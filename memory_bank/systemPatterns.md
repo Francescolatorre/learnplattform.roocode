@@ -1,86 +1,73 @@
-# Learning Platform System Architecture Patterns
+## Authentication System Architecture
 
-## Overall Architecture
-- Backend: Django REST Framework
-- Frontend: React with TypeScript
-- Database: PostgreSQL
-- Authentication: JWT (Simple JWT)
-- API Documentation: DRF Spectacular
-- Testing: Pytest
-
-## Backend Design Patterns
-
-### Model Layer
-- Custom User Model
-  - Extends Django's AbstractUser
-  - Adds role-based access control
-- Generic Managers for Models
-  - Custom create methods
-  - Centralized business logic
-- Explicit Relationship Definitions
-  - ForeignKey with clear related_names
-  - ManyToMany for flexible associations
-
-### View Layer
-- Class-based and Function-based Views
-- Permission Classes
-  - AllowAny for public endpoints
-  - IsAuthenticated for protected routes
-- Decorator-based Permissions
-
-### Authentication Strategy
-- JWT Token-based Authentication
-- Refresh and Access Token Mechanism
-- Stateless Authentication
-- Role-based Access Control
-
-### Testing Approach
-- Pytest for Comprehensive Testing
-- Isolated Test Databases
-- Minimal External Dependencies
-- Comprehensive Model and Endpoint Coverage
-
-## Data Flow Patterns
+### Backend Authentication Flow
 1. User Registration
-   - Validate Input
-   - Create User
-   - Generate JWT Tokens
-   - Return User Profile
+- Endpoint: `/api/users/register/`
+- Method: POST
+- Accepts: email, username, password
+- Returns: User object, authentication token
+- Validation:
+  * Unique email/username
+  * Password strength requirements
+  * Email format validation
 
-2. Course Creation
-   - Validate User Permissions
-   - Create Course
-   - Associate Tasks
-   - Return Course Details
+2. User Login
+- Endpoint: `/api/users/login/`
+- Method: POST
+- Accepts: email/username, password
+- Returns: Authentication token, user profile
+- Features:
+  * JWT token generation
+  * Role-based access
+  * Login attempt tracking
 
-3. Submission Workflow
-   - Validate Submission
-   - Store Submission
-   - Update User Progress
-   - Trigger Evaluation Process
+3. User Logout
+- Endpoint: `/api/users/logout/`
+- Method: POST
+- Invalidates current authentication token
+- Supports both server-side and client-side logout
 
-## Performance Considerations
-- Minimal Database Queries
-- Efficient Model Relationships
-- Lazy Loading of Related Objects
-- Indexing for Frequent Queries
+4. Password Management
+- Reset Request: `/api/users/password-reset/`
+- Confirm Reset: `/api/users/password-reset/confirm/`
+- Secure token-based reset mechanism
+- Email notifications
 
-## Scalability Strategies
-- Stateless Authentication
-- Modular App Structure
-- Dependency Injection
-- Asynchronous Task Processing (Future)
+5. Profile Management
+- Retrieve: `/api/users/profile/`
+- Update: `/api/users/profile/update/`
+- Supports partial updates
+- Role-based access control
 
-## Security Patterns
-- Input Validation
-- JWT Token Rotation
-- CORS Configuration
-- Environment-based Configuration
-- Minimal Exposure of Sensitive Data
+### Frontend Authentication Flow
+1. Registration Component
+- Controlled form with validation
+- Client-side and server-side validation
+- Error handling
+- Redirect on successful registration
 
-## Future Architectural Improvements
-- Microservices Potential
-- Event-driven Architecture
-- Advanced Caching Mechanisms
-- Comprehensive Logging
-- Monitoring and Observability
+2. Login Component
+- Email/Username flexible login
+- Remember me functionality
+- Social login integration (future)
+- Error handling
+
+3. Authentication State Management
+- Global authentication state
+- Token storage (secure, HttpOnly cookies)
+- Automatic token refresh
+- Logout handling
+
+### Security Considerations
+- HTTPS enforcement
+- CSRF protection
+- Rate limiting on auth endpoints
+- Secure password hashing
+- Token expiration and rotation
+- Audit logging for auth events
+
+### Technology Stack
+- Backend: Django Rest Framework
+- Authentication: JWT (JSON Web Tokens)
+- Frontend State Management: React Context/Redux
+- Token Storage: HttpOnly Cookies

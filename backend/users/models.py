@@ -3,6 +3,9 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 class User(AbstractUser):
+    """
+    Custom user model extending Django's AbstractUser.
+    """
     ROLE_CHOICES = [
         ('admin', _('Admin')),
         ('user', _('User')),
@@ -21,6 +24,9 @@ class User(AbstractUser):
     )
 
     def __str__(self):
+        """
+        Return string representation of the user.
+        """
         return str(self.username or self.email or self.pk)
 
     class Meta:

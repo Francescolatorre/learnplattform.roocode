@@ -1,6 +1,10 @@
+'''
+dummy docstring
+'''
+
 import pytest
 from django.contrib.auth import get_user_model
-from .models import Course, Task
+from courses.models import Course, Task
 
 User = get_user_model()
 
@@ -11,7 +15,7 @@ def test_create_course():
         title='Test Course',
         description='A test course description'
     )
-    
+
     assert course.title == 'Test Course'
     assert course.description == 'A test course description'
     assert course.created_at is not None
@@ -24,7 +28,7 @@ def test_create_task():
         title='Test Course',
         description='A test course description'
     )
-    
+
     task = Task.objects.create(
         course=course,
         title='Test Task',
@@ -33,7 +37,7 @@ def test_create_task():
         order=1,
         evaluation_prompt='Evaluate this task carefully'
     )
-    
+
     assert task.course == course
     assert task.title == 'Test Task'
     assert task.description == 'A test task description'

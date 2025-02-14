@@ -1,55 +1,68 @@
-import { ThemeProvider } from '@mui/material/styles';
-import { CssBaseline } from '@mui/material';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
 import { theme } from './theme/theme';
+import { AuthProvider } from './features/auth/AuthContext';
+
+// Import authentication components
+import LoginForm from './features/auth/LoginForm';
+import RegisterForm from './features/auth/RegisterForm';
+
+// Import layout components
 import { MainLayout } from './components/layout/MainLayout';
 
-// Create a client for React Query
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
-    },
-  },
-});
+// Placeholder for dashboard and other components
+const Dashboard = () => <div>Dashboard</div>;
+const Profile = () => <div>Profile</div>;
 
-// Placeholder components - will be replaced with actual implementations
-const CoursesPage = () => <div>Courses Page</div>;
-const SubmissionsPage = () => <div>Submissions Page</div>;
-const ProfilePage = () => <div>Profile Page</div>;
-const LoginPage = () => <div>Login Page</div>;
+// Protected Route Component
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const isAuthenticated = localStorage.getItem('access_token') !== null;
+  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+};
 
-function App() {
-  // Simple auth check - will be replaced with proper auth logic
-  const isAuthenticated = !!localStorage.getItem('token');
-
+const App: React.FC = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AuthProvider>
         <Router>
-          {isAuthenticated ? (
-            <MainLayout>
-              <Routes>
-                <Route path="/courses" element={<CoursesPage />} />
-                <Route path="/submissions" element={<SubmissionsPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/" element={<Navigate to="/courses" replace />} />
-                <Route path="*" element={<Navigate to="/courses" replace />} />
-              </Routes>
-            </MainLayout>
-          ) : (
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="*" element={<Navigate to="/login" replace />} />
-            </Routes>
-          )}
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/register" element={<RegisterForm />} />
+
+            {/* Protected Routes */}
+            <Route 
+              path="/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Dashboard />
+                  </MainLayout>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/profile" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Profile />
+                  </MainLayout>
+                </ProtectedRoute>
+              } 
+            />
+
+            {/* Redirect */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
         </Router>
-      </ThemeProvider>
-    </QueryClientProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
-}
+};
 
 export default App;

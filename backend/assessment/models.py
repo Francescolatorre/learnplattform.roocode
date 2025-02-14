@@ -1,118 +1,161 @@
-from django.db import models
-from django.conf import settings
-from django.utils.translation import gettext_lazy as _
-from courses.models import Task, Course
-from django.db.models import Manager
+'''
+This module contains the models for the assessment app.
+'''
 
-class SubmissionManager(Manager):
-    def create_submission(self, user, task, content, status='pending'):
-        """Create a submission with optional status."""
-        return self.create(
-            user=user,
-            task=task,
-            content=content,
-            status=status
-        )
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+from django.conf import settings
+from tasks.models import AssessmentTask, QuizTask
 
 class Submission(models.Model):
-    objects = SubmissionManager()
-
-    SUBMISSION_STATUS = [
-        ('pending', _('Pending Review')),
-        ('reviewed', _('Reviewed')),
-        ('accepted', _('Accepted')),
-        ('rejected', _('Rejected'))
-    ]
+    '''
+    Model representing a submission for an assessment task.
+    Attributes:
+        user (ForeignKey): Reference to the user who made the submission.
+        task (ForeignKey): Reference to the task being submitted.
+        submitted_at (DateTimeField): Timestamp when the submission was made.
+        content (TextField): Content of the submission.
+        grade (DecimalField): Grade assigned to the submission.
+    Methods:
+        get_username() -> str:
+            Safely retrieve the username from the related user.
+        get_task_title() -> str:
+            Safely retrieve the task title.
+        __str__() -> str:
+            Return a string representation of the submission in the format "username - task title".
+    '''
+    class Meta:
+        app_label = 'assessment'
+        unique_together = ('user', 'task')
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
         on_delete=models.CASCADE, 
-        related_name='submissions',
-        verbose_name=_('User')
+        related_name='submissions'
     )
     task = models.ForeignKey(
-        Task, 
+        AssessmentTask, 
         on_delete=models.CASCADE, 
-        related_name='submissions',
-        verbose_name=_('Task')
+        related_name='submissions'
     )
-    content = models.TextField(_('Submission Content'))
-    file = models.FileField(
-        _('Submission File'), 
-        upload_to='submissions/', 
-        null=True, 
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    content = models.TextField(
+        _('Submission Content'), 
         blank=True
     )
-    submitted_at = models.DateTimeField(
-        _('Submitted At'), 
-        auto_now_add=True
-    )
-    status = models.CharField(
-        _('Submission Status'), 
-        max_length=20, 
-        choices=SUBMISSION_STATUS, 
-        default='pending'
-    )
-    feedback = models.TextField(
-        _('Feedback'), 
-        blank=True
-    )
-    score = models.FloatField(
-        _('Score'), 
+    grade = models.DecimalField(
+        _('Grade'), 
+        max_digits=5, 
+        decimal_places=2, 
         null=True, 
         blank=True
     )
 
-    def __str__(self):
-        return f"{self.user.username} - {self.task.title}"
+    objects = models.Manager()
 
+    def get_username(self) -> str:
+        """
+        Safely retrieve username from related user
+        """
+        try:
+            return str(self.user.username) if self.user else ''
+        except AttributeError:
+            return ''
+
+    def get_task_title(self) -> str:
+        """
+        Safely retrieve task title
+        """
+        try:
+            return str(self.task.title) if self.task else ''
+        except AttributeError:
+            return ''
+
+    def __str__(self) -> str:
+        return f"{self.get_username()} - {self.get_task_title()}"
+
+class Quiz(models.Model):
+    '''
+    Model representing a quiz in the assessment system.
+    '''
     class Meta:
-        verbose_name = _('Submission')
-        verbose_name_plural = _('Submissions')
-        ordering = ['-submitted_at']
+        app_label = 'assessment'
+        verbose_name_plural = 'Quizzes'
 
-class UserProgressManager(Manager):
-    def create_progress(self, user, course, total_score=0):
-        """Create a user progress record."""
-        return self.create(
-            user=user,
-            course=course,
-            total_score=total_score
-        )
+    title = models.CharField(
+        _('Quiz Title'), 
+        max_length=200
+    )
+    description = models.TextField(
+        _('Quiz Description'), 
+        blank=True
+    )
+    tasks = models.ManyToManyField(
+        QuizTask, 
+        related_name='quizzes', 
+        blank=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    objects = models.Manager()
+
+    def __str__(self) -> str:
+        return self.title
+
+    def get_total_tasks(self) -> int:
+        """
+        Returns the total number of tasks in the quiz.
+        """
+        return self.tasks.count()
 
 class UserProgress(models.Model):
-    objects = UserProgressManager()
+    class Meta:
+        app_label = 'assessment'
+        unique_together = ('user', 'quiz')
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
         on_delete=models.CASCADE, 
-        related_name='progress',
-        verbose_name=_('User')
+        related_name='assessment_progress'
     )
-    course = models.ForeignKey(
-        Course, 
+    quiz = models.ForeignKey(
+        Quiz, 
         on_delete=models.CASCADE, 
-        related_name='user_progress',
-        verbose_name=_('Course')
+        related_name='user_progress'
     )
     completed_tasks = models.ManyToManyField(
-        Task, 
-        blank=True,
-        verbose_name=_('Completed Tasks')
+        QuizTask, 
+        related_name='completed_by',
+        blank=True
     )
-    last_accessed = models.DateTimeField(
-        _('Last Accessed'), 
-        auto_now=True
-    )
-    total_score = models.FloatField(
+    total_score = models.DecimalField(
         _('Total Score'), 
+        max_digits=5, 
+        decimal_places=2, 
         default=0
     )
+    is_completed = models.BooleanField(default=False)
 
-    class Meta:
-        unique_together = ('user', 'course')
-        verbose_name = _('User Progress')
-        verbose_name_plural = _('User Progress')
+    objects = models.Manager()
 
-    def __str__(self):
-        return f"{self.user.username} - {self.course.title} Progress"
+    def get_username(self) -> str:
+        """
+        Safely retrieve username from related user
+        """
+        try:
+            return str(self.user.username) if self.user else ''
+        except AttributeError:
+            return ''
+
+    def get_quiz_title(self) -> str:
+        """
+        Safely retrieve quiz title
+        """
+        try:
+            return str(self.quiz.title) if self.quiz else ''
+        except AttributeError:
+            return ''
+
+    def __str__(self) -> str:
+        return f"{self.get_username()} - {self.get_quiz_title()}"

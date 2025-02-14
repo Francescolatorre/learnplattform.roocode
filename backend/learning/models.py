@@ -1,14 +1,14 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
-from typing import Optional
+from tasks.models import LearningTask
 
 class Course(models.Model):
     """
-    Model representing a course.
+    Model representing a course in the learning platform.
     """
     class Meta:
-        app_label = 'courses'
+        app_label = 'learning'
 
     title = models.CharField(
         _('Course Title'), 
@@ -27,6 +27,13 @@ class Course(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    # Relationship with tasks
+    tasks = models.ManyToManyField(
+        LearningTask, 
+        related_name='courses', 
+        blank=True
+    )
 
     objects = models.Manager()
 
@@ -36,32 +43,14 @@ class Course(models.Model):
         """
         return self.title or ''
 
-class Task(models.Model):
-    """
-    Model representing a task within a course.
-    """
-    class Meta:
-        app_label = 'courses'
-
-    course = models.ForeignKey(
-        Course, 
-        on_delete=models.CASCADE, 
-        related_name='tasks'
-    )
-    title = models.CharField(
-        _('Task Title'), 
-        max_length=200
-    )
-    description = models.TextField(
-        _('Task Description'), 
-        blank=True
-    )
-    due_date = models.DateTimeField(null=True, blank=True)
-
-    objects = models.Manager()
-
-    def __str__(self) -> str:
+    def get_total_tasks(self) -> int:
         """
-        String representation of the Task model.
+        Returns the total number of tasks in the course.
         """
-        return f"{self.course.title or ''} - {self.title or ''}"
+        return self.tasks.count()
+
+    def get_learning_tasks(self):
+        """
+        Returns all learning tasks for this course.
+        """
+        return self.tasks.all()

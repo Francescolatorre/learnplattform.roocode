@@ -1,84 +1,67 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
 
-export const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// Request interceptor for adding auth token
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Response interceptor for handling errors
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response?.status === 401) {
-      // Handle unauthorized error (e.g., redirect to login)
-      localStorage.removeItem('token');
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
-  }
-);
-
-// API endpoints
-export const endpoints = {
-  auth: {
-    login: '/auth/login',
-    register: '/auth/register',
-    refresh: '/auth/refresh',
-  },
-  courses: {
-    list: '/courses',
-    detail: (id: string) => `/courses/${id}`,
-    tasks: (id: string) => `/courses/${id}/tasks`,
-  },
-  tasks: {
-    detail: (id: string) => `/tasks/${id}`,
-    submit: (id: string) => `/tasks/${id}/submit`,
-  },
-  submissions: {
-    list: '/submissions/me',
-    create: '/submissions',
-  },
-  progress: {
-    overview: '/progress',
-    course: (id: string) => `/progress/${id}`,
-  },
-};
-
-// Type definitions
-export interface ApiError {
-  message: string;
-  code?: string;
-  details?: unknown;
+interface LoginResponse {
+  user: {
+    id: number;
+    username: string;
+    email: string;
+    role: string;
+  };
+  access: string;
+  refresh: string;
 }
 
-// Helper function to handle API errors
-export const handleApiError = (error: unknown): ApiError => {
-  if (axios.isAxiosError(error)) {
-    return {
-      message: error.response?.data?.message || 'An error occurred',
-      code: error.response?.data?.code,
-      details: error.response?.data?.details,
-    };
+interface RegisterData {
+  username: string;
+  email: string;
+  password: string;
+  password2: string;
+  role?: string;
+}
+
+export const login = async (usernameOrEmail: string, password: string): Promise<LoginResponse> => {
+  try {
+    const response = await axios.post<LoginResponse>(`${API_BASE_URL}/users/login/`, {
+      username_or_email: usernameOrEmail,
+      password: password
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Login failed:', error);
+    throw error;
   }
-  return {
-    message: 'An unexpected error occurred',
-  };
+};
+
+export const register = async (data: RegisterData): Promise<LoginResponse> => {
+  try {
+    const response = await axios.post<LoginResponse>(`${API_BASE_URL}/users/register/`, {
+      ...data,
+      role: data.role || 'user'
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Registration failed:', error);
+    throw error;
+  }
+};
+
+export const logout = async (refreshToken: string) => {
+  try {
+    await axios.post(`${API_BASE_URL}/users/logout/`, { refresh_token: refreshToken });
+  } catch (error) {
+    console.error('Logout failed:', error);
+    throw error;
+  }
+};
+
+export const refreshAccessToken = async (refreshToken: string) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/token/refresh/`, { refresh: refreshToken });
+    return response.data;
+  } catch (error) {
+    console.error('Token refresh failed:', error);
+    throw error;
+  }
 };
