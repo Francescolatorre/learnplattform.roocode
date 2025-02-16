@@ -1,88 +1,127 @@
-"""
-This module contains tests for the assessment application.
-
-It includes tests for creating submissions and tracking user progress.
-"""
-
-import pytest
+from django.test import TestCase
 from django.contrib.auth import get_user_model
-from courses.models import Course, Task
-from .models import Submission, UserProgress
+from django.utils import timezone
+from .models import Submission, Quiz, UserProgress
+from tasks.models import QuizTask, AssessmentTask
 
 User = get_user_model()
 
-@pytest.mark.django_db
-def test_create_submission():
-    """Test creating a submission"""
-    user = User.objects.create_user(
-        username='testuser', 
-        email='test@example.com', 
-        password='testpass123'
-    )
+class AssessmentModelTests(TestCase):
+    def setUp(self):
+        """
+        Set up test data for assessment models.
+        """
+        self.user = User.objects.create_user(
+            username='testuser', 
+            email='test@example.com', 
+            password='testpass123'
+        )
 
-    course = Course.objects.create(
-        title='Test Course',
-        description='A test course description'
-    )
+        # Create a quiz task
+        self.quiz_task = QuizTask.objects.create(
+            title='Python Basics Quiz',
+            description='Quiz on fundamental Python concepts',
+            max_score=100.00,
+            passing_score=60.00,
+            time_limit=60,
+            is_randomized=True
+        )
 
-    task = Task.objects.create(
-        course=course,
-        title='Test Task',
-        description='A test task description',
-        type='text',
-        order=1  # Ensure unique order
-    )
+        # Create a quiz
+        self.quiz = Quiz.objects.create(
+            title='Python Fundamentals Quiz',
+            description='A comprehensive quiz on Python basics'
+        )
+        self.quiz.tasks.add(self.quiz_task)
 
-    submission = Submission.objects.create(
-        user=user,
-        task=task,
-        content='Test submission content',
-        status='pending'
-    )
+    def test_submission_creation(self):
+        """
+        Test creating a submission for an assessment task.
+        """
+        assessment_task = AssessmentTask.objects.create(
+            title='Python Assignment',
+            description='Coding assignment on Python fundamentals',
+            max_score=100.00,
+            passing_score=70.00
+        )
 
-    assert submission.user == user
-    assert submission.task == task
-    assert submission.content == 'Test submission content'
-    assert submission.status == 'pending'
-    assert submission.submitted_at is not None
+        submission = Submission.objects.create(
+            user=self.user,
+            task=assessment_task,
+            content='Solution to the Python assignment',
+            grade=85.50
+        )
 
-@pytest.mark.django_db
-def test_user_progress():
-    """Test creating user progress"""
-    user = User.objects.create_user(
-        username='testuser', 
-        email='test@example.com', 
-        password='testpass123'
-    )
+        self.assertEqual(submission.user, self.user)
+        self.assertEqual(submission.task, assessment_task)
+        self.assertEqual(submission.grade, 85.50)
+        self.assertIsNotNone(submission.submitted_at)
 
-    course = Course.objects.create(
-        title='Test Course',
-        description='A test course description'
-    )
+    def test_quiz_creation_and_task_management(self):
+        """
+        Test quiz creation and task management.
+        """
+        # Verify quiz creation
+        self.assertEqual(self.quiz.title, 'Python Fundamentals Quiz')
+        self.assertEqual(self.quiz.get_total_tasks(), 1)
+        self.assertIn(self.quiz_task, self.quiz.tasks.all())
 
-    task1 = Task.objects.create(
-        course=course,
-        title='Task 1',
-        type='text',
-        order=1  # Ensure unique order
-    )
+    def test_user_progress_creation(self):
+        """
+        Test creating and managing user progress for a quiz.
+        """
+        user_progress = UserProgress.objects.create(
+            user=self.user,
+            quiz=self.quiz
+        )
 
-    task2 = Task.objects.create(
-        course=course,
-        title='Task 2',
-        type='text',
-        order=2  # Ensure unique order
-    )
+        # Add a completed task
+        user_progress.completed_tasks.add(self.quiz_task)
 
-    progress = UserProgress.objects.create(
-        user=user,
-        course=course,
-        total_score=85.5
-    )
+        self.assertEqual(user_progress.user, self.user)
+        self.assertEqual(user_progress.quiz, self.quiz)
+        self.assertIn(self.quiz_task, user_progress.completed_tasks.all())
+        self.assertEqual(user_progress.total_score, 0)  # Default value
+        self.assertFalse(user_progress.is_completed)
 
-    progress.completed_tasks.add(task1, task2)
+    def test_user_progress_completion(self):
+        """
+        Test user progress completion logic.
+        """
+        user_progress = UserProgress.objects.create(
+            user=self.user,
+            quiz=self.quiz
+        )
 
-    assert progress.user == user
-    assert progress.course == course
-    assert progress.total_score == 85.5
-    assert list(progress.completed_tasks.all()) == [task1, task2]
+        # Add all tasks to completed tasks
+        user_progress.completed_tasks.add(self.quiz_task)
+        user_progress.total_score = self.quiz_task.max_score or 0
+        user_progress.is_completed = (
+            user_progress.completed_tasks.count() == self.quiz.tasks.count()
+        )
+        user_progress.save()
+
+        self.assertTrue(user_progress.is_completed)
+        self.assertEqual(user_progress.total_score, 100.00)
+
+    def test_submission_string_representation(self):
+        """
+        Test the string representation of a submission.
+        """
+        assessment_task = AssessmentTask.objects.create(
+            title='Test Task',
+            max_score=100.00
+        )
+
+        submission = Submission.objects.create(
+            user=self.user,
+            task=assessment_task
+        )
+
+        self.assertEqual(str(submission), f'{self.user.username} - Test Task')
+
+    def test_quiz_string_representation(self):
+        """
+        Test the string representation of a quiz.
+        """
+        self.assertEqual(str(self.quiz), 'Python Fundamentals Quiz')

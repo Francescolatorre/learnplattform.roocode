@@ -5,7 +5,7 @@ This module contains the models for the assessment app.
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
-from tasks.models import AssessmentTask, QuizTask
+from django.apps import apps
 
 class Submission(models.Model):
     '''
@@ -34,7 +34,7 @@ class Submission(models.Model):
         related_name='submissions'
     )
     task = models.ForeignKey(
-        AssessmentTask, 
+        'tasks.AssessmentTask', 
         on_delete=models.CASCADE, 
         related_name='submissions'
     )
@@ -91,7 +91,7 @@ class Quiz(models.Model):
         blank=True
     )
     tasks = models.ManyToManyField(
-        QuizTask, 
+        'tasks.QuizTask', 
         related_name='quizzes', 
         blank=True
     )
@@ -101,13 +101,13 @@ class Quiz(models.Model):
     objects = models.Manager()
 
     def __str__(self) -> str:
-        return self.title
+        return str(self.title)
 
     def get_total_tasks(self) -> int:
         """
         Returns the total number of tasks in the quiz.
         """
-        return self.tasks.count()
+        return self.tasks.all().count()
 
 class UserProgress(models.Model):
     class Meta:
@@ -125,7 +125,7 @@ class UserProgress(models.Model):
         related_name='user_progress'
     )
     completed_tasks = models.ManyToManyField(
-        QuizTask, 
+        'tasks.QuizTask', 
         related_name='completed_by',
         blank=True
     )

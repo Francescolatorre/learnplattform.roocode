@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
-from tasks.models import LearningTask
+from django.apps import apps
 
 class Course(models.Model):
     """
@@ -30,7 +30,7 @@ class Course(models.Model):
     
     # Relationship with tasks
     tasks = models.ManyToManyField(
-        LearningTask, 
+        'tasks.LearningTask', 
         related_name='courses', 
         blank=True
     )
@@ -41,7 +41,7 @@ class Course(models.Model):
         """
         String representation of the Course model.
         """
-        return self.title or ''
+        return str(self.title) if self.title else ''
 
     def get_total_tasks(self) -> int:
         """

@@ -1,37 +1,36 @@
 from django.contrib import admin
 from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
+from rest_framework.routers import DefaultRouter
 
-# Explicitly import views
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView, 
-    TokenRefreshView
-)
-from drf_spectacular.views import (
-    SpectacularAPIView, 
-    SpectacularSwaggerView
-)
+# Import viewsets from different apps
+from users.views import UserViewSet
+from tasks.views import LearningTaskViewSet, AssessmentTaskViewSet, QuizTaskViewSet
+from learning.views import CourseViewSet
+from assessment.views import SubmissionViewSet, QuizViewSet, UserProgressViewSet
+
+# Create router and register viewsets
+router = DefaultRouter()
+
+# Users
+router.register(r'users', UserViewSet, basename='user')
+
+# Tasks
+router.register(r'learning-tasks', LearningTaskViewSet, basename='learning-task')
+router.register(r'assessment-tasks', AssessmentTaskViewSet, basename='assessment-task')
+router.register(r'quiz-tasks', QuizTaskViewSet, basename='quiz-task')
+
+# Learning
+router.register(r'courses', CourseViewSet, basename='course')
+
+# Assessment
+router.register(r'submissions', SubmissionViewSet, basename='submission')
+router.register(r'quizzes', QuizViewSet, basename='quiz')
+router.register(r'user-progress', UserProgressViewSet, basename='user-progress')
 
 urlpatterns = [
-    # Admin
+    # Admin site
     path('admin/', admin.site.urls),
-
-    # Authentication
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-
-    # API Documentation
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-
-    # API Routes
-    path('api/users/', include('users.urls')),
-    path('api/courses/', include('courses.urls')),
-    path('api/assessment/', include('assessment.urls')),
-    path('api/core/', include('core.urls')),
+    
+    # API routes
+    path('api/v1/', include(router.urls)),
 ]
-
-# Serve media files in development
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

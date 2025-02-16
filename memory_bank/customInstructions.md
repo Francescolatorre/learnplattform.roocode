@@ -1,5 +1,24 @@
 # Roo Project Guidelines
 
+## Documentation Requirements
+
+### Memory Bank Maintenance
+1. Required Documentation Files:
+   - productContext.md - Vision and requirements
+   - systemPatterns.md - Architecture patterns
+   - techContext.md - Technology stack
+   - progress.md - Implementation status
+   - activeContext.md - Current work tracking
+
+2. Active Context Management
+   - ALWAYS maintain activeContext.md across all modes
+   - Update for every significant change or task
+   - Include:
+     * Current work being performed
+     * Recent changes made
+     * Next steps planned
+   - Keep synchronized with actual project state
+
 ## General Task Completion Rules
 
 ### Test Validation
@@ -38,3 +57,4 @@
 - Keep tests simple, focused, and maintainable
 - Use meaningful test descriptions
 - Cover edge cases and error scenarios
+- Keep documentation up-to-date with changes
