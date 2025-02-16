@@ -87,6 +87,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
             error={!!error}
             disabled={isLoading}
             autoFocus
+            autoComplete="username"
+            inputProps={{
+              'aria-label': 'Username or Email'
+            }}
           />
           <TextField
             variant="outlined"
@@ -100,6 +104,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
             error={!!error}
             disabled={isLoading}
             helperText={error}
+            autoComplete="current-password"
+            inputProps={{
+              'aria-label': 'Password'
+            }}
           />
           <Box sx={{ mt: 2, mb: 2, textAlign: 'right' }}>
             <Link

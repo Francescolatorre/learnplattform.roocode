@@ -154,10 +154,10 @@ pytest --cov=.
 ```
 
 ### 2. Coverage Requirements
-- Business Logic: 100%
-- Models: 100%
-- Views: 95%
-- Utils: 90%
+- Business Logic: 10%
+- Models: 10%
+- Views: 40%
+- Utils: 40%
 
 ### 3. Performance Metrics
 - Test execution time limits

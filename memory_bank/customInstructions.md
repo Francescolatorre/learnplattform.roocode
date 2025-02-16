@@ -48,6 +48,7 @@ Dependencies: [List of Task-IDs]
    - Acknowledge task receipt by updating status to IN_PROGRESS
    - Implement requirements exactly as specified
    - Follow Django best practices
+   - 
    - Create/modify only specified files
 
 2. Validation
