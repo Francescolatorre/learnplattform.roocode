@@ -1,25 +1,21 @@
 """
-URL configuration for the user management and JWT token endpoints.
+URL configuration for user authentication endpoints.
 """
-
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView
-)
+from django.urls import path
+from rest_framework_simplejwt.views import TokenRefreshView
 from .views import UserViewSet
 
-router = DefaultRouter()
-router.register(r'', UserViewSet, basename='user')
-
 urlpatterns = [
-    # User management routes
-    path('', include(router.urls)),
+    # Authentication endpoints
+    path('register/', UserViewSet.as_view({'post': 'register'}), name='user-register'),
+    path('login/', UserViewSet.as_view({'post': 'login'}), name='user-login'),
+    path('logout/', UserViewSet.as_view({'post': 'logout'}), name='user-logout'),
+    path('password-reset/', UserViewSet.as_view({'post': 'password_reset'}), name='user-password-reset'),
+    path('profile/', UserViewSet.as_view({
+        'get': 'profile',
+        'patch': 'profile'
+    }), name='user-profile'),
     
-    # JWT Token endpoints
-    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # JWT token refresh
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 ]

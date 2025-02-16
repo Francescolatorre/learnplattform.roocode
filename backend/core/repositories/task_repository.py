@@ -2,8 +2,10 @@
 Repository for task-related database operations.
 """
 from decimal import Decimal
+from typing import Dict, List, Optional, Union
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
+from django.db.models import QuerySet
 
 from tasks.models import LearningTask, AssessmentTask, QuizTask
 
@@ -12,7 +14,7 @@ class TaskRepository:
     Handles database operations for tasks.
     """
 
-    def get_learning_tasks(self):
+    def get_learning_tasks(self) -> QuerySet[LearningTask]:
         """
         Retrieves all learning tasks.
 
@@ -21,7 +23,7 @@ class TaskRepository:
         """
         return LearningTask.objects.all()
 
-    def get_assessment_tasks(self):
+    def get_assessment_tasks(self) -> QuerySet[AssessmentTask]:
         """
         Retrieves all assessment tasks.
 
@@ -30,7 +32,7 @@ class TaskRepository:
         """
         return AssessmentTask.objects.all()
 
-    def get_quiz_task(self, task_id: int):
+    def get_quiz_task(self, task_id: int) -> QuizTask:
         """
         Retrieves a specific quiz task by ID.
 
@@ -45,7 +47,7 @@ class TaskRepository:
         """
         return QuizTask.objects.get(id=task_id)
 
-    def create_learning_task(self, **task_data):
+    def create_learning_task(self, **task_data: Dict[str, Union[str, Decimal]]) -> LearningTask:
         """
         Creates a new learning task.
 
@@ -58,7 +60,7 @@ class TaskRepository:
         """
         return LearningTask.objects.create(**task_data)
 
-    def create_quiz_task(self, **task_data):
+    def create_quiz_task(self, **task_data: Dict[str, Union[str, int, bool, Decimal]]) -> QuizTask:
         """
         Creates a new quiz task.
 
@@ -71,7 +73,7 @@ class TaskRepository:
         """
         return QuizTask.objects.create(**task_data)
 
-    def update_assessment_task(self, task_id: int, **updates):
+    def update_assessment_task(self, task_id: int, **updates: Dict[str, Union[str, Decimal]]) -> AssessmentTask:
         """
         Updates an assessment task.
 
@@ -91,7 +93,7 @@ class TaskRepository:
         task.save()
         return task
 
-    def delete_task(self, task_id: int):
+    def delete_task(self, task_id: int) -> None:
         """
         Deletes a task of any type.
 
@@ -107,7 +109,7 @@ class TaskRepository:
             task = AssessmentTask.objects.get(id=task_id)
         task.delete()
 
-    def get_tasks_by_due_date(self, before_date=None):
+    def get_tasks_by_due_date(self, before_date: Optional[str] = None) -> QuerySet[AssessmentTask]:
         """
         Retrieves tasks based on due date.
 
@@ -122,7 +124,7 @@ class TaskRepository:
             tasks = tasks.filter(due_date__lte=before_date)
         return tasks
 
-    def get_tasks_with_criteria(self, **filters):
+    def get_tasks_with_criteria(self, **filters: Dict[str, Union[str, Decimal]]) -> QuerySet[AssessmentTask]:
         """
         Retrieves tasks based on multiple criteria.
 
@@ -135,7 +137,7 @@ class TaskRepository:
         return AssessmentTask.objects.filter(**filters)
 
     @transaction.atomic
-    def bulk_create_tasks(self, task_data_list):
+    def bulk_create_tasks(self, task_data_list: List[Dict[str, Union[str, int, bool, Decimal]]]) -> List[Union[LearningTask, QuizTask]]:
         """
         Creates multiple tasks in a single transaction.
 

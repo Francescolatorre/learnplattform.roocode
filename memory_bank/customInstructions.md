@@ -9,9 +9,9 @@
    - Define clear requirements and validation criteria
    - Specify dependencies between tasks
    - Document tasks in YAML format in activeContext.md
-   - Review learnings.md for applicable patterns and lessons
 
 2. Task Structure MUST COMPLY
+
 ```yaml
 Task-ID: Unique identifier (e.g., CORE-001)
 Description: Clear, concise task description
@@ -25,10 +25,6 @@ Validation:
   - Expected outcomes
 Status: TODO | IN_PROGRESS | DONE
 Dependencies: [List of Task-IDs]
-Learnings:
-  - Applicable patterns from learnings.md
-  - Previous lessons to consider
-  - Best practices to follow
 ```
 
 3. Task Management
@@ -38,27 +34,17 @@ Learnings:
    - Validate completed tasks
    - Always move task to IN_PROGRESS before implementation begins
    - Update task status to DONE upon completion
-   - Document new learnings in learnings.md
 
 4. Documentation
    - Maintain architectural documentation
    - Update technical specifications
    - Document design decisions
    - Track implementation progress
-   - Review and update learnings.md
-
-5. Knowledge Management
-   - Review learnings.md before task planning
-   - Apply documented best practices
-   - Identify opportunities for new patterns
-   - Update learnings with new insights
-   - Share knowledge across tasks
 
 ### Code Mode Responsibilities
 
 1. Task Execution
    - Read current task from activeContext.md
-   - Review applicable learnings from learnings.md
    - Acknowledge task receipt by updating status to IN_PROGRESS
    - Implement requirements exactly as specified
    - Follow Django best practices
@@ -129,58 +115,3 @@ Learnings:
    - Proper authentication
    - Input validation
    - Secure API design
-
-## Task Lifecycle
-
-1. Creation
-   - Architect mode creates atomic task
-   - Reviews learnings.md for applicable patterns
-   - Task added to activeContext.md with TODO status
-   - Dependencies specified
-   - Validation criteria defined
-
-2. Implementation
-   - Code mode updates task status to IN_PROGRESS
-   - Implements requirements
-   - Follows best practices
-   - Updates task status to DONE upon completion
-
-3. Validation
-   - Code mode verifies criteria
-   - Architect mode reviews
-   - Tests verified
-   - Documentation updated
-
-4. Completion
-   - Task marked as DONE
-   - Next task activated
-   - Progress tracked
-   - Dependencies checked
-   - Changes committed to git
-   - New learnings documented
-
-## Memory Bank Usage
-
-1. Active Context
-   - Current task details
-   - Implementation progress
-   - Blocking issues
-   - Next steps
-
-2. Technical Context
-   - Architecture decisions
-   - Design patterns
-   - Best practices
-   - Implementation guides
-
-3. Progress Tracking
-   - Completed tasks
-   - Current phase
-   - Outstanding items
-   - Success metrics
-
-4. Learnings
-   - Review before task planning
-   - Apply documented patterns
-   - Update with new insights
-   - Share across tasks

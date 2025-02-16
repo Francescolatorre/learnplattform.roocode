@@ -18,7 +18,7 @@ class TestLearningRepository:
     """
     Database tests for LearningRepository.
     """
-    
+
     @pytest.fixture
     def repository(self):
         """

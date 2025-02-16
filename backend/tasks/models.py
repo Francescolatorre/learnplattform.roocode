@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from typing import Optional, Union
 
 class BaseTask(models.Model):
     """
@@ -22,7 +23,7 @@ class BaseTask(models.Model):
         app_label = 'tasks'
 
     def __str__(self) -> str:
-        return self.title or ''
+        return str(self.title) if self.title else ''
 
 class LearningTask(BaseTask):
     """
@@ -34,6 +35,8 @@ class LearningTask(BaseTask):
         blank=True
     )
 
+    objects: models.Manager = models.Manager()
+
 class AssessmentTask(BaseTask):
     """
     Task used for assessment and grading.
@@ -42,18 +45,18 @@ class AssessmentTask(BaseTask):
         _('Maximum Score'), 
         max_digits=5, 
         decimal_places=2, 
-        null=True
-,
+        null=True,
         blank=True
     )
     passing_score = models.DecimalField(
         _('Passing Score'), 
         max_digits=5, 
         decimal_places=2, 
-        null=True
-,
+        null=True,
         blank=True
     )
+
+    objects: models.Manager = models.Manager()
 
 class QuizTask(AssessmentTask):
     """
@@ -61,11 +64,12 @@ class QuizTask(AssessmentTask):
     """
     time_limit = models.IntegerField(
         _('Time Limit (minutes)'), 
-        null=True
-,
+        null=True,
         blank=True
     )
     is_randomized = models.BooleanField(
         _('Randomize Question Order'), 
         default=False
     )
+
+    objects: models.Manager = models.Manager()

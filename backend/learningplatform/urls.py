@@ -1,3 +1,6 @@
+"""
+Root URL configuration for the learning platform.
+"""
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
@@ -33,4 +36,7 @@ urlpatterns = [
     
     # API routes
     path('api/v1/', include(router.urls)),
+    
+    # Authentication routes
+    path('api/v1/auth/', include('users.urls')),
 ]

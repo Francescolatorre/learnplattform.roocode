@@ -19,16 +19,6 @@ PASSWORD_HASHERS = [
 # Use a faster test runner
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
-# Disable migrations during tests
-class DisableMigrations:
-    def __contains__(self, item):
-        return True
-
-    def __getitem__(self, item):
-        return None
-
-MIGRATION_MODULES = DisableMigrations()
-
 # Configure test-specific apps
 INSTALLED_APPS = [
     'django.contrib.admin',

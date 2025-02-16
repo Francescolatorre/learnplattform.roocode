@@ -1,145 +1,189 @@
-# Service Layer Testing Guidelines
+# Service Layer Testing Guide
 
-## Test Organization
+## Overview
 
-### Directory Structure
-```
-services/
-├── tests/
-│   ├── __init__.py
-│   ├── conftest.py         # Shared fixtures and configurations
-│   ├── test_*_service.py   # Service-specific test modules
-│   └── README.md           # This documentation
+This directory contains tests for the service layer, which implements core business logic for the learning platform. The tests follow established patterns from repository testing while adding additional coverage for business rules, authorization, and error handling.
+
+## Test Structure
+
+### Directory Organization
+
+```python
+tests/
+├── conftest.py           # Common fixtures
+├── test_assessment_service.py
+├── test_learning_service.py
+├── test_task_service.py
+└── utils/
+    └── assertions.py     # Custom assertions
 ```
 
 ### Test Categories
-- Unit tests: `@pytest.mark.unit`
-- Integration tests: `@pytest.mark.integration`
-- Service tests: `@pytest.mark.service`
 
-## Mocking Strategy
+1. Unit Tests (`@pytest.mark.unit`)
+   - Mock repository dependencies
+   - Focus on business logic
+   - Test error handling
+   - Verify authorization rules
 
-### Repository Layer
-- Use `mock_repository` fixture from conftest.py
-- Configure specific method returns for each test
-- Verify repository method calls with assert_called_* methods
+2. Integration Tests (`@pytest.mark.integration`)
+   - Use real repositories
+   - Test transaction handling
+   - Verify data persistence
+   - Check query optimization
 
-### Mock Objects
-- Use provided fixtures from conftest.py for common objects
-- Create test-specific mocks in test methods when needed
-- Configure mock returns before test execution
+3. Performance Tests (`@pytest.mark.performance`)
+   - Query execution time
+   - Cache behavior
+   - Load testing scenarios
 
-## Test Patterns
+## Testing Patterns
 
-### Service Method Tests
-1. Basic Success Case
-   - Configure mocks
-   - Execute service method
-   - Assert expected results
-   - Verify repository calls
+### 1. Test Data Setup
 
-2. Error Cases
-   - Test all possible exceptions
-   - Verify error messages
-   - Ensure proper exception hierarchy
+Use Factory Boy for test data:
 
-3. Edge Cases
-   - Test boundary conditions
-   - Verify data validation
-   - Check authorization rules
-
-### Example Test Structure
 ```python
-def test_method_name_scenario(self, service, mock_repository):
-    # Arrange
-    mock_repository.method.return_value = expected_value
-    
-    # Act
-    result = service.method(params)
-    
-    # Assert
-    assert result == expected_value
-    mock_repository.method.assert_called_once_with(params)
+@pytest.fixture
+def mock_quiz(mock_repository):
+    quiz = QuizFactory.build()
+    mock_repository.get_quiz_with_tasks.return_value = quiz
+    return quiz
 ```
 
-## Integration Testing
+### 2. Transaction Management
 
-### Database Integration
-- Use `@pytest.mark.integration`
-- Test with actual database
-- Utilize transaction rollback
-- Create test data with factories
+Use transaction fixtures for isolation:
 
-### Service Boundaries
-- Test service-to-service interactions
-- Verify transaction handling
-- Test rollback scenarios
+```python
+@pytest.fixture
+def test_transaction():
+    with transaction.atomic():
+        sid = transaction.savepoint()
+        yield
+        transaction.savepoint_rollback(sid)
+```
+
+### 3. Mock Configuration
+
+Configure mocks with proper return values:
+
+```python
+@pytest.fixture
+def mock_repository():
+    repository = Mock()
+    repository.get_user_submissions.return_value = []
+    return repository
+```
+
+### 4. Test Organization
+
+Follow the Arrange-Act-Assert pattern:
+
+```python
+def test_method_name():
+    """
+    Clear test description with:
+    - Preconditions
+    - Expected behavior
+    - Edge cases covered
+    """
+    # Arrange
+    service = ServiceClass(repository)
+    input_data = prepare_test_data()
+
+    # Act
+    result = service.method(input_data)
+
+    # Assert
+    assert result.status == expected_status
+    assert_business_rules_followed(result)
+```
+
+## Key Testing Areas
+
+### 1. Business Logic
+
+- Input validation
+- Data transformation
+- Calculation accuracy
+- State transitions
+- Business rule enforcement
+
+### 2. Error Handling
+
+- Invalid inputs
+- Not found scenarios
+- Authorization failures
+- Business rule violations
+- Edge cases
+
+### 3. Transaction Management
+
+- Atomic operations
+- Rollback scenarios
+- Concurrent access
+- Deadlock handling
+
+### 4. Integration Points
+
+- Repository interaction
+- Event handling
+- Cache integration
+- External service mocking
 
 ## Best Practices
 
-1. Test Independence
-   - Each test should be self-contained
-   - Reset mocks between tests
-   - Don't share state between tests
+### 1. Test Isolation
 
-2. Test Coverage
-   - Cover all service methods
-   - Test both success and failure paths
-   - Include edge cases and validations
+- Use fresh test data
+- Clean up after tests
+- Avoid test interdependence
 
-3. Mock Configuration
-   - Configure mocks in test methods
-   - Use descriptive names for mock objects
-   - Document complex mock setups
+### 2. Mock Usage
 
-4. Assertions
-   - Use specific assertions
-   - Verify both results and side effects
-   - Check repository method calls
+- Mock at repository boundary
+- Verify mock interactions
+- Use realistic mock data
 
-5. Documentation
-   - Document test scenarios
-   - Explain complex test setups
-   - Include examples for new patterns
+### 3. Error Testing
 
-## Common Patterns
+- Test all error paths
+- Verify error messages
+- Check error propagation
 
-### Authorization Testing
-```python
-def test_method_unauthorized(self, service, mock_user):
-    with pytest.raises(NotAuthorizedError):
-        service.restricted_method(mock_user.id)
+### 4. Performance Testing
+
+- Measure query counts
+- Check execution time
+- Test with realistic data volumes
+
+## Coverage Requirements
+
+- Core Business Logic: 100%
+- Error Handling: 100%
+- Helper Methods: 80%+
+
+## Running Tests
+
+```bash
+# Run all service tests
+pytest core/services/tests/
+
+# Run specific test categories
+pytest core/services/tests/ -m unit
+pytest core/services/tests/ -m integration
+pytest core/services/tests/ -m performance
+
+# Run with coverage
+pytest core/services/tests/ --cov=core/services --cov-report=html
 ```
 
-### Transaction Testing
-```python
-@pytest.mark.integration
-def test_transaction_rollback(self, service, mock_repository):
-    with pytest.raises(Exception):
-        service.transactional_method()
-    # Verify rollback occurred
-```
+## Contributing
 
-### Data Validation
-```python
-def test_invalid_input(self, service):
-    with pytest.raises(ValidationError):
-        service.method(invalid_data)
-```
-
-## Testing Tools
-
-### Pytest Fixtures
-- Use fixtures for common setup
-- Scope fixtures appropriately
-- Document fixture dependencies
-
-### Mock Objects
-- unittest.mock for mocking
-- Factory Boy for test data
-- pytest-django for database handling
-
-### Coverage
-- Minimum 90% coverage for services
-- Run with: `pytest --cov=services`
-- Generate reports: `pytest --cov-report=html`
+1. Follow the test organization pattern
+2. Add proper docstrings
+3. Include edge cases
+4. Verify error handling
+5. Check test isolation
+6. Update this README as needed

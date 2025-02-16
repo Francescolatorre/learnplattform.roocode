@@ -1,119 +1,192 @@
 # Active Context
 
-## Current Task: TEST-006 Repository Layer Testing (COMPLETED)
+## Current Task Status
+- ✅ Authentication API tests passing
+- ✅ JWT authentication configured
+- ✅ Token validation implemented
+- ✅ API documentation created
 
-## Next Tasks
+## Recent Changes
+1. Fixed authentication configuration in settings.py:
+   - Added proper JWT settings
+   - Configured default authentication classes
+   - Set up token blacklist support
+2. Updated UserViewSet with proper authentication:
+   - Added JWTAuthentication class
+   - Improved permission handling
+   - Fixed logout endpoint response
 
-### TEST-007: Service Layer Testing
-```yaml
-Task-ID: TEST-007
-Description: Implement comprehensive tests for the service layer
-Requirements:
-  - Apply repository testing patterns to service layer
-  - Test business logic and validation
-  - Verify service integration with repositories
-  - Test error handling and edge cases
-Validation:
-  - All test cases pass
-  - Code coverage meets standards
-  - Business rules verified
-  - Error handling confirmed
-Status: TODO
-Dependencies: [TEST-006]
-Learnings:
-  - Apply Factory Boy patterns from repository testing
-  - Use transaction handling best practices
-  - Follow test organization guidelines
+## Authentication API Documentation
+
+### Base URL
+```
+/api/v1/auth/
 ```
 
-### TEST-008: API Integration Testing
-```yaml
-Task-ID: TEST-008
-Description: Implement API integration tests
-Requirements:
-  - Test API endpoints
-  - Verify request/response handling
-  - Test authentication and authorization
-  - Validate error responses
-Validation:
-  - API endpoints tested
-  - Authentication flows verified
-  - Error handling confirmed
-  - Response formats validated
-Status: TODO
-Dependencies: [TEST-007]
-Learnings:
-  - Use test organization patterns
-  - Apply error handling practices
-  - Follow documentation standards
+### Endpoints
+
+#### 1. Register
+- **URL**: `register/`
+- **Method**: `POST`
+- **Auth Required**: No
+- **Request Body**:
+```json
+{
+    "username": "string",
+    "email": "string",
+    "password": "string",
+    "password2": "string",
+    "display_name": "string",
+    "role": "string"
+}
+```
+- **Success Response**: `201 Created`
+```json
+{
+    "user": {
+        "username": "string",
+        "email": "string",
+        "display_name": "string"
+    },
+    "refresh": "string",
+    "access": "string"
+}
 ```
 
-### TEST-009: Performance Testing Framework
-```yaml
-Task-ID: TEST-009
-Description: Set up performance testing infrastructure
-Requirements:
-  - Implement load testing framework
-  - Create performance benchmarks
-  - Test database query performance
-  - Monitor resource usage
-Validation:
-  - Load tests implemented
-  - Benchmarks established
-  - Performance metrics captured
-  - Resource monitoring in place
-Status: TODO
-Dependencies: [TEST-008]
-Learnings:
-  - Apply transaction isolation patterns
-  - Use database optimization techniques
-  - Follow monitoring best practices
+#### 2. Login
+- **URL**: `login/`
+- **Method**: `POST`
+- **Auth Required**: No
+- **Request Body**:
+```json
+{
+    "username_or_email": "string",
+    "password": "string"
+}
+```
+- **Success Response**: `200 OK`
+```json
+{
+    "user": {
+        "username": "string",
+        "email": "string"
+    },
+    "refresh": "string",
+    "access": "string"
+}
 ```
 
-### TEST-010: End-to-End Testing
-```yaml
-Task-ID: TEST-010
-Description: Implement end-to-end testing suite
-Requirements:
-  - Set up E2E testing framework
-  - Create critical path tests
-  - Test user workflows
-  - Verify system integration
-Validation:
-  - E2E tests passing
-  - User flows verified
-  - Integration confirmed
-  - System stability validated
-Status: TODO
-Dependencies: [TEST-009]
-Learnings:
-  - Apply test organization patterns
-  - Use Factory Boy for test data
-  - Follow documentation standards
+#### 3. Logout
+- **URL**: `logout/`
+- **Method**: `POST`
+- **Auth Required**: No
+- **Request Body**:
+```json
+{
+    "refresh_token": "string"
+}
+```
+- **Success Response**: `205 Reset Content`
+
+#### 4. Password Reset
+- **URL**: `password-reset/`
+- **Method**: `POST`
+- **Auth Required**: No
+- **Request Body**:
+```json
+{
+    "email": "string"
+}
+```
+- **Success Response**: `200 OK`
+```json
+{
+    "message": "Password reset link sent"
+}
 ```
 
-## Implementation Notes
+#### 5. Profile
+- **URL**: `profile/`
+- **Methods**: `GET`, `PATCH`
+- **Auth Required**: Yes
+- **Headers**:
+```
+Authorization: Bearer <access_token>
+```
+- **GET Response**: `200 OK`
+```json
+{
+    "username": "string",
+    "email": "string",
+    "display_name": "string"
+}
+```
+- **PATCH Request Body**:
+```json
+{
+    "display_name": "string"
+}
+```
+- **PATCH Response**: `200 OK`
+```json
+{
+    "username": "string",
+    "email": "string",
+    "display_name": "string"
+}
+```
 
-1. Each task builds on patterns established in repository testing
-2. Focus on maintaining high test coverage
-3. Apply learnings from repository layer testing
-4. Keep documentation updated with new patterns
-5. Review and update learnings.md with new insights
+#### 6. Token Refresh
+- **URL**: `token/refresh/`
+- **Method**: `POST`
+- **Auth Required**: No
+- **Request Body**:
+```json
+{
+    "refresh": "string"
+}
+```
+- **Success Response**: `200 OK`
+```json
+{
+    "access": "string"
+}
+```
 
-## Current Status
-- Repository layer testing complete
-- All tests passing
-- Documentation updated
-- Learnings captured
-- Next tasks prepared
+### Authentication Flow
 
-## Priorities
-1. Service layer testing (TEST-007)
-2. API integration testing (TEST-008)
-3. Performance testing (TEST-009)
-4. End-to-end testing (TEST-010)
+1. **Registration/Login**:
+   - Call register or login endpoint
+   - Store received tokens (refresh & access)
 
-## Dependencies
-- All tasks depend on completed repository testing
-- Each task builds on previous task's infrastructure
-- Knowledge transfer through learnings.md
+2. **Making Authenticated Requests**:
+   - Add access token to Authorization header:
+   ```
+   Authorization: Bearer <access_token>
+   ```
+
+3. **Token Refresh**:
+   - When access token expires, use refresh token to get new access token
+   - If refresh fails, redirect to login
+
+4. **Logout**:
+   - Call logout endpoint with refresh token
+   - Clear stored tokens
+
+### Error Responses
+
+- **400 Bad Request**: Invalid input data
+- **401 Unauthorized**: Invalid or expired token
+- **403 Forbidden**: Insufficient permissions
+- **404 Not Found**: Resource not found
+- **500 Internal Server Error**: Server error
+
+### Token Lifetimes
+- Access Token: 60 minutes
+- Refresh Token: 24 hours
+
+## Next Steps
+1. Implement frontend authentication flow using the API
+2. Add error handling and token refresh logic
+3. Create protected route wrapper components
+4. Implement user session management
