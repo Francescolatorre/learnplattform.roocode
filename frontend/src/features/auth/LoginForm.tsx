@@ -5,11 +5,18 @@ import {
   TextField, 
   Typography, 
   Container, 
-  Paper 
+  Paper,
+  Link,
+  Alert,
+  CircularProgress
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { login } from '../../services/api';
+import { useNavigate, useLocation, Link as RouterLink } from 'react-router-dom';
 import { AxiosError } from 'axios';
+import { useAuth } from './AuthContext';
+
+interface LocationState {
+  message?: string;
+}
 
 interface LoginFormProps {
   onLoginSuccess?: () => void;
@@ -19,18 +26,23 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login: authLogin } = useAuth();
+
+  // Get success message from navigation state (e.g., after password reset)
+  const state = location.state as LocationState;
+  const [successMessage, setSuccessMessage] = useState(state?.message || '');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
+    setSuccessMessage('');
 
     try {
-      const response = await login(username, password);
-      
-      // Store tokens securely
-      localStorage.setItem('access_token', response.access);
-      localStorage.setItem('refresh_token', response.refresh);
+      await authLogin(username, password);
       
       // Optional callback for parent component
       onLoginSuccess?.();
@@ -47,6 +59,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
       } else {
         setError('An unexpected error occurred');
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -57,6 +71,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
           Login
         </Typography>
         <Box component="form" onSubmit={handleSubmit}>
+          {successMessage && (
+            <Alert severity="success" sx={{ mb: 2 }}>
+              {successMessage}
+            </Alert>
+          )}
           <TextField
             variant="outlined"
             margin="normal"
@@ -66,6 +85,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             error={!!error}
+            disabled={isLoading}
+            autoFocus
           />
           <TextField
             variant="outlined"
@@ -77,17 +98,58 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             error={!!error}
+            disabled={isLoading}
             helperText={error}
           />
+          <Box sx={{ mt: 2, mb: 2, textAlign: 'right' }}>
+            <Link
+              component={RouterLink}
+              to="/forgot-password"
+              variant="body2"
+              underline="hover"
+            >
+              Forgot password?
+            </Link>
+          </Box>
           <Button
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
-            sx={{ marginTop: 2 }}
+            disabled={isLoading}
+            sx={{ 
+              height: 36,
+              position: 'relative'
+            }}
           >
-            Sign In
+            {isLoading ? (
+              <CircularProgress
+                size={24}
+                sx={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  marginTop: '-12px',
+                  marginLeft: '-12px'
+                }}
+              />
+            ) : (
+              'Sign In'
+            )}
           </Button>
+          <Box sx={{ mt: 2, textAlign: 'center' }}>
+            <Typography variant="body2" color="textSecondary">
+              Don't have an account?{' '}
+              <Link
+                component={RouterLink}
+                to="/register"
+                variant="body2"
+                underline="hover"
+              >
+                Sign up
+              </Link>
+            </Typography>
+          </Box>
         </Box>
       </Paper>
     </Container>

@@ -1,38 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Button, 
-  TextField, 
-  Typography, 
-  Container, 
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Container,
   Paper,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  SelectChangeEvent,
   Alert
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { register } from '../../services/api';
-import { AxiosError } from 'axios';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { resetPassword } from '../../services/api';
 import { validatePassword, type PasswordStrength } from './utils/passwordValidation';
 import PasswordStrengthIndicator from './components/PasswordStrengthIndicator';
+import { AxiosError } from 'axios';
 
-const RegisterForm: React.FC = () => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
+const ResetPasswordForm: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('user');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
     isValid: false,
     score: 0,
     feedback: []
   });
-  const navigate = useNavigate();
+
+  const token = searchParams.get('token');
+
+  useEffect(() => {
+    if (!token) {
+      setError('Invalid or missing reset token');
+    }
+  }, [token]);
 
   useEffect(() => {
     if (password) {
@@ -47,7 +48,12 @@ const RegisterForm: React.FC = () => {
     setError('');
     setIsLoading(true);
 
-    // Validation checks
+    if (!token) {
+      setError('Invalid or missing reset token');
+      setIsLoading(false);
+      return;
+    }
+
     if (!passwordStrength.isValid) {
       setError('Please address all password requirements');
       setIsLoading(false);
@@ -61,26 +67,19 @@ const RegisterForm: React.FC = () => {
     }
 
     try {
-      const response = await register({
-        username,
-        email,
-        password,
-        password2: confirmPassword,
-        role
+      await resetPassword(token, password);
+      // Show success message and redirect to login
+      navigate('/login', { 
+        state: { 
+          message: 'Password has been reset successfully. Please login with your new password.' 
+        } 
       });
-      
-      // Store tokens securely
-      localStorage.setItem('access_token', response.access);
-      localStorage.setItem('refresh_token', response.refresh);
-      
-      // Navigate to dashboard or home
-      navigate('/dashboard');
     } catch (err: unknown) {
       if (err instanceof Error) {
         const axiosError = err as AxiosError;
-        const errorMessage = axiosError.response?.data 
-          ? Object.values(axiosError.response.data).flat().join(', ') 
-          : 'Registration failed. Please try again.';
+        const errorMessage = axiosError.response?.data
+          ? (axiosError.response.data as { detail?: string }).detail || 'Password reset failed'
+          : 'An error occurred while resetting your password.';
         setError(errorMessage);
       } else {
         setError('An unexpected error occurred');
@@ -90,15 +89,11 @@ const RegisterForm: React.FC = () => {
     }
   };
 
-  const handleRoleChange = (event: SelectChangeEvent) => {
-    setRole(event.target.value as string);
-  };
-
   return (
     <Container maxWidth="xs">
       <Paper elevation={3} sx={{ padding: 3, marginTop: 8 }}>
         <Typography variant="h4" align="center" gutterBottom>
-          Register
+          Reset Password
         </Typography>
         <Box component="form" onSubmit={handleSubmit}>
           <TextField
@@ -106,35 +101,12 @@ const RegisterForm: React.FC = () => {
             margin="normal"
             required
             fullWidth
-            label="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            error={!!error}
-            disabled={isLoading}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            error={!!error}
-            disabled={isLoading}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            label="Password"
+            label="New Password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             error={!!error}
-            disabled={isLoading}
+            disabled={isLoading || !token}
           />
           {password && (
             <PasswordStrengthIndicator
@@ -147,25 +119,13 @@ const RegisterForm: React.FC = () => {
             margin="normal"
             required
             fullWidth
-            label="Confirm Password"
+            label="Confirm New Password"
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             error={!!error}
-            disabled={isLoading}
+            disabled={isLoading || !token}
           />
-          <FormControl fullWidth margin="normal">
-            <InputLabel>Role</InputLabel>
-            <Select
-              value={role}
-              label="Role"
-              onChange={handleRoleChange}
-              disabled={isLoading}
-            >
-              <MenuItem value="user">User</MenuItem>
-              <MenuItem value="admin">Admin</MenuItem>
-            </Select>
-          </FormControl>
           {error && (
             <Alert severity="error" sx={{ mt: 2 }}>
               {error}
@@ -176,10 +136,10 @@ const RegisterForm: React.FC = () => {
             fullWidth
             variant="contained"
             color="primary"
-            sx={{ marginTop: 2 }}
-            disabled={isLoading || !passwordStrength.isValid}
+            sx={{ mt: 3, mb: 2 }}
+            disabled={isLoading || !token || !passwordStrength.isValid}
           >
-            {isLoading ? 'Registering...' : 'Register'}
+            {isLoading ? 'Resetting Password...' : 'Reset Password'}
           </Button>
         </Box>
       </Paper>
@@ -187,4 +147,4 @@ const RegisterForm: React.FC = () => {
   );
 };
 
-export default RegisterForm;
+export default ResetPasswordForm;
