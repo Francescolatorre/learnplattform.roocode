@@ -1,61 +1,48 @@
-# Active Context
+# Course Management System Implementation Tasks
 
-## Current Branch: feature/auth-improvements
+Task-ID: COURSE-VERSION-001
+Description: Implement course versioning system for tracking and managing course revisions
 
-## Completed Authentication Features
-- ✅ Password strength validation with visual feedback
-- ✅ Password reset functionality
-- ✅ Role-based access control
-- ✅ Loading states and error handling
-- ✅ CORS configuration
-- ✅ Token management
-- ✅ Test users created
+Requirements:
+  - [ ] Create VersionControl service in backend/core/services/version_control_service.py:
+    * Version increment logic
+    * Version comparison utilities
+    * Version history tracking
+    * Rollback capabilities with data integrity checks
 
-### Test Users
-1. Admin User:
-   - Username: admin
-   - Email: admin@example.com
-   - Password: test
-   - Role: admin
+  - [ ] Enhance Course model version handling:
+    * Add version metadata fields (created_from, version_notes)
+    * Implement version comparison methods
+    * Add version history relationship
+    * Create version rollback methods
 
-2. Regular User:
-   - Username: testuser
-   - Email: testuser@example.com
-   - Password: testpassword123
-   - Role: user
+  - [ ] Implement CourseVersion model in backend/learning/models.py:
+    * Fields: version_number, created_at, created_by, notes
+    * Snapshot of course content at version point
+    * Relationship to parent course
+    * Version metadata and change tracking
 
-## Development Servers
-- Frontend: http://localhost:5173
-- Backend: http://localhost:8000
+  - [ ] Update CourseSerializer:
+    * Add version-related fields
+    * Include version history in responses
+    * Support version comparison
+    * Handle rollback operations
 
-## API Endpoints
-Base URL: `/api/v1/auth/`
-- POST `/login/` - User login
-- POST `/register/` - User registration
-- POST `/logout/` - User logout
-- POST `/password-reset/` - Request password reset
-- POST `/password-reset/confirm/` - Confirm password reset
-- GET/PATCH `/profile/` - User profile
-- POST `/token/refresh/` - Refresh access token
+Validation:
+  - [ ] Version numbers increment correctly
+  - [ ] Version history maintains accurate snapshots
+  - [ ] Changes between versions are properly tracked
+  - [ ] Rollback operations preserve data integrity
+  - [ ] Version metadata is complete and accurate
+  - [ ] Invalid operations are prevented
+  - [ ] Version comparison works correctly
 
-## Next Steps
-1. Testing and Validation
-   - Conduct end-to-end testing of authentication flow
-   - Test role-based access restrictions
-   - Verify password reset functionality
+Status: IN_PROGRESS
+Dependencies: [COURSE-MODEL-001]
 
-2. Security Enhancements
-   - Implement two-factor authentication
-   - Add session management
-   - Set up account lockout after failed attempts
-
-3. Documentation
-   - Update API documentation
-   - Add user guide for authentication features
-   - Document security best practices
-
-4. Future Improvements
-   - Consider moving to HttpOnly cookies
-   - Implement rate limiting
-   - Add audit logging
-   - Enhance error handling and user feedback
+Next Steps:
+1. Create version_control_service.py
+2. Implement CourseVersion model
+3. Update Course model with version features
+4. Enhance serializer for version support
+5. Add comprehensive tests for versioning
