@@ -1,8 +1,30 @@
 import { ReactNode } from 'react';
-import { Box, AppBar, Toolbar, Typography, Container, IconButton, Drawer, List, ListItemButton, ListItemIcon, ListItemText, useTheme, useMediaQuery } from '@mui/material';
-import { Menu as MenuIcon, School as SchoolIcon, Assignment as AssignmentIcon, Person as PersonIcon } from '@mui/icons-material';
+import { 
+  Box, 
+  AppBar, 
+  Toolbar, 
+  Typography, 
+  Container, 
+  IconButton, 
+  Drawer, 
+  List, 
+  ListItemButton, 
+  ListItemIcon, 
+  ListItemText, 
+  useTheme, 
+  useMediaQuery,
+  Button
+} from '@mui/material';
+import { 
+  Menu as MenuIcon, 
+  School as SchoolIcon, 
+  Assignment as AssignmentIcon, 
+  Person as PersonIcon,
+  Logout as LogoutIcon
+} from '@mui/icons-material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../features/auth';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -13,6 +35,16 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
+  const { logout, user } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
 
   const menuItems = [
     { text: 'Courses', icon: <SchoolIcon />, path: '/courses' },
@@ -29,6 +61,16 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
 
   const drawer = (
     <Box sx={{ width: 250 }}>
+      {user && (
+        <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
+          <Typography variant="subtitle1" noWrap>
+            {user.display_name || user.username}
+          </Typography>
+          <Typography variant="body2" color="textSecondary" noWrap>
+            {user.email}
+          </Typography>
+        </Box>
+      )}
       <List>
         {menuItems.map((item) => (
           <ListItemButton 
@@ -39,6 +81,10 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
             <ListItemText primary={item.text} />
           </ListItemButton>
         ))}
+        <ListItemButton onClick={handleLogout}>
+          <ListItemIcon><LogoutIcon /></ListItemIcon>
+          <ListItemText primary="Logout" />
+        </ListItemButton>
       </List>
     </Box>
   );
@@ -58,6 +104,16 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             Learning Platform
           </Typography>
+          {user && (
+            <Button
+              color="inherit"
+              onClick={handleLogout}
+              startIcon={<LogoutIcon />}
+              sx={{ display: { xs: 'none', sm: 'flex' } }}
+            >
+              Logout
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
 
