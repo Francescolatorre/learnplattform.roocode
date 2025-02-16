@@ -1,188 +1,71 @@
-# Repository Testing Lessons Learned
+## Pylint Learnings for Django ManyToManyField and Model Methods
 
-## Key Learnings
+### ManyToManyField Challenges
 
-### 1. Factory Boy Patterns
+1. **Direct Method Limitations**
+   - Pylint often flags `.count()`, `.all()`, and `.filter()` as unsupported methods on ManyToManyField
+   - Recommended solutions:
+     * Use `ModelName.objects.filter(field=instance).count()`
+     * Use `ModelName.objects.filter(field=instance)` instead of `.all()`
+     * Leverage the through model or related manager for complex queries
 
-#### Issues Encountered
+2. **Through Model Access**
+   - When using `through` parameter in ManyToManyField, access related data via:
+     ```python
+     # Instead of self.tasks.count()
+     self.tasks.through.objects.filter(course=self).count()
+     ```
 
-- Default task creation in QuizFactory caused test failures
-- Missing graded_by field in SubmissionFactory
-- Factory post-generation hooks needed better handling
+### Model Method Best Practices
 
-#### Recommendations
+1. **Role Display Names**
+   - For models with choices, create an explicit `get_role_name_display()` method
+   - Use dictionary lookup for more robust display name retrieval
+     ```python
+     def get_role_name_display(self) -> str:
+         return dict(self.StandardRoles.choices).get(self.role_name, self.role_name)
+     ```
 
-1. Always explicitly handle optional relationships:
+2. **Exception Handling**
+   - Use `objects.model.DoesNotExist` for more generic exception handling
+     ```python
+     try:
+         # Your query
+     except ModelName.objects.model.DoesNotExist:
+         # Handle exception
+     ```
 
-```python
-@factory.post_generation
-def tasks(self, create, extracted, **kwargs):
-    if not create:
-        return
-    if extracted is not None:  # Check for None, not truthiness
-        self.tasks.add(*extracted)
-```
+### Type Hinting and Imports
 
-2. Include all model fields in factories:
-   - Add fields even if they're nullable
-   - Document field dependencies
-   - Set sensible defaults
+1. **Dynamic Model Access**
+   - Use `django.apps.apps.get_model()` for dynamic model retrieval
+   - Helpful for avoiding circular imports and dynamic model access
 
-### 2. Foreign Key Relationships
+2. **Type Checking Imports**
+   - Use `TYPE_CHECKING` for type hint imports to avoid circular dependencies
+     ```python
+     from typing import TYPE_CHECKING
+     if TYPE_CHECKING:
+         from users.models import User
+     ```
 
-#### Issues Encountered
+### Performance Considerations
 
-- Passing IDs instead of model instances
-- Incorrect relationship handling in tests
-- Missing cascade delete tests
+1. **QuerySet Methods**
+   - Prefer `values_list()` for efficient data retrieval
+   - Use `flat=True` to get simple lists instead of tuples
+     ```python
+     list(self.tasks.values_list('id', flat=True))
+     ```
 
-#### Recommendations
+### Debugging Tips
 
-1. Always use model instances for foreign keys:
+1. Always add explicit managers to models
+2. Implement `__str__` methods for better debugging
+3. Use type hints to improve code clarity and catch potential issues early
 
-```python
-# Wrong
-submission.graded_by = admin_user.id
+### Common Pylint Workarounds
 
-# Correct
-submission.graded_by = admin_user
-```
-
-2. Test relationship constraints:
-   - Cascade deletion behavior
-   - Null handling
-   - Unique constraints
-
-### 3. Transaction Handling
-
-#### Issues Encountered
-
-- Inconsistent transaction usage
-- Missing isolation level tests
-- Incomplete rollback scenarios
-
-#### Recommendations
-
-1. Use proper transaction fixtures:
-
-```python
-@pytest.fixture
-def test_transaction():
-    with transaction.atomic():
-        sid = transaction.savepoint()
-        yield
-        transaction.savepoint_rollback(sid)
-```
-
-2. Test all transaction scenarios:
-   - Atomic operations
-   - Nested transactions
-   - Rollbacks
-   - Concurrent access
-
-### 4. Test Organization
-
-#### Best Practices
-
-1. Group tests by operation type:
-   - CRUD operations
-   - Query methods
-   - Transaction tests
-   - Error cases
-
-2. Follow consistent naming:
-
-```python
-def test_<operation>_<scenario>():
-    # Example: test_create_user_with_valid_data()
-```
-
-3. Use clear test documentation:
-
-```python
-def test_method():
-    """
-    Test description with:
-    - Preconditions
-    - Expected behavior
-    - Edge cases covered
-    """
-```
-
-### 5. Coverage Considerations
-
-#### Recommendations
-
-1. Separate coverage metrics:
-   - Core repository operations (aim for 100%)
-   - Error handling (aim for 100%)
-   - Helper methods (aim for 80%+)
-
-2. Use targeted coverage reporting:
-
-```bash
-pytest --cov=core/repositories/ --cov-report=html
-```
-
-## Process Improvements
-
-### 1. Test First Development
-
-- Write test cases before implementation
-- Define clear test scenarios in documentation
-- Review test coverage requirements early
-
-### 2. Code Review Guidelines
-
-- Check for proper factory usage
-- Verify transaction handling
-- Ensure relationship handling
-- Review test naming and organization
-
-### 3. Documentation Updates
-
-- Maintain factory documentation
-- Document common testing patterns
-- Keep test README files updated
-- Include example test cases
-
-## Action Items
-
-1. Update Repository Test Documentation:
-   - Add Factory Boy best practices
-   - Include relationship handling examples
-   - Document transaction patterns
-
-2. Create Testing Templates:
-   - Standard test class structure
-   - Common test scenarios
-   - Factory definitions
-
-3. Update Code Review Checklist:
-   - Factory implementation review
-   - Transaction handling verification
-   - Relationship testing coverage
-
-4. Knowledge Sharing:
-   - Schedule team review of testing patterns
-   - Create testing pattern documentation
-   - Regular test coverage reviews
-
-## Future Considerations
-
-1. Test Infrastructure:
-   - Consider test data management tools
-   - Evaluate test isolation strategies
-   - Plan for performance testing
-
-2. Automation:
-   - Add pre-commit hooks for test coverage
-   - Automate test pattern verification
-   - Implement test documentation checks
-
-3. Monitoring:
-   - Track test coverage trends
-   - Monitor test execution times
-   - Report common test failures
-
-These learnings should be incorporated into the team's development process and regularly reviewed for continued improvement.
+1. For methods flagged as not existing, create wrapper methods
+2. Use `getattr()` with default values for dynamic attribute access
+3. Leverage Django's model managers for complex queries

@@ -1,13 +1,71 @@
 from rest_framework import serializers
-from .models import Course
+from .models import Course, StatusTransition, InstructorRole, CourseInstructorAssignment
 from tasks.serializers import LearningTaskSerializer
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class InstructorRoleSerializer(serializers.ModelSerializer):
+    """
+    Serializer for InstructorRole model.
+    """
+    class Meta:
+        model = InstructorRole
+        fields = [
+            'role_name', 
+            'description', 
+            'can_edit_course', 
+            'can_manage_tasks', 
+            'can_grade_submissions'
+        ]
+
+class CourseInstructorAssignmentSerializer(serializers.ModelSerializer):
+    """
+    Serializer for CourseInstructorAssignment model.
+    """
+    role = InstructorRoleSerializer(read_only=True)
+    instructor = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all()
+    )
+
+    class Meta:
+        model = CourseInstructorAssignment
+        fields = [
+            'instructor', 
+            'role', 
+            'assigned_at', 
+            'is_active'
+        ]
+
+class StatusTransitionSerializer(serializers.ModelSerializer):
+    """
+    Serializer for StatusTransition model.
+    """
+    changed_by = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), 
+        required=False, 
+        allow_null=True
+    )
+
+    class Meta:
+        model = StatusTransition
+        fields = [
+            'from_status', 
+            'to_status', 
+            'changed_by', 
+            'changed_at', 
+            'reason'
+        ]
 
 class CourseSerializer(serializers.ModelSerializer):
     """
-    Serializer for Course model with nested learning tasks.
+    Serializer for Course model with nested learning tasks and instructor assignments.
     """
     tasks = LearningTaskSerializer(many=True, read_only=True)
     total_tasks = serializers.SerializerMethodField()
+    status_history = serializers.SerializerMethodField()
+    allowed_transitions = serializers.SerializerMethodField()
+    instructors = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
@@ -15,19 +73,113 @@ class CourseSerializer(serializers.ModelSerializer):
             'id', 
             'title', 
             'description', 
-            'instructor', 
+            'instructors', 
             'created_at', 
             'updated_at', 
             'tasks', 
-            'total_tasks'
+            'total_tasks',
+            'status',
+            'visibility',
+            'status_history',
+            'allowed_transitions'
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        read_only_fields = [
+            'id', 
+            'created_at', 
+            'updated_at', 
+            'status_history', 
+            'allowed_transitions'
+        ]
 
     def get_total_tasks(self, obj):
         """
         Returns the total number of tasks in the course.
         """
         return obj.get_total_tasks()
+
+    def get_instructors(self, obj):
+        """
+        Returns detailed instructor information for the course.
+        """
+        assignments = CourseInstructorAssignment.objects.filter(
+            course=obj, 
+            is_active=True
+        )
+        return CourseInstructorAssignmentSerializer(assignments, many=True).data
+
+    def get_status_history(self, obj):
+        """
+        Returns the status transition history for the course.
+        """
+        return StatusTransitionSerializer(
+            obj.get_status_history(), 
+            many=True
+        ).data
+
+    def get_allowed_transitions(self, obj):
+        """
+        Returns the list of allowed status transitions.
+        """
+        return obj.get_allowed_transitions()
+
+    def validate_status(self, value):
+        """
+        Validate status transition.
+        """
+        instance = getattr(self, 'instance', None)
+        if instance and not instance.can_transition_to(value):
+            raise serializers.ValidationError(
+                f"Cannot transition from {instance.status} to {value}"
+            )
+        return value
+
+    def create(self, validated_data):
+        """
+        Custom create method to handle instructor assignments.
+        """
+        instructors_data = self.context.get('instructors', [])
+        course = Course.objects.create(**validated_data)
+
+        for instructor_data in instructors_data:
+            user = instructor_data.get('instructor')
+            role = instructor_data.get('role', InstructorRole.StandardRoles.GUEST)
+            
+            CourseInstructorAssignment.objects.create(
+                course=course,
+                instructor=user,
+                role=InstructorRole.objects.get(role_name=role)
+            )
+
+        return course
+
+    def update(self, instance, validated_data):
+        """
+        Custom update method to handle instructor assignments.
+        """
+        instructors_data = self.context.get('instructors', [])
+
+        # Update course fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        # Update instructor assignments
+        # First, deactivate all current assignments
+        CourseInstructorAssignment.objects.filter(course=instance).update(is_active=False)
+
+        # Create new assignments
+        for instructor_data in instructors_data:
+            user = instructor_data.get('instructor')
+            role = instructor_data.get('role', InstructorRole.StandardRoles.GUEST)
+            
+            CourseInstructorAssignment.objects.create(
+                course=instance,
+                instructor=user,
+                role=InstructorRole.objects.get(role_name=role),
+                is_active=True
+            )
+
+        return instance
 
 class CourseDetailSerializer(CourseSerializer):
     """

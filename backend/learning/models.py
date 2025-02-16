@@ -2,31 +2,172 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.apps import apps
+from django.core.validators import MinLengthValidator
+from typing import List, TYPE_CHECKING, Optional, Dict, Any
 
-class Course(models.Model):
+if TYPE_CHECKING:
+    from tasks.models import LearningTask
+    from users.models import User
+
+class InstructorRoleManager(models.Manager):
+    """Manager for InstructorRole model."""
+    def get_by_natural_key(self, role_name):
+        return self.get(role_name=role_name)
+
+class InstructorRole(models.Model):
     """
-    Model representing a course in the learning platform.
+    Defines roles and permissions for course instructors.
     """
     class Meta:
         app_label = 'learning'
+        unique_together = ['role_name']
+
+    class StandardRoles(models.TextChoices):
+        """Standard predefined instructor roles."""
+        LEAD = 'LEAD', _('Lead Instructor')
+        ASSISTANT = 'ASSISTANT', _('Assistant Instructor')
+        GUEST = 'GUEST', _('Guest Instructor')
+
+    role_name = models.CharField(
+        _('Role Name'),
+        max_length=50,
+        choices=StandardRoles.choices,
+        unique=True
+    )
+    description = models.TextField(
+        _('Role Description'),
+        blank=True
+    )
+    can_edit_course = models.BooleanField(
+        _('Can Edit Course'),
+        default=False
+    )
+    can_manage_tasks = models.BooleanField(
+        _('Can Manage Tasks'),
+        default=False
+    )
+    can_grade_submissions = models.BooleanField(
+        _('Can Grade Submissions'),
+        default=False
+    )
+
+    objects = InstructorRoleManager()
+
+    def __str__(self) -> str:
+        return self.get_role_name_display()
+
+    def get_role_name_display(self) -> str:
+        """
+        Returns the display name for the role.
+        """
+        return dict(self.StandardRoles.choices).get(self.role_name, self.role_name)
+
+class CourseInstructorAssignmentManager(models.Manager):
+    """Manager for CourseInstructorAssignment model."""
+    pass
+
+class CourseInstructorAssignment(models.Model):
+    """
+    Tracks instructor assignments to courses with roles and dates.
+    """
+    class Meta:
+        app_label = 'learning'
+        unique_together = ['course', 'instructor']
+
+    course = models.ForeignKey(
+        'Course', 
+        on_delete=models.CASCADE, 
+        related_name='instructor_assignments'
+    )
+    instructor = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name='course_instructor_assignments'
+    )
+    role = models.ForeignKey(
+        InstructorRole, 
+        on_delete=models.PROTECT,
+        related_name='course_assignments'
+    )
+    assigned_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    objects = CourseInstructorAssignmentManager()
+
+    def __str__(self) -> str:
+        return f"{self.instructor} - {self.role} for {self.course}"
+
+class CourseManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset()
+
+class Course(models.Model):
+    """
+    Enhanced Course model with multi-instructor support, 
+    status tracking, and comprehensive metadata.
+    """
+    class Meta:
+        app_label = 'learning'
+        unique_together = ['title', 'version']
+
+    class Status(models.TextChoices):
+        """Enumeration of possible course statuses."""
+        DRAFT = 'DRAFT', _('Draft')
+        PUBLISHED = 'PUBLISHED', _('Published')
+        ARCHIVED = 'ARCHIVED', _('Archived')
+        DEPRECATED = 'DEPRECATED', _('Deprecated')
+
+    class Visibility(models.TextChoices):
+        """Enumeration of course visibility levels."""
+        PRIVATE = 'PRIVATE', _('Private')
+        INTERNAL = 'INTERNAL', _('Internal')
+        PUBLIC = 'PUBLIC', _('Public')
 
     title = models.CharField(
         _('Course Title'), 
         max_length=200, 
-        unique=True
+        validators=[MinLengthValidator(3)]
     )
     description = models.TextField(
         _('Course Description'), 
         blank=True
     )
-    instructor = models.ForeignKey(
+    instructors = models.ManyToManyField(
         settings.AUTH_USER_MODEL, 
-        on_delete=models.SET_NULL, 
         related_name='courses_taught',
-        null=True
+        through='CourseInstructorAssignment',
+        blank=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    # Existing fields...
+    version = models.PositiveIntegerField(
+        _('Course Version'),
+        default=1
+    )
+    status = models.CharField(
+        _('Course Status'),
+        max_length=20,
+        choices=Status.choices,
+        default=Status.DRAFT
+    )
+    visibility = models.CharField(
+        _('Course Visibility'),
+        max_length=20,
+        choices=Visibility.choices,
+        default=Visibility.PRIVATE
+    )
+    learning_objectives = models.TextField(
+        _('Learning Objectives'),
+        blank=True,
+        help_text=_('Detailed learning objectives for the course')
+    )
+    prerequisites = models.TextField(
+        _('Prerequisites'),
+        blank=True,
+        help_text=_('Required knowledge or courses before taking this course')
+    )
     
     # Relationship with tasks
     tasks = models.ManyToManyField(
@@ -35,13 +176,98 @@ class Course(models.Model):
         blank=True
     )
 
-    objects = models.Manager()
+    objects = CourseManager()
 
     def __str__(self) -> str:
         """
         String representation of the Course model.
         """
-        return str(self.title) if self.title else ''
+        return f"{self.title} (v{self.version})"
+
+    def get_instructors_by_role(self, role: str) -> List['User']:
+        """
+        Retrieve instructors for the course with a specific role.
+        
+        :param role: Role to filter instructors by
+        :return: List of instructors with the specified role
+        """
+        return list(
+            CourseInstructorAssignment.objects.filter(
+                course=self,
+                role__role_name=role,
+                is_active=True
+            ).values_list('instructor', flat=True)
+        )
+
+    def add_instructor(self, user: 'User', role: str) -> 'CourseInstructorAssignment':
+        """
+        Add an instructor to the course with a specific role.
+        
+        :param user: User to add as an instructor
+        :param role: Role for the instructor
+        :return: Created CourseInstructorAssignment instance
+        """
+        role_obj = InstructorRole.objects.get(role_name=role)
+        return CourseInstructorAssignment.objects.create(
+            course=self,
+            instructor=user,
+            role=role_obj
+        )
+
+    def remove_instructor(self, user: 'User') -> None:
+        """
+        Remove an instructor from the course.
+        
+        :param user: User to remove from instructors
+        """
+        CourseInstructorAssignment.objects.filter(
+            course=self, 
+            instructor=user
+        ).update(is_active=False)
+
+    def update_instructor_role(self, user: 'User', new_role: str) -> 'CourseInstructorAssignment':
+        """
+        Update an instructor's role for the course.
+        
+        :param user: User whose role is being updated
+        :param new_role: New role for the instructor
+        :return: Updated CourseInstructorAssignment instance
+        """
+        assignment = CourseInstructorAssignment.objects.get(
+            course=self, 
+            instructor=user,
+            is_active=True
+        )
+        new_role_obj = InstructorRole.objects.get(role_name=new_role)
+        assignment.role = new_role_obj
+        assignment.save()
+        return assignment
+
+    def has_instructor_permission(self, user: 'User', permission: str) -> bool:
+        """
+        Check if an instructor has a specific permission for the course.
+        
+        :param user: User to check permissions for
+        :param permission: Permission to check
+        :return: Boolean indicating if the user has the specified permission
+        """
+        try:
+            assignment = CourseInstructorAssignment.objects.get(
+                course=self, 
+                instructor=user,
+                is_active=True
+            )
+            role = assignment.role
+            
+            permission_map = {
+                'edit_course': 'can_edit_course',
+                'manage_tasks': 'can_manage_tasks',
+                'grade_submissions': 'can_grade_submissions'
+            }
+            
+            return getattr(role, permission_map.get(permission, ''), False)
+        except CourseInstructorAssignment.objects.model.DoesNotExist:
+            return False
 
     def get_total_tasks(self) -> int:
         """
@@ -49,8 +275,102 @@ class Course(models.Model):
         """
         return self.tasks.count()
 
-    def get_learning_tasks(self):
+    def get_learning_tasks(self) -> List['LearningTask']:
         """
         Returns all learning tasks for this course.
         """
-        return self.tasks.all()
+        return list(self.tasks.all())
+
+    def increment_version(self):
+        """
+        Increment the course version when significant changes are made.
+        """
+        self.version += 1
+        self.save()
+
+    def can_transition_to(self, new_status: str) -> bool:
+        """
+        Checks if course can transition to the given status.
+        
+        :param new_status: Target status to transition to
+        :return: Boolean indicating if transition is allowed
+        """
+        from core.services.course_status_service import CourseStatusService
+        service = CourseStatusService(self)
+        return service.can_transition_to(new_status)
+
+    def transition_to(self, new_status: str, reason: str, user) -> None:
+        """
+        Transitions course to new status with validation.
+        
+        :param new_status: Target status to transition to
+        :param reason: Reason for the status change
+        :param user: User initiating the transition
+        """
+        from core.services.course_status_service import CourseStatusService
+        service = CourseStatusService(self)
+        service.transition_to(new_status, reason, user)
+
+    def get_status_history(self):
+        """
+        Returns the complete status transition history.
+        
+        :return: QuerySet of status transitions
+        """
+        from .models import StatusTransition
+        return StatusTransition.objects.filter(course=self).order_by('-changed_at')
+
+    def get_allowed_transitions(self):
+        """
+        Returns list of allowed status transitions.
+        
+        :return: List of allowed status transitions
+        """
+        from core.services.course_status_service import CourseStatusService
+        service = CourseStatusService(self)
+        return service.get_allowed_transitions()
+
+class StatusTransition(models.Model):
+    """
+    Tracks the history of course status changes with metadata.
+    """
+    class Meta:
+        app_label = 'learning'
+        ordering = ['-changed_at']
+        verbose_name_plural = 'Status Transitions'
+
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name='status_transitions',
+        verbose_name=_('Course')
+    )
+    from_status = models.CharField(
+        _('From Status'),
+        max_length=20,
+        choices=Course.Status.choices
+    )
+    to_status = models.CharField(
+        _('To Status'),
+        max_length=20,
+        choices=Course.Status.choices
+    )
+    changed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name=_('Changed By')
+    )
+    changed_at = models.DateTimeField(
+        _('Changed At'),
+        auto_now_add=True
+    )
+    reason = models.TextField(
+        _('Transition Reason'),
+        blank=True
+    )
+
+    objects = models.Manager()
+
+    def __str__(self):
+        return f"{self.course} status changed from {self.from_status} to {self.to_status}"
