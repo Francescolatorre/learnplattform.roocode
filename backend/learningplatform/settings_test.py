@@ -2,9 +2,10 @@
 Test settings for the learning platform.
 """
 import sys
-print("Loading test settings...", file=sys.stderr)
-
+import tempfile
 from .settings import *  # noqa
+
+print("Loading test settings...", file=sys.stderr)
 
 # Test-specific settings
 TESTING = True
@@ -13,11 +14,23 @@ DEBUG = False
 # Use custom user model
 AUTH_USER_MODEL = 'users.User'
 
-# Use in-memory SQLite for tests
+# Use file-based SQLite for tests
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ':memory:',
+        'NAME': 'test_db.sqlite3',
+        'TEST': {
+            'NAME': 'test_db.sqlite3',
+            'ENGINE': 'django.db.backends.sqlite3',
+            'SERIALIZE': True,
+            'MIRROR': None,
+            'DEPENDENCIES': [],
+            'CHARSET': 'utf8',
+            'COLLATION': None,
+            'CREATE_DB': True,
+            'CREATE_USER': False,
+            'TEMPLATE': None
+        },
     }
 }
 
@@ -32,18 +45,7 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.MD5PasswordHasher',
 ]
 
-# Disable migrations for tests
-class DisableMigrations:
-    def __contains__(self, item):
-        return True
-
-    def __getitem__(self, item):
-        return None
-
-MIGRATION_MODULES = DisableMigrations()
-
 # Media files configuration for tests
-import tempfile
 MEDIA_ROOT = tempfile.mkdtemp()
 
 # Cache configuration for tests
@@ -53,10 +55,30 @@ CACHES = {
     }
 }
 
-# Ensure users app is in INSTALLED_APPS
-if 'users' not in INSTALLED_APPS:
-    INSTALLED_APPS = list(INSTALLED_APPS)
-    INSTALLED_APPS.append('users')
-    INSTALLED_APPS = tuple(INSTALLED_APPS)
+# Ensure all required apps are in INSTALLED_APPS with explicit configs
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    
+    # Core apps with explicit configs
+    'core.apps.CoreConfig',
+    'users.apps.UsersConfig',
+    
+    # Domain apps with explicit configs
+    'tasks.apps.TasksConfig',
+    'learning.apps.LearningConfig',
+    'assessment.apps.AssessmentConfig',
+    
+    # Third-party apps
+    'rest_framework',
+    'rest_framework_simplejwt',
+]
+
+# Database configuration for tests
+DATABASES['default']['ATOMIC_REQUESTS'] = True
 
 print(f"INSTALLED_APPS: {INSTALLED_APPS}", file=sys.stderr)

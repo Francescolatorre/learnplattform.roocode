@@ -23,16 +23,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    # Core apps
-    'core',
-    'users',
+    # Core apps with explicit configs
+    'core.apps.CoreConfig',
+    'users.apps.UsersConfig',
     
-    # New domain-structured apps
-    'tasks',
-    'learning',
-    'assessment',
+    # Domain apps with explicit configs
+    'tasks.apps.TasksConfig',
+    'learning.apps.LearningConfig',
+    'assessment.apps.AssessmentConfig',
     
-    # DRF
+    # Third-party apps
     'rest_framework',
     'rest_framework_simplejwt',
 ]
@@ -70,12 +70,8 @@ WSGI_APPLICATION = 'learningplatform.wsgi.application'
 # Database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'learnplatform'),
-        'USER': os.getenv('DB_USER', 'postgres'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'postgres'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 

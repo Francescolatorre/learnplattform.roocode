@@ -4,7 +4,9 @@ Pytest configuration and fixtures for the test suite.
 import pytest
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
+from django.core.management import call_command
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.db import connection
 
 User = get_user_model()
 
@@ -16,8 +18,24 @@ def pytest_configure(config):
         settings.DEBUG = False
         # Use in-memory email backend for tests
         settings.EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+        # Configure test database
+        settings.DATABASES['default']['TEST'] = {
+            'NAME': ':memory:',
+            'ENGINE': 'django.db.backends.sqlite3',
+            'SERIALIZE': False,
+            'MIRROR': None,
+            'DEPENDENCIES': [],
+        }
     except ImportError:
         pass
+
+@pytest.fixture(scope='session')
+def django_db_setup(django_db_blocker):
+    """Configure test database and run migrations."""
+    with django_db_blocker.unblock():
+        # Run migrations
+        call_command('migrate')
+        yield
 
 @pytest.fixture
 def api_client():
@@ -38,6 +56,15 @@ def user_factory(db):
     return create_user
 
 @pytest.fixture
+def test_user(db):
+    """Create and return a test user."""
+    return User.objects.create_user(
+        username='testuser',
+        email='test@example.com',
+        password='testpass123'
+    )
+
+@pytest.fixture
 def authenticated_client(api_client, user_factory):
     """Return an authenticated API client."""
     user = user_factory()
@@ -46,15 +73,15 @@ def authenticated_client(api_client, user_factory):
     return api_client, user
 
 @pytest.fixture
-def admin_user(db, user_factory):
+def admin_user(db):
     """Create and return a superuser."""
-    admin = user_factory(
+    return User.objects.create_superuser(
         username='admin',
         email='admin@example.com',
+        password='adminpass123',
         is_staff=True,
         is_superuser=True
     )
-    return admin
 
 @pytest.fixture
 def admin_client(api_client, admin_user):

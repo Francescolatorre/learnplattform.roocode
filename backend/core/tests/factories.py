@@ -2,8 +2,12 @@
 Factory Boy factories for core models.
 """
 import factory
+from decimal import Decimal
 from users.models import User  # Direct import from users app
 from factory.django import DjangoModelFactory
+from assessment.models import Quiz, Submission, UserProgress
+from tasks.models import QuizTask, LearningTask
+from learning.models import Course
 
 class UserFactory(DjangoModelFactory):
     """Factory for User model."""
@@ -45,3 +49,100 @@ class AdminFactory(UserFactory):
     role = 'admin'
     is_staff = True
     is_superuser = True
+
+class QuizTaskFactory(DjangoModelFactory):
+    """Factory for QuizTask model."""
+    
+    class Meta:
+        model = QuizTask
+    
+    title = factory.Sequence(lambda n: f'Quiz Task {n}')
+    description = factory.LazyAttribute(lambda obj: f'Description for {obj.title}')
+    max_score = Decimal('10.0')
+    passing_score = Decimal('6.0')
+    time_limit = 30
+    is_randomized = False
+
+class LearningTaskFactory(DjangoModelFactory):
+    """Factory for LearningTask model."""
+    
+    class Meta:
+        model = LearningTask
+    
+    title = factory.Sequence(lambda n: f'Learning Task {n}')
+    description = factory.LazyAttribute(lambda obj: f'Description for {obj.title}')
+    difficulty_level = factory.Iterator([
+        'Beginner',
+        'Intermediate',
+        'Advanced'
+    ])
+
+class QuizFactory(DjangoModelFactory):
+    """Factory for Quiz model."""
+    
+    class Meta:
+        model = Quiz
+    
+    title = factory.Sequence(lambda n: f'Quiz {n}')
+    description = factory.LazyAttribute(lambda obj: f'Description for {obj.title}')
+
+    @factory.post_generation
+    def tasks(self, create, extracted, **kwargs):
+        """Add tasks to quiz if specified."""
+        if not create:
+            return
+
+        if extracted:
+            self.tasks.add(*extracted)
+        else:
+            # Create 3 default tasks if none specified
+            for _ in range(3):
+                self.tasks.add(QuizTaskFactory())
+
+class SubmissionFactory(DjangoModelFactory):
+    """Factory for Submission model."""
+    
+    class Meta:
+        model = Submission
+    
+    user = factory.SubFactory(UserFactory)
+    task = factory.SubFactory(QuizTaskFactory)
+    content = factory.LazyAttribute(lambda obj: f'Submission content for {obj.task.title}')
+    grade = None
+
+class UserProgressFactory(DjangoModelFactory):
+    """Factory for UserProgress model."""
+    
+    class Meta:
+        model = UserProgress
+    
+    user = factory.SubFactory(UserFactory)
+    quiz = factory.SubFactory(QuizFactory)
+    total_score = Decimal('0.0')
+    is_completed = False
+
+    @factory.post_generation
+    def completed_tasks(self, create, extracted, **kwargs):
+        """Add completed tasks if specified."""
+        if not create:
+            return
+
+        if extracted:
+            self.completed_tasks.add(*extracted)
+
+class CourseFactory(DjangoModelFactory):
+    """Factory for Course model."""
+    
+    class Meta:
+        model = Course
+    
+    title = factory.Sequence(lambda n: f'Course {n}')
+    description = factory.LazyAttribute(lambda obj: f'Description for {obj.title}')
+    instructor = factory.SubFactory(UserFactory)
+
+    @factory.post_generation
+    def tasks(self, create, extracted, **kwargs):
+        """Add tasks to course if specified."""
+        if not create or not extracted:
+            return
+        self.tasks.add(*extracted)

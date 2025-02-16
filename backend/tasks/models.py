@@ -43,12 +43,16 @@ class AssessmentTask(BaseTask):
         max_digits=5, 
         decimal_places=2, 
         null=True
+,
+        blank=True
     )
     passing_score = models.DecimalField(
         _('Passing Score'), 
         max_digits=5, 
         decimal_places=2, 
         null=True
+,
+        blank=True
     )
 
 class QuizTask(AssessmentTask):
@@ -58,6 +62,8 @@ class QuizTask(AssessmentTask):
     time_limit = models.IntegerField(
         _('Time Limit (minutes)'), 
         null=True
+,
+        blank=True
     )
     is_randomized = models.BooleanField(
         _('Randomize Question Order'), 

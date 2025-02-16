@@ -1,60 +1,154 @@
-# Roo Project Guidelines
+# Roo's Custom Instructions
 
-## Documentation Requirements
+## Mode Interaction Protocol
 
-### Memory Bank Maintenance
-1. Required Documentation Files:
-   - productContext.md - Vision and requirements
-   - systemPatterns.md - Architecture patterns
-   - techContext.md - Technology stack
-   - progress.md - Implementation status
-   - activeContext.md - Current work tracking
+### Architect Mode Responsibilities
 
-2. Active Context Management
-   - ALWAYS maintain activeContext.md across all modes
-   - Update for every significant change or task
-   - Include:
-     * Current work being performed
-     * Recent changes made
-     * Next steps planned
-   - Keep synchronized with actual project state
+1. Task Creation
+   - Break down large tasks into atomic units
+   - Define clear requirements and validation criteria
+   - Specify dependencies between tasks
+   - Document tasks in YAML format in activeContext.md
 
-## General Task Completion Rules
+2. Task Structure MUST COMPLY
+```yaml
+Task-ID: Unique identifier (e.g., CORE-001)
+Description: Clear, concise task description
+Requirements:
+  - Specific, actionable items
+  - Clear technical requirements
+  - Required file paths and changes
+Validation:
+  - Concrete success criteria
+  - Testable conditions
+  - Expected outcomes
+Status: TODO | IN_PROGRESS | DONE
+Dependencies: [List of Task-IDs]
+```
 
-### Test Validation
-1. Before ending any task, ALWAYS run and verify all relevant tests:
-   - Backend tests (pytest)
-   - Frontend tests (Vitest)
-   - Ensure 100% test pass rate
-   - If any tests fail, diagnose and fix before task completion
+3. Task Management
+   - Maintain single active task in activeContext.md
+   - Queue upcoming tasks with dependencies
+   - Track progress and blocking issues
+   - Validate completed tasks
+   - Always move task to IN_PROGRESS before implementation begins
+   - Update task status to DONE upon completion
 
-### Test Validation Workflow
-- Run backend tests: `python -m pytest`
-- Run frontend tests: `npm run test`
-- Verify test coverage
-- Address any test failures immediately
-- Refactor code to pass all tests
-- Document any test-related changes
+4. Documentation
+   - Maintain architectural documentation
+   - Update technical specifications
+   - Document design decisions
+   - Track implementation progress
 
-### Continuous Integration Principles
-- Tests are a critical part of task completion
-- No task is considered complete until ALL tests pass
-- Maintain high test coverage
-- Prioritize test-driven development
+### Code Mode Responsibilities
 
-### Reporting
-- If tests fail, provide:
-  1. Detailed error messages
-  2. Potential root causes
-  3. Proposed fixes
+1. Task Execution
+   - Read current task from activeContext.md
+   - Acknowledge task receipt by updating status to IN_PROGRESS
+   - Implement requirements exactly as specified
+   - Follow Django best practices
+   - Create/modify only specified files
 
-## Exceptions
-- Rare cases may require manual override
-- Always document and justify any test bypassing
+2. Validation
+   - Verify against task validation criteria
+   - Run tests if specified
+   - Document any issues encountered
+   - Update task status to DONE upon completion
 
-## Best Practices
-- Write tests alongside feature implementation
-- Keep tests simple, focused, and maintainable
-- Use meaningful test descriptions
-- Cover edge cases and error scenarios
-- Keep documentation up-to-date with changes
+3. Implementation Rules
+   - Focus on single task completion
+   - No scope creep beyond requirements
+   - Follow specified patterns and practices
+   - Document technical decisions
+
+### Communication Flow
+
+1. Task Handoff
+   - Architect mode prepares task in activeContext.md
+   - Code mode acknowledges task receipt by updating status to IN_PROGRESS
+   - Code mode begins implementation
+   - Architect mode awaits completion
+
+2. Task Completion
+   - Code mode updates task status to DONE
+   - Code mode provides implementation details
+   - Architect mode validates completion
+   - Architect mode activates next task
+
+3. Issue Handling
+   - Code mode reports blocking issues
+   - Architect mode provides clarification
+   - Task requirements updated if needed
+   - Progress tracked in activeContext.md
+
+### Best Practices
+
+1. Django Standards
+   - Business logic in services.py
+   - Efficient ORM usage
+   - Proper model relationships
+   - Clean separation of concerns
+
+2. Testing Requirements
+   - pytest with Factory Boy
+   - Comprehensive test coverage
+   - Isolated test cases
+   - Performance testing
+
+3. Code Quality
+   - Type hints
+   - Proper documentation
+   - Error handling
+   - Query optimization
+
+4. Security
+   - CSRF protection
+   - Proper authentication
+   - Input validation
+   - Secure API design
+
+## Task Lifecycle
+
+1. Creation
+   - Architect mode creates atomic task
+   - Task added to activeContext.md with TODO status
+   - Dependencies specified
+   - Validation criteria defined
+
+2. Implementation
+   - Code mode updates task status to IN_PROGRESS
+   - Implements requirements
+   - Follows best practices
+   - Updates task status to DONE upon completion
+
+3. Validation
+   - Code mode verifies criteria
+   - Architect mode reviews
+   - Tests verified
+   - Documentation updated
+
+4. Completion
+   - Task marked as DONE
+   - Next task activated
+   - Progress tracked
+   - Dependencies checked
+
+## Memory Bank Usage
+
+1. Active Context
+   - Current task details
+   - Implementation progress
+   - Blocking issues
+   - Next steps
+
+2. Technical Context
+   - Architecture decisions
+   - Design patterns
+   - Best practices
+   - Implementation guides
+
+3. Progress Tracking
+   - Completed tasks
+   - Current phase
+   - Outstanding items
+   - Success metrics
