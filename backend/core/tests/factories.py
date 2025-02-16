@@ -6,7 +6,7 @@ from decimal import Decimal
 from users.models import User  # Direct import from users app
 from factory.django import DjangoModelFactory
 from assessment.models import Quiz, Submission, UserProgress
-from tasks.models import QuizTask, LearningTask
+from tasks.models import QuizTask, LearningTask, AssessmentTask
 from learning.models import Course
 
 class UserFactory(DjangoModelFactory):
@@ -50,16 +50,23 @@ class AdminFactory(UserFactory):
     is_staff = True
     is_superuser = True
 
-class QuizTaskFactory(DjangoModelFactory):
+class AssessmentTaskFactory(DjangoModelFactory):
+    """Factory for AssessmentTask model."""
+    
+    class Meta:
+        model = AssessmentTask
+    
+    title = factory.Sequence(lambda n: f'Assessment Task {n}')
+    description = factory.LazyAttribute(lambda obj: f'Description for {obj.title}')
+    max_score = Decimal('100.0')
+    passing_score = Decimal('60.0')
+
+class QuizTaskFactory(AssessmentTaskFactory):
     """Factory for QuizTask model."""
     
     class Meta:
         model = QuizTask
     
-    title = factory.Sequence(lambda n: f'Quiz Task {n}')
-    description = factory.LazyAttribute(lambda obj: f'Description for {obj.title}')
-    max_score = Decimal('10.0')
-    passing_score = Decimal('6.0')
     time_limit = 30
     is_randomized = False
 
@@ -92,10 +99,10 @@ class QuizFactory(DjangoModelFactory):
         if not create:
             return
 
-        if extracted:
+        if extracted is not None:  # Check for None instead of truthiness
             self.tasks.add(*extracted)
         else:
-            # Create 3 default tasks if none specified
+            # Create 3 default tasks if no tasks specified and not explicitly empty
             for _ in range(3):
                 self.tasks.add(QuizTaskFactory())
 
@@ -109,6 +116,7 @@ class SubmissionFactory(DjangoModelFactory):
     task = factory.SubFactory(QuizTaskFactory)
     content = factory.LazyAttribute(lambda obj: f'Submission content for {obj.task.title}')
     grade = None
+    graded_by = None
 
 class UserProgressFactory(DjangoModelFactory):
     """Factory for UserProgress model."""

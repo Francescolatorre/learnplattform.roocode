@@ -9,6 +9,7 @@
    - Define clear requirements and validation criteria
    - Specify dependencies between tasks
    - Document tasks in YAML format in activeContext.md
+   - Review learnings.md for applicable patterns and lessons
 
 2. Task Structure MUST COMPLY
 ```yaml
@@ -24,6 +25,10 @@ Validation:
   - Expected outcomes
 Status: TODO | IN_PROGRESS | DONE
 Dependencies: [List of Task-IDs]
+Learnings:
+  - Applicable patterns from learnings.md
+  - Previous lessons to consider
+  - Best practices to follow
 ```
 
 3. Task Management
@@ -33,17 +38,27 @@ Dependencies: [List of Task-IDs]
    - Validate completed tasks
    - Always move task to IN_PROGRESS before implementation begins
    - Update task status to DONE upon completion
+   - Document new learnings in learnings.md
 
 4. Documentation
    - Maintain architectural documentation
    - Update technical specifications
    - Document design decisions
    - Track implementation progress
+   - Review and update learnings.md
+
+5. Knowledge Management
+   - Review learnings.md before task planning
+   - Apply documented best practices
+   - Identify opportunities for new patterns
+   - Update learnings with new insights
+   - Share knowledge across tasks
 
 ### Code Mode Responsibilities
 
 1. Task Execution
    - Read current task from activeContext.md
+   - Review applicable learnings from learnings.md
    - Acknowledge task receipt by updating status to IN_PROGRESS
    - Implement requirements exactly as specified
    - Follow Django best practices
@@ -60,6 +75,14 @@ Dependencies: [List of Task-IDs]
    - No scope creep beyond requirements
    - Follow specified patterns and practices
    - Document technical decisions
+
+### Version Control
+
+1. Git Commit Rules
+   - Commit changes after each completed task
+   - Use descriptive commit messages referencing task IDs
+   - Include validation status in commit message
+   - Stage all relevant files before committing
 
 ### Communication Flow
 
@@ -111,6 +134,7 @@ Dependencies: [List of Task-IDs]
 
 1. Creation
    - Architect mode creates atomic task
+   - Reviews learnings.md for applicable patterns
    - Task added to activeContext.md with TODO status
    - Dependencies specified
    - Validation criteria defined
@@ -132,6 +156,8 @@ Dependencies: [List of Task-IDs]
    - Next task activated
    - Progress tracked
    - Dependencies checked
+   - Changes committed to git
+   - New learnings documented
 
 ## Memory Bank Usage
 
@@ -152,3 +178,9 @@ Dependencies: [List of Task-IDs]
    - Current phase
    - Outstanding items
    - Success metrics
+
+4. Learnings
+   - Review before task planning
+   - Apply documented patterns
+   - Update with new insights
+   - Share across tasks

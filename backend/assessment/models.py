@@ -16,13 +16,14 @@ class Submission(models.Model):
         submitted_at (DateTimeField): Timestamp when the submission was made.
         content (TextField): Content of the submission.
         grade (DecimalField): Grade assigned to the submission.
+        graded_by (ForeignKey): Reference to the user who graded the submission.
     Methods:
         get_username() -> str:
             Safely retrieve the username from the related user.
         get_task_title() -> str:
             Safely retrieve the task title.
         __str__() -> str:
-            Return a string representation of the submission in the format "username - task title".
+            Return a string representation of the submission.
     '''
     class Meta:
         app_label = 'assessment'
@@ -48,6 +49,13 @@ class Submission(models.Model):
         max_digits=5, 
         decimal_places=2, 
         null=True, 
+        blank=True
+    )
+    graded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name='graded_submissions',
+        null=True,
         blank=True
     )
 

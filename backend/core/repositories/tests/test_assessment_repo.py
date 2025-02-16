@@ -154,7 +154,8 @@ class TestAssessmentRepository:
         
         # Act
         with transaction.atomic():
-            quiz = QuizFactory()
+            # Create quiz without default tasks
+            quiz = QuizFactory(tasks=[])  # Pass empty list to prevent default task creation
             quiz.tasks.add(*tasks)
         
         # Assert
@@ -184,7 +185,7 @@ class TestAssessmentRepository:
         with transaction.atomic():
             # First grading
             submission.grade = Decimal('85.0')
-            submission.graded_by = test_admin.id
+            submission.graded_by = test_admin  # Pass the User instance, not just the ID
             submission.save()
             
             # Simulate concurrent grading
@@ -196,4 +197,4 @@ class TestAssessmentRepository:
         # Assert
         final_submission = repository.get_submission(submission.id)
         assert final_submission.grade == Decimal('90.0')
-        assert final_submission.graded_by == test_admin.id
+        assert final_submission.graded_by == test_admin

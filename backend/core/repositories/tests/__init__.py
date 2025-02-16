@@ -1,9 +1,21 @@
 """
-Repository Layer Test Suite
+Repository layer test package.
 
-This package contains tests for the repository layer, focusing on:
-- Database interactions
-- Transaction management
-- Data persistence
-- Query operations
+This package contains tests for all repository implementations:
+- AssessmentRepository
+- TaskRepository
+- LearningRepository
+- UserRepository
 """
+
+from .test_assessment_repo import TestAssessmentRepository
+from .test_task_repo import TestTaskRepository
+from .test_learning_repo import TestLearningRepository
+from .test_user_repo import TestUserRepository
+
+__all__ = [
+    'TestAssessmentRepository',
+    'TestTaskRepository',
+    'TestLearningRepository',
+    'TestUserRepository',
+]
