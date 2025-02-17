@@ -1,0 +1,95 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "UAT: Backend Server",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "manage",
+            "args": [
+                "runserver",
+                "8000"
+            ],
+            "django": true,
+            "cwd": "${workspaceFolder}/backend",
+            "console": "integratedTerminal",
+            "env": {
+                "DJANGO_SETTINGS_MODULE": "learningplatform.settings"
+            }
+        },
+        {
+            "name": "UAT: Frontend Dev Server",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "dev"],
+            "cwd": "${workspaceFolder}/frontend",
+            "console": "integratedTerminal",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "name": "UAT: Run Tests",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "backend/learning/tests/user_acceptance/test_user_acceptance.py",
+                "-v"
+            ],
+            "cwd": "${workspaceFolder}/backend",
+            "console": "integratedTerminal",
+            "env": {
+                "DJANGO_SETTINGS_MODULE": "learningplatform.settings"
+            }
+        },
+        {
+            "name": "Debug: Specific Test",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "${file}",
+                "-v"
+            ],
+            "cwd": "${workspaceFolder}/backend",
+            "console": "integratedTerminal",
+            "env": {
+                "DJANGO_SETTINGS_MODULE": "learningplatform.settings"
+            }
+        },
+        {
+            "name": "Debug: Authentication API Test",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "backend/users/tests/test_authentication_api.py",
+                "-v"
+            ],
+            "cwd": "${workspaceFolder}/backend",
+            "console": "integratedTerminal",
+            "env": {
+                "DJANGO_SETTINGS_MODULE": "learningplatform.settings"
+            }
+        },
+        {
+            "name": "Django: Management Command",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "manage",
+            "args": [
+                "shell"
+            ],
+            "django": true,
+            "cwd": "${workspaceFolder}/backend",
+            "console": "integratedTerminal",
+            "env": {
+                "DJANGO_SETTINGS_MODULE": "learningplatform.settings"
+            }
+        }
+        // Note: To run multiple configurations, open multiple VSCode windows 
+        // and start each configuration separately
+    ]
+}
