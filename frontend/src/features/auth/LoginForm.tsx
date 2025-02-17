@@ -1,165 +1,109 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  Box, 
-  Button, 
   TextField, 
-  Typography, 
+  Button, 
   Container, 
-  Paper,
-  Link,
-  Alert,
-  CircularProgress
+  Typography, 
+  Box, 
+  CircularProgress 
 } from '@mui/material';
-import { useNavigate, useLocation, Link as RouterLink } from 'react-router-dom';
-import { AxiosError } from 'axios';
-import { useAuth } from './AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { login } from '../../services/api';
+import ErrorMessage from '../../components/ErrorMessage';
 
-interface LocationState {
-  message?: string;
-}
-
-interface LoginFormProps {
-  onLoginSuccess?: () => void;
-}
-
-const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
+const LoginForm: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const location = useLocation();
-  const { login: authLogin } = useAuth();
 
-  // Get success message from navigation state (e.g., after password reset)
-  const state = location.state as LocationState;
-  const [successMessage, setSuccessMessage] = useState(state?.message || '');
+  // Clear error when username or password changes
+  useEffect(() => {
+    if (error) {
+      setError(null);
+    }
+  }, [username, password]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setIsLoading(true);
-    setSuccessMessage('');
+    setLoading(true);
+    setError(null);
 
     try {
-      await authLogin(username, password);
+      const response = await login(username, password);
       
-      // Optional callback for parent component
-      onLoginSuccess?.();
-      
-      // Navigate to dashboard or home
+      // Store tokens
+      localStorage.setItem('access_token', response.access);
+      localStorage.setItem('refresh_token', response.refresh);
+
+      // Redirect to dashboard
       navigate('/dashboard');
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        const axiosError = err as AxiosError;
-        const errorMessage = axiosError.response?.data 
-          ? (axiosError.response.data as { detail?: string }).detail || 'Login failed'
-          : 'Login failed. Please try again.';
-        setError(errorMessage);
-      } else {
-        setError('An unexpected error occurred');
-      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('Invalid username or password');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
     <Container maxWidth="xs">
-      <Paper elevation={3} sx={{ padding: 3, marginTop: 8 }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          Login
+      <Box 
+        sx={{ 
+          marginTop: 8, 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center' 
+        }}
+      >
+        <Typography component="h1" variant="h5">
+          Sign in
         </Typography>
-        <Box component="form" onSubmit={handleSubmit}>
-          {successMessage && (
-            <Alert severity="success" sx={{ mb: 2 }}>
-              {successMessage}
-            </Alert>
-          )}
+        <Box component="form" onSubmit={handleLogin} sx={{ mt: 1, width: '100%' }}>
           <TextField
-            variant="outlined"
             margin="normal"
             required
             fullWidth
             label="Username or Email"
+            name="username_or_email"
+            autoComplete="username"
+            autoFocus
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             error={!!error}
-            disabled={isLoading}
-            autoFocus
-            autoComplete="username"
-            inputProps={{
-              'aria-label': 'Username or Email'
-            }}
           />
           <TextField
-            variant="outlined"
             margin="normal"
             required
             fullWidth
+            name="password"
             label="Password"
             type="password"
+            autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             error={!!error}
-            disabled={isLoading}
-            helperText={error}
-            autoComplete="current-password"
-            inputProps={{
-              'aria-label': 'Password'
-            }}
           />
-          <Box sx={{ mt: 2, mb: 2, textAlign: 'right' }}>
-            <Link
-              component={RouterLink}
-              to="/forgot-password"
-              variant="body2"
-              underline="hover"
-            >
-              Forgot password?
-            </Link>
-          </Box>
+          {error && (
+            <ErrorMessage 
+              message={error} 
+              title="Login Failed" 
+              severity="error"
+              onClose={() => setError(null)}
+            />
+          )}
           <Button
             type="submit"
             fullWidth
             variant="contained"
-            color="primary"
-            disabled={isLoading}
-            sx={{ 
-              height: 36,
-              position: 'relative'
-            }}
+            sx={{ mt: 3, mb: 2 }}
+            disabled={loading}
           >
-            {isLoading ? (
-              <CircularProgress
-                size={24}
-                sx={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  marginTop: '-12px',
-                  marginLeft: '-12px'
-                }}
-              />
-            ) : (
-              'Sign In'
-            )}
+            {loading ? <CircularProgress size={24} /> : 'Sign In'}
           </Button>
-          <Box sx={{ mt: 2, textAlign: 'center' }}>
-            <Typography variant="body2" color="textSecondary">
-              Don't have an account?{' '}
-              <Link
-                component={RouterLink}
-                to="/register"
-                variant="body2"
-                underline="hover"
-              >
-                Sign up
-              </Link>
-            </Typography>
-          </Box>
         </Box>
-      </Paper>
+      </Box>
     </Container>
   );
 };

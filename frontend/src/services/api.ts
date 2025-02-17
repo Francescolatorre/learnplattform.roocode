@@ -9,6 +9,7 @@ interface LoginResponse {
     username: string;
     email: string;
     role: string;
+    display_name: string;
   };
   access: string;
   refresh: string;
@@ -32,6 +33,7 @@ export const login = async (usernameOrEmail: string, password: string): Promise<
       username_or_email: usernameOrEmail,
       password: password
     });
+    
     return response.data;
   } catch (error) {
     console.error('Login failed:', error);

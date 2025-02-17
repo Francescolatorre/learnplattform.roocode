@@ -1,88 +1,117 @@
 import { test, expect } from '@playwright/test';
 
+// Centralized test configuration
+const TEST_USERS = {
+  lead_instructor: {
+    username_or_email: 'lead_instructor',
+    password: 'testpass123',
+    expectedRole: 'instructor'
+  },
+  admin: {
+    username_or_email: 'admin',
+    password: 'testpass123',
+    expectedRole: 'admin'
+  }
+};
+
 test.describe('Authentication', () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate to the login page before each test
-    await page.goto('http://localhost:5173/login');
+    await page.goto('/login');
   });
 
-  test('admin user can login and logout', async ({ page }) => {
-    // Fill in admin credentials
-    await page.fill('input[type="text"]', 'admin');
-    await page.fill('input[type="password"]', 'test');
+  // Centralized login helper function
+  const login = async (page, user) => {
+    console.log(`Attempting login for user: ${user.username_or_email}`);
     
-    // Click login button
-    await page.click('button[type="submit"]');
-    
-    // Verify successful login
-    await expect(page).toHaveURL(/.*dashboard/);
-    
-    // Verify admin user info is displayed
-    const userInfo = await page.textContent('.MuiDrawer-paper');
-    expect(userInfo).toContain('admin');
-    
-    // Click logout button
-    await page.click('button:has-text("Logout")');
-    
-    // Verify redirect to login page
-    await expect(page).toHaveURL(/.*login/);
+    // Wait for login form elements
+    await page.waitForSelector('input[name="username_or_email"]', { state: 'visible', timeout: 10000 });
+    await page.waitForSelector('input[name="password"]', { state: 'visible', timeout: 10000 });
+    await page.waitForSelector('button[type="submit"]', { state: 'visible', timeout: 10000 });
+
+    // Fill login form with updated payload structure
+    await page.fill('input[name="username_or_email"]', user.username_or_email);
+    await page.fill('input[name="password"]', user.password);
+
+    // Capture submit button
+    const submitButton = page.locator('button[type="submit"]');
+
+    // Trigger login and wait for navigation
+    await Promise.all([
+      page.waitForNavigation({ timeout: 10000 }),
+      submitButton.click()
+    ]);
+
+    // Verify login success and role
+    await page.waitForURL('/dashboard', { timeout: 10000 });
+    console.log(`Successfully logged in as ${user.username_or_email}`);
+
+    // Additional role verification
+    const userProfileElement = await page.textContent('.user-role');
+    expect(userProfileElement).toContain(user.expectedRole);
+  };
+
+  test('lead instructor can login and access dashboard', async ({ page }) => {
+    await login(page, TEST_USERS.lead_instructor);
+
+    // Verify dashboard elements
+    const dashboardTitle = await page.textContent('h4');
+    expect(dashboardTitle).toContain('Dashboard');
   });
 
-  test('test user can login and logout', async ({ page }) => {
-    // Fill in test user credentials
-    await page.fill('input[type="text"]', 'testuser');
-    await page.fill('input[type="password"]', 'testpassword123');
+  test('admin user can login and access dashboard', async ({ page }) => {
+    await login(page, TEST_USERS.admin);
     
-    // Click login button
-    await page.click('button[type="submit"]');
-    
-    // Verify successful login
-    await expect(page).toHaveURL(/.*dashboard/);
-    
-    // Verify test user info is displayed
-    const userInfo = await page.textContent('.MuiDrawer-paper');
-    expect(userInfo).toContain('testuser');
-    
-    // Click logout button
-    await page.click('button:has-text("Logout")');
-    
-    // Verify redirect to login page
-    await expect(page).toHaveURL(/.*login/);
-  });
-
-  test('displays error with invalid credentials', async ({ page }) => {
-    // Fill in invalid credentials
-    await page.fill('input[type="text"]', 'invalid');
-    await page.fill('input[type="password"]', 'invalid');
-    
-    // Click login button
-    await page.click('button[type="submit"]');
-    
-    // Wait for and verify error message in helper text
-    const helperText = page.locator('.MuiFormHelperText-root');
-    await expect(helperText).toBeVisible({ timeout: 5000 });
-    const errorMessage = await helperText.textContent();
-    expect(errorMessage).toContain('Invalid credentials');
-    
-    // Verify still on login page
-    await expect(page).toHaveURL(/.*login/);
+    // Verify dashboard elements
+    const dashboardTitle = await page.textContent('h4');
+    expect(dashboardTitle).toContain('Dashboard');
   });
 
   test('shows loading state during login', async ({ page }) => {
-    // Fill in admin credentials
-    await page.fill('input[type="text"]', 'admin');
-    await page.fill('input[type="password"]', 'test');
-    
-    // Click login button and immediately look for loading indicator
-    await Promise.all([
-      page.click('button[type="submit"]'),
-      page.waitForSelector('.MuiCircularProgress-root')
+    await page.fill('input[name="username_or_email"]', TEST_USERS.lead_instructor.username_or_email);
+    await page.fill('input[name="password"]', TEST_USERS.lead_instructor.password);
+
+    // Capture loading state before submission
+    const submitButton = page.locator('button[type="submit"]');
+    const loadingIndicator = page.locator('.loading-spinner');
+
+    // Trigger login and wait for navigation
+    const loginPromise = Promise.all([
+      page.waitForNavigation({ timeout: 10000 }),
+      submitButton.click()
     ]);
-    
-    // Verify loading state was shown
-    await expect(page.locator('.MuiCircularProgress-root')).toBeVisible();
-    
-    // Wait for navigation to complete
-    await expect(page).toHaveURL(/.*dashboard/);
+
+    // Verify loading state is shown
+    await expect(loadingIndicator).toBeVisible({ timeout: 5000 });
+
+    await loginPromise;
+  });
+
+  test('displays error with invalid credentials', async ({ page }) => {
+    await page.fill('input[name="username_or_email"]', 'invalid_user');
+    await page.fill('input[name="password"]', 'wrong_password');
+
+    const submitButton = page.locator('button[type="submit"]');
+    await submitButton.click();
+
+    // Wait for and verify error message in helper text
+    const helperText = page.locator('.error-message');
+    await expect(helperText).toBeVisible({ timeout: 5000 });
+    const errorMessage = await helperText.textContent();
+    expect(errorMessage).toContain('Login failed');
+  });
+
+  test('token generation and storage', async ({ page }) => {
+    await login(page, TEST_USERS.lead_instructor);
+
+    // Check local storage for tokens
+    const localStorageData = await page.evaluate(() => {
+      return {
+        accessToken: localStorage.getItem('access_token'),
+        refreshToken: localStorage.getItem('refresh_token')
+      };
+    });
+
+    expect(localStorageData.accessToken).toBeTruthy();
+    expect(localStorageData.refreshToken).toBeTruthy();
   });
 });

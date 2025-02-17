@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Course, StatusTransition, InstructorRole, CourseInstructorAssignment
+from .models import Course, StatusTransition, InstructorRole, CourseInstructorAssignment, CourseVersion
 from tasks.serializers import LearningTaskSerializer
 from django.contrib.auth import get_user_model
 
@@ -57,6 +57,36 @@ class StatusTransitionSerializer(serializers.ModelSerializer):
             'reason'
         ]
 
+class CourseVersionSerializer(serializers.ModelSerializer):
+    """
+    Serializer for CourseVersion model with version metadata.
+    """
+    created_by = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        required=False,
+        allow_null=True
+    )
+    changes_from_previous = serializers.SerializerMethodField()
+    is_current = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CourseVersion
+        fields = [
+            'version_number',
+            'created_at',
+            'created_by',
+            'notes',
+            'changes_from_previous',
+            'is_current'
+        ]
+        read_only_fields = ['version_number', 'created_at', 'changes_from_previous', 'is_current']
+
+    def get_changes_from_previous(self, obj):
+        return obj.get_changes_from_previous()
+
+    def get_is_current(self, obj):
+        return obj.is_current()
+
 class CourseSerializer(serializers.ModelSerializer):
     """
     Serializer for Course model with nested learning tasks and instructor assignments.
@@ -66,6 +96,9 @@ class CourseSerializer(serializers.ModelSerializer):
     status_history = serializers.SerializerMethodField()
     allowed_transitions = serializers.SerializerMethodField()
     instructors = serializers.SerializerMethodField()
+    version_history = serializers.SerializerMethodField()
+    created_from = serializers.PrimaryKeyRelatedField(
+        queryset=Course.objects.all(), required=False, allow_null=True)
 
     class Meta:
         model = Course
@@ -81,14 +114,19 @@ class CourseSerializer(serializers.ModelSerializer):
             'status',
             'visibility',
             'status_history',
-            'allowed_transitions'
+            'allowed_transitions',
+            'version',
+            'version_notes',
+            'created_from',
+            'version_history'
         ]
         read_only_fields = [
             'id', 
             'created_at', 
             'updated_at', 
             'status_history', 
-            'allowed_transitions'
+            'allowed_transitions',
+            'version_history'
         ]
 
     def get_total_tasks(self, obj):
@@ -121,6 +159,13 @@ class CourseSerializer(serializers.ModelSerializer):
         Returns the list of allowed status transitions.
         """
         return obj.get_allowed_transitions()
+
+    def get_version_history(self, obj):
+        """
+        Returns the version history for the course.
+        """
+        versions = obj.versions.all().order_by('-version_number')
+        return CourseVersionSerializer(versions, many=True).data
 
     def validate_status(self, value):
         """

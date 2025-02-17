@@ -23,17 +23,33 @@ class TestAuthenticationAPI:
             username='testuser',
             email='testuser@example.com',
             password='testpassword123',
-            is_active=True
+            is_active=True,
+            role='user'
+        )
+        self.lead_instructor = User.objects.create_user(
+            username='lead_instructor',
+            email='lead@example.com',
+            password='testpassword123',
+            is_active=True,
+            role='instructor'
+        )
+        self.admin_user = User.objects.create_user(
+            username='admin',
+            email='admin@example.com',
+            password='testpassword123',
+            is_active=True,
+            role='admin'
         )
         self.inactive_user = User.objects.create_user(
             username='inactiveuser',
             email='inactive@example.com',
             password='testpassword123',
-            is_active=False
+            is_active=False,
+            role='user'
         )
 
     def test_user_registration_success(self):
-        """Test successful user registration with valid data."""
+        """Test successful user registration with valid data and role."""
         registration_data = {
             'username': 'newuser',
             'email': 'newuser@example.com',
@@ -48,16 +64,20 @@ class TestAuthenticationAPI:
         assert response.status_code == 201
         assert 'user' in response.data
         assert response.data['user']['username'] == 'newuser'
+        assert 'role' in response.data['user']
+        assert response.data['user']['role'] == 'user'
         assert 'access' in response.data
         assert 'refresh' in response.data
+
         
-        # Verify user was created
+        # Verify user was created with correct role
         user = User.objects.get(username='newuser')
         assert user.email == 'newuser@example.com'
         assert user.display_name == 'New User'
+        assert user.role == 'user'
 
     def test_user_registration_validation(self):
-        """Test registration validation for required fields and constraints."""
+        """Test registration validation for required fields, constraints, and role."""
         # Test missing required fields
         response = self.client.post('/api/v1/auth/register/', {})
         assert response.status_code == 400
@@ -70,7 +90,8 @@ class TestAuthenticationAPI:
             'username': 'newuser',
             'email': 'new@example.com',
             'password': 'Pass123!',
-            'password2': 'DifferentPass123!'
+            'password2': 'DifferentPass123!',
+            'role': 'user'
         }
         response = self.client.post('/api/v1/auth/register/', data)
         assert response.status_code == 400
@@ -81,30 +102,62 @@ class TestAuthenticationAPI:
             'username': 'testuser',  # Existing username
             'email': 'new@example.com',
             'password': 'Pass123!',
-            'password2': 'Pass123!'
+            'password2': 'Pass123!',
+            'role': 'instructor'
         }
         response = self.client.post('/api/v1/auth/register/', data)
         assert response.status_code == 400
         assert 'username' in response.data
 
-    def test_user_login_success(self):
-        """Test successful login with username and email."""
-        # Login with username
-        login_data = {
-            'username_or_email': 'testuser',
-            'password': 'testpassword123'
+        # Test invalid role
+        data = {
+            'username': 'roletest',
+            'email': 'roletest@example.com',
+            'password': 'Pass123!',
+            'password2': 'Pass123!',
+            'role': 'invalid_role'
         }
-        response = self.client.post('/api/v1/auth/login/', login_data)
-        assert response.status_code == 200
-        assert 'access' in response.data
-        assert 'refresh' in response.data
-        assert 'user' in response.data
-        
-        # Login with email
-        login_data['username_or_email'] = 'testuser@example.com'
-        response = self.client.post('/api/v1/auth/login/', login_data)
-        assert response.status_code == 200
-        assert 'access' in response.data
+        response = self.client.post('/api/v1/auth/register/', data)
+        assert response.status_code == 400
+        assert 'role' in response.data
+
+    def test_user_login_success(self):
+        """Test successful login with username, email, and role verification."""
+        test_users = [
+            {
+                'username_or_email': 'lead_instructor', 
+                'password': 'testpassword123',
+                'expected_role': 'instructor'
+            },
+            {
+                'username_or_email': 'admin', 
+                'password': 'testpassword123',
+                'expected_role': 'admin'
+            },
+            {
+                'username_or_email': 'testuser', 
+                'password': 'testpassword123',
+                'expected_role': 'user'
+            }
+        ]
+
+        for user_data in test_users:
+            # Login with username or email
+            login_data = {
+                'username_or_email': user_data['username_or_email'],
+                'password': user_data['password']
+            }
+            response = self.client.post('/api/v1/auth/login/', login_data)
+            
+            assert response.status_code == 200
+            assert 'access' in response.data
+            assert 'refresh' in response.data
+            assert 'user' in response.data
+            
+            # Verify user role
+            assert 'role' in response.data['user'], f"Role missing for {user_data['username_or_email']}"
+            assert response.data['user']['role'] == user_data['expected_role'], \
+                f"Role mismatch for {user_data['username_or_email']}"
 
     def test_user_login_failure(self):
         """Test login failures with invalid credentials."""
@@ -173,7 +226,7 @@ class TestAuthenticationAPI:
         assert response.status_code == 400
 
     def test_user_profile(self):
-        """Test user profile retrieval and updates."""
+        """Test user profile retrieval and updates with role verification."""
         # Authenticate user
         self.client.force_authenticate(user=self.user)
         
@@ -182,6 +235,7 @@ class TestAuthenticationAPI:
         assert response.status_code == 200
         assert response.data['username'] == 'testuser'
         assert response.data['email'] == 'testuser@example.com'
+        assert response.data['role'] == 'user'  # Verify role in profile
         
         # Test profile update
         update_data = {
@@ -190,16 +244,19 @@ class TestAuthenticationAPI:
         response = self.client.patch('/api/v1/auth/profile/', update_data)
         assert response.status_code == 200
         assert response.data['display_name'] == 'Updated Name'
+        assert response.data['role'] == 'user'  # Ensure role remains unchanged
         
         # Verify read-only fields can't be updated
         update_data = {
             'username': 'newusername',
-            'email': 'newemail@example.com'
+            'email': 'newemail@example.com',
+            'role': 'admin'  # Attempt to change role
         }
         response = self.client.patch('/api/v1/auth/profile/', update_data)
         assert response.status_code == 200
         assert response.data['username'] == 'testuser'  # Unchanged
         assert response.data['email'] == 'testuser@example.com'  # Unchanged
+        assert response.data['role'] == 'user'  # Role remains unchanged
 
     def test_token_refresh(self):
         """Test JWT token refresh functionality."""
@@ -237,3 +294,4 @@ class TestAuthenticationAPI:
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
         response = self.client.get('/api/v1/auth/profile/')
         assert response.status_code == 200
+        assert 'role' in response.data  # Verify role is included in authenticated response

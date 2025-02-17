@@ -69,3 +69,35 @@
 1. For methods flagged as not existing, create wrapper methods
 2. Use `getattr()` with default values for dynamic attribute access
 3. Leverage Django's model managers for complex queries
+
+## Version Control System Implementation Learnings
+
+### Content Snapshot Management
+
+1. **JSON Field for Snapshots**
+   - Use JSONField for flexible content snapshots
+   - Include only serializable data
+   - Document snapshot structure for maintainability
+
+2. **Version History Tracking**
+   - Implement version comparison at the model level
+   - Use dedicated service layer for version operations
+   - Maintain clear version numbering scheme
+
+### Data Integrity Patterns
+
+1. **Atomic Operations**
+   - Use `transaction.atomic()` for version operations
+   - Ensure rollback operations maintain referential integrity
+   - Validate version state before operations
+
+2. **Version Validation**
+   - Implement version operation validation
+   - Check status constraints before version changes
+   - Prevent invalid version transitions
+
+### Service Layer Design
+
+1. **Separation of Concerns**
+   - Keep version logic in dedicated service
+   - Use model managers for version-specific queries

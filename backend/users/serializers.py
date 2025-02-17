@@ -64,7 +64,7 @@ class UserLoginSerializer(serializers.Serializer):
 
         # Try to authenticate with username
         user = authenticate(username=username_or_email, password=password)
-        
+
         # If not found, try with email
         if not user:
             try:
@@ -75,7 +75,7 @@ class UserLoginSerializer(serializers.Serializer):
 
         if not user:
             raise AuthenticationFailed('Invalid credentials.')
-        
+
         if not user.is_active:
             raise AuthenticationFailed('User account is disabled.')
 
@@ -87,10 +87,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'display_name', 'role')
-        read_only_fields = ('id', 'username', 'email')
+        read_only_fields = ('id', 'username', 'email', 'role')
 
     def update(self, instance, validated_data):
-        """Update user profile."""
+        """Update user profile, preventing role changes."""
         for attr, value in validated_data.items():
             if attr not in self.Meta.read_only_fields:
                 setattr(instance, attr, value)

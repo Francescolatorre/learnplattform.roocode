@@ -13,7 +13,8 @@ import {
   ListItemText, 
   useTheme, 
   useMediaQuery,
-  Button
+  Button,
+  Chip
 } from '@mui/material';
 import { 
   Menu as MenuIcon, 
@@ -24,7 +25,7 @@ import {
 } from '@mui/icons-material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../features/auth';
+import { useAuth } from '../../features/auth/AuthContext';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -64,7 +65,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
       {user && (
         <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
           <Typography variant="subtitle1" noWrap>
-            {user.display_name || user.username}
+            {user.username}
           </Typography>
           <Typography variant="body2" color="textSecondary" noWrap>
             {user.email}
@@ -105,14 +106,22 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
             Learning Platform
           </Typography>
           {user && (
-            <Button
-              color="inherit"
-              onClick={handleLogout}
-              startIcon={<LogoutIcon />}
-              sx={{ display: { xs: 'none', sm: 'flex' } }}
-            >
-              Logout
-            </Button>
+            <>
+              <Chip 
+                label={user.role} 
+                className="user-role"
+                color="secondary"
+                sx={{ mr: 2, display: { xs: 'none', sm: 'flex' } }}
+              />
+              <Button
+                color="inherit"
+                onClick={handleLogout}
+                startIcon={<LogoutIcon />}
+                sx={{ display: { xs: 'none', sm: 'flex' } }}
+              >
+                Logout
+              </Button>
+            </>
           )}
         </Toolbar>
       </AppBar>

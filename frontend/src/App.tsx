@@ -13,9 +13,10 @@ import RegisterForm from './features/auth/RegisterForm';
 // Import layout components
 import { MainLayout } from './components/layout/MainLayout';
 
-// Placeholder for dashboard and other components
-const Dashboard = () => <div>Dashboard</div>;
-const Profile = () => <div>Profile</div>;
+// Import page components
+import Dashboard from './features/dashboard/Dashboard';
+import Profile from './features/profile/Profile';
+import CoursesPage from './features/courses/CoursesPage';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -51,6 +52,16 @@ const App: React.FC = () => {
                 <ProtectedRoute>
                   <MainLayout>
                     <Profile />
+                  </MainLayout>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/courses" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <CoursesPage />
                   </MainLayout>
                 </ProtectedRoute>
               } 

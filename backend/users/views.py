@@ -55,7 +55,8 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({
                 'user': UserProfileSerializer(user).data,
                 'refresh': str(refresh),
-                'access': str(refresh.access_token)
+                'access': str(refresh.access_token),
+                'role': user.role
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -70,7 +71,8 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({
                 'user': UserProfileSerializer(user).data,
                 'refresh': str(refresh),
-                'access': str(refresh.access_token)
+                'access': str(refresh.access_token),
+                'role': user.role
             })
         except Exception as e:
             return Response(

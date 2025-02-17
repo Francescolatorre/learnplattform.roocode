@@ -50,6 +50,20 @@ frontend/.env.local
 frontend/.env.development.local
 frontend/.env.test.local
 frontend/.env.production.local
+frontend/yarn-error.log
+frontend/yarn.lock
+frontend/npm-debug.log
+frontend/playwright-report/
+frontend/test-results/
+
+#backend
+backend/.pytest_cache/
+backend/.coverage
+backend/htmlcov/
+backend/coverage_html/
+backend/test_db.sqlite3
+backend/pytest_report.jsonl
+
 
 # Logs
 npm-debug.log*

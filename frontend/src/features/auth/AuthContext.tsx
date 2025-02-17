@@ -6,6 +6,7 @@ interface User {
   username: string;
   email: string;
   role: string;
+  display_name: string;
 }
 
 interface AuthContextType {
@@ -22,33 +23,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
-    // Check for existing token on app load
+  const fetchUserDetails = async () => {
     const token = localStorage.getItem('access_token');
-    if (token) {
-      // TODO: Validate token and fetch user details
-      setIsAuthenticated(true);
+    const storedUser = localStorage.getItem('user');
+    
+    if (token && storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        // Ensure role is not empty
+        if (parsedUser.role) {
+          setUser(parsedUser);
+          setIsAuthenticated(true);
+        }
+      } catch {
+        // If parsing fails, log out
+        await logout();
+      }
     }
+  };
+
+  useEffect(() => {
+    fetchUserDetails();
   }, []);
 
   const login = async (usernameOrEmail: string, password: string) => {
     try {
       const response = await apiLogin(usernameOrEmail, password);
       
-      // Store tokens
+      // Store tokens and user
       localStorage.setItem('access_token', response.access);
       localStorage.setItem('refresh_token', response.refresh);
+      localStorage.setItem('user', JSON.stringify(response.user));
       
       // Set user and authentication state
       setUser(response.user);
       setIsAuthenticated(true);
-    } catch (error) {
-      // Clear any existing tokens
+    } catch {
+      // Clear any existing tokens and user
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
+      localStorage.removeItem('user');
       setUser(null);
       setIsAuthenticated(false);
-      throw error;
+      throw new Error('Login failed');
     }
   };
 
@@ -62,13 +79,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Clear tokens and user state
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
+      localStorage.removeItem('user');
       setUser(null);
       setIsAuthenticated(false);
-    } catch (error) {
-      console.error('Logout failed', error);
+    } catch {
+      console.error('Logout failed');
       // Even if logout fails, clear local storage
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
+      localStorage.removeItem('user');
       setUser(null);
       setIsAuthenticated(false);
     }
@@ -83,10 +102,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       const { access } = await refreshAccessToken(refreshToken);
       localStorage.setItem('access_token', access);
-    } catch (error) {
+    } catch {
       // If refresh fails, log out the user
       await logout();
-      throw error;
+      throw new Error('Token refresh failed');
     }
   };
 

@@ -143,8 +143,22 @@ class Course(models.Model):
     
     # Existing fields...
     version = models.PositiveIntegerField(
-        _('Course Version'),
+        _('Current Version'),
         default=1
+,
+        help_text=_('Current version number of the course')
+    )
+    created_from = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='derived_versions',
+        help_text=_('Original course this was created from')
+    )
+    version_notes = models.TextField(
+        _('Version Notes'),
+        blank=True
     )
     status = models.CharField(
         _('Course Status'),
@@ -273,13 +287,13 @@ class Course(models.Model):
         """
         Returns the total number of tasks in the course.
         """
-        return self.tasks.count()
+        return self.tasks.model.objects.filter(courses=self).count()
 
     def get_learning_tasks(self) -> List['LearningTask']:
         """
         Returns all learning tasks for this course.
         """
-        return list(self.tasks.all())
+        return list(self.tasks.model.objects.filter(courses=self))
 
     def increment_version(self):
         """
@@ -374,3 +388,83 @@ class StatusTransition(models.Model):
 
     def __str__(self):
         return f"{self.course} status changed from {self.from_status} to {self.to_status}"
+
+class CourseVersionManager(models.Manager):
+    """Manager for CourseVersion model."""
+    def get_latest_for_course(self, course):
+        """Get the latest version for a course."""
+        return self.filter(course=course).order_by('-version_number').first()
+
+
+class CourseVersion(models.Model):
+    """
+    Tracks version history for courses with content snapshots.
+    """
+    class Meta:
+        app_label = 'learning'
+        unique_together = ['course', 'version_number']
+        ordering = ['-version_number']
+        get_latest_by = 'version_number'
+
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name='versions',
+        verbose_name=_('Course')
+    )
+    version_number = models.PositiveIntegerField(
+        _('Version Number'),
+        help_text=_('Sequential version number for this course')
+    )
+    created_at = models.DateTimeField(
+        _('Created At'),
+        auto_now_add=True
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name=_('Created By'),
+        related_name='course_versions_created'
+    )
+    notes = models.TextField(
+        _('Version Notes'),
+        blank=True,
+        help_text=_('Notes about changes in this version')
+    )
+    content_snapshot = models.JSONField(
+        _('Content Snapshot'),
+        help_text=_('Snapshot of course content at this version')
+    )
+
+    objects = CourseVersionManager()
+
+    def __str__(self) -> str:
+        return f"{self.course} v{self.version_number}"
+
+    objects = models.Manager()
+
+    def get_changes_from_previous(self) -> Optional[Dict[str, Any]]:
+        """
+        Get changes between this version and the previous one.
+        
+        Returns:
+            Dict of changes or None if this is the first version
+        """
+        try:
+            previous = CourseVersion.objects.filter(
+                course=self.course,
+                version_number__lt=self.version_number
+            ).latest()
+            
+            from core.services.version_control_service import VersionControlService
+            service = VersionControlService(self.course)
+            return service._compare_snapshots(
+                previous.content_snapshot,
+                self.content_snapshot
+            )
+        except models.Model.DoesNotExist:
+            return None
+
+    def is_current(self) -> bool:
+        """Returns whether this is the current version of the course."""
