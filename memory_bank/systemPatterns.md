@@ -1,73 +1,30 @@
-## Authentication System Architecture
+# System Patterns and Architecture Decisions
 
-### Backend Authentication Flow
-1. User Registration
-- Endpoint: `/api/users/register/`
-- Method: POST
-- Accepts: email, username, password
-- Returns: User object, authentication token
-- Validation:
-  * Unique email/username
-  * Password strength requirements
-  * Email format validation
+This document outlines the key architectural patterns and decisions made in the Course Management System.
 
-2. User Login
-- Endpoint: `/api/users/login/`
-- Method: POST
-- Accepts: email/username, password
-- Returns: Authentication token, user profile
-- Features:
-  * JWT token generation
-  * Role-based access
-  * Login attempt tracking
+## Authentication and Authorization
 
-3. User Logout
-- Endpoint: `/api/users/logout/`
-- Method: POST
-- Invalidates current authentication token
-- Supports both server-side and client-side logout
+### Architectural Issue: Direct API Calls in LoginForm
 
-4. Password Management
-- Reset Request: `/api/users/password-reset/`
-- Confirm Reset: `/api/users/password-reset/confirm/`
-- Secure token-based reset mechanism
-- Email notifications
+**Description:**
 
-5. Profile Management
-- Retrieve: `/api/users/profile/`
-- Update: `/api/users/profile/update/`
-- Supports partial updates
-- Role-based access control
+The `LoginForm` component in `frontend/src/features/auth/LoginForm.tsx` is directly calling the `login` function from the API service (`../../services/api`) instead of using the `login` function provided by the `AuthContext`.
 
-### Frontend Authentication Flow
-1. Registration Component
-- Controlled form with validation
-- Client-side and server-side validation
-- Error handling
-- Redirect on successful registration
+**Consequences:**
 
-2. Login Component
-- Email/Username flexible login
-- Remember me functionality
-- Social login integration (future)
-- Error handling
+*   **Lack of Separation of Concerns:** The `LoginForm` is responsible for both UI logic and authentication state management, violating the single responsibility principle.
+*   **Inconsistent Authentication Handling:** Authentication logic is duplicated in multiple places, leading to potential inconsistencies and making it harder to maintain and test.
+*   **Tight Coupling:** The `LoginForm` is tightly coupled to the API service, making it harder to switch to a different authentication mechanism in the future.
 
-3. Authentication State Management
-- Global authentication state
-- Token storage (secure, HttpOnly cookies)
-- Automatic token refresh
-- Logout handling
+**Proposed Solution:**
 
-### Security Considerations
-- HTTPS enforcement
-- CSRF protection
-- Rate limiting on auth endpoints
-- Secure password hashing
-- Token expiration and rotation
-- Audit logging for auth events
+1.  **Modify `LoginForm.tsx`:**
+    *   Import the `useAuth` hook from `AuthContext.tsx`.
+    *   Use the `login` function from the `useAuth` hook instead of the one from `../../services/api`.
+2.  **Centralize Authentication Logic:** Ensure that all authentication-related logic is handled within the `AuthContext`.
 
-### Technology Stack
-- Backend: Django Rest Framework
-- Authentication: JWT (JSON Web Tokens)
-- Frontend State Management: React Context/Redux
-- Token Storage: HttpOnly Cookies
+This will ensure that the `LoginForm` is only responsible for handling the UI and form submission, while the `AuthContext` is responsible for managing the authentication state and providing the `login` function.
+
+## Course Versioning
+
+(This section will be populated with details about the course versioning system)

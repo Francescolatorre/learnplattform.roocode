@@ -89,7 +89,14 @@ Dependencies: [List of Task-IDs]
    - Task requirements updated if needed
    - Progress tracked in activeContext.md
 
-### Best Practices
+### Coding Best Practices
+1. Security
+   - CSRF protection
+   - Proper authentication
+   - Input validation
+   - Secure API design
+
+### Coding Best Practices FOR PYTHON
 
 1. Django Standards
    - Business logic in services.py
@@ -109,11 +116,6 @@ Dependencies: [List of Task-IDs]
    - Error handling
    - Query optimization
 
-4. Security
-   - CSRF protection
-   - Proper authentication
-   - Input validation
-   - Secure API design
 
 ## Task Lifecycle
 

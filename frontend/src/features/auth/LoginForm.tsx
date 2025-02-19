@@ -8,7 +8,7 @@ import {
   CircularProgress 
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../../services/api';
+import { useAuth } from './AuthContext';
 import ErrorMessage from '../../components/ErrorMessage';
 
 const LoginForm: React.FC = () => {
@@ -17,6 +17,7 @@ const LoginForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   // Clear error when username or password changes
   useEffect(() => {
@@ -31,13 +32,7 @@ const LoginForm: React.FC = () => {
     setError(null);
 
     try {
-      const response = await login(username, password);
-      
-      // Store tokens
-      localStorage.setItem('access_token', response.access);
-      localStorage.setItem('refresh_token', response.refresh);
-
-      // Redirect to dashboard
+      await login(username, password);
       navigate('/dashboard');
     } catch (err) {
       console.error('Login error:', err);

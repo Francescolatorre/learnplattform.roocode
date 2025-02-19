@@ -30,11 +30,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (token && storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
-        // Ensure role is not empty
-        if (parsedUser.role) {
-          setUser(parsedUser);
-          setIsAuthenticated(true);
+
+        // Handle missing or empty role
+        if (!parsedUser.role) {
+          console.warn('User role is missing. Assigning default role: "user"');
+          parsedUser.role = 'user';
         }
+        
+        setUser(parsedUser);
+        setIsAuthenticated(true);
+        
       } catch {
         // If parsing fails, log out
         await logout();
@@ -58,7 +63,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Set user and authentication state
       setUser(response.user);
       setIsAuthenticated(true);
-    } catch {
+    } catch (error) {
+      console.error('Login failed:', error);
       // Clear any existing tokens and user
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
