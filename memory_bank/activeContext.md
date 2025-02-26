@@ -1,29 +1,61 @@
 # Active Context
 
 ## Current Task
-- **Task ID**: GOVERNANCE-002
-- **Description**: Implement mode definitions in the `.roomodes` file.
-- **Status**: DONE
 
-## Recent Changes
-- Created `.roomodes` file in the workspace root directory with mode definitions
-- Implemented all five modes: Architect, Code, Debug, Ask, and Digital Design
-- Set appropriate file access permissions for each mode
-- Created `memory_bank/governance_model.md` to document the governance model
-- Created `memory_bank/mode_definitions.md` to document mode definitions
-- Added ADR-002 to document the decision to establish a governance model and mode definitions
-- Completed task GOVERNANCE-001 (Create a governance model and mode definitions)
-- Completed task BACKEND-API-001 (Update `backend/API.md` to be in sync with the backend)
+### TASK-MODEL-001
+- **Status**: TODO
+- **Description**: Extend database schema for Learning Tasks
+- **Assigned To**: Architect
+- **Started At**: 2025-02-26 20:57:25
+- **Notes**: 
+  - Design comprehensive database schema
+  - Define fields and relationships
+  - Ensure performance and scalability
+
+## Task Sequence
+
+### Phase 1: Technical Foundations
+1. Database and Model Design
+   - TASK-MODEL-001 (Current Focus)
+   - TASK-MODEL-002
+   - TASK-VALIDATION-001
+   - TASK-TEST-001
+
+### Phase 2: Instructor Features
+2. Backend Implementation
+   - TASK-CREATION-001
+   - TASK-EDIT-001
+   - TASK-VISIBILITY-001
+
+3. Frontend Implementation
+   - TASK-UI-001
+   - TASK-UI-002
+   - TASK-UI-003
+
+### Phase 3: Student Features
+4. Backend Implementation
+   - TASK-SUBMISSION-001
+   - TASK-GRADING-001
+   - TASK-PROGRESS-001
+   - TASK-NOTIFICATION-001
+
+5. Frontend Implementation
+   - TASK-UI-004
+   - TASK-UI-005
+   - TASK-UI-006
+
+### API Integration
+6. API Development
+   - TASK-API-001
+
+## Project Context
+- Developing comprehensive learning task management system
+- Focus on modular, scalable architecture
+- Implementing robust backend and frontend features
+- Ensuring seamless user experience
 
 ## Next Steps
-- Test the mode definitions by switching between modes
-- Update the mode definitions based on feedback
-- Document any issues or limitations encountered
-- Implement the course versioning system in the backend (COURSE-VERSION-001)
-- Update the frontend to support course versioning
-- Write tests for the new endpoints
-
-## Postponed Tasks
-- **Task ID**: COURSE-VERSION-001
-- **Description**: Implement course versioning system.
-- **Status**: POSTPONED
+- Complete database schema design
+- Define comprehensive validation rules
+- Prepare for backend implementation
+- Ensure alignment with project requirements

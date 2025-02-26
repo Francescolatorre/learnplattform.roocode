@@ -61,7 +61,7 @@ LOGGING = {
 }
 
 # Test-specific settings
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = False
 EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 CELERY_TASK_ALWAYS_EAGER = True

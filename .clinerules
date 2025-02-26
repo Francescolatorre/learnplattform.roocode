@@ -1,242 +1,70 @@
-# Roo's Custom Instructions
+# Roo-Code Core Governance Rules
 
-## Mode Interaction Protocol
+memory_bank:
+  read_strategy:
+    - "Read `activeContext.md` ONCE per execution."
+    - "If `activeContext.md` has an active task, read only necessary files."
+    - "If no active task, read `progress.md` to determine next steps."
+    - "If `progress.md` has no tasks, WAIT for new task."
 
-## Memory Bank Files
+  consistency_checks:
+    - "Compare `activeContext.md` & `progress.md` for mismatches."
+    - "If a mismatch exists, follow `inconsistency_resolution.md`."
+    - "If task conflict found, escalate to Architect Mode."
 
-**CRITICAL:** If `memory_bank/` or any of these files don't exist, **CREATE THEM IMMEDIATELY** by:
+  resolution_protocol:
+    - "If an inconsistency exists, STOP and consult `inconsistency_resolution.md`."
+    - "DO NOT proceed unless files are aligned with user confirmation."
 
-1. Reading all provided documentation.
-2. Asking the user for ANY missing information.
-3. Creating files with verified information only.
-4. Never proceeding without complete context.
+  mandatory_reads:
+    - "ALWAYS read `activeContext.md` first."
+    - "ALWAYS state `[Memory Bank: active]` after reading required files."
+    - "DO NOT proceed if inconsistencies exist."
+    - "If a required file is missing, request it."
 
-### Required files
+task_management:
+  lifecycle:
+    - Architect defines (`TODO`).
+    - Code implements (`IN_PROGRESS`).
+    - Code validates (`DONE`).
+    - Architect reviews (`DONE` or revision requested).
 
-- **productContext.md**
-  - Why this project exists
-  - What problems it solves
-  - How it should work
-  - functional requirements
-  - non functional requirements
+  prioritization:
+    - Critical-path tasks first.
+    - Dependencies must be resolved before activation.
+    - Postponed tasks reviewed in 14 days.
 
-- **activeContext.md**
-  - What you're working on now
-  - Recent changes
+switching_protocol:
+  Architect → Code:
+    - Define task in `tasks/{TASK-ID}.md`, `progress.md`.
+    - Set `TODO`, switch to Code.
+  Code → Architect:
+    - Mark `DONE`, request review.
+  Debug <-> Code:
+    - Switch if bug blocks progress.
+  Emergency:
+    - Log blocker in `activeContext.md`, switch mode.
 
-- **systemPatterns.md**
-  - How the system is built
-  - Key technical decisions
-  - Architecture patterns
+status_updates:
+  - Sync across `progress.md`, `tasks/{TASK-ID}.md`, `activeContext.md`.
+  - Use consistent statuses: `TODO`, `IN_PROGRESS`, `DONE`, `POSTPONED`.
+  - Include timestamp & reason for changes.
 
-- **techContext.md**
-  - Technologies used
-  - Development setup
-  - Technical constraints
+automation:
+  - Auto-sync memory bank updates.
+  - Track postponed task deadlines.
+  - Use Git metadata for timestamps.
 
-- **progress.md**
-  - Next steps (This is your source of truth)
-  - What works
-  - What's left to build
-  - Progress status
+git_commit_rules:
+  - **Each commit must reference `TASK-ID`.**
+  - **Commit format:** `[TASK-ID] [STATUS] [SUMMARY]`
+  - **Examples:**
+    - `[CORE-011] IN_PROGRESS Added authentication logic`
+    - `[CORE-021] DONE Refactored error handling`
+  - **Commits must include validation status** (e.g., "Tests Passed", "Awaiting Review").
+  - **Stage all relevant files before committing.**
+  - **Squash minor commits before merging.**
+  - **Merge commits must follow:** `"Merge branch {FEATURE_BRANCH} into {MAIN_BRANCH}"`.
 
-- **ADRs.md**
-  - Essential decisions and their history using Architecture Decision Records (ADRs)
-
-### ADR Structure
-
-#### 1. Title of the Decision
-
-_Unique and descriptive title for the decision_
-
-#### 2. Context
-
-_Explains the background and situation that led to the decision. Which technical, business, or organizational factors are involved?_
-
-#### 3. Decision
-
-_Clear and concise description of the chosen architecture decision. What was decided?_
-
-#### 4. Justification
-
-_Why was this decision made? Which alternatives were considered and why were they rejected? What risks are involved?_
-
-#### 5. Consequences
-
-_What are the positive and negative impacts of this decision? How does it affect other components, systems, or teams?_
-
-#### 6. Status
-
-_- Draft / Final / Rejected / Revised_
-_Indicates whether the decision is still under discussion, has been finally accepted, or needs to be revised._
-
-#### 7. Participants
-
-_Who was involved in this decision? (Name, Team, Role)_
-
-#### 8. References
-
-_Links to additional information, e.g., technical documentation, RFCs, or code references._
-
-### Task Structure MUST COMPLY
-
-```yaml
-Task-ID: "CORE-001"
-Description: "Implement user authentication with Django."
-Requirements:
-  - "Use Django's built-in authentication system."
-  - "Create login, logout, and registration views."
-  - "Ensure password hashing and security best practices."
-Validation:
-  - "User should be able to register with an email and password."
-  - "Login should authenticate users correctly."
-  - "Logout should properly destroy session data."
-Status: "TODO"
-Dependencies: []
-```
-
-### Task Management
-
-- Maintain a **single active task** in `activeContext.md`.
-- Queue upcoming tasks with dependencies.
-- Track progress and blocking issues.
-- Validate completed tasks.
-- Always move task to `IN_PROGRESS` before implementation begins.
-- Update task status to `DONE` upon completion.
-
-### Documentation
-
-- Maintain architectural documentation.
-- Update technical specifications.
-- Document design decisions.
-- Track implementation progress.
-
-### Code Mode Responsibilities
-
-1. **Task Execution**
-   - Read the current task from `activeContext.md`.
-   - Acknowledge task receipt by updating status to `IN_PROGRESS`.
-   - Implement requirements exactly as specified.
-   - Follow Django best practices.
-   - Create/modify only specified files.
-
-2. **Validation**
-   - Verify implementation against task validation criteria.
-   - Run tests if specified.
-   - Document any issues encountered.
-   - Update task status to `DONE` upon completion.
-
-3. **Implementation Rules**
-   - Focus on single task completion.
-   - No scope creep beyond requirements.
-   - Follow specified patterns and practices.
-   - Document technical decisions.
-
-### Version Control
-
-1. **Git Commit Rules**
-   - Commit changes after each completed task.
-   - Use descriptive commit messages referencing task IDs.
-   - Include validation status in commit messages.
-   - Stage all relevant files before committing.
-
-### Communication Flow
-
-1. **Task Handoff**
-   - Architect mode prepares the task in `activeContext.md`.
-   - Code mode acknowledges task receipt by updating status to `IN_PROGRESS`.
-   - Code mode begins implementation.
-   - Architect mode awaits completion.
-
-2. **Task Completion**
-   - Code mode updates task status to `DONE`.
-   - Code mode provides implementation details.
-   - Architect mode validates completion.
-   - Architect mode activates the next task.
-
-3. **Issue Handling**
-   - Code mode reports blocking issues.
-   - Architect mode provides clarification.
-   - Task requirements updated if needed.
-   - Progress tracked in `activeContext.md`.
-
-### Coding Best Practices
-
-1. **Security**
-   - CSRF protection.
-   - Proper authentication.
-   - Input validation.
-   - Secure API design.
-
-### Coding Best Practices FOR PYTHON
-
-- **Dependency Management**
-  - Always install dependencies via requirements.txt.
-  - Never install dependencies directly using pip install <package>.
-  - When adding new dependencies, always update requirements.txt using:
-    - pip freeze > requirements.txt
-
-- **Django Standards**
-  - Keep business logic in `services.py`.
-  - Optimize ORM queries and follow clean separation of concerns.
-
-- **Testing Requirements**
-  - Use `pytest` with `Factory Boy`.
-  - Ensure proper test coverage with isolated test cases.
-  - Include performance testing where necessary.
-
-- **Code Quality**
-  - Use type hints.
-  - Maintain proper documentation.
-  - Ensure error handling and query optimization.
-
-## Task Lifecycle
-
-1. **Creation**
-   - Architect mode creates atomic task.
-   - Task added to `progress.md` with `TODO` status.
-   - Dependencies specified.
-   - Validation criteria defined.
-
-2. **Implementation**
-   - Code mode updates task status to `IN_PROGRESS`.
-   - Implements requirements.
-   - Follows best practices.
-   - Updates task status to `DONE` upon completion.
-
-3. **Validation**
-   - Code mode verifies criteria.
-   - Architect mode reviews.
-   - Tests verified.
-   - Documentation updated.
-
-4. **Completion**
-   - Task marked as `DONE`.
-   - Next task activated.
-   - Progress tracked.
-   - Dependencies checked.
-   - Changes committed to Git.
-
-## Memory Bank Usage
-
-1. **Active Context**
-   - Current task details.
-   - Implementation progress.
-   - Blocking issues.
-   - Next steps.
-
-2. **Technical Context**
-   - Architecture decisions.
-   - Design patterns.
-   - Best practices.
-   - Implementation guides.
-
-3. **Progress Tracking**
-   - Completed tasks.
-   - Current phase.
-   - Outstanding items.
-   - Success metrics.
-
----
-
-**Follow this workflow precisely to ensure structured execution and progress tracking.**
+language_specific_rules:
+  - "Refer to `/languages/{LANGUAGE}_rules.yaml` for implementation guidelines."

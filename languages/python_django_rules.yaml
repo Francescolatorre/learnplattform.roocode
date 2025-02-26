@@ -1,0 +1,34 @@
+# Python & Django Best Practices
+
+python_version: "Specify version if relevant"
+django_version: "Specify version if relevant"
+
+best_practices:
+  - "Use `services.py` for business logic."
+  - "Optimize ORM queries; avoid N+1 queries."
+  - "Use `requirements.txt` or `pyproject.toml` for dependency management."
+  - "Follow PEP8 & type hints."
+  - "Use Django's built-in authentication & permission system."
+  - "Validate all user input to prevent injection attacks."
+  - "Use `.env` files for environment variables (never hardcode secrets)."
+  - "Keep views thin; move logic to services & models."
+  - "Use Django signals with caution to avoid unexpected side effects."
+  - "Cache expensive queries using Django caching framework."
+
+security_guidelines:
+  - "Enforce CSRF protection & secure API design."
+  - "Use Django built-in user authentication."
+  - "Restrict database queries to prevent SQL injection."
+  - "Sanitize file uploads to prevent malicious files."
+  - "Disable Django `DEBUG` mode in production."
+
+testing_requirements:
+  - "Use `pytest` and `Factory Boy` for testing."
+  - "Ensure proper test coverage before marking `DONE`."
+  - "Mock external services in unit tests."
+  - "Perform integration testing for API endpoints."
+
+commit_rules:
+  - "Follow `.clinerules` commit format."
+  - "Ensure all changes follow Django & Python best practices."
+  - "Reference `TASK-ID` in every commit."

@@ -23,6 +23,9 @@ Implement mode definitions in the `.roomodes` file.
 ## Status
 DONE
 
+## Completion Date
+2/26/2025
+
 ## Dependencies
 - GOVERNANCE-001
 

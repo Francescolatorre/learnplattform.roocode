@@ -125,3 +125,60 @@ Final
 - [.clinerules file](/.clinerules)
 - [Memory Bank Structure](/memory_bank/)
 - [Project Management Best Practices](https://www.pmi.org/learning/library/project-management-best-practices)
+
+## ADR-003: Testing Results Documentation
+
+### 1. Title of the Decision
+Document Testing Results for the Learning Platform
+
+### 2. Context
+To ensure the quality and reliability of the Learning Platform, it is crucial to document the testing results comprehensively. This documentation will help in identifying areas for improvement, tracking progress, and ensuring that all critical functionalities are thoroughly tested.
+
+### 3. Decision
+We will document the testing results in the `memory_bank/ADRs.md` file, following the Architecture Decision Record (ADR) format. This will include:
+- Test Cases Executed
+- Test Results
+- Issues Identified
+- Recommendations for Improvement
+
+### 4. Justification
+This approach was chosen because:
+- It provides a structured and organized way to document testing results
+- It ensures that all testing activities are tracked and reviewed
+- It helps in identifying and addressing issues promptly
+- It facilitates communication between different stakeholders
+
+Alternatives considered:
+1. **Spreadsheet Documentation**: Using spreadsheets to document testing results. Rejected due to lack of structure and organization.
+2. **External Testing Tool Reports**: Using external testing tools to generate reports. Rejected due to integration complexity and overhead.
+3. **Ad-hoc Documentation**: Continuing with the current ad-hoc approach. Rejected due to inconsistencies and lack of structure.
+
+### 5. Consequences
+
+#### Positive
+- Structured and organized documentation of testing results
+- Improved tracking of testing activities
+- Better identification and resolution of issues
+- Enhanced communication between stakeholders
+- Facilitation of continuous improvement
+
+#### Negative
+- Initial overhead in setting up the documentation process
+- Learning curve for new team members
+- Need for regular updates to the documentation as testing progresses
+- Potential rigidity if the documentation process is not flexible enough
+
+### 6. Status
+Final
+
+### 7. Participants
+- QA Engineer
+- Lead Backend Developer
+- Lead Frontend Developer
+- Project Manager
+- Team Lead
+
+### 8. References
+- [Testing Best Practices](https://www.guru99.com/software-testing.html)
+- [Documentation Standards](https://www.atlassian.com/software-development/documentation)
+- [Memory Bank Structure](/memory_bank/)

@@ -295,7 +295,7 @@ class Course(models.Model):
         """
         # Import the service directly
         from core.services.course_status_service import CourseStatusService
-        
+
         service = CourseStatusService(self)
         return service.can_transition_to(new_status)
 
@@ -308,7 +308,7 @@ class Course(models.Model):
         """
         # Import the service directly
         from core.services.course_status_service import CourseStatusService
-        
+
         service = CourseStatusService(self)
         service.transition_to(new_status, reason, user)
 
@@ -330,6 +330,36 @@ class Course(models.Model):
 
         service = CourseStatusService(self)
         return service.get_allowed_transitions()
+
+    def create_version(self, user, notes: str = "") -> "CourseVersion":
+        """Creates a new version of the course.
+
+        :param user: User creating the new version
+        :param notes: Optional notes for the new version
+        :return: Created CourseVersion instance
+        """
+        version_number = self.version + 1
+        content_snapshot = self.get_content_snapshot()
+        return CourseVersion.objects.create(
+            course=self,
+            version_number=version_number,
+            created_by=user,
+            notes=notes,
+            content_snapshot=content_snapshot,
+        )
+
+    def get_content_snapshot(self) -> Dict[str, Any]:
+        """Returns a snapshot of the course content.
+
+        :return: Dictionary representing the course content snapshot
+        """
+        return {
+            "title": self.title,
+            "description": self.description,
+            "learning_objectives": self.learning_objectives,
+            "prerequisites": self.prerequisites,
+            "tasks": list(self.tasks.values("id", "title", "description")),
+        }
 
 
 class StatusTransition(models.Model):
@@ -448,15 +478,15 @@ class CourseVersion(models.Model):
         """Returns whether this is the current version of the course."""
         # Use a more Django-idiomatic approach to check if this is the current version
         # This avoids direct ForeignKey access issues
-        
+
         # Get the course's current version from the database
         from django.db.models import F
-        
+
         # Use a query that doesn't rely on accessing self.course directly
         course_version = Course.objects.filter(
             versions__pk=self.pk  # Use the reverse relation with pk instead of id
         ).values_list('version', flat=True).first()
-        
+
         return self.version_number == course_version
 
     def save(self, *args, **kwargs):
@@ -498,13 +528,13 @@ class CourseVersion(models.Model):
         """Returns whether this is the current version of the course."""
         # Use a more Django-idiomatic approach to check if this is the current version
         # This avoids direct ForeignKey access issues
-        
+
         # Get the course's current version from the database
         from django.db.models import F
-        
+
         # Use a query that doesn't rely on accessing self.course directly
         course_version = Course.objects.filter(
             versions__pk=self.pk  # Use the reverse relation with pk instead of id
         ).values_list('version', flat=True).first()
-        
+
         return self.version_number == course_version

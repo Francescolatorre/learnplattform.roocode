@@ -1,1 +1,0 @@
-Implementation details have been moved to memory_bank/activeContext.md for centralized task management.
