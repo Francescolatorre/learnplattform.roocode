@@ -63,3 +63,37 @@ Requirements:
   - Test validation for version operations
 Status: TODO
 Dependencies: [COURSE-VERSION-001]
+
+Task-ID: BACKEND-COURSE-001
+Description: Investigate why the /api/courses/ endpoint is returning an empty array.
+Requirements:
+  - Examine the backend code responsible for handling the /api/courses/ endpoint.
+  - Check the database to ensure that there are courses available.
+  - Identify any potential errors in the query or filtering logic.
+Validation:
+  - The /api/courses/ endpoint returns a list of courses.
+Status: TODO
+Dependencies: []
+
+Task-ID: BACKEND-COURSE-002
+Description: Fix the issue in the backend code.
+Requirements:
+  - Modify the backend code to ensure that the /api/courses/ endpoint returns the correct course data.
+Validation:
+  - The /api/courses/ endpoint returns a list of courses.
+Status: TODO
+Dependencies: [BACKEND-COURSE-001]
+
+Task-ID: IMPORT-FIX-001
+Description: Fix import issues in the codebase
+Requirements:
+  - [x] Fix circular imports in backend/learning/models.py
+  - [x] Fix model reference in Course.tasks field to use correct format
+  - [x] Fix imports in TYPE_CHECKING section to use correct relative imports
+  - [x] Fix imports in methods that use service classes to use relative imports
+Validation:
+  - [x] Django system check passes with no issues
+  - [x] Django development server starts without errors
+  - [x] Tests run successfully
+Status: DONE
+Dependencies: []
