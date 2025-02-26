@@ -16,8 +16,8 @@ Exceptions:
 from django.db import transaction
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
-from backend.learning.models import Course, CourseVersion
-from backend.core.services.exceptions import VersionControlError
+from learning.models import Course, CourseVersion
+from core.services.exceptions import VersionControlError
 
 # Define DoesNotExist exception for CourseVersion
 CourseVersion.DoesNotExist = ObjectDoesNotExist

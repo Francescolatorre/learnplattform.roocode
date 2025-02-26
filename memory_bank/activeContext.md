@@ -67,21 +67,21 @@ Dependencies: [COURSE-VERSION-001]
 Task-ID: BACKEND-COURSE-001
 Description: Investigate why the /api/courses/ endpoint is returning an empty array.
 Requirements:
-  - Examine the backend code responsible for handling the /api/courses/ endpoint.
-  - Check the database to ensure that there are courses available.
-  - Identify any potential errors in the query or filtering logic.
+  - [x] Examine the backend code responsible for handling the /api/courses/ endpoint.
+  - [x] Check the database to ensure that there are courses available.
+  - [x] Identify any potential errors in the query or filtering logic.
 Validation:
-  - The /api/courses/ endpoint returns a list of courses.
-Status: TODO
+  - [x] The /api/courses/ endpoint returns a list of courses.
+Status: DONE
 Dependencies: []
 
 Task-ID: BACKEND-COURSE-002
 Description: Fix the issue in the backend code.
 Requirements:
-  - Modify the backend code to ensure that the /api/courses/ endpoint returns the correct course data.
+  - [x] Modify the backend code to ensure that the /api/courses/ endpoint returns the correct course data.
 Validation:
-  - The /api/courses/ endpoint returns a list of courses.
-Status: TODO
+  - [x] The /api/courses/ endpoint returns a list of courses.
+Status: DONE
 Dependencies: [BACKEND-COURSE-001]
 
 Task-ID: IMPORT-FIX-001
@@ -95,5 +95,17 @@ Validation:
   - [x] Django system check passes with no issues
   - [x] Django development server starts without errors
   - [x] Tests run successfully
+Status: DONE
+Dependencies: []
+
+Task-ID: IMPORT-FIX-002
+Description: Fix 'backend' module import issues
+Requirements:
+  - [x] Fix imports in course_status_service.py to use relative imports
+  - [x] Fix imports in version_control_service.py to use relative imports
+  - [x] Fix imports in learning/models.py to use relative imports
+Validation:
+  - [x] Django development server starts without ModuleNotFoundError
+  - [x] API endpoints work correctly
 Status: DONE
 Dependencies: []

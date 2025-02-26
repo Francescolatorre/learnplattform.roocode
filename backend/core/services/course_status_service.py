@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
-from backend.learning.models import Course
-from backend.learning.models import StatusTransition as StatusTransitionModel
+from learning.models import Course
+from learning.models import StatusTransition as StatusTransitionModel
 
 User = get_user_model()
 

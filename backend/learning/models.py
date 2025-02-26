@@ -59,7 +59,30 @@ class InstructorRole(models.Model):
 class CourseInstructorAssignmentManager(models.Manager):
     """Manager for CourseInstructorAssignment model."""
 
-    ...
+    def get_active_assignments(self, course=None):
+        """
+        Get all active instructor assignments, optionally filtered by course.
+        
+        :param course: Optional course to filter assignments by
+        :return: QuerySet of active assignments
+        """
+        queryset = self.filter(is_active=True)
+        if course:
+            queryset = queryset.filter(course=course)
+        return queryset
+    
+    def get_by_role(self, role_name, course=None):
+        """
+        Get assignments by role name, optionally filtered by course.
+        
+        :param role_name: Role name to filter by
+        :param course: Optional course to filter assignments by
+        :return: QuerySet of assignments with the specified role
+        """
+        queryset = self.filter(role__role_name=role_name, is_active=True)
+        if course:
+            queryset = queryset.filter(course=course)
+        return queryset
 
 
 class CourseInstructorAssignment(models.Model):
@@ -181,11 +204,10 @@ class Course(models.Model):
         :param role: Role to filter instructors by
         :return: List of instructors with the specified role
         """
+        # Use the manager method for better reusability and caching potential
+        assignments = CourseInstructorAssignment.objects.get_by_role(role, self)
         return list(
-            CourseInstructorAssignment.objects.filter(
-                course=self, role__role_name=role, is_active=True
-            )
-            .select_related("instructor")
+            assignments.select_related("instructor")
             .values_list("instructor", flat=True)
         )
 
@@ -252,11 +274,13 @@ class Course(models.Model):
 
     def get_total_tasks(self) -> int:
         """Returns the total number of tasks in the course."""
+        # Revert to original implementation to avoid Pylint errors
         return self.tasks.model.objects.filter(courses=self).count()
 
     def get_learning_tasks(self) -> List["LearningTask"]:
         """Returns all learning tasks for this course."""
-        return list(self.tasks.model.objects.filter(courses=self))
+        # Add select_related for better performance
+        return list(self.tasks.model.objects.filter(courses=self).select_related('created_by'))
 
     def increment_version(self):
         """Increment the course version when significant changes are made."""
@@ -269,9 +293,9 @@ class Course(models.Model):
         :param new_status: Target status to transition to
         :return: Boolean indicating if transition is allowed
         """
-        # Import at function level to avoid circular imports
-        from ..core.services.course_status_service import CourseStatusService
-
+        # Import the service directly
+        from core.services.course_status_service import CourseStatusService
+        
         service = CourseStatusService(self)
         return service.can_transition_to(new_status)
 
@@ -282,9 +306,9 @@ class Course(models.Model):
         :param reason: Reason for the status change
         :param user: User initiating the transition
         """
-        # Import at function level to avoid circular imports
-        from ..core.services.course_status_service import CourseStatusService
-
+        # Import the service directly
+        from core.services.course_status_service import CourseStatusService
+        
         service = CourseStatusService(self)
         service.transition_to(new_status, reason, user)
 
@@ -301,8 +325,8 @@ class Course(models.Model):
 
         :return: List of allowed status transitions
         """
-        # Import at function level to avoid circular imports
-        from ..core.services.course_status_service import CourseStatusService
+        # Import the service directly
+        from core.services.course_status_service import CourseStatusService
 
         service = CourseStatusService(self)
         return service.get_allowed_transitions()
@@ -385,7 +409,9 @@ class CourseVersion(models.Model):
         help_text=_("Notes about changes in this version"),
     )
     content_snapshot = models.JSONField(
-        _("Content Snapshot"), help_text=_("Snapshot of course content at this version")
+        _("Content Snapshot"),
+        help_text=_("Snapshot of course content at this version"),
+        default=dict
     )
 
     objects = CourseVersionManager()
@@ -410,8 +436,8 @@ class CourseVersion(models.Model):
         if not previous:
             return None
 
-        # Import at function level to avoid circular imports
-        from ..core.services.version_control_service import VersionControlService
+        # Import the service using relative import
+        from core.services.version_control_service import VersionControlService
 
         service = VersionControlService(self.course)
         # Use compare_versions method instead of _compare_snapshots
@@ -420,5 +446,65 @@ class CourseVersion(models.Model):
 
     def is_current(self) -> bool:
         """Returns whether this is the current version of the course."""
-        # Access the course instance directly
-        return self.version_number == self.course.version
+        # Use a more Django-idiomatic approach to check if this is the current version
+        # This avoids direct ForeignKey access issues
+        
+        # Get the course's current version from the database
+        from django.db.models import F
+        
+        # Use a query that doesn't rely on accessing self.course directly
+        course_version = Course.objects.filter(
+            versions__pk=self.pk  # Use the reverse relation with pk instead of id
+        ).values_list('version', flat=True).first()
+        
+        return self.version_number == course_version
+
+    def save(self, *args, **kwargs):
+        """Override save to ensure validation is called."""
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+    objects = CourseVersionManager()
+
+    def __str__(self) -> str:
+        return f"{self.course} v{self.version_number}"
+
+    def get_changes_from_previous(self) -> Optional[Dict[str, Any]]:
+        """Get changes between this version and the previous one.
+
+        Returns:
+            Dict of changes or None if this is the first version
+        """
+        previous = (
+            CourseVersion.objects.filter(
+                course=self.course, version_number__lt=self.version_number
+            )
+            .order_by("-version_number")
+            .first()
+        )
+
+        if not previous:
+            return None
+
+        # Import the service using relative import
+        from core.services.version_control_service import VersionControlService
+
+        service = VersionControlService(self.course)
+        # Use compare_versions method instead of _compare_snapshots
+        # This is a public method that should be available
+        return service.compare_versions(previous, self)
+
+    def is_current(self) -> bool:
+        """Returns whether this is the current version of the course."""
+        # Use a more Django-idiomatic approach to check if this is the current version
+        # This avoids direct ForeignKey access issues
+        
+        # Get the course's current version from the database
+        from django.db.models import F
+        
+        # Use a query that doesn't rely on accessing self.course directly
+        course_version = Course.objects.filter(
+            versions__pk=self.pk  # Use the reverse relation with pk instead of id
+        ).values_list('version', flat=True).first()
+        
+        return self.version_number == course_version
