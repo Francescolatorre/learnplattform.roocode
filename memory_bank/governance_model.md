@@ -199,7 +199,10 @@ This document defines the governance model for the Learning Platform project, in
 ### Status Reporting
 
 1. **Task Status Updates**
-   - Status changes must be reflected in all relevant files
+   - Status changes must be reflected in all relevant files:
+     - `activeContext.md` - For the current active task
+     - `progress.md` - For overall project tracking
+     - `tasks/{TASK-ID}.md` - For detailed task documentation
    - Status terminology must be consistent: `TODO`, `IN_PROGRESS`, `DONE`, `POSTPONED`
    - Status changes must include timestamp and reason
 
