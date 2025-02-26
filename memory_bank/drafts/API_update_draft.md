@@ -1,302 +1,11 @@
-# Learning Platform API Documentation
+# API Documentation Update for Course Versioning
 
-## Base URL
-```
-/api/v1/
-```
+This document provides a draft of the updates needed for the `backend/API.md` file to include documentation for the course versioning system.
 
-## Authentication
-Most endpoints require JWT authentication. Include the access token in the Authorization header:
-```
-Authorization: Bearer <access_token>
-```
-
-## API Sections
-
-- [Authentication API](#authentication-api)
-- [Course API](#course-api)
-- [Course Version Control API](#course-version-control-api)
-
----
-
-# Authentication API
-
-## Base URL
-```
-/api/v1/auth/
-```
-
-## Endpoints
-
-### 1. Register
-Create a new user account.
-
-- **URL**: `register/`
-- **Method**: `POST`
-- **Auth Required**: No
-- **Request Body**:
-```json
-{
-    "username": "string",
-    "email": "string",
-    "password": "string",
-    "password2": "string",
-    "display_name": "string",
-    "role": "string"
-}
-```
-- **Success Response**: `201 Created`
-```json
-{
-    "user": {
-        "username": "string",
-        "email": "string",
-        "display_name": "string"
-    },
-    "refresh": "string",
-    "access": "string"
-}
-```
-- **Error Response**: `400 Bad Request`
-```json
-{
-    "username": ["Username is already taken"],
-    "email": ["Invalid email format"],
-    "password": ["Passwords do not match"]
-}
-```
-
-### 2. Login
-Authenticate a user and receive tokens.
-
-- **URL**: `login/`
-- **Method**: `POST`
-- **Auth Required**: No
-- **Request Body**:
-```json
-{
-    "username_or_email": "string",
-    "password": "string"
-}
-```
-- **Success Response**: `200 OK`
-```json
-{
-    "user": {
-        "username": "string",
-        "email": "string"
-    },
-    "refresh": "string",
-    "access": "string"
-}
-```
-- **Error Response**: `401 Unauthorized`
-```json
-{
-    "detail": "Invalid credentials"
-}
-```
-
-### 3. Logout
-Invalidate a refresh token.
-
-- **URL**: `logout/`
-- **Method**: `POST`
-- **Auth Required**: No
-- **Request Body**:
-```json
-{
-    "refresh_token": "string"
-}
-```
-- **Success Response**: `205 Reset Content`
-- **Error Response**: `400 Bad Request`
-```json
-{
-    "detail": "Invalid token"
-}
-```
-
-### 4. Password Reset
-Request a password reset email.
-
-- **URL**: `password-reset/`
-- **Method**: `POST`
-- **Auth Required**: No
-- **Request Body**:
-```json
-{
-    "email": "string"
-}
-```
-- **Success Response**: `200 OK`
-```json
-{
-    "message": "Password reset link sent"
-}
-```
-- **Error Response**: `400 Bad Request`
-```json
-{
-    "email": ["User with this email does not exist"]
-}
-```
-
-### 5. Profile
-Manage user profile information.
-
-- **URL**: `profile/`
-- **Methods**: `GET`, `PATCH`
-- **Auth Required**: Yes
-- **Headers**:
-```
-Authorization: Bearer <access_token>
-```
-- **GET Response**: `200 OK`
-```json
-{
-    "username": "string",
-    "email": "string",
-    "display_name": "string"
-}
-```
-- **PATCH Request Body**:
-```json
-{
-    "display_name": "string"
-}
-```
-- **PATCH Response**: `200 OK`
-```json
-{
-    "username": "string",
-    "email": "string",
-    "display_name": "string"
-}
-```
-- **Error Response**: `401 Unauthorized`
-```json
-{
-    "detail": "Authentication credentials were not provided"
-}
-```
-
-### 6. Token Refresh
-Get a new access token using a refresh token.
-
-- **URL**: `token/refresh/`
-- **Method**: `POST`
-- **Auth Required**: No
-- **Request Body**:
-```json
-{
-    "refresh": "string"
-}
-```
-- **Success Response**: `200 OK`
-```json
-{
-    "access": "string"
-}
-```
-- **Error Response**: `401 Unauthorized`
-```json
-{
-    "detail": "Token is invalid or expired"
-}
-```
-
-### Authentication Implementation Guide
-
-#### Authentication Flow
-
-1. **Initial Authentication**:
-   - Register a new user or login with existing credentials
-   - Store received tokens securely (e.g., in localStorage or secure cookie)
-   - Use access token for subsequent requests
-
-2. **Making Authenticated Requests**:
-```javascript
-const headers = {
-  'Authorization': `Bearer ${accessToken}`,
-  'Content-Type': 'application/json'
-};
-
-fetch('/api/v1/auth/profile/', {
-  headers: headers
-});
-```
-
-3. **Token Refresh Flow**:
-```javascript
-async function refreshToken() {
-  const response = await fetch('/api/v1/auth/token/refresh/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      refresh: refreshToken
-    })
-  });
-
-  if (response.ok) {
-    const data = await response.json();
-    // Store new access token
-    return data.access;
-  } else {
-    // Token refresh failed, redirect to login
-    window.location.href = '/login';
-  }
-}
-```
-
-4. **Logout Flow**:
-```javascript
-async function logout() {
-  await fetch('/api/v1/auth/logout/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      refresh_token: refreshToken
-    })
-  });
-
-  // Clear stored tokens
-  localStorage.removeItem('accessToken');
-  localStorage.removeItem('refreshToken');
-}
-```
-
-#### Token Lifetimes
-
-- Access Token: 60 minutes
-- Refresh Token: 24 hours
-
-#### Security Considerations
-
-1. Store tokens securely
-2. Implement token refresh before expiration
-3. Clear tokens on logout
-4. Use HTTPS for all requests
-5. Validate token expiration
-6. Handle authentication errors gracefully
-
----
-
-# Course API
-
-## Base URL
-```
-/api/v1/courses/
-```
-
-## Endpoints
+## Course API Endpoints
 
 ### 1. List Courses
-- **URL**: `/`
+- **URL**: `/api/v1/courses/`
 - **Method**: `GET`
 - **Auth Required**: Yes
 - **Headers**:
@@ -350,7 +59,7 @@ Authorization: Bearer <access_token>
 ```
 
 ### 2. Create Course
-- **URL**: `/`
+- **URL**: `/api/v1/courses/`
 - **Method**: `POST`
 - **Auth Required**: Yes
 - **Headers**:
@@ -400,7 +109,7 @@ Content-Type: application/json
 ```
 
 ### 3. Get Course Details
-- **URL**: `/{id}/`
+- **URL**: `/api/v1/courses/{id}/`
 - **Method**: `GET`
 - **Auth Required**: Yes
 - **Headers**:
@@ -452,21 +161,12 @@ Authorization: Bearer <access_token>
 }
 ```
 
----
-
-# Course Version Control API
-
-## Base URL
-```
-/api/v1/courses/{id}/versions/
-```
-
-## Endpoints
+## Course Version Control Endpoints
 
 ### 1. Create New Version
 Create a new version of a course.
 
-- **URL**: `/`
+- **URL**: `/api/v1/courses/{id}/versions/`
 - **Method**: `POST`
 - **Auth Required**: Yes
 - **Headers**:
@@ -501,7 +201,7 @@ Content-Type: application/json
 ### 2. List Course Versions
 Retrieve the version history of a course.
 
-- **URL**: `/`
+- **URL**: `/api/v1/courses/{id}/versions/`
 - **Method**: `GET`
 - **Auth Required**: Yes
 - **Headers**:
@@ -533,7 +233,7 @@ Authorization: Bearer <access_token>
 ### 3. Get Specific Version
 Retrieve a specific version of a course.
 
-- **URL**: `/{version_number}/`
+- **URL**: `/api/v1/courses/{id}/versions/{version_number}/`
 - **Method**: `GET`
 - **Auth Required**: Yes
 - **Headers**:
@@ -568,7 +268,7 @@ Authorization: Bearer <access_token>
 ### 4. Compare Versions
 Compare two versions of a course.
 
-- **URL**: `/compare/`
+- **URL**: `/api/v1/courses/{id}/versions/compare/`
 - **Method**: `GET`
 - **Auth Required**: Yes
 - **Headers**:
@@ -608,7 +308,7 @@ version2=2
 ### 5. Rollback to Version
 Rollback a course to a specific version.
 
-- **URL**: `/{version_number}/rollback/`
+- **URL**: `/api/v1/courses/{id}/versions/{version_number}/rollback/`
 - **Method**: `POST`
 - **Auth Required**: Yes
 - **Headers**:
@@ -706,7 +406,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## Version Control Implementation Guide
+## Implementation Guide
 
 ### Version Control Flow
 
@@ -783,13 +483,3 @@ async function rollbackToVersion(courseId, versionNumber) {
 3. Use version notes to document the changes made in each version
 4. Consider the impact of rolling back to a previous version, especially if the course has active enrollments
 5. Implement proper error handling for version control operations
-
----
-
-## Error Handling
-
-- **400 Bad Request**: Invalid input data
-- **401 Unauthorized**: Invalid or expired token
-- **403 Forbidden**: Insufficient permissions
-- **404 Not Found**: Resource not found
-- **500 Internal Server Error**: Server error
