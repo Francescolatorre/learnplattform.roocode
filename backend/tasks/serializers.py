@@ -1,30 +1,23 @@
 from rest_framework import serializers
-from .models import BaseTask, LearningTask, AssessmentTask, QuizTask
+from .models import LearningTask, AssessmentTask, QuizTask
 
-class BaseTaskSerializer(serializers.ModelSerializer):
-    """
-    Serializer for base task attributes.
-    """
-    class Meta:
-        model = BaseTask
-        fields = ['id', 'title', 'description', 'created_at', 'updated_at', 'due_date']
-        read_only_fields = ['id', 'created_at', 'updated_at']
-
-class LearningTaskSerializer(BaseTaskSerializer):
+class LearningTaskSerializer(serializers.ModelSerializer):
     """
     Serializer for learning-specific tasks.
     """
-    class Meta(BaseTaskSerializer.Meta):
+    class Meta:
         model = LearningTask
-        fields = BaseTaskSerializer.Meta.fields + ['difficulty_level']
+        fields = ['id', 'title', 'description', 'created_at', 'updated_at', 'due_date']
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
-class AssessmentTaskSerializer(BaseTaskSerializer):
+class AssessmentTaskSerializer(serializers.ModelSerializer):
     """
     Serializer for assessment tasks with scoring.
     """
-    class Meta(BaseTaskSerializer.Meta):
+    class Meta:
         model = AssessmentTask
-        fields = BaseTaskSerializer.Meta.fields + ['max_score', 'passing_score']
+        fields = ['id', 'title', 'description', 'created_at', 'updated_at', 'due_date', 'max_score', 'passing_score']
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 class QuizTaskSerializer(AssessmentTaskSerializer):
     """

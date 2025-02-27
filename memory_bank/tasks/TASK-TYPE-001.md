@@ -4,11 +4,18 @@
 - **Task-ID:** TASK-TYPE-001
 - **Status:** IN_PROGRESS
 - **Priority:** Medium
-- **Dependencies:** TASK-SUBMISSION-001
+- **Dependencies:** 
+  - TASK-SUBMISSION-001
+  - TASK-MODEL-CONSOLIDATION-002
 - **Assigned To:** Architect and Code Team
 - **Started At:** 2025-02-26 21:22:32
 - **Estimated Completion:** 2025-04-20
 - **Story Points:** 5
+
+## Notes on Model Consolidation Impact
+- Update task type implementation to align with consolidated task model
+- Verify compatibility with new model structure
+- Ensure all model references are updated
 
 ## Description
 Implement a comprehensive text submission task type that allows students to submit written responses to assignments. This task type will support rich text formatting, word count limits, and draft saving functionality.

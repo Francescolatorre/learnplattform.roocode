@@ -29,7 +29,7 @@ db.sqlite3-journal
 media/
 
 # Virtual Environment
-venv/
+backend/venv/
 env/
 .env
 .venv
@@ -63,7 +63,6 @@ backend/htmlcov/
 backend/coverage_html/
 backend/test_db.sqlite3
 backend/pytest_report.jsonl
-
 
 # Logs
 npm-debug.log*

@@ -10,7 +10,7 @@ DATABASES = {
     }
 }
 
-# Enable all apps for integration testing
+# Enable all apps for integration testing with dotted paths
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -18,11 +18,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core',
-    'assessment',
-    'learning',
-    'tasks',
-    'users',
+    'backend.core.apps.CoreConfig',
+    'backend.assessment.apps.AssessmentConfig',
+    'backend.learning.apps.LearningConfig',
+    'backend.tasks.apps.TasksConfig',
+    'backend.users.apps.UsersConfig',
 ]
 
 # Faster password hashing for tests
