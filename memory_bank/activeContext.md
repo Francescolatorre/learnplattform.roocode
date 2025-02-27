@@ -1,21 +1,5 @@
 # Active Context
 
-## Completed Tasks
-
-### TASK-MODEL-CONFLICT-001
-- **Status**: DONE
-- **Description**: Resolve Course model conflict
-- **Assigned To**: Code Mode
-- **Started At**: 2025-02-27 09:59:26
-- **Completed At**: 2025-02-27 13:26:15
-- **Priority**: Critical
-- **Dependencies**: None
-- **Notes**: 
-  - Successfully resolved conflicts in the Course model across different Django apps
-  - Standardized import paths and model registration
-  - Cleaned up migrations and database
-  - Unblocked dependent tasks
-
 ## Current Task
 
 ### TASK-MODEL-001
