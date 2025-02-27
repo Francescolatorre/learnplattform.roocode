@@ -1,5 +1,16 @@
 # Completed Tasks
 
+### TASK-MODEL-001
+- **Status**: DONE
+- **Description**: Extend database schema for Learning Tasks
+- **Assigned To**: Code Mode
+- **Started At**: 2025-02-26 20:57:25
+- **Completed At**: 2025-02-27 14:45:00
+- **Dependencies**: None
+- **Notes**: 
+  - Implemented LearningTask, AssessmentTask, and QuizTask models in backend/tasks/models.py.
+  - Registered models in Django admin.
+  - Unit tests are failing due to import errors and need to be repaired in a separate task.
 
 ### TASK-MODEL-CONFLICT-001
 - **Status**: DONE
@@ -14,7 +25,7 @@
   - Standardized import paths and model registration
   - Cleaned up migrations and database
   - Unblocked dependent tasks
-
+  
 ## Task ID: FRONTEND-COURSES-001
 - **Description:** Implement error handling for network issues in the `fetchCourses` function.
 - **Status:** DONE

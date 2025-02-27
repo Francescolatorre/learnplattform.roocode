@@ -5,8 +5,8 @@ from typing import List, Optional
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 
-from assessment.models import Submission, Quiz, UserProgress
-from tasks.models import QuizTask
+from assessment.models import Submission, Quiz, UserProgress, QuizTask  # Corrected import: QuizTask from assessment.models
+# from tasks.models import QuizTask # Incorrect import
 
 class AssessmentRepository:
     """

@@ -1,127 +1,77 @@
-import uuid
 from django.db import models
-from django.utils.translation import gettext_lazy as _
-from django.conf import settings
-from typing import Optional, Union
+from backend.courses.models import Course # Corrected import
+from backend.users.models import User # Corrected import
+import uuid
 
-class BaseTask(models.Model):
-    """
-    Abstract base class for all task types in the system.
-    """
-    id = models.UUIDField(
-        primary_key=True, 
-        default=uuid.uuid4, 
-        editable=False
-    )
-    title = models.CharField(
-        _('Task Title'), 
-        max_length=255
-    )
-    description = models.TextField(
-        _('Task Description'), 
-        blank=True
-    )
+class LearningTask(models.Model):
+    STATUS_CHOICES = [
+        ('Draft', 'Draft'),
+        ('Published', 'Published'),
+        ('Archived', 'Archived'),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    title = models.CharField(max_length=255, verbose_name="Task Title")
+    description = models.TextField(verbose_name="Task Description", blank=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='tasks', verbose_name="Course")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='DRAFT', verbose_name="Task Status")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    due_date = models.DateTimeField(null=True, blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='created_tasks', verbose_name="Created By")
+    max_submissions = models.PositiveIntegerField(verbose_name="Maximum Submissions", blank=True, null=True)
+    deadline = models.DateTimeField(verbose_name="Task Deadline", blank=True, null=True)
+    difficulty_level = models.CharField(max_length=50, verbose_name="Difficulty Level", blank=True)
 
     class Meta:
-        abstract = True
-        app_label = 'tasks'
-
-    def __str__(self) -> str:
-        return str(self.title) if self.title else ''
-
-class LearningTask(BaseTask):
-    """
-    Task specific to learning activities with comprehensive metadata.
-    """
-    class Status(models.TextChoices):
-        DRAFT = 'DRAFT', _('Draft')
-        PUBLISHED = 'PUBLISHED', _('Published')
-        ARCHIVED = 'ARCHIVED', _('Archived')
-
-    course = models.ForeignKey(
-        'courses.Course', 
-        on_delete=models.CASCADE, 
-        related_name='tasks',
-        verbose_name=_('Course')
-    )
-    status = models.CharField(
-        _('Task Status'),
-        max_length=20,
-        choices=Status.choices,
-        default=Status.DRAFT
-    )
-    max_submissions = models.PositiveIntegerField(
-        _('Maximum Submissions'),
-        null=True,
-        blank=True
-    )
-    deadline = models.DateTimeField(
-        _('Task Deadline'),
-        null=True,
-        blank=True
-    )
-    created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='created_tasks',
-        verbose_name=_('Created By')
-    )
-    difficulty_level = models.CharField(
-        _('Difficulty Level'), 
-        max_length=50, 
-        blank=True
-    )
-
-    objects: models.Manager = models.Manager()
-
-    class Meta:
-        verbose_name = _('Learning Task')
-        verbose_name_plural = _('Learning Tasks')
+        verbose_name = "Learning Task"
+        verbose_name_plural = "Learning Tasks"
         indexes = [
             models.Index(fields=['course', 'status']),
             models.Index(fields=['created_at']),
             models.Index(fields=['updated_at']),
-            models.Index(fields=['deadline'])
+            models.Index(fields=['deadline']),
         ]
 
-# Existing models remain unchanged
-class AssessmentTask(BaseTask):
+    def __str__(self):
+        return self.title
+
+
+class AssessmentTask(LearningTask):
     """
-    Task used for assessment and grading.
+    Abstract base class for assessment tasks.
     """
+    class Meta:
+        abstract = True
+
     max_score = models.DecimalField(
-        _('Maximum Score'), 
-        max_digits=5, 
-        decimal_places=2, 
+        verbose_name="Maximum Score",
+        max_digits=5,
+        decimal_places=2,
         null=True,
         blank=True
     )
     passing_score = models.DecimalField(
-        _('Passing Score'), 
-        max_digits=5, 
-        decimal_places=2, 
+        verbose_name="Passing Score",
+        max_digits=5,
+        decimal_places=2,
         null=True,
         blank=True
     )
 
-    objects: models.Manager = models.Manager()
 
 class QuizTask(AssessmentTask):
     """
-    Specialized task for quiz-based assessments.
+    Model representing a quiz task, which is a type of assessment task.
     """
     time_limit = models.IntegerField(
-        _('Time Limit (minutes)'), 
-        null=True,
-        blank=True
+        verbose_name="Time Limit (minutes)",
+        blank=True,
+        null=True
     )
     is_randomized = models.BooleanField(
-        _('Randomize Question Order'), 
+        verbose_name="Randomize Question Order",
         default=False
     )
 
-    objects: models.Manager = models.Manager()
+    def __str__(self):
+        return self.title
