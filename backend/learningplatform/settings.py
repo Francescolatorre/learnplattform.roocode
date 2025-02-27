@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "tasks.apps.TasksConfig",
     "learning.apps.LearningConfig",
     "assessment.apps.AssessmentConfig",
+    "courses.apps.CoursesConfig",  # Add courses app here
     # Third-party apps
     "rest_framework",
     "rest_framework_simplejwt",

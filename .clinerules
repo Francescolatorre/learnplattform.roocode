@@ -2,69 +2,61 @@
 
 memory_bank:
   read_strategy:
-    - "Read `activeContext.md` ONCE per execution."
-    - "If `activeContext.md` has an active task, read only necessary files."
-    - "If no active task, read `progress.md` to determine next steps."
-    - "If `progress.md` has no tasks, WAIT for new task."
+    - "Read `activeContext.md` ONCE per execution"
+    - "If active task exists, read only necessary files"
+    - "If no active task, check `progress.md`"
+    - "If no tasks in progress, WAIT"
 
   consistency_checks:
-    - "Compare `activeContext.md` & `progress.md` for mismatches."
-    - "If a mismatch exists, follow `inconsistency_resolution.md`."
-    - "If task conflict found, escalate to Architect Mode."
+    - "Compare `activeContext.md` & `progress.md`"
+    - "If mismatch exists, follow `inconsistency_resolution.md`"
+    - "Escalate task conflicts to Architect Mode"
 
   resolution_protocol:
-    - "If an inconsistency exists, STOP and consult `inconsistency_resolution.md`."
-    - "DO NOT proceed unless files are aligned with user confirmation."
+    - "STOP if inconsistency exists"
+    - "Proceed only with user confirmation"
 
   mandatory_reads:
-    - "ALWAYS read `activeContext.md` first."
-    - "ALWAYS state `[Memory Bank: active]` after reading required files."
-    - "DO NOT proceed if inconsistencies exist."
-    - "If a required file is missing, request it."
+    - "Read `activeContext.md` first"
+    - "State `[Memory Bank: active]` after reading"
+    - "Request missing files"
 
 task_management:
   lifecycle:
-    - Architect defines (`TODO`).
-    - Code implements (`IN_PROGRESS`).
-    - Code validates (`DONE`).
-    - Architect reviews (`DONE` or revision requested).
+    - "Architect defines (TODO): template, gaps, resources, risks, comms"
+    - "Code implements (IN_PROGRESS): validate, mitigate, document, monitor"
+    - "Code validates (DONE): test, review, document, update"
+    - "Architect reviews: verify goals, assess quality, provide feedback"
+
+  task_review_criteria:
+    - "Completeness, clarity, resources, risks, alignment"
 
   prioritization:
-    - Critical-path tasks first.
-    - Dependencies must be resolved before activation.
-    - Postponed tasks reviewed in 14 days.
+    - "Critical-path first, resolve dependencies, review postponed tasks"
+    - "Consider complexity and constraints"
 
 switching_protocol:
-  Architect → Code:
-    - Define task in `tasks/{TASK-ID}.md`, `progress.md`.
-    - Set `TODO`, switch to Code.
-  Code → Architect:
-    - Mark `DONE`, request review.
-  Debug <-> Code:
-    - Switch if bug blocks progress.
-  Emergency:
-    - Log blocker in `activeContext.md`, switch mode.
+  "Architect → Code": "Define task, set TODO, provide context, highlight challenges"
+  "Code → Architect": "Mark DONE, document implementation, request review"
+  "Debug <-> Code": "Switch if bug blocks progress"
+  "Emergency": "Log blocker, switch mode, escalate"
 
 status_updates:
-  - Sync across `progress.md`, `tasks/{TASK-ID}.md`, `activeContext.md`.
-  - Use consistent statuses: `TODO`, `IN_PROGRESS`, `DONE`, `POSTPONED`.
-  - Include timestamp & reason for changes.
+  - "Sync across all task files"
+  - "Use standard statuses: TODO, IN_PROGRESS, DONE, POSTPONED"
+  - "Include timestamps and reasons"
+  - "Document knowledge and challenges"
 
 automation:
-  - Auto-sync memory bank updates.
-  - Track postponed task deadlines.
-  - Use Git metadata for timestamps.
+  - "Auto-sync updates, track deadlines, use Git metadata"
+  - "Implement quality checks"
 
 git_commit_rules:
-  - **Each commit must reference `TASK-ID`.**
-  - **Commit format:** `[TASK-ID] [STATUS] [SUMMARY]`
-  - **Examples:**
-    - `[CORE-011] IN_PROGRESS Added authentication logic`
-    - `[CORE-021] DONE Refactored error handling`
-  - **Commits must include validation status** (e.g., "Tests Passed", "Awaiting Review").
-  - **Stage all relevant files before committing.**
-  - **Squash minor commits before merging.**
-  - **Merge commits must follow:** `"Merge branch {FEATURE_BRANCH} into {MAIN_BRANCH}"`.
+  - "Format: [TASK-ID] [STATUS] [SUMMARY]"
+  - "Include validation status and explanation"
+  - "Stage all files, squash minor commits"
+  - "Proper merge format"
 
 language_specific_rules:
-  - "Refer to `/languages/{LANGUAGE}_rules.yaml` for implementation guidelines."
+  - "Follow language rules in `/languages/{LANGUAGE}_rules.yaml`"
+  - "Maintain task enhancement framework principles"

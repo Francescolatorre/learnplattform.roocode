@@ -6,7 +6,6 @@ from tasks.models import LearningTask
 
 User = get_user_model()
 
-
 class CourseModelTests(TestCase):
     def setUp(self):
         """
@@ -87,3 +86,67 @@ class CourseModelTests(TestCase):
         self.assertNotIn(self.task1, course2.tasks.all())
         self.assertIn(self.task2, course2.tasks.all())
         self.assertNotIn(self.task2, course1.tasks.all())
+
+class LearningTaskModelTests(TestCase):
+    def setUp(self):
+        """
+        Set up test data for learning task model.
+        """
+        self.task1 = LearningTask.objects.create(
+            title="Python Basics",
+            description="Introduction to Python programming",
+            difficulty_level="Beginner",
+        )
+        self.task2 = LearningTask.objects.create(
+            title="Advanced Python",
+            description="Advanced Python programming concepts",
+            difficulty_level="Advanced",
+        )
+
+    def test_learning_task_creation(self):
+        """
+        Test creating a learning task.
+        """
+        task = LearningTask.objects.create(
+            title="Test Task",
+            description="This is a test task",
+            difficulty_level="Intermediate",
+        )
+
+        self.assertEqual(task.title, "Test Task")
+        self.assertEqual(task.description, "This is a test task")
+        self.assertEqual(task.difficulty_level, "Intermediate")
+        self.assertIsNotNone(task.created_at)
+        self.assertIsNotNone(task.updated_at)
+
+    def test_learning_task_string_representation(self):
+        """
+        Test the string representation of a learning task.
+        """
+        task = LearningTask.objects.create(
+            title="Test Task",
+            description="This is a test task",
+            difficulty_level="Intermediate",
+        )
+
+        self.assertEqual(str(task), "Test Task")
+
+    def test_learning_task_update(self):
+        """
+        Test updating a learning task.
+        """
+        task = LearningTask.objects.create(
+            title="Test Task",
+            description="This is a test task",
+            difficulty_level="Intermediate",
+        )
+
+        task.title = "Updated Task"
+        task.description = "This is an updated task"
+        task.difficulty_level = "Advanced"
+        task.save()
+
+        updated_task = LearningTask.objects.get(id=task.id)
+        self.assertEqual(updated_task.title, "Updated Task")
+        self.assertEqual(updated_task.description, "This is an updated task")
+        self.assertEqual(updated_task.difficulty_level, "Advanced")

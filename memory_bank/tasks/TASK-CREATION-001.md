@@ -1,62 +1,46 @@
-# Task: Enable Instructors to Create Learning Tasks for a Course
+# TASK-CREATION-001: Course Creation Feature
 
-## Task Metadata
-- **Task-ID:** TASK-CREATION-001
-- **Status:** TODO
-- **Priority:** Medium
-- **Dependencies:** COURSE-INSTRUCTOR-001
+## Status
+- **Status**: IN_PROGRESS
+- **Assigned To**: Code Team
+- **Started At**: 2025-02-27 08:55:45
+- **Notes**: Implement the course creation feature.
 
 ## Description
-Enable instructors to create learning tasks for a specific course through a dedicated interface with proper authorization and validation.
+Develop the course creation feature for the learning platform. This includes creating the necessary forms, views, and backend logic to allow instructors to create new courses.
 
 ## Requirements
+1. **Course Creation Form**:
+   - Fields: `title`, `description`, `instructor`
+   - Validation: Ensure all fields are filled out and the instructor is a valid user.
 
-### Functional Requirements
-1. Add task creation form in the instructor interface
-   - Input fields:
-     - Title (required)
-     - Description (required)
-     - Optional metadata
-   - Associate tasks with a specific course
-   - Implement role-based access control
+2. **Backend Logic**:
+   - Create a new course instance with the provided data.
+   - Associate the course with the instructor.
+   - Save the course to the database.
 
-2. Authorization Constraints
-   - Only instructors with `can_manage_tasks` permission can create tasks
-   - Validate user permissions before allowing task creation
+3. **Frontend Integration**:
+   - Create a new page or component for course creation.
+   - Integrate the course creation form with the backend API.
+   - Display success or error messages based on the API response.
 
-### Technical Requirements
-- Frontend: Create form component in React
-- Backend: Implement task creation endpoint
-- Database: Persist task data with proper course association
+## Implementation Guidelines
+- Use Django forms for the course creation form.
+- Create a new view to handle the course creation logic.
+- Use Django's ORM to save the course to the database.
+- Create a new API endpoint for course creation.
+- Integrate the frontend with the new API endpoint.
+- Add necessary error handling and validation.
 
-## Validation Criteria
-- [x] Only authorized instructors can create tasks
-- [x] Tasks are properly linked to courses
-- [x] Task data is correctly persisted in the database
-- [x] Form includes all required fields
-- [x] Proper error handling for unauthorized or invalid task creation
+## Validation
+- Test the course creation form with valid and invalid data.
+- Verify that the course is created and associated with the instructor.
+- Ensure that the course creation form displays appropriate success or error messages.
+- Test the course creation feature with different user roles.
 
-## Implementation Notes
-- Utilize existing course and user models
-- Implement permission checks in both frontend and backend
-- Use Django REST Framework for backend API
-- Create TypeScript interfaces for task data
+## Dependencies
+- TASK-MODEL-001: Database Schema
 
-## Acceptance Criteria
-1. Instructor can access task creation form
-2. Form validates input before submission
-3. Task is saved and associated with correct course
-4. Unauthorized users are prevented from creating tasks
-
-## Estimated Effort
-- Frontend: 3 story points
-- Backend: 5 story points
-- Total: 8 story points
-
-## Open Questions
-- Specific metadata fields to be included
-- Exact permission model for task management
-
-## Potential Risks
-- Ensuring consistent permission checks
-- Handling edge cases in task creation process
+## Notes
+- This task is a critical part of the course management phase.
+- Ensure that the course creation feature is user-friendly and secure.

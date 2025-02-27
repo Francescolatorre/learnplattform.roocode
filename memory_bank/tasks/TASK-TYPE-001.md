@@ -2,10 +2,10 @@
 
 ## Task Metadata
 - **Task-ID:** TASK-TYPE-001
-- **Status:** TODO
+- **Status:** IN_PROGRESS
 - **Priority:** Medium
 - **Dependencies:** TASK-SUBMISSION-001
-- **Assigned To:** Architect
+- **Assigned To:** Architect and Code Team
 - **Started At:** 2025-02-26 21:22:32
 - **Estimated Completion:** 2025-04-20
 - **Story Points:** 5
