@@ -68,4 +68,4 @@ We will consolidate and standardize our data models with the following approach:
 2025-02-27
 
 ## Status
-Proposed
+Accepted

@@ -55,3 +55,6 @@
 - Update related serializers
 - Modify test data generation scripts
 - Develop comprehensive test suite
+
+## Status
+Accepted
