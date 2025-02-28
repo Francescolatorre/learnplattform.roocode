@@ -1,6 +1,6 @@
 from django.test import TestCase
-from backend.learning.models import LearningTask
-from backend.courses.models import Course
+from learning.models import LearningTask
+from courses.models import Course
 from django.contrib.auth.models import User
 from django.utils import timezone
 import uuid

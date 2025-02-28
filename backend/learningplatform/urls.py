@@ -1,38 +1,14 @@
-from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-# Import viewsets from different apps
-from backend.users.views import UserViewSet
-from backend.tasks.views import LearningTaskViewSet, QuizTaskViewSet
-from backend.learning.views import CourseViewSet
-from backend.assessment.views import SubmissionViewSet, QuizViewSet, UserProgressViewSet
+from .views import CourseViewSet, LearningTaskViewSet
 
-# Create router and register viewsets
+# Create a router and register our viewsets
 router = DefaultRouter()
-
-# Users
-router.register(r'users', UserViewSet, basename='user')
-
-# Tasks
-router.register(r'learning-tasks', LearningTaskViewSet, basename='learning-task')
-router.register(r'quiz-tasks', QuizTaskViewSet, basename='quiz-task')
-
-# Learning
-router.register(r'courses', CourseViewSet, basename='course')
-
-# Assessment
-router.register(r'submissions', SubmissionViewSet, basename='submission')
-router.register(r'quizzes', QuizViewSet, basename='quiz')
-router.register(r'user-progress', UserProgressViewSet, basename='user-progress')
+router.register(r'courses', CourseViewSet)
+router.register(r'tasks', LearningTaskViewSet)
 
 urlpatterns = [
-    # Admin site
-    path('admin/', admin.site.urls),
-    
-    # API routes
-    path('api/v1/', include(router.urls)),
-    
-    # Authentication routes
-    path('api/v1/auth/', include('backend.users.urls')),
+    # Include router URLs
+    path('', include(router.urls)),
 ]

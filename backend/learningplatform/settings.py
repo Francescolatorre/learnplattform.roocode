@@ -25,13 +25,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Core apps with explicit configs
-    "backend.core.apps.CoreConfig",
-    "backend.users.apps.UsersConfig",
+    "core.apps.CoreConfig",
+    "users.apps.UsersConfig",
     # Domain apps with explicit configs
-    "backend.tasks.apps.TasksConfig",
-    "backend.learning.apps.LearningConfig",
-    "backend.assessment.apps.AssessmentConfig",
-    "backend.courses.apps.CoursesConfig",  # Add courses app here
+    "tasks.apps.TasksConfig",
+    "learning.apps.LearningConfig",
+    "assessment.apps.AssessmentConfig",
+    "courses.apps.CoursesConfig",
+    "learningplatform.apps.LearningPlatformConfig",  # Add learningplatform app
     # Third-party apps
     "rest_framework",
     "rest_framework_simplejwt",
@@ -56,7 +57,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 
-ROOT_URLCONF = "backend.learningplatform.urls"
+ROOT_URLCONF = "learningplatform.urls"
 
 TEMPLATES = [
     {
@@ -74,7 +75,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "backend.learningplatform.wsgi.application"
+WSGI_APPLICATION = "learningplatform.wsgi.application"
 
 # Database
 DATABASES = {
@@ -113,7 +114,7 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Custom user model
-AUTH_USER_MODEL = "backend.users.User"
+AUTH_USER_MODEL = "users.User"
 
 # DRF settings
 REST_FRAMEWORK = {

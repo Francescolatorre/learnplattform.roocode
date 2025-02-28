@@ -1,15 +1,39 @@
-# Learnings
+## Test Infrastructure Debugging - Tasks App (2025-02-28)
 
-## Debugging Session on 2025-02-26
+### Problem Identified
+- Intermittent test discovery and execution failures in the tasks app
+- Pytest and Django test configuration issues
 
-### Issue
-The `DEBUG` setting in `backend/learningplatform/settings_test_temp.py` was set to `False`, which prevented detailed error messages during testing.
+### Root Causes
+1. Inconsistent test file naming and import conventions
+2. Potential caching conflicts in Python's import system
+3. Misalignment between Django and pytest test discovery mechanisms
 
-### Diagnosis
-The initial diff failed because the content at the specified lines did not match the search content exactly. The `DEBUG` setting was correctly identified on line 64.
+### Resolution Strategies
+- Renamed test file to follow pytest naming conventions (test_models.py)
+- Rewrote tests using pytest decorators and assertions
+- Cleaned up __pycache__ directories
+- Verified Django and pytest configuration
 
-### Solution
-The `DEBUG` setting was updated to `True` to enable detailed error messages during testing.
+### Key Learnings
+- Importance of consistent test file naming (test_*.py)
+- Using pytest decorators like @pytest.mark.django_db
+- Cleaning __pycache__ directories to resolve import conflicts
+- Verifying test environment configuration before debugging
 
-### Documentation Update
-The `DEBUG` setting in `backend/learningplatform/settings_test_temp.py` was updated to `True` to enable detailed error messages during testing.
+### Test Outcomes
+- 3 tests successfully implemented and passed
+- Covered key functionality:
+  1. Learning task creation
+  2. Task status choices validation
+  3. Task difficulty choices validation
+
+### Recommendations
+- Maintain consistent test file naming across the project
+- Use pytest for more precise test discovery and execution
+- Regularly clean __pycache__ directories
+- Implement similar testing approach for other app models
+
+### Status
+- Tasks app test infrastructure: RESOLVED
+- Confidence in test coverage: HIGH

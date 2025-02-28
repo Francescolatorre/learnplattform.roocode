@@ -1,86 +1,88 @@
+import os
+import sys
+import django
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from django.utils import timezone
-from .models import BaseTask, LearningTask, AssessmentTask, QuizTask
+from courses.models import Course
+from tasks.models import LearningTask, TaskStatus, TaskDifficulty
+
+# Debugging: Print Python path and Django setup
+print("Python Path:", sys.path)
+print("Current Working Directory:", os.getcwd())
+
+# Ensure Django is set up correctly
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'learningplatform.settings')
+django.setup()
 
 User = get_user_model()
 
-class TaskModelTests(TestCase):
+class TaskModelTestCase(TestCase):
     def setUp(self):
         """
         Set up test data for task models.
         """
+        print("Running setUp method")
+        # Create a test user
         self.user = User.objects.create_user(
             username='testuser', 
             email='test@example.com', 
             password='testpass123'
         )
+        
+        # Create a test course
+        self.course = Course.objects.create(
+            title='Test Course',
+            description='A test course',
+            instructor=self.user,
+            difficulty_level='BEGINNER'
+        )
 
     def test_learning_task_creation(self):
         """
-        Test creating a learning task.
+        Test creating a learning task with all required fields.
         """
-        learning_task = LearningTask.objects.create(
-            title='Python Basics',
-            description='Learn fundamental Python programming concepts',
-            difficulty_level='Beginner',
-            due_date=timezone.now() + timezone.timedelta(days=30)
+        print("Running test_learning_task_creation")
+        task = LearningTask.objects.create(
+            title='Test Task',
+            description='Test Description',
+            course=self.course,
+            created_by=self.user,
+            difficulty_level=TaskDifficulty.BEGINNER,
+            task_type='test_type'
         )
+        
+        # Verify task creation
+        self.assertEqual(task.title, 'Test Task')
+        self.assertEqual(task.description, 'Test Description')
+        self.assertEqual(task.course, self.course)
+        self.assertEqual(task.created_by, self.user)
+        self.assertEqual(task.status, TaskStatus.DRAFT)
+        self.assertEqual(task.difficulty_level, TaskDifficulty.BEGINNER)
+        self.assertEqual(task.task_type, 'test_type')
+        self.assertTrue(task.is_active)
+        print("test_learning_task_creation completed")
 
-        self.assertEqual(learning_task.title, 'Python Basics')
-        self.assertEqual(learning_task.difficulty_level, 'Beginner')
-        self.assertIsNotNone(learning_task.created_at)
-        self.assertIsNotNone(learning_task.updated_at)
+    def test_task_status_choices(self):
+        """
+        Test the available task status choices.
+        """
+        print("Running test_task_status_choices")
+        valid_statuses = [status[0] for status in TaskStatus.choices]
+        expected_statuses = ['DRAFT', 'PUBLISHED', 'ARCHIVED', 'DEPRECATED']
+        self.assertEqual(set(valid_statuses), set(expected_statuses))
+        print("test_task_status_choices completed")
 
-    def test_assessment_task_creation(self):
+    def test_task_difficulty_choices(self):
         """
-        Test creating an assessment task.
+        Test the available task difficulty choices.
         """
-        assessment_task = AssessmentTask.objects.create(
-            title='Python Quiz',
-            description='Assessment of Python programming skills',
-            max_score=100.00,
-            passing_score=60.00,
-            due_date=timezone.now() + timezone.timedelta(days=14)
-        )
+        print("Running test_task_difficulty_choices")
+        valid_difficulties = [diff[0] for diff in TaskDifficulty.choices]
+        expected_difficulties = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED']
+        self.assertEqual(set(valid_difficulties), set(expected_difficulties))
+        print("test_task_difficulty_choices completed")
 
-        self.assertEqual(assessment_task.title, 'Python Quiz')
-        self.assertEqual(assessment_task.max_score, 100.00)
-        self.assertEqual(assessment_task.passing_score, 60.00)
-
-    def test_quiz_task_creation(self):
-        """
-        Test creating a quiz task.
-        """
-        quiz_task = QuizTask.objects.create(
-            title='Advanced Python Concepts',
-            description='Quiz on advanced Python programming',
-            max_score=100.00,
-            passing_score=70.00,
-            time_limit=60,
-            is_randomized=True
-        )
-
-        self.assertEqual(quiz_task.title, 'Advanced Python Concepts')
-        self.assertEqual(quiz_task.time_limit, 60)
-        self.assertTrue(quiz_task.is_randomized)
-
-    def test_task_string_representation(self):
-        """
-        Test the string representation of tasks.
-        """
-        learning_task = LearningTask.objects.create(title='Test Task')
-        self.assertEqual(str(learning_task), 'Test Task')
-
-    def test_task_date_fields(self):
-        """
-        Test that created_at and updated_at are set correctly.
-        """
-        learning_task = LearningTask.objects.create(
-            title='Datetime Test Task'
-        )
-
-        self.assertIsNotNone(learning_task.created_at)
-        self.assertIsNotNone(learning_task.updated_at)
-        self.assertLessEqual(learning_task.created_at, timezone.now())
-        self.assertLessEqual(learning_task.updated_at, timezone.now())
+# Debugging: Ensure tests are discoverable
+if __name__ == '__main__':
+    import unittest
+    unittest.main(verbosity=2)

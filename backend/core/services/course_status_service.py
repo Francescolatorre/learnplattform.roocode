@@ -6,7 +6,7 @@ try:
     from courses.models import Course
 except ImportError:
     try:
-        from backend.courses.models import Course
+        from courses.models import Course
     except ImportError:
         # Define a placeholder for Course to allow module loading
         from django.db import models
@@ -24,7 +24,7 @@ try:
     from learning.models import StatusTransition as StatusTransitionModel
 except ImportError:
     try:
-        from backend.learning.models import StatusTransition as StatusTransitionModel
+        from learning.models import StatusTransition as StatusTransitionModel
     except ImportError:
         # Define a placeholder for StatusTransitionModel
         from django.db import models

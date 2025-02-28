@@ -6,10 +6,10 @@ from decimal import Decimal
 import pytest
 
 from django.core.exceptions import ValidationError
-from backend.tasks.models import LearningTask, AssessmentTask, QuizTask
-from backend.core.tests.factories import QuizTaskFactory
-from backend.courses.models import Course
-from backend.users.models import User
+from tasks.models import LearningTask, AssessmentTask, QuizTask
+from core.tests.factories import QuizTaskFactory
+from courses.models import Course
+from users.models import User
 
 
 @pytest.mark.transactional

@@ -4,11 +4,11 @@ memory_bank:
   read_strategy:
     - "Read `activeContext.md` ONCE per execution"
     - "If active task exists, read only necessary files"
-    - "If no active task, check `progress.md`"
+    - "If no active task, check `project_status.md`"
     - "If no tasks in progress, WAIT"
 
   consistency_checks:
-    - "Compare `activeContext.md` & `progress.md`"
+    - "Compare `activeContext.md` & `project_status.md`"
     - "If mismatch exists, follow `inconsistency_resolution.md`"
     - "Escalate task conflicts to Architect Mode"
 

@@ -1,72 +1,69 @@
-# Task: Extend Database Schema for Learning Tasks
-
-## Task Metadata
-- **Task-ID:** TASK-MODEL-001
-- **Status:** DONE
-- **Priority:** Critical
-- **Dependencies:** None
-- **Assigned To:** Code Mode
-- **Completed At:** 2025-02-27 09:50:00
+# TASK-MODEL-001: Extend Database Schema for Learning Tasks
 
 ## Description
-Design and implement a robust database schema for Learning Tasks with comprehensive field support and efficient querying.
+Extend the database schema for Learning Tasks to support comprehensive field support and efficient querying. This involves designing a unified model that enhances performance and scalability.
 
-## Requirements
+## Model Diagram
+```mermaid
+classDiagram
+    class LearningTask {
+        UUID id
+        String title
+        String description
+        Course course
+        TaskType task_type
+        TaskStatus status
+        TaskDifficulty difficulty_level
+        DateTime created_at
+        DateTime updated_at
+        User created_by
+        Integer max_submissions
+        DateTime deadline
+        Decimal points_possible
+        Decimal passing_score
+        JSONField task_configuration
+        Boolean is_active
+        Boolean requires_peer_review
+    }
+    
+    class Course {
+        UUID id
+        String title
+        String description
+        User instructor
+        DateTime created_at
+        DateTime updated_at
+    }
+    
+    class User {
+        UUID id
+        String username
+        String email
+        Boolean is_instructor
+        Boolean is_student
+    }
+    
+    LearningTask --> Course : belongs to
+    LearningTask --> User : created by
+    Course --> User : instructed by
+```
 
-### Database Schema Design
-1. LearningTask Table Fields
-   - `id`: Primary Key (UUID) ✓
-   - `title`: String (max 255 characters) ✓
-   - `description`: Text field with markdown support ✓
-   - `course_id`: Foreign Key to Course model ✓
-   - `status`: Enum (Draft, Published, Archived) ✓
-   - `created_at`: Timestamp with timezone ✓
-   - `updated_at`: Timestamp with timezone ✓
-   - `created_by`: Foreign Key to User model ✓
-   - `max_submissions`: Integer (optional) ✓
-   - `deadline`: DateTime (optional) ✓
+## Objectives
+- Consolidate and extend the Learning Task model
+- Implement a flexible and performant database schema
+- Support various task types with a unified model structure
 
-2. Indexing Strategy
-   - Created indexes on:
-     - `course_id`
-     - `status`
-     - `created_at`
-     - `updated_at`
+## Dependencies
+- TASK-MODEL-UPDATE-PLAN-001
 
-### Technical Requirements
-- Used Django ORM for model definition ✓
-- Implemented custom model methods ✓
-- Supported data validation ✓
-- Ensured database performance ✓
+## Status
+- IN_PROGRESS
 
-## Validation Criteria
-- [x] Schema follows Django ORM best practices
-- [x] Tasks are properly stored in the database
-- [x] Foreign key relationships are enforced
-- [x] Indexing supports efficient queries
+## Assigned To
+- Architect
 
-## Implementation Notes
-- Used `django.db.models` for field definitions
-- Implemented custom validation methods
-- Utilized `django-model-utils` for additional timestamp features
+## Priority
+- Critical
 
-## Acceptance Criteria
-1. LearningTask model created with all specified fields ✓
-2. Database migrations completed successfully ✓
-3. Model supports all required operations ✓
-4. Performance is optimized for querying ✓
-
-## Effort Breakdown
-- Database Schema Design: 3 story points ✓
-- Model Implementation: 2 story points ✓
-- Testing: 1 story point ✓
-- Total: 6 story points ✓
-
-## Potential Risks Mitigated
-- Complex indexing requirements addressed
-- Performance considerations implemented
-- Data integrity across relationships ensured
-
-## Next Steps
-- Proceed with TASK-MODEL-002: Implement database relationships
-- Validate model with comprehensive test suite
+## Started At
+- 2025-02-28

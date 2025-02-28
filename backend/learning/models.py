@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from backend.courses.models import Course
+from courses.models import Course
 
 class LearningModule(models.Model):
     """

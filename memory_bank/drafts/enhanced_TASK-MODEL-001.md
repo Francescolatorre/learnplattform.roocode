@@ -344,3 +344,19 @@ class Migration(migrations.Migration):
 - Ensuring data integrity across relationships
 - Migration complexity in production environment
 - Future extensibility requirements
+
+## Debugging Notes (2025-02-28)
+
+### Test Infrastructure Insights
+- Successfully resolved test discovery issues in tasks app
+- Implemented consistent pytest and Django test configuration
+- Established robust test writing approach for model validation
+- Key improvements:
+  1. Consistent test file naming (test_*.py)
+  2. Use of @pytest.mark.django_db decorator
+  3. Comprehensive model method testing
+- Verified test coverage for:
+  - Model instance creation
+  - Choice field validations
+  - Default value checks
+- Confidence in model testing: HIGH

@@ -6,7 +6,7 @@ try:
     from courses.models import Course
 except ImportError as e:
     try:
-        from backend.courses.models import Course
+        from courses.models import Course
     except ImportError as e:
         raise ImportError(
             "Ensure the 'courses' app is installed and available in your Django project settings."

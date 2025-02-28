@@ -32,12 +32,12 @@ class Submission(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
         on_delete=models.CASCADE, 
-        related_name='submissions'
+        related_name='assessment_submissions'
     )
     task = models.ForeignKey(
-        'tasks.AssessmentTask', 
+        'tasks.LearningTask', 
         on_delete=models.CASCADE, 
-        related_name='submissions'
+        related_name='assessment_submissions'
     )
     submitted_at = models.DateTimeField(auto_now_add=True)
     content = models.TextField(
@@ -54,7 +54,7 @@ class Submission(models.Model):
     graded_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
-        related_name='graded_submissions',
+        related_name='assessment_graded_submissions',
         null=True,
         blank=True
     )
@@ -99,9 +99,10 @@ class Quiz(models.Model):
         blank=True
     )
     tasks = models.ManyToManyField(
-        'tasks.QuizTask', 
-        related_name='quizzes', 
-        blank=True
+        'tasks.LearningTask', 
+        related_name='assessment_quizzes', 
+        blank=True,
+        limit_choices_to={'task_type': 'MULTIPLE_CHOICE'}
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -133,9 +134,10 @@ class UserProgress(models.Model):
         related_name='user_progress'
     )
     completed_tasks = models.ManyToManyField(
-        'tasks.QuizTask', 
-        related_name='completed_by',
-        blank=True
+        'tasks.LearningTask', 
+        related_name='assessment_completed_by',
+        blank=True,
+        limit_choices_to={'task_type': 'MULTIPLE_CHOICE'}
     )
     total_score = models.DecimalField(
         _('Total Score'), 
