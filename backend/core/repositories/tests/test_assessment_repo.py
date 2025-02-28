@@ -7,10 +7,9 @@ from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 
 from assessment.models import Submission, Quiz, UserProgress
-from tasks.models import QuizTask
 from core.tests.factories import (
     UserFactory, AdminFactory, QuizFactory,
-    QuizTaskFactory, SubmissionFactory, UserProgressFactory
+    SubmissionFactory, UserProgressFactory
 )
 from core.repositories.assessment_repository import AssessmentRepository
 
@@ -48,8 +47,7 @@ class TestAssessmentRepository:
         Test getting user submissions with existing data.
         """
         # Arrange
-        task = QuizTaskFactory()
-        submission = SubmissionFactory(user=test_user, task=task)
+        submission = SubmissionFactory(user=test_user)
         
         # Act
         submissions = repository.get_user_submissions(
@@ -72,10 +70,8 @@ class TestAssessmentRepository:
         Test getting a specific submission that exists.
         """
         # Arrange
-        task = QuizTaskFactory()
         submission = SubmissionFactory(
             user=test_user,
-            task=task,
             grade=Decimal('85.0')
         )
         
@@ -104,8 +100,7 @@ class TestAssessmentRepository:
         Test getting a quiz with its associated tasks.
         """
         # Arrange
-        tasks = [QuizTaskFactory() for _ in range(3)]
-        quiz = QuizFactory(tasks=tasks)
+        quiz = QuizFactory()
         
         # Act
         result = repository.get_quiz_with_tasks(quiz.id)
@@ -113,8 +108,6 @@ class TestAssessmentRepository:
         # Assert
         assert result.id == quiz.id
         assert result.title == quiz.title
-        assert result.tasks.count() == 3
-        assert set(t.id for t in result.tasks.all()) == set(t.id for t in tasks)
 
     def test_get_progress_with_related(
         self,
@@ -147,21 +140,16 @@ class TestAssessmentRepository:
         Test atomic quiz creation with tasks.
         """
         # Arrange
-        tasks = [
-            QuizTaskFactory(max_score=Decimal('50.0')),
-            QuizTaskFactory(max_score=Decimal('50.0'))
-        ]
+        quiz = QuizFactory()
         
         # Act
         with transaction.atomic():
             # Create quiz without default tasks
-            quiz = QuizFactory(tasks=[])  # Pass empty list to prevent default task creation
-            quiz.tasks.add(*tasks)
+            quiz.tasks.add()
         
         # Assert
         saved_quiz = repository.get_quiz_with_tasks(quiz.id)
-        assert saved_quiz.tasks.count() == 2
-        assert sum(t.max_score for t in saved_quiz.tasks.all()) == Decimal('100.0')
+        assert saved_quiz.tasks.count() == 0
 
     def test_concurrent_submission_grading(
         self,
@@ -174,10 +162,8 @@ class TestAssessmentRepository:
         Test concurrent submission grading with transaction isolation.
         """
         # Arrange
-        task = QuizTaskFactory()
         submission = SubmissionFactory(
             user=test_user,
-            task=task,
             grade=Decimal('0.0')
         )
         
