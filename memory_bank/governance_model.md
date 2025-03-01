@@ -1,13 +1,10 @@
 # Governance Model
 
 ## Overview
-
 This document defines the governance model for the Learning Platform project, including mode interactions, task management, and memory bank usage guidelines. It serves as the authoritative reference for how different modes collaborate to accomplish project goals.
 
 ## Mode Interaction Protocol
-
 ### Mode Definitions and Responsibilities
-
 1. **Architect Mode**
    - **Primary Responsibility**: High-level system design, task planning, and architectural decisions
    - **File Access**: Can only edit markdown files (`.md`)
@@ -60,7 +57,6 @@ This document defines the governance model for the Learning Platform project, in
      - Validate requirements against business needs
 
 ### Mode Switching Protocol
-
 1. **Architect to Code Handoff**
    - Architect mode creates a task in `activeContext.md` with status `TODO`
    - Architect mode adds the task to `progress.md`
@@ -84,9 +80,7 @@ This document defines the governance model for the Learning Platform project, in
    - Target mode requests switch back to original mode
 
 ## Task Management Process
-
 ### Task Lifecycle
-
 1. **Task Creation (Architect Mode)**
    - Create task definition in `memory_bank/tasks/{TASK-ID}.md`
    - Add task to `progress.md` with status `TODO`
@@ -114,7 +108,6 @@ This document defines the governance model for the Learning Platform project, in
    - Activate next task or create new tasks
 
 ### Task Prioritization
-
 1. **Critical Path Tasks**
    - Tasks that block other tasks are prioritized
    - Dependencies are clearly documented
@@ -131,9 +124,7 @@ This document defines the governance model for the Learning Platform project, in
    - Circular dependencies are avoided
 
 ## Memory Bank Usage Guidelines
-
 ### File Purposes and Maintenance
-
 1. **activeContext.md**
    - Contains the current active task
    - Updated at the beginning and end of each task
@@ -177,7 +168,6 @@ This document defines the governance model for the Learning Platform project, in
    - Updated when product requirements change
 
 ### Information Flow Between Files
-
 1. **Task Creation Flow**
    - New task created in `tasks/{TASK-ID}.md`
    - Task added to `progress.md`
@@ -195,9 +185,7 @@ This document defines the governance model for the Learning Platform project, in
    - Technical context updated in `techContext.md` if needed
 
 ## Communication Standards
-
 ### Status Reporting
-
 1. **Task Status Updates**
    - Status changes must be reflected in all relevant files:
      - `activeContext.md` - For the current active task
@@ -213,7 +201,6 @@ This document defines the governance model for the Learning Platform project, in
    - Request appropriate mode switch if needed
 
 ### Documentation Standards
-
 1. **Task Documentation**
    - Follow YAML-like structure as specified in `.clinerules`
    - Include clear requirements and validation criteria
@@ -233,10 +220,25 @@ This document defines the governance model for the Learning Platform project, in
    - Reference relevant technical documentation
 
 ## Governance Model Updates
-
 This governance model should be reviewed and updated as needed to reflect changes in project processes and requirements. Updates to the governance model should be documented as ADRs to provide context for the changes.
 
 ## References
-
 - `.clinerules` - Base rules for mode interactions and task management
 - `.roomodes` - Mode definitions and file access permissions
+
+### Task Document Structure Definition
+**Task Document Structure**:
+- Each task document must include:
+  - **Title**: Clear and concise title of the task.
+  - **Status**: Status of the task on of [`TODO`, `IN_PROGRESS`, `DONE`, `POSTPONED`]
+  - **last Update**: Date of the last Update
+  - **Description**: Detailed description of what the task entails.
+  - **Requirements**: Specific requirements that need to be met.
+  - **Validation Criteria**: Criteria for validating the completion of the task.
+  - **Dependencies**: Any dependencies on other tasks or components.
+  - **Expected Outcome**: The expected result upon completion of the task.
+  - **Assigned To**:
+  - **Notes**:
+
+**Rule**:
+- All task documents must adhere to the above structure to ensure consistency and clarity across all project documentation. Failure to follow this structure may result in the task being revisited for additional clarification and documentation.
