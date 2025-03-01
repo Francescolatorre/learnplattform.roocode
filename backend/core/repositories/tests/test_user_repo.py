@@ -2,12 +2,12 @@
 Tests for the UserRepository implementation.
 """
 import pytest
-from django.db import transaction
-from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
 
-from core.tests.factories import UserFactory, AdminFactory
 from core.repositories.user_repository import UserRepository
+from core.tests.factories import AdminFactory, UserFactory
 
 User = get_user_model()
 pytestmark = pytest.mark.django_db

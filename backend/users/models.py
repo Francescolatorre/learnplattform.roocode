@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+
 class User(AbstractUser):
     """
     Custom User model with additional fields and configurations
@@ -14,6 +15,20 @@ class User(AbstractUser):
     # Optional profile fields
     bio = models.TextField(
         _('Bio'), 
+        blank=True
+    )
+    
+    # Add display_name field
+    display_name = models.CharField(
+        _('Display Name'),
+        max_length=150,
+        blank=True
+    )
+    
+    # Add role field
+    role = models.CharField(
+        _('Role'),
+        max_length=50,
         blank=True
     )
     

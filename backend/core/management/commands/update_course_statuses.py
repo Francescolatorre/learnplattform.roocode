@@ -1,5 +1,7 @@
 from django.core.management.base import BaseCommand
+
 from learning.models import Course
+
 
 class Command(BaseCommand):
     help = 'Updates the status of all courses to PUBLISHED'

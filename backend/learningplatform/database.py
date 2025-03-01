@@ -1,6 +1,7 @@
 """Database configuration for the learning platform."""
 
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

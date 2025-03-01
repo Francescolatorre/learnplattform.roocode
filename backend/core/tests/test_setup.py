@@ -4,9 +4,10 @@ Tests to verify the test infrastructure is working correctly.
 import pytest
 from django.urls import reverse
 from rest_framework import status
+
 from users.models import User  # Direct import from users app
 
-from .factories import UserFactory, AdminFactory
+from .factories import AdminFactory, UserFactory
 from .utils import APITestMixin, ModelTestMixin
 
 pytestmark = pytest.mark.django_db

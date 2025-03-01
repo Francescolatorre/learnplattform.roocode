@@ -15,7 +15,8 @@
             "console": "integratedTerminal",
             "env": {
                 "DJANGO_SETTINGS_MODULE": "learningplatform.settings"
-            }
+            },
+            "python": "${workspaceFolder}/backend/venv/Scripts/python.exe"
         },
         {
             "name": "UAT: Frontend Dev Server",
@@ -42,7 +43,8 @@
             "console": "integratedTerminal",
             "env": {
                 "DJANGO_SETTINGS_MODULE": "learningplatform.settings"
-            }
+            },
+            "python": "${workspaceFolder}/backend/venv/Scripts/python.exe"
         },
         {
             "name": "Debug: Specific Test",
@@ -57,7 +59,8 @@
             "console": "integratedTerminal",
             "env": {
                 "DJANGO_SETTINGS_MODULE": "learningplatform.settings"
-            }
+            },
+            "python": "${workspaceFolder}/backend/venv/Scripts/python.exe"
         },
         {
             "name": "Debug: Authentication API Test",
@@ -72,7 +75,8 @@
             "console": "integratedTerminal",
             "env": {
                 "DJANGO_SETTINGS_MODULE": "learningplatform.settings"
-            }
+            },
+            "python": "${workspaceFolder}/backend/venv/Scripts/python.exe"
         },
         {
             "name": "Django: Management Command",
@@ -87,7 +91,8 @@
             "console": "integratedTerminal",
             "env": {
                 "DJANGO_SETTINGS_MODULE": "learningplatform.settings"
-            }
+            },
+            "python": "${workspaceFolder}/backend/venv/Scripts/python.exe"
         }
         // Note: To run multiple configurations, open multiple VSCode windows 
         // and start each configuration separately

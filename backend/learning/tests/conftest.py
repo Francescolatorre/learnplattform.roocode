@@ -1,6 +1,7 @@
 import pytest
 from django.conf import settings
 
+
 @pytest.fixture(autouse=True)
 def setup_test_environment():
     settings.DEBUG = True

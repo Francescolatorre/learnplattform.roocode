@@ -1,5 +1,5 @@
-from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 # Try both import paths to handle different environments
 try:

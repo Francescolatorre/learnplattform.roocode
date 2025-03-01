@@ -2,14 +2,15 @@
 """
 Script to test if the Django server can start and if all endpoints work correctly.
 """
+import json
 import os
+import signal
+import subprocess
 import sys
 import time
-import subprocess
-import requests
-import json
-import signal
 from urllib.parse import urljoin
+
+import requests
 
 # Configuration
 BASE_URL = "http://localhost:8000"

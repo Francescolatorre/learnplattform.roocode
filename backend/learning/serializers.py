@@ -1,7 +1,10 @@
-from rest_framework import serializers
-from .models import Course, StatusTransition, InstructorRole, CourseInstructorAssignment, CourseVersion
-from tasks.serializers import LearningTaskSerializer
 from django.contrib.auth import get_user_model
+from rest_framework import serializers
+
+from tasks.serializers import LearningTaskSerializer
+
+from .models import (Course, CourseInstructorAssignment, CourseVersion,
+                     InstructorRole, StatusTransition)
 
 User = get_user_model()
 

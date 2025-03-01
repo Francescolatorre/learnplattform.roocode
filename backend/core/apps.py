@@ -1,5 +1,8 @@
+import logging
+
 from django.apps import AppConfig
 
+logger = logging.getLogger(__name__)
 
 class CoreConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
@@ -15,5 +18,5 @@ class CoreConfig(AppConfig):
             import core.models  # noqa
             import core.repositories  # noqa
             import core.services  # noqa
-        except ImportError:
-            pass
+        except ImportError as e:
+            logger.error(f"ImportError in CoreConfig.ready: {e}")

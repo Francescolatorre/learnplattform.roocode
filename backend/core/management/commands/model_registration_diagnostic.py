@@ -1,11 +1,13 @@
-from django.core.management.base import BaseCommand
-from django.apps import apps
-from django.db import models
 import json
 import os
 import sys
 import traceback
+
+from django.apps import apps
 from django.conf import settings
+from django.core.management.base import BaseCommand
+from django.db import models
+
 
 class Command(BaseCommand):
     help = 'Diagnostic tool to verify Django model registration'

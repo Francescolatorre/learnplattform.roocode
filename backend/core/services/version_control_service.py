@@ -13,11 +13,12 @@ Exceptions:
     encounter errors.
 """
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.utils import timezone
-from django.core.exceptions import ObjectDoesNotExist
-from learning.models import Course, CourseVersion
+
 from core.services.exceptions import VersionControlError
+from learning.models import Course, CourseVersion
 
 # Define DoesNotExist exception for CourseVersion
 CourseVersion.DoesNotExist = ObjectDoesNotExist

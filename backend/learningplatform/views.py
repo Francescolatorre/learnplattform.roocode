@@ -1,78 +1,34 @@
-from rest_framework import viewsets, permissions
-from rest_framework.decorators import action
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from rest_framework import permissions, viewsets
 from rest_framework.response import Response
 
-from courses.models import Course
-from tasks.models import LearningTask
-from .serializers import CourseSerializer, LearningTaskSerializer
+from .models import Course  # Assuming Course model exists
+from .serializers import CourseSerializer  # Assuming CourseSerializer exists
+
+
+# Add schema view for OpenAPI
+class SchemaView(SpectacularAPIView):
+    permission_classes = [permissions.AllowAny]
+
+class SwaggerView(SpectacularSwaggerView):
+    permission_classes = [permissions.AllowAny]
 
 class CourseViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet for Course operations
-    """
+    """ViewSet for handling course-related API endpoints."""
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
-    @action(detail=True, methods=['get'])
-    def tasks(self, request, pk=None):
-        """
-        Retrieve tasks for a specific course
-        """
-        course = self.get_object()
-        tasks = course.learning_tasks.all()
-        serializer = LearningTaskSerializer(tasks, many=True)
+    def list(self, request):
+        """Retrieve a list of courses."""
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-class LearningTaskViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet for Learning Task operations
-    """
-    queryset = LearningTask.objects.all()
-    serializer_class = LearningTaskSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    def create(self, request):
+        """Create a new course."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        course = serializer.save()
+        return Response(serializer.data, status=201)
 
-    def get_queryset(self):
-        """
-        Optionally filter tasks by course or task type
-        """
-        queryset = LearningTask.objects.all()
-        course_id = self.request.query_params.get('course_id')
-        task_type = self.request.query_params.get('task_type')
-
-        if course_id:
-            queryset = queryset.filter(course_id=course_id)
-        if task_type:
-            queryset = queryset.filter(task_type=task_type)
-
-        return queryset
-
-    @action(detail=True, methods=['get'])
-    def configuration(self, request, pk=None):
-        """
-        Retrieve task-specific configuration
-        """
-        task = self.get_object()
-        return Response(task.get_task_configuration())
-
-    @action(detail=True, methods=['post'])
-    def activate(self, request, pk=None):
-        """
-        Activate a task
-        """
-        task = self.get_object()
-        task.is_active = True
-        task.save()
-        serializer = self.get_serializer(task)
-        return Response(serializer.data)
-
-    @action(detail=True, methods=['post'])
-    def deactivate(self, request, pk=None):
-        """
-        Deactivate a task
-        """
-        task = self.get_object()
-        task.is_active = False
-        task.save()
-        serializer = self.get_serializer(task)
-        return Response(serializer.data)
+    # Additional methods for retrieve, update, and destroy can be added here

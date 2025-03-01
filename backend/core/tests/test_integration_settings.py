@@ -2,11 +2,12 @@
 Tests to verify integration test settings are working correctly.
 """
 import os
+
 import pytest
-from django.db import connection, transaction
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
+from django.db import connection, transaction
 from django.test import TransactionTestCase
 
 pytestmark = [pytest.mark.integration, pytest.mark.django_db(transaction=True)]

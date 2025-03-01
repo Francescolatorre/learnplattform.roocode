@@ -1,8 +1,9 @@
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 from django.utils import timezone
-from .models import Submission, Quiz, UserProgress
-from tasks.models import QuizTask, AssessmentTask
+
+from ..tasks.models import LearningTask, TaskType
+from .models import Quiz, Submission, UserProgress
 
 User = get_user_model()
 
@@ -17,14 +18,14 @@ class AssessmentModelTests(TestCase):
             password='testpass123'
         )
 
-        # Create a quiz task
-        self.quiz_task = QuizTask.objects.create(
+        # Create a learning task with task type QUIZ
+        self.quiz_task = LearningTask.objects.create(
             title='Python Basics Quiz',
             description='Quiz on fundamental Python concepts',
+            task_type=TaskType.QUIZ,
             max_score=100.00,
             passing_score=60.00,
-            time_limit=60,
-            is_randomized=True
+            is_active=True
         )
 
         # Create a quiz
@@ -38,9 +39,10 @@ class AssessmentModelTests(TestCase):
         """
         Test creating a submission for an assessment task.
         """
-        assessment_task = AssessmentTask.objects.create(
+        assessment_task = LearningTask.objects.create(
             title='Python Assignment',
             description='Coding assignment on Python fundamentals',
+            task_type=TaskType.TEXT_SUBMISSION,
             max_score=100.00,
             passing_score=70.00
         )
@@ -108,8 +110,9 @@ class AssessmentModelTests(TestCase):
         """
         Test the string representation of a submission.
         """
-        assessment_task = AssessmentTask.objects.create(
+        assessment_task = LearningTask.objects.create(
             title='Test Task',
+            task_type=TaskType.TEXT_SUBMISSION,
             max_score=100.00
         )
 

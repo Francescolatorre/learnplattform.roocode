@@ -1,6 +1,8 @@
 import os
 import sys
+
 import django
+
 
 def setup_django():
     """
@@ -32,8 +34,9 @@ def run_minimal_test():
     try:
         # Import models to verify they can be imported
         from django.contrib.auth import get_user_model
+
         from courses.models import Course
-        from tasks.models import LearningTask, TaskStatus, TaskDifficulty
+        from tasks.models import LearningTask, TaskDifficulty, TaskStatus
         
         print("Model imports successful")
         

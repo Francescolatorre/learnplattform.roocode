@@ -1,12 +1,9 @@
 import pytest
 from django.contrib.auth import get_user_model
-from learning.models import (
-    Course,
-    CourseInstructorAssignment,
-    InstructorRole,
-    CourseVersion,
-)
+
 from core.services.version_control_service import VersionControlService
+from learning.models import (Course, CourseInstructorAssignment, CourseVersion,
+                             InstructorRole)
 
 User = get_user_model()
 

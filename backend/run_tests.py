@@ -1,7 +1,9 @@
 import os
 import sys
+
 import pytest
 from django.conf import settings
+
 
 def print_path():
     print("Current PYTHONPATH:")

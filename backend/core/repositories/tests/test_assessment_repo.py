@@ -1,17 +1,16 @@
 """
 Tests for the AssessmentRepository implementation.
 """
-import pytest
 from decimal import Decimal
-from django.db import transaction
-from django.core.exceptions import ObjectDoesNotExist
 
-from assessment.models import Submission, Quiz, UserProgress
-from core.tests.factories import (
-    UserFactory, AdminFactory, QuizFactory,
-    SubmissionFactory, UserProgressFactory
-)
+import pytest
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
+
+from assessment.models import Quiz, Submission, UserProgress
 from core.repositories.assessment_repository import AssessmentRepository
+from core.tests.factories import (AdminFactory, QuizFactory, SubmissionFactory,
+                                  UserFactory, UserProgressFactory)
 
 pytestmark = pytest.mark.django_db
 

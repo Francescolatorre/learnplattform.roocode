@@ -1,93 +1,76 @@
 """
 Repository for task-related database operations.
 """
+
 from decimal import Decimal
 from typing import Dict, List, Optional, Union
-from django.core.exceptions import ObjectDoesNotExist
+
 from django.db import transaction
 from django.db.models import QuerySet
 
-from tasks.models import LearningTask, AssessmentTask, QuizTask
+from backend.learningplatform.models import Task
+
 
 class TaskRepository:
     """
     Handles database operations for tasks.
     """
 
-    def get_learning_tasks(self) -> QuerySet[LearningTask]:
+    def get_tasks(self) -> QuerySet[Task]:
         """
-        Retrieves all learning tasks.
+        Retrieves all tasks.
 
         Returns:
-            QuerySet[LearningTask]: A queryset of learning tasks.
+            QuerySet[Task]: A queryset of tasks.
         """
-        return LearningTask.objects.all()
+        return Task.objects.all()
 
-    def get_assessment_tasks(self) -> QuerySet[AssessmentTask]:
+    def get_task(self, task_id: int) -> Task:
         """
-        Retrieves all assessment tasks.
-
-        Returns:
-            QuerySet[AssessmentTask]: A queryset of assessment tasks.
-        """
-        return AssessmentTask.objects.all()
-
-    def get_quiz_task(self, task_id: int) -> QuizTask:
-        """
-        Retrieves a specific quiz task by ID.
+        Retrieves a specific task by ID.
 
         Args:
-            task_id (int): The ID of the quiz task.
+            task_id (int): The ID of the task.
 
         Returns:
-            QuizTask: The requested quiz task.
+            Task: The requested task.
 
         Raises:
             ObjectDoesNotExist: If the task doesn't exist.
         """
-        return QuizTask.objects.get(id=task_id)
+        return Task.objects.get(id=task_id)
 
-    def create_learning_task(self, **task_data: Dict[str, Union[str, Decimal]]) -> LearningTask:
+    def create_task(
+        self, **task_data: Dict[str, Union[str, int, bool, Decimal]]
+    ) -> Task:
         """
-        Creates a new learning task.
+        Creates a new task.
 
         Args:
-            **task_data: Task fields including title, description,
-                        and difficulty_level.
+            **task_data: Task fields including title, description, and other attributes.
 
         Returns:
-            LearningTask: The created learning task.
+            Task: The created task.
         """
-        return LearningTask.objects.create(**task_data)
+        return Task.objects.create(**task_data)
 
-    def create_quiz_task(self, **task_data: Dict[str, Union[str, int, bool, Decimal]]) -> QuizTask:
+    def update_task(
+        self, task_id: int, **updates: Dict[str, Union[str, Decimal]]
+    ) -> Task:
         """
-        Creates a new quiz task.
-
-        Args:
-            **task_data: Task fields including title, max_score,
-                        time_limit, and is_randomized.
-
-        Returns:
-            QuizTask: The created quiz task.
-        """
-        return QuizTask.objects.create(**task_data)
-
-    def update_assessment_task(self, task_id: int, **updates: Dict[str, Union[str, Decimal]]) -> AssessmentTask:
-        """
-        Updates an assessment task.
+        Updates a task.
 
         Args:
             task_id (int): The ID of the task to update.
             **updates: Fields to update.
 
         Returns:
-            AssessmentTask: The updated task.
+            Task: The updated task.
 
         Raises:
             ObjectDoesNotExist: If the task doesn't exist.
         """
-        task = AssessmentTask.objects.get(id=task_id)
+        task = Task.objects.get(id=task_id)
         for field, value in updates.items():
             setattr(task, field, value)
         task.save()
@@ -95,7 +78,7 @@ class TaskRepository:
 
     def delete_task(self, task_id: int) -> None:
         """
-        Deletes a task of any type.
+        Deletes a task.
 
         Args:
             task_id (int): The ID of the task to delete.
@@ -103,13 +86,12 @@ class TaskRepository:
         Raises:
             ObjectDoesNotExist: If the task doesn't exist.
         """
-        try:
-            task = LearningTask.objects.get(id=task_id)
-        except LearningTask.DoesNotExist:
-            task = AssessmentTask.objects.get(id=task_id)
+        task = Task.objects.get(id=task_id)
         task.delete()
 
-    def get_tasks_by_due_date(self, before_date: Optional[str] = None) -> QuerySet[AssessmentTask]:
+    def get_tasks_by_due_date(
+        self, before_date: Optional[str] = None
+    ) -> QuerySet[Task]:
         """
         Retrieves tasks based on due date.
 
@@ -119,12 +101,14 @@ class TaskRepository:
         Returns:
             QuerySet: Tasks matching the criteria.
         """
-        tasks = AssessmentTask.objects.all()
+        tasks = Task.objects.all()
         if before_date:
             tasks = tasks.filter(due_date__lte=before_date)
         return tasks
 
-    def get_tasks_with_criteria(self, **filters: Dict[str, Union[str, Decimal]]) -> QuerySet[AssessmentTask]:
+    def get_tasks_with_criteria(
+        self, **filters: Dict[str, Union[str, Decimal]]
+    ) -> QuerySet[Task]:
         """
         Retrieves tasks based on multiple criteria.
 
@@ -134,10 +118,12 @@ class TaskRepository:
         Returns:
             QuerySet: Tasks matching the criteria.
         """
-        return AssessmentTask.objects.filter(**filters)
+        return Task.objects.filter(**filters)
 
     @transaction.atomic
-    def bulk_create_tasks(self, task_data_list: List[Dict[str, Union[str, int, bool, Decimal]]]) -> List[Union[LearningTask, QuizTask]]:
+    def bulk_create_tasks(
+        self, task_data_list: List[Dict[str, Union[str, int, bool, Decimal]]]
+    ) -> List[Task]:
         """
         Creates multiple tasks in a single transaction.
 
@@ -149,10 +135,6 @@ class TaskRepository:
         """
         created_tasks = []
         for task_data in task_data_list:
-            task_type = task_data.pop('type', 'learning')
-            if task_type == 'quiz':
-                task = self.create_quiz_task(**task_data)
-            else:
-                task = self.create_learning_task(**task_data)
+            task = self.create_task(**task_data)
             created_tasks.append(task)
         return created_tasks

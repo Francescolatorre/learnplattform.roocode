@@ -1,11 +1,11 @@
-from django.test import TestCase
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.core.exceptions import ValidationError
-from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import TestCase
 
-from tasks.models import FileUploadTaskType, FileSubmission, LearningTask
 from courses.models import Course
+from tasks.models import FileSubmission, FileUploadTaskType, LearningTask
 
 User = get_user_model()
 

@@ -1,9 +1,12 @@
-from django.test import TestCase
-from learning.models import LearningTask
-from courses.models import Course
-from django.contrib.auth.models import User
-from django.utils import timezone
 import uuid
+
+from django.contrib.auth.models import User
+from django.test import TestCase
+from django.utils import timezone
+
+from courses.models import Course
+from learning.models import LearningTask
+
 
 class LearningTaskModelTest(TestCase):
 

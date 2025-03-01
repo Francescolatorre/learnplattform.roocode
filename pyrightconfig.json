@@ -1,0 +1,10 @@
+{
+  "include": ["backend"],
+  "exclude": ["**/migrations"],
+  "reportMissingTypeStubs": false,
+  "reportUnusedImport": true,
+  "reportUnusedVariable": true,
+  "reportGeneralTypeIssues": true,
+  "pythonVersion": "3.8",
+  "typeCheckingMode": "basic"
+}

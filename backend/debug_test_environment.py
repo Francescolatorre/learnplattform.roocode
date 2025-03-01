@@ -1,7 +1,9 @@
 import os
 import sys
+
 import django
 from django.conf import settings
+
 
 def print_debug_info():
     print("Python Version:", sys.version)
@@ -21,8 +23,9 @@ def print_debug_info():
     # Check model imports
     try:
         from django.contrib.auth import get_user_model
+
         from courses.models import Course
-        from tasks.models import LearningTask, TaskStatus, TaskDifficulty
+        from tasks.models import LearningTask, TaskDifficulty, TaskStatus
         
         print("\nModel Import Check:")
         print("User Model:", get_user_model())

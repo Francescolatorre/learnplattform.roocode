@@ -5,17 +5,11 @@ from .assessment_service import AssessmentService
 
 # Import exceptions with error handling to avoid Pylint errors
 try:
-    from .exceptions import (
-        ServiceError,
-        NotAuthorizedError,
-        SubmissionNotFoundError,
-        QuizNotFoundError,
-        TaskNotFoundError,
-        DuplicateTaskError,
-        ProgressNotFoundError,
-        TaskNotInQuizError,
-        VersionControlError
-    )
+    from .exceptions import (DuplicateTaskError, NotAuthorizedError,
+                             ProgressNotFoundError, QuizNotFoundError,
+                             ServiceError, SubmissionNotFoundError,
+                             TaskNotFoundError, TaskNotInQuizError,
+                             VersionControlError)
 except ImportError:
     # Define placeholder classes if imports fail
     # This helps with circular imports and Pylint errors

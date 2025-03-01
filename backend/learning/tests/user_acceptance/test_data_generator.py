@@ -1,6 +1,7 @@
 import os
-import django
 import random
+
+import django
 from django.contrib.auth import get_user_model
 from django.core.wsgi import get_wsgi_application
 
@@ -8,13 +9,9 @@ from django.core.wsgi import get_wsgi_application
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "learningplatform.settings")
 django.setup()
 
-from learning.models import (
-    Course,
-    CourseInstructorAssignment,
-    InstructorRole,
-    CourseVersion,
-)
 from core.services.version_control_service import VersionControlService
+from learning.models import (Course, CourseInstructorAssignment, CourseVersion,
+                             InstructorRole)
 
 User = get_user_model()
 

@@ -2,9 +2,11 @@
 Test utilities for the learning platform.
 """
 from typing import Any, Dict, List, Optional, Type, Union
+
 from django.db import models
 from django.urls import reverse
 from rest_framework.test import APIClient
+
 
 class APITestMixin:
     """Mixin providing utility methods for API testing."""
@@ -120,8 +122,9 @@ def get_test_image_file(
     Returns:
         SimpleUploadedFile instance with the image
     """
-    from PIL import Image
     import io
+
+    from PIL import Image
     image = Image.new('RGB', size, color)
     image_io = io.BytesIO()
     image.save(image_io, format=ext)

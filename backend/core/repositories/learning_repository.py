@@ -2,11 +2,13 @@
 Repository for learning-related database operations.
 """
 from typing import List, Optional
-from django.db import transaction
+
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
 
 from learning.models import Course
 from tasks.models import LearningTask
+
 
 class LearningRepository:
     """

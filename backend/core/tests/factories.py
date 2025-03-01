@@ -1,13 +1,16 @@
 """
 Factory Boy factories for core models.
 """
-import factory
 from decimal import Decimal
-from users.models import User  # Direct import from users app
+
+import factory
 from factory.django import DjangoModelFactory
+
 from assessment.models import Quiz, Submission, UserProgress
-from tasks.models import QuizTask, LearningTask, AssessmentTask
 from learning.models import Course
+from tasks.models import LearningTask
+from users.models import User  # Direct import from users app
+
 
 class UserFactory(DjangoModelFactory):
     """Factory for User model."""
@@ -49,26 +52,6 @@ class AdminFactory(UserFactory):
     role = 'admin'
     is_staff = True
     is_superuser = True
-
-class AssessmentTaskFactory(DjangoModelFactory):
-    """Factory for AssessmentTask model."""
-    
-    class Meta:
-        model = AssessmentTask
-    
-    title = factory.Sequence(lambda n: f'Assessment Task {n}')
-    description = factory.LazyAttribute(lambda obj: f'Description for {obj.title}')
-    max_score = Decimal('100.0')
-    passing_score = Decimal('60.0')
-
-class QuizTaskFactory(AssessmentTaskFactory):
-    """Factory for QuizTask model."""
-    
-    class Meta:
-        model = QuizTask
-    
-    time_limit = 30
-    is_randomized = False
 
 class LearningTaskFactory(DjangoModelFactory):
     """Factory for LearningTask model."""
@@ -113,7 +96,7 @@ class SubmissionFactory(DjangoModelFactory):
         model = Submission
     
     user = factory.SubFactory(UserFactory)
-    task = factory.SubFactory(QuizTaskFactory)
+    task = factory.SubFactory(LearningTaskFactory)
     content = factory.LazyAttribute(lambda obj: f'Submission content for {obj.task.title}')
     grade = None
     graded_by = None

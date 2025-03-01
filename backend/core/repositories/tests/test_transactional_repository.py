@@ -3,8 +3,10 @@ Tests for transactional behavior in repositories.
 """
 import pytest
 from django.db import transaction
+
 from core.repositories.task_repository import TaskRepository
 from tasks.models import LearningTask
+
 
 @pytest.mark.django_db
 def test_repository_transaction_isolation(django_user_model):

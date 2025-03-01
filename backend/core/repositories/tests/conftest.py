@@ -1,11 +1,13 @@
 """
 Repository layer test configuration and fixtures.
 """
-import pytest
 from decimal import Decimal
-from django.db import transaction
+
+import pytest
 from django.contrib.auth import get_user_model
-from core.tests.factories import UserFactory, AdminFactory
+from django.db import transaction
+
+from core.tests.factories import AdminFactory, UserFactory
 
 User = get_user_model()
 

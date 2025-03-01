@@ -1,7 +1,9 @@
-from rest_framework import serializers
-from .models import Submission, Quiz, UserProgress
-from tasks.serializers import AssessmentTaskSerializer, QuizTaskSerializer
 from django.contrib.auth import get_user_model
+from rest_framework import serializers
+
+from tasks.serializers import AssessmentTaskSerializer, QuizTaskSerializer
+
+from .models import Quiz, Submission, UserProgress
 
 User = get_user_model()
 

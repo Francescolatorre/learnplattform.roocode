@@ -1,10 +1,12 @@
-from django.test import TestCase
-from django.contrib.auth import get_user_model
-from django.utils import timezone
-from django.core.exceptions import ValidationError
 from datetime import timedelta
+
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.test import TestCase
+from django.utils import timezone
+
 from courses.models import Course
-from tasks.models import LearningTask, TaskStatus, TaskType, TaskDifficulty
+from tasks.models import LearningTask, TaskDifficulty, TaskStatus, TaskType
 
 User = get_user_model()
 

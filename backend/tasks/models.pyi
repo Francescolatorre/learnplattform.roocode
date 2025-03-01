@@ -1,4 +1,5 @@
 from typing import Any, Optional
+
 from django.db import models
 from django.db.models import Manager, QuerySet
 
@@ -24,13 +25,6 @@ class LearningTask(BaseTask):
 class AssessmentTask(BaseTask):
     max_score: Optional[float]
     passing_score: Optional[float]
-    objects: BaseTaskManager
-
-    class DoesNotExist(Exception): ...
-
-class QuizTask(AssessmentTask):
-    time_limit: Optional[int]
-    is_randomized: bool
     objects: BaseTaskManager
 
     class DoesNotExist(Exception): ...

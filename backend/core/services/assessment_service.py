@@ -4,18 +4,14 @@ Service layer implementation for assessment-related business logic.
 from decimal import Decimal
 from typing import List, Optional
 
-from django.db import transaction
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 
-from .exceptions import (
-    NotAuthorizedError,
-    SubmissionNotFoundError,
-    QuizNotFoundError,
-    TaskNotFoundError,
-    DuplicateTaskError,
-    ProgressNotFoundError,
-    TaskNotInQuizError
-)
+from .exceptions import (DuplicateTaskError, NotAuthorizedError,
+                         ProgressNotFoundError, QuizNotFoundError,
+                         SubmissionNotFoundError, TaskNotFoundError,
+                         TaskNotInQuizError)
+
 
 class AssessmentService:
     """

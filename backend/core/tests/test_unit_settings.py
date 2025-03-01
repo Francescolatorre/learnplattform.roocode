@@ -2,8 +2,8 @@
 Tests to verify unit test settings are working correctly.
 """
 import pytest
-from django.db import connection
 from django.conf import settings
+from django.db import connection
 
 pytestmark = pytest.mark.unit
 

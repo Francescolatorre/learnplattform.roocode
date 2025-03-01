@@ -2,15 +2,14 @@
 Tests for the LearningRepository implementation.
 """
 import pytest
-from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
 
+from core.repositories.learning_repository import LearningRepository
+from core.tests.factories import (CourseFactory, LearningTaskFactory,
+                                  UserFactory)
 from learning.models import Course
 from tasks.models import LearningTask
-from core.tests.factories import (
-    UserFactory, CourseFactory, LearningTaskFactory
-)
-from core.repositories.learning_repository import LearningRepository
 
 pytestmark = pytest.mark.django_db
 

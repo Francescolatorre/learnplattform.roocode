@@ -1,21 +1,18 @@
 """
 Tests for the assessment service layer.
 """
-import pytest
 from decimal import Decimal
 from unittest.mock import Mock, call
+
+import pytest
 from django.db import transaction
 
 from ..assessment_service import AssessmentService
-from ..exceptions import (
-    NotAuthorizedError,
-    SubmissionNotFoundError,
-    QuizNotFoundError,
-    TaskNotFoundError,
-    ProgressNotFoundError,
-    TaskNotInQuizError,
-    DuplicateTaskError
-)
+from ..exceptions import (DuplicateTaskError, NotAuthorizedError,
+                          ProgressNotFoundError, QuizNotFoundError,
+                          SubmissionNotFoundError, TaskNotFoundError,
+                          TaskNotInQuizError)
+
 
 @pytest.mark.unit
 def test_get_user_submissions(mock_repository):

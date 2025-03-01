@@ -90,6 +90,27 @@ npm run dev
 - LLM-powered assessment
 - Basic user management
 - Course submissions
+- **Multiple Choice Quiz Task Type**
+  - Configurable quiz with randomization options
+  - Flexible scoring mechanism
+  - Detailed submission tracking
+  - Support for single and multiple correct answers
+  - Attempt limit configuration
+
+## Task Types Supported
+- Text Submission
+- Multiple Choice Quiz
+- File Upload
+- Project
+- Discussion
+
+## Quiz Configuration Features
+- Total questions configuration
+- Points per question
+- Maximum attempts
+- Question randomization
+- Option randomization
+- Detailed submission results
 
 ## YAGNI Considerations
 - No premium features

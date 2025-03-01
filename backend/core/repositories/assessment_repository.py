@@ -2,11 +2,12 @@
 Repository for assessment-related database operations.
 """
 from typing import List, Optional
-from django.db import transaction
-from django.core.exceptions import ObjectDoesNotExist
 
-from assessment.models import Submission, Quiz, UserProgress, QuizTask  # Corrected import: QuizTask from assessment.models
-# from tasks.models import QuizTask # Incorrect import
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
+
+from assessment.models import Quiz, Submission, UserProgress
+
 
 class AssessmentRepository:
     """
@@ -88,7 +89,7 @@ class AssessmentRepository:
         self,
         title: str,
         description: str,
-        tasks: List[QuizTask]
+        tasks: List
     ) -> Quiz:
         """
         Create a new quiz with associated tasks atomically.
@@ -96,7 +97,7 @@ class AssessmentRepository:
         Args:
             title: Quiz title
             description: Quiz description
-            tasks: List of QuizTask objects
+            tasks: List of task objects
             
         Returns:
             Created Quiz object

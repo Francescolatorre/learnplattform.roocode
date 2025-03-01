@@ -1,7 +1,8 @@
 import pytest
 from django.contrib.auth import get_user_model
+
 from courses.models import Course
-from tasks.models import LearningTask, TaskStatus, TaskDifficulty
+from tasks.models import LearningTask, TaskDifficulty, TaskStatus
 
 User = get_user_model()
 

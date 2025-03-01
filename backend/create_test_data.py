@@ -1,9 +1,10 @@
-from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
+from django.core.management.base import BaseCommand
 from django.db import transaction
 
 try:
-    from learning.models import Course, CourseInstructorAssignment, InstructorRole
+    from learning.models import (Course, CourseInstructorAssignment,
+                                 InstructorRole)
 except ImportError as e:
     raise ImportError(
         "Ensure the 'learning' app is installed and available in your Django project settings."

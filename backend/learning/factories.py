@@ -1,8 +1,11 @@
+from django.contrib.auth.models import User
 from factory import DjangoModelFactory, Faker, SubFactory
 from factory.django import DjangoModelFactory
-from .models import LearningTask
+
 from courses.factories import CourseFactory
-from django.contrib.auth.models import User
+
+from .models import LearningTask
+
 
 class LearningTaskFactory(DjangoModelFactory):
     class Meta:

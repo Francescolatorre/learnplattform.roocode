@@ -2,20 +2,16 @@
 Views for user authentication and management.
 """
 from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from django.core.mail import send_mail
-from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
-from .serializers import (
-    UserRegistrationSerializer,
-    UserLoginSerializer,
-    UserProfileSerializer,
-    PasswordResetSerializer,
-)
+from .serializers import (PasswordResetSerializer, UserLoginSerializer,
+                          UserProfileSerializer, UserRegistrationSerializer)
 
 User = get_user_model()
 

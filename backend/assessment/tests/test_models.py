@@ -1,15 +1,17 @@
 """
 Tests for assessment app models.
 """
-import pytest
 from decimal import Decimal
+
+import pytest
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from assessment.models import Submission, Quiz, UserProgress
-from core.tests.factories import (
-    UserFactory, QuizFactory, QuizTaskFactory,
-    SubmissionFactory, UserProgressFactory
-)
+
+from assessment.models import Quiz, Submission, UserProgress
+from core.tests.factories import (QuizFactory, QuizTaskFactory,
+                                  SubmissionFactory, UserFactory,
+                                  UserProgressFactory)
+
 
 @pytest.mark.django_db
 class TestSubmissionModel:

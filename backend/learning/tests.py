@@ -1,8 +1,10 @@
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 from django.utils import timezone
-from .models import Course
+
 from tasks.models import LearningTask
+
+from .models import Course
 
 User = get_user_model()
 

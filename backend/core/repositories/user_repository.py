@@ -2,9 +2,10 @@
 Repository for user-related database operations.
 """
 from typing import List, Optional
-from django.db import transaction
-from django.core.exceptions import ObjectDoesNotExist
+
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
 
 User = get_user_model()
 

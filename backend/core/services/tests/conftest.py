@@ -1,9 +1,10 @@
 """
 Service layer test configuration and fixtures.
 """
-import pytest
-from unittest.mock import Mock, MagicMock, PropertyMock
 from decimal import Decimal
+from unittest.mock import MagicMock, Mock, PropertyMock
+
+import pytest
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.test import TransactionTestCase

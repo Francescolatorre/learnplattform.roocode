@@ -2,9 +2,11 @@
 Custom assertions for service layer testing.
 """
 from decimal import Decimal
-from typing import Any, List, Dict, Optional
-from django.db.models import Model
+from typing import Any, Dict, List, Optional
+
 from django.db import transaction
+from django.db.models import Model
+
 
 def assert_business_rules(
     result: Any,
