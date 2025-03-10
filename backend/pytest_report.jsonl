@@ -1,4 +1,0 @@
-{"pytest_version": "7.4.4", "$report_type": "SessionStart"}
-{"nodeid": "", "outcome": "passed", "longrepr": null, "result": null, "sections": [], "$report_type": "CollectReport"}
-{"nodeid": "tasks/tests.py", "outcome": "failed", "longrepr": "import file mismatch:\nimported module 'backend.tasks.tests' has this __file__ attribute:\n  C:\\DEVELOPMENT\\projects\\learnplatfom2\\backend\\tasks\\tests\nwhich is not the same as the test file we want to collect:\n  C:\\DEVELOPMENT\\projects\\learnplatfom2\\backend\\tasks\\tests.py\nHINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules", "result": null, "sections": [], "$report_type": "CollectReport"}
-{"exitstatus": 2, "$report_type": "SessionFinish"}

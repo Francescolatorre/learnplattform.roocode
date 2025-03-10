@@ -1,5 +1,5 @@
 [MASTER]
-ignore=tests
+ignore=tests, Lib
 jobs=1
 load-plugins=pylint_django
 
@@ -10,7 +10,7 @@ disable=
     C0116,  # missing-function-docstring
 
 [FORMAT]
-max-line-length=88
+max-line-length=120
 
 [DESIGN]
 max-args=10
@@ -29,3 +29,6 @@ ignored-modules=
     django.conf
     django.core
     django.utils
+
+[pylint_django]
+django-settings-module=learningplatform_backend.settings

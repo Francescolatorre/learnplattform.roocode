@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Box, 
   Typography, 
@@ -8,22 +9,28 @@ import {
   Select, 
   MenuItem, 
   CircularProgress, 
-  SelectChangeEvent 
+  SelectChangeEvent, 
+  Button,
+  Card,
+  CardContent,
+  CardActionArea
 } from '@mui/material';
-import { fetchCourses } from '../../services/courseService';
+import { fetchCourses, fetchCourseDetails } from '../../services/courseService';
 import { Course, CourseError } from '../../types/courseTypes';
 
 const CoursesPage: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<CourseError | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<Course['category'] | null>(null);
+  const { courseId } = useParams<{ courseId: string }>();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadCourses = async () => {
       try {
         setLoading(true);
-        const result = await fetchCourses(selectedCategory || undefined);
+        const result = await fetchCourses();
         
         if (result.error) {
           setError(result.error);
@@ -44,13 +51,46 @@ const CoursesPage: React.FC = () => {
     };
 
     loadCourses();
-  }, [selectedCategory]);
+  }, []);
 
-  const handleCategoryChange = (event: SelectChangeEvent<string>) => {
-    setSelectedCategory(event.target.value as Course['category'] || null);
-  };
+  useEffect(() => {
+    const loadCourseDetails = async () => {
+      if (!courseId) return;
+      
+      try {
+        setLoading(true);
+        const result = await fetchCourseDetails(courseId);
+        
+        if ('error' in result) {
+          setError(result.error);
+        } else {
+          // Find the course in the list and replace it with the detailed version
+          const courseIndex = courses.findIndex(c => c.id.toString() === courseId);
+          if (courseIndex >= 0) {
+            const updatedCourses = [...courses];
+            updatedCourses[courseIndex] = result;
+            setCourses(updatedCourses);
+          }
+          setSelectedCourse(result);
+        }
+      } catch {
+        setError({ 
+          message: 'An unexpected error occurred while fetching course details', 
+          code: 0 
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (loading) {
+    if (courseId) {
+      loadCourseDetails();
+    } else {
+      setSelectedCourse(null);
+    }
+  }, [courseId, courses]);
+
+  if (loading && courses.length === 0) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
         <CircularProgress />
@@ -58,7 +98,7 @@ const CoursesPage: React.FC = () => {
     );
   }
 
-  if (error) {
+  if (error && courses.length === 0) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="100vh" flexDirection="column">
         <Typography color="error" variant="h6" gutterBottom>
@@ -73,23 +113,77 @@ const CoursesPage: React.FC = () => {
     );
   }
 
+  // Display course details if a course is selected
+  if (selectedCourse) {
+    return (
+      <Box p={3}>
+        <Button variant="outlined" onClick={() => navigate('/courses')}>
+          Back to All Courses
+        </Button>
+        
+        <Box mt={3}>
+          <Typography variant="h4" gutterBottom>
+            {selectedCourse.title}
+          </Typography>
+          
+          <Typography variant="body1" paragraph>
+            {selectedCourse.description}
+          </Typography>
+          
+          <Grid container spacing={2} mt={2}>
+            <Grid item xs={12} md={6}>
+              <Typography variant="subtitle1">Course Details</Typography>
+              <Box mt={1}>
+                <Typography variant="body2">
+                  <strong>Status:</strong> {selectedCourse.status || 'Draft'}
+                </Typography>
+                <Typography variant="body2">
+                  <strong>Version:</strong> {selectedCourse.version || '1.0'}
+                </Typography>
+                <Typography variant="body2">
+                  <strong>Created:</strong> {new Date(selectedCourse.created_at).toLocaleDateString()}
+                </Typography>
+                <Typography variant="body2">
+                  <strong>Last Updated:</strong> {new Date(selectedCourse.updated_at).toLocaleDateString()}
+                </Typography>
+              </Box>
+            </Grid>
+            
+            <Grid item xs={12} md={6}>
+              <Typography variant="subtitle1">Learning Objectives</Typography>
+              <Typography variant="body2">
+                {selectedCourse.learning_objectives || 'No learning objectives specified.'}
+              </Typography>
+            </Grid>
+          </Grid>
+          
+          <Box mt={4}>
+            <Button 
+              variant="contained" 
+              color="primary"
+              onClick={() => navigate(`/courses/${selectedCourse.id}/edit`)}
+            >
+              Edit Course
+            </Button>
+            
+            <Button 
+              variant="outlined" 
+              color="primary" 
+              sx={{ ml: 2 }}
+              onClick={() => navigate(`/courses/${selectedCourse.id}/tasks`)}
+            >
+              View Tasks
+            </Button>
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
+
+  // Display list of courses
   return (
     <Box p={3}>
       <Typography variant="h4" gutterBottom>Courses</Typography>
-      
-      <FormControl fullWidth variant="outlined" sx={{ mb: 3 }}>
-        <InputLabel>Category</InputLabel>
-        <Select
-          value={selectedCategory || ''}
-          onChange={handleCategoryChange}
-          label="Category"
-        >
-          <MenuItem value="">All Categories</MenuItem>
-          <MenuItem value="Web Development">Web Development</MenuItem>
-          <MenuItem value="Data Science">Data Science</MenuItem>
-          <MenuItem value="Cybersecurity">Cybersecurity</MenuItem>
-        </Select>
-      </FormControl>
 
       {courses.length === 0 ? (
         <Typography variant="body1" color="textSecondary">
@@ -99,25 +193,29 @@ const CoursesPage: React.FC = () => {
         <Grid container spacing={3}>
           {courses.map((course) => (
             <Grid item xs={12} sm={6} md={4} key={course.id}>
-              <Box 
-                border={1} 
-                borderColor="grey.300" 
-                borderRadius={2} 
-                p={2} 
-                height="100%"
-                display="flex"
-                flexDirection="column"
-              >
-                <Typography variant="h6" gutterBottom>
-                  {course.title}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" sx={{ flexGrow: 1 }}>
-                  {course.description}
-                </Typography>
-                <Typography variant="caption" color="textSecondary">
-                  Category: {course.category}
-                </Typography>
-              </Box>
+              <Card variant="outlined" sx={{ height: '100%' }}>
+                <CardActionArea 
+                  onClick={() => navigate(`/courses/${course.id}`)} 
+                  sx={{ height: '100%' }}
+                >
+                  <CardContent sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <Typography variant="h6" gutterBottom>
+                      {course.title}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" sx={{ flexGrow: 1 }}>
+                      {course.description}
+                    </Typography>
+                    <Box mt={2}>
+                      <Typography variant="caption" color="textSecondary" display="block">
+                        Status: {course.status || 'Draft'}
+                      </Typography>
+                      <Typography variant="caption" color="textSecondary" display="block">
+                        Version: {course.version || '1.0'}
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
             </Grid>
           ))}
         </Grid>

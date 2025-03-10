@@ -1,4 +1,9 @@
+import axios from 'axios';
 import { Course, CourseDetails, CourseError } from '../types/courseTypes';
+import { CourseVersion } from '../features/courses/courseTypes';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = `${API_BASE_URL}/api/v1`;
 
 const getAuthToken = () => {
   return localStorage.getItem('access_token') || '';
@@ -7,16 +12,25 @@ const getAuthToken = () => {
 export const fetchCourses = async (category?: string, sortOrder?: string, page?: number, includeReviews?: boolean): Promise<{ courses: Course[], error: CourseError | null }> => {
   try {
     const token = getAuthToken();
-    const url = category ? `/api/v1/courses?category=${category}` : '/api/v1/courses';
-    const response = await fetch(`${url}${sortOrder ? `&sortOrder=${sortOrder}` : ''}${page ? `&page=${page}` : ''}${includeReviews ? `&includeReviews=${includeReviews}` : ''}`, {
+    const params = new URLSearchParams();
+    if (category) params.append('category', category);
+    if (sortOrder) params.append('sortOrder', sortOrder);
+    if (page) params.append('page', page.toString());
+    if (includeReviews) params.append('includeReviews', includeReviews.toString());
+    
+    const response = await axios.get(`${API_URL}/courses/`, {
+      params,
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       }
     });
 
-    if (!response.ok) {
-      switch (response.status) {
+    return { courses: response.data.results || response.data, error: null };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status || 0;
+      switch (status) {
         case 401:
           return { courses: [], error: { message: 'Unauthorized. Please log in again.', code: 401 } };
         case 403:
@@ -26,23 +40,7 @@ export const fetchCourses = async (category?: string, sortOrder?: string, page?:
         case 500:
           return { courses: [], error: { message: 'An internal server error occurred. Please try again later.', code: 500 } };
         default:
-          return { courses: [], error: { message: `An error occurred: ${response.statusText}`, code: response.status } };
-      }
-    }
-    const courses = await response.json();
-    return { courses, error: null };
-  } catch (error) {
-    if (error instanceof TypeError) {
-      switch (error.message) {
-        case 'Failed to fetch':
-        case 'NetworkError when attempting to fetch resource.':
-          return { courses: [], error: { message: 'Network error. Please check your internet connection and try again.', code: 0 } };
-        case 'The operation was aborted.':
-          return { courses: [], error: { message: 'Request aborted. Please try again.', code: 0 } };
-        case 'The network connection was lost.':
-          return { courses: [], error: { message: 'Network connection lost. Please check your internet connection and try again.', code: 0 } };
-        default:
-          return { courses: [], error: { message: 'An unexpected error occurred. Please try again later.', code: 0 } };
+          return { courses: [], error: { message: `An error occurred: ${error.message}`, code: status } };
       }
     }
     return { courses: [], error: { message: 'An unexpected error occurred. Please try again later.', code: 0 } };
@@ -52,15 +50,23 @@ export const fetchCourses = async (category?: string, sortOrder?: string, page?:
 export const fetchCourseDetails = async (courseId: string, includeReviews?: boolean, page?: number): Promise<CourseDetails | { error: CourseError }> => {
   try {
     const token = getAuthToken();
-    const response = await fetch(`/api/v1/courses/${courseId}/details?includeReviews=${includeReviews}&page=${page}`, {
+    const params = new URLSearchParams();
+    if (includeReviews) params.append('includeReviews', includeReviews.toString());
+    if (page) params.append('page', page.toString());
+    
+    const response = await axios.get(`${API_URL}/courses/${courseId}/`, {
+      params,
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       }
     });
 
-    if (!response.ok) {
-      switch (response.status) {
+    return response.data as CourseDetails;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status || 0;
+      switch (status) {
         case 401:
           return { error: { message: 'Unauthorized. Please log in again.', code: 401 } };
         case 403:
@@ -70,23 +76,7 @@ export const fetchCourseDetails = async (courseId: string, includeReviews?: bool
         case 500:
           return { error: { message: 'An internal server error occurred. Please try again later.', code: 500 } };
         default:
-          return { error: { message: `An error occurred: ${response.statusText}`, code: response.status } };
-      }
-    }
-    const data = await response.json();
-    return data as CourseDetails;
-  } catch (error) {
-    if (error instanceof TypeError) {
-      switch (error.message) {
-        case 'Failed to fetch':
-        case 'NetworkError when attempting to fetch resource.':
-          return { error: { message: 'Network error. Please check your internet connection and try again.', code: 0 } };
-        case 'The operation was aborted.':
-          return { error: { message: 'Request aborted. Please try again.', code: 0 } };
-        case 'The network connection was lost.':
-          return { error: { message: 'Network connection lost. Please check your internet connection and try again.', code: 0 } };
-        default:
-          return { error: { message: 'An unexpected error occurred. Please try again later.', code: 0 } };
+          return { error: { message: `An error occurred: ${error.message}`, code: status } };
       }
     }
     return { error: { message: 'An unexpected error occurred. Please try again later.', code: 0 } };
@@ -96,17 +86,21 @@ export const fetchCourseDetails = async (courseId: string, includeReviews?: bool
 export const updateCourseProgress = async (courseId: string, progress: number): Promise<{ success: boolean, error: CourseError | null }> => {
   try {
     const token = getAuthToken();
-    const response = await fetch(`/api/v1/courses/${courseId}/progress`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ progress }),
-    });
+    await axios.post(`${API_URL}/courses/${courseId}/progress/`, 
+      { progress },
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
+      }
+    );
 
-    if (!response.ok) {
-      switch (response.status) {
+    return { success: true, error: null };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status || 0;
+      switch (status) {
         case 401:
           return { success: false, error: { message: 'Unauthorized. Please log in again.', code: 401 } };
         case 403:
@@ -116,24 +110,26 @@ export const updateCourseProgress = async (courseId: string, progress: number): 
         case 500:
           return { success: false, error: { message: 'An internal server error occurred. Please try again later.', code: 500 } };
         default:
-          return { success: false, error: { message: `An error occurred: ${response.statusText}`, code: response.status } };
-      }
-    }
-    return { success: true, error: null };
-  } catch (error) {
-    if (error instanceof TypeError) {
-      switch (error.message) {
-        case 'Failed to fetch':
-        case 'NetworkError when attempting to fetch resource.':
-          return { success: false, error: { message: 'Network error. Please check your internet connection and try again.', code: 0 } };
-        case 'The operation was aborted.':
-          return { success: false, error: { message: 'Request aborted. Please try again.', code: 0 } };
-        case 'The network connection was lost.':
-          return { success: false, error: { message: 'Network connection lost. Please check your internet connection and try again.', code: 0 } };
-        default:
-          return { success: false, error: { message: 'An unexpected error occurred. Please try again later.', code: 0 } };
+          return { success: false, error: { message: `An error occurred: ${error.message}`, code: status } };
       }
     }
     return { success: false, error: { message: 'An unexpected error occurred. Please try again later.', code: 0 } };
+  }
+};
+
+export const fetchCourseVersions = async (courseId: string): Promise<CourseVersion[]> => {
+  try {
+    const token = getAuthToken();
+    const response = await axios.get(`${API_URL}/courses/${courseId}/versions/`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    return response.data as CourseVersion[];
+  } catch (error) {
+    console.error('Failed to fetch course versions:', error);
+    throw error;
   }
 };

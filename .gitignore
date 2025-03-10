@@ -43,6 +43,7 @@ ENV/
 *~
 
 # Frontend
+node_modules/
 frontend/node_modules/
 frontend/dist/
 frontend/build/
@@ -91,3 +92,5 @@ secrets.yml
 # Miscellaneous
 .tmp/
 .temp/
+node_modules/lodash-es/_getNative.js
+

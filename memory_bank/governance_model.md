@@ -55,11 +55,16 @@ This document defines the governance model for the Learning Platform project, in
      - Design user interfaces
      - Document user flows
      - Validate requirements against business needs
+     - **Requirement Validation**: Ensure all tasks in `progress.md` are fully defined before moving to `TODO`.
+     - **Define User Acceptance Criteria**: Ensure every task has clear validation rules before implementation.
+     - **Pre-Task Validation**: Confirm that tasks contain sufficient detail before they move to Code Mode.
+     - **Collaboration with Architect Mode**: Align technical feasibility with business needs.
+     - **Maintain `productContext.md`**: Ensure product documentation reflects the latest requirements.
 
 ### Mode Switching Protocol
 1. **Architect to Code Handoff**
-   - Architect mode creates a task in `activeContext.md` with status `TODO`
-   - Architect mode adds the task to `progress.md`
+   - Architect mode creates a task in `memory_bank/tasks/{TASK-ID}.md` with status `VALIDATED`
+   - Architect mode adds the task to `progress.md` and assigns status `TODO`
    - Architect mode requests switch to Code mode
    - Code mode acknowledges receipt by updating status to `IN_PROGRESS`
    - Code mode implements the task
@@ -81,12 +86,12 @@ This document defines the governance model for the Learning Platform project, in
 
 ## Task Management Process
 ### Task Lifecycle
-1. **Task Creation (Architect Mode)**
+1. **Task Creation (Architect Mode & Digital Design Mode)**
    - Create task definition in `memory_bank/tasks/{TASK-ID}.md`
-   - Add task to `progress.md` with status `TODO`
-   - Define clear requirements and validation criteria
-   - Specify dependencies if any
-   - Switch to Code mode for implementation
+   - Add task to `progress.md` with status `DRAFT`
+   - Digital Design Mode refines and validates requirements
+   - Once validated, status updates to `VALIDATED`
+   - Architect Mode assigns the task for implementation, setting `TODO` status
 
 2. **Task Implementation (Code Mode)**
    - Update task status to `IN_PROGRESS` in all relevant files
@@ -95,11 +100,12 @@ This document defines the governance model for the Learning Platform project, in
    - Document implementation details
    - Run tests to validate implementation
 
-3. **Task Validation (Code Mode)**
+3. **Task Validation (Code Mode & Digital Design Mode)**
    - Verify implementation against validation criteria
    - Document any issues or limitations
    - Update task status to `DONE`
-   - Switch to Architect mode for review
+   - Digital Design Mode verifies that user requirements are met
+   - Switch to Architect Mode for final review
 
 4. **Task Review (Architect Mode)**
    - Review implementation against requirements
@@ -132,7 +138,7 @@ This document defines the governance model for the Learning Platform project, in
    - Single source of truth for current work
 
 2. **progress.md**
-   - Tracks all tasks: completed, in progress, postponed, and upcoming
+   - Tracks all tasks: completed, in progress, postponed, validated, and upcoming
    - Updated when task status changes
    - Provides overview of project progress
    - Includes completion dates and summaries
@@ -143,82 +149,6 @@ This document defines the governance model for the Learning Platform project, in
    - Updated when task status changes
    - Serves as reference for implementation
 
-4. **ADRs.md**
-   - Documents architectural decisions
-   - Follows structured format for decision records
-   - Updated when new architectural decisions are made
-   - Provides context for technical choices
-
-5. **systemPatterns.md**
-   - Documents system architecture and patterns
-   - Updated when architectural changes are made
-   - Serves as reference for implementation
-   - Ensures consistency across the system
-
-6. **techContext.md**
-   - Documents technologies used
-   - Includes development setup instructions
-   - Lists technical constraints
-   - Updated when technology stack changes
-
-7. **productContext.md**
-   - Documents product vision and requirements
-   - Includes functional and non-functional requirements
-   - Serves as reference for feature implementation
-   - Updated when product requirements change
-
-### Information Flow Between Files
-1. **Task Creation Flow**
-   - New task created in `tasks/{TASK-ID}.md`
-   - Task added to `progress.md`
-   - Task activated in `activeContext.md`
-
-2. **Task Implementation Flow**
-   - Task status updated in `activeContext.md`
-   - Implementation details documented
-   - Task status updated in `tasks/{TASK-ID}.md`
-   - Task status updated in `progress.md`
-
-3. **Architectural Decision Flow**
-   - Decision documented in `ADRs.md`
-   - System patterns updated in `systemPatterns.md`
-   - Technical context updated in `techContext.md` if needed
-
-## Communication Standards
-### Status Reporting
-1. **Task Status Updates**
-   - Status changes must be reflected in all relevant files:
-     - `activeContext.md` - For the current active task
-     - `progress.md` - For overall project tracking
-     - `tasks/{TASK-ID}.md` - For detailed task documentation
-   - Status terminology must be consistent: `TODO`, `IN_PROGRESS`, `DONE`, `POSTPONED`
-   - Status changes must include timestamp and reason
-
-2. **Blocking Issues**
-   - Documented in `activeContext.md`
-   - Include clear description of the issue
-   - Specify what is needed to resolve the issue
-   - Request appropriate mode switch if needed
-
-### Documentation Standards
-1. **Task Documentation**
-   - Follow YAML-like structure as specified in `.clinerules`
-   - Include clear requirements and validation criteria
-   - Specify dependencies
-   - Document status changes
-
-2. **Code Documentation**
-   - Follow language-specific best practices
-   - Include docstrings and comments
-   - Document complex algorithms and business logic
-   - Update documentation when code changes
-
-3. **Architectural Documentation**
-   - Follow ADR structure as specified in `.clinerules`
-   - Document context, decision, justification, and consequences
-   - Include status and participants
-   - Reference relevant technical documentation
-
 ## Governance Model Updates
 This governance model should be reviewed and updated as needed to reflect changes in project processes and requirements. Updates to the governance model should be documented as ADRs to provide context for the changes.
 
@@ -226,19 +156,3 @@ This governance model should be reviewed and updated as needed to reflect change
 - `.clinerules` - Base rules for mode interactions and task management
 - `.roomodes` - Mode definitions and file access permissions
 
-### Task Document Structure Definition
-**Task Document Structure**:
-- Each task document must include:
-  - **Title**: Clear and concise title of the task.
-  - **Status**: Status of the task on of [`TODO`, `IN_PROGRESS`, `DONE`, `POSTPONED`]
-  - **last Update**: Date of the last Update
-  - **Description**: Detailed description of what the task entails.
-  - **Requirements**: Specific requirements that need to be met.
-  - **Validation Criteria**: Criteria for validating the completion of the task.
-  - **Dependencies**: Any dependencies on other tasks or components.
-  - **Expected Outcome**: The expected result upon completion of the task.
-  - **Assigned To**:
-  - **Notes**:
-
-**Rule**:
-- All task documents must adhere to the above structure to ensure consistency and clarity across all project documentation. Failure to follow this structure may result in the task being revisited for additional clarification and documentation.

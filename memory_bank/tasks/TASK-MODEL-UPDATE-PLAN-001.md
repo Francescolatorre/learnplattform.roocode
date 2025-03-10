@@ -18,7 +18,7 @@ Draft a detailed plan for updating the data models across the learning platform,
     *   Use `task_type` field to differentiate task types (LEARNING, QUIZ, ASSESSMENT)
     *   Incorporate relevant attributes from `tasks/models.py`:
         *   `LearningTask`: `difficulty_level`, `max_submissions`
-        *   `AssessmentTask`: `max_score`, `passing_score` (already in `learningplatform.Task`)
+        *   `AssessmentTask`: `max_score`, `passing_score` (already in `learningplatform_backend.Task`)
         *   `QuizTask`: `time_limit`, `is_randomized`
     *   Remove complex inheritance structure from tasks app.
 3.  **User Model**:
@@ -30,7 +30,7 @@ Draft a detailed plan for updating the data models across the learning platform,
     *   User Model: No direct dependencies.
 5.  **Migration Strategy**:
     *   For Course model, add new fields (`duration`, `difficulty_level`) and run migrations. Data migration might be needed for these new fields.
-    *   For Task model, consolidate data from `LearningTask`, `AssessmentTask`, and `QuizTask` into `learningplatform.Task`. This will require a data migration script to move and transform existing task data. After migration, remove `LearningTask`, `AssessmentTask`, and `QuizTask` models.
+    *   For Task model, consolidate data from `LearningTask`, `AssessmentTask`, and `QuizTask` into `learningplatform_backend.Task`. This will require a data migration script to move and transform existing task data. After migration, remove `LearningTask`, `AssessmentTask`, and `QuizTask` models.
     *   User model requires no migration.
 6.  **Testing**:
     *   Unit tests for Course, Task, and User models to ensure data integrity and functionality after consolidation.

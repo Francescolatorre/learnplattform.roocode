@@ -1,34 +1,13 @@
-export interface CourseError {
-  message: string;
-  code?: number;
-}
-
-export interface Course {
-  id: number;
-  title: string;
-  description: string;
-  author: string;
-  duration: number;
-  category: string;
-  error?: CourseError;
-}
-
-export interface CourseVersion {
-  id: number;
-  course_id: number;
-  version_number: number;
-  content: string;
-  created_at: string;
-  is_published: boolean;
-}
+import { Module } from './Course'; // Correct import for Module type
 
 export interface CourseDetails {
   id: number;
   title: string;
   description: string;
-  author: string;
+  instructor: string;
+  startDate: string;
+  endDate: string;
+  modules: Module[];
   duration: number;
-  category: string;
-  progress: number;
-  error?: CourseError;
+  enrollment: number;
 }

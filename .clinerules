@@ -23,19 +23,23 @@ memory_bank:
 
 task_management:
   lifecycle:
-    - "Architect defines (TODO): template, gaps, resources, risks, comms"
+    - "Digital Design defines (DRAFT): requirements, user stories, acceptance criteria"
+    - "Digital Design validates (VALIDATED): ensure completeness, business alignment"
+    - "Architect refines and sets (TODO): finalize templates, identify risks, resources"
     - "Code implements (IN_PROGRESS): validate, mitigate, document, monitor"
     - "Code validates (DONE): test, review, document, update"
     - "Architect reviews: verify goals, assess quality, provide feedback"
 
   task_review_criteria:
     - "Completeness, clarity, resources, risks, alignment"
+    - "Validated tasks must have clear requirements before moving to TODO"
 
   prioritization:
     - "Critical-path first, resolve dependencies, review postponed tasks"
     - "Consider complexity and constraints"
 
 switching_protocol:
+  "Digital Design → Architect": "Validate requirements, finalize specification, confirm feasibility"
   "Architect → Code": "Define task, set TODO, provide context, highlight challenges"
   "Code → Architect": "Mark DONE, document implementation, request review"
   "Debug <-> Code": "Switch if bug blocks progress"
@@ -43,9 +47,10 @@ switching_protocol:
 
 status_updates:
   - "Sync across all task files"
-  - "Use standard statuses: TODO, IN_PROGRESS, DONE, POSTPONED"
+  - "Use standard statuses: DRAFT, VALIDATED, TODO, IN_PROGRESS, DONE, POSTPONED"
   - "Include timestamps and reasons"
   - "Document knowledge and challenges"
+  - "Digital Design Mode must verify task validity before setting VALIDATED"
 
 automation:
   - "Auto-sync updates, track deadlines, use Git metadata"
