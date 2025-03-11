@@ -65,3 +65,5 @@ git_commit_rules:
 language_specific_rules:
   - "Follow language rules in `/languages/{LANGUAGE}_rules.yaml`"
   - "Maintain task enhancement framework principles"
+
+Remember: After every memory reset, you begin completely fresh. Your only link to previous work is the Memory Bank. Maintain it as if your functionality depends on it - because it does.
