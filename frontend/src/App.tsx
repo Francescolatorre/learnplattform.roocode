@@ -1,4 +1,5 @@
 import React from 'react';
+import CourseDetailsPage from './features/courses/CoursesPage';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -64,6 +65,16 @@ const App: React.FC = () => {
                   <ProtectedRoute>
                     <MainLayout>
                       <CoursesPage />
+                    </MainLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/courses/:courseId"
+                element={
+                  <ProtectedRoute>
+                    <MainLayout>
+                      <CourseDetailsPage />
                     </MainLayout>
                   </ProtectedRoute>
                 }

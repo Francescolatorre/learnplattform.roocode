@@ -30,7 +30,7 @@ const CourseEditPage: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  
+
   const [formData, setFormData] = useState<{
     title: string;
     description: string;
@@ -55,7 +55,7 @@ const CourseEditPage: React.FC = () => {
       try {
         setLoading(true);
         const result = await fetchCourseDetails(courseId);
-        
+
         if ('error' in result) {
           setError(result.error.message);
         } else {
@@ -78,6 +78,7 @@ const CourseEditPage: React.FC = () => {
     };
 
     loadCourse();
+    console.log(`Fetching course details for ID: ${courseId}`);
   }, [courseId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -98,20 +99,20 @@ const CourseEditPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!courseId) return;
-    
+
     try {
       setSaving(true);
       const token = localStorage.getItem('access_token');
-      
+
       // Convert status and visibility back to lowercase for the API
       const apiFormData = {
         ...formData,
         status: formData.status.toLowerCase(),
         visibility: formData.visibility.toLowerCase()
       };
-      
+
       const response = await axios.put(
         `${API_URL}/courses/${courseId}/`,
         apiFormData,
@@ -122,13 +123,13 @@ const CourseEditPage: React.FC = () => {
           }
         }
       );
-      
+
       setSuccess(true);
       // Wait for the success message to show before navigating
       setTimeout(() => {
         navigate(`/courses/${courseId}`);
       }, 1500);
-      
+
     } catch (err: any) {
       console.error('Failed to update course:', err);
       setError(err.response?.data?.detail || 'Failed to update course');
@@ -148,7 +149,7 @@ const CourseEditPage: React.FC = () => {
   return (
     <Box p={3}>
       <Typography variant="h4" gutterBottom>Edit Course</Typography>
-      
+
       <Paper elevation={2} sx={{ p: 3, mt: 3 }}>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
@@ -163,7 +164,7 @@ const CourseEditPage: React.FC = () => {
                 variant="outlined"
               />
             </Grid>
-            
+
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -177,7 +178,7 @@ const CourseEditPage: React.FC = () => {
                 rows={4}
               />
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant="outlined">
                 <InputLabel>Status</InputLabel>
@@ -196,7 +197,7 @@ const CourseEditPage: React.FC = () => {
                 </FormHelperText>
               </FormControl>
             </Grid>
-            
+
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant="outlined">
                 <InputLabel>Visibility</InputLabel>
@@ -215,7 +216,7 @@ const CourseEditPage: React.FC = () => {
                 </FormHelperText>
               </FormControl>
             </Grid>
-            
+
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -229,7 +230,7 @@ const CourseEditPage: React.FC = () => {
                 placeholder="What students will learn from this course..."
               />
             </Grid>
-            
+
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -243,17 +244,17 @@ const CourseEditPage: React.FC = () => {
                 placeholder="Knowledge required before taking this course..."
               />
             </Grid>
-            
+
             <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-              <Button 
-                variant="outlined" 
+              <Button
+                variant="outlined"
                 onClick={() => navigate(`/courses/${courseId}`)}
               >
                 Cancel
               </Button>
-              <Button 
-                type="submit" 
-                variant="contained" 
+              <Button
+                type="submit"
+                variant="contained"
                 color="primary"
                 disabled={saving}
               >
@@ -263,11 +264,11 @@ const CourseEditPage: React.FC = () => {
           </Grid>
         </form>
       </Paper>
-      
+
       {/* Success message */}
-      <Snackbar 
-        open={success} 
-        autoHideDuration={3000} 
+      <Snackbar
+        open={success}
+        autoHideDuration={3000}
         onClose={() => setSuccess(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
@@ -275,11 +276,11 @@ const CourseEditPage: React.FC = () => {
           Course updated successfully!
         </Alert>
       </Snackbar>
-      
+
       {/* Error message */}
-      <Snackbar 
-        open={!!error} 
-        autoHideDuration={5000} 
+      <Snackbar
+        open={!!error}
+        autoHideDuration={5000}
         onClose={() => setError(null)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >

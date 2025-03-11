@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  Box, 
-  Typography, 
-  Grid, 
-  FormControl, 
-  InputLabel, 
-  Select, 
-  MenuItem, 
-  CircularProgress, 
-  SelectChangeEvent, 
+import {
+  Box,
+  Typography,
+  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  CircularProgress,
+  SelectChangeEvent,
   Button,
   Card,
   CardContent,
@@ -31,7 +31,7 @@ const CoursesPage: React.FC = () => {
       try {
         setLoading(true);
         const result = await fetchCourses();
-        
+
         if (result.error) {
           setError(result.error);
           setCourses([]);
@@ -40,9 +40,9 @@ const CoursesPage: React.FC = () => {
           setError(null);
         }
       } catch {
-        setError({ 
-          message: 'An unexpected error occurred while fetching courses', 
-          code: 0 
+        setError({
+          message: 'An unexpected error occurred while fetching courses',
+          code: 0
         });
         setCourses([]);
       } finally {
@@ -55,12 +55,14 @@ const CoursesPage: React.FC = () => {
 
   useEffect(() => {
     const loadCourseDetails = async () => {
+      console.log(`Fetching details for courseId: ${courseId}`);
+      console.log(`Current courses array: ${JSON.stringify(courses)}`);
       if (!courseId) return;
-      
+
       try {
         setLoading(true);
         const result = await fetchCourseDetails(courseId);
-        
+
         if ('error' in result) {
           setError(result.error);
         } else {
@@ -74,9 +76,9 @@ const CoursesPage: React.FC = () => {
           setSelectedCourse(result);
         }
       } catch {
-        setError({ 
-          message: 'An unexpected error occurred while fetching course details', 
-          code: 0 
+        setError({
+          message: 'An unexpected error occurred while fetching course details',
+          code: 0
         });
       } finally {
         setLoading(false);
@@ -84,11 +86,13 @@ const CoursesPage: React.FC = () => {
     };
 
     if (courseId) {
-      loadCourseDetails();
+      if (!loading) {
+        loadCourseDetails();
+      }
     } else {
       setSelectedCourse(null);
     }
-  }, [courseId, courses]);
+  }, [courseId]);
 
   if (loading && courses.length === 0) {
     return (
@@ -120,16 +124,16 @@ const CoursesPage: React.FC = () => {
         <Button variant="outlined" onClick={() => navigate('/courses')}>
           Back to All Courses
         </Button>
-        
+
         <Box mt={3}>
           <Typography variant="h4" gutterBottom>
             {selectedCourse.title}
           </Typography>
-          
+
           <Typography variant="body1" paragraph>
             {selectedCourse.description}
           </Typography>
-          
+
           <Grid container spacing={2} mt={2}>
             <Grid item xs={12} md={6}>
               <Typography variant="subtitle1">Course Details</Typography>
@@ -141,34 +145,34 @@ const CoursesPage: React.FC = () => {
                   <strong>Version:</strong> {selectedCourse.version || '1.0'}
                 </Typography>
                 <Typography variant="body2">
-                  <strong>Created:</strong> {new Date(selectedCourse.created_at).toLocaleDateString()}
+                  <strong>Created:</strong> {selectedCourse.created_at ? new Date(selectedCourse.created_at).toLocaleDateString() : 'N/A'}
                 </Typography>
                 <Typography variant="body2">
-                  <strong>Last Updated:</strong> {new Date(selectedCourse.updated_at).toLocaleDateString()}
+                  <strong>Last Updated:</strong> {selectedCourse.updated_at ? new Date(selectedCourse.updated_at).toLocaleDateString() : 'N/A'}
                 </Typography>
               </Box>
             </Grid>
-            
+
             <Grid item xs={12} md={6}>
               <Typography variant="subtitle1">Learning Objectives</Typography>
               <Typography variant="body2">
-                {selectedCourse.learning_objectives || 'No learning objectives specified.'}
+                {selectedCourse.learningObjectives || 'No learning objectives specified.'}
               </Typography>
             </Grid>
           </Grid>
-          
+
           <Box mt={4}>
-            <Button 
-              variant="contained" 
+            <Button
+              variant="contained"
               color="primary"
               onClick={() => navigate(`/courses/${selectedCourse.id}/edit`)}
             >
               Edit Course
             </Button>
-            
-            <Button 
-              variant="outlined" 
-              color="primary" 
+
+            <Button
+              variant="outlined"
+              color="primary"
               sx={{ ml: 2 }}
               onClick={() => navigate(`/courses/${selectedCourse.id}/tasks`)}
             >
@@ -194,8 +198,8 @@ const CoursesPage: React.FC = () => {
           {courses.map((course) => (
             <Grid item xs={12} sm={6} md={4} key={course.id}>
               <Card variant="outlined" sx={{ height: '100%' }}>
-                <CardActionArea 
-                  onClick={() => navigate(`/courses/${course.id}`)} 
+                <CardActionArea
+                  onClick={() => navigate(`/courses/${course.id}`)}
                   sx={{ height: '100%' }}
                 >
                   <CardContent sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
