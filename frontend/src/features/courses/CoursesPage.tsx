@@ -17,12 +17,14 @@ import {
 } from '@mui/material';
 import { fetchCourses, fetchCourseDetails } from '../../services/courseService';
 import { Course, CourseError } from '../../types/courseTypes';
+import { fetchTasksByCourse } from '../../services/taskService';
 
 const CoursesPage: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<CourseError | null>(null);
+  const [tasks, setTasks] = useState<{ title: string }[]>([]);
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
 
@@ -74,6 +76,10 @@ const CoursesPage: React.FC = () => {
             setCourses(updatedCourses);
           }
           setSelectedCourse(result);
+
+          // Fetch tasks for the selected course
+          const taskData = await fetchTasksByCourse(courseId);
+          setTasks(taskData);
         }
       } catch {
         setError({
@@ -162,14 +168,15 @@ const CoursesPage: React.FC = () => {
           </Grid>
 
           <Box mt={4}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => navigate(`/courses/${selectedCourse.id}/edit`)}
-            >
-              Edit Course
-            </Button>
-
+            {['admin', 'instructor'].includes(localStorage.getItem('user_role') || '') && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => navigate(`/courses/${selectedCourse.id}/edit`)}
+              >
+                Edit Course
+              </Button>
+            )}
             <Button
               variant="outlined"
               color="primary"
@@ -178,6 +185,22 @@ const CoursesPage: React.FC = () => {
             >
               View Tasks
             </Button>
+          </Box>
+
+          {/* Task List */}
+          <Box mt={3}>
+            <Typography variant="h5" gutterBottom>Tasks</Typography>
+            {tasks.length > 0 ? (
+              <ul>
+                {tasks.map((task, index) => (
+                  <li key={index}>
+                    <Typography variant="body1">{task.title}</Typography>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <Typography variant="body2">No tasks available for this course.</Typography>
+            )}
           </Box>
         </Box>
       </Box>

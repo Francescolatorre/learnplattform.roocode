@@ -10,6 +10,10 @@ export interface CourseDetails {
   modules: Module[];
   duration: number;
   enrollment: number;
+  status?: string;
+  visibility?: string;
+  learningObjectives?: string;
+  prerequisites?: string;
 }
 
 export interface Course {

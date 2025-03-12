@@ -19,6 +19,7 @@ import {
 import { fetchCourseDetails } from '../../services/courseService';
 import { Course, CourseError } from '../../types/courseTypes';
 import axios from 'axios';
+import { fetchTasksByCourse } from '../../services/taskService';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const API_URL = `${API_BASE_URL}/api/v1`;
@@ -26,24 +27,30 @@ const API_URL = `${API_BASE_URL}/api/v1`;
 const CourseEditPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
+  const userRole = localStorage.getItem('user_role');
+
+  if (userRole === 'student') {
+    navigate('/courses');
+  }
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [tasks, setTasks] = useState<{ title: string }[]>([]);
 
   const [formData, setFormData] = useState<{
     title: string;
     description: string;
     status: string;
     visibility: string;
-    learning_objectives: string;
+    learningObjectives: string;
     prerequisites: string;
   }>({
     title: '',
     description: '',
     status: 'DRAFT',
     visibility: 'PRIVATE',
-    learning_objectives: '',
+    learningObjectives: '',
     prerequisites: ''
   });
 
@@ -65,7 +72,7 @@ const CourseEditPage: React.FC = () => {
             description: result.description || '',
             status: (result.status || 'draft').toUpperCase(), // Convert to uppercase
             visibility: (result.visibility || 'private').toUpperCase(), // Convert to uppercase
-            learning_objectives: result.learning_objectives || '',
+            learningObjectives: result.learningObjectives || '',
             prerequisites: result.prerequisites || ''
           });
         }
@@ -78,6 +85,17 @@ const CourseEditPage: React.FC = () => {
     };
 
     loadCourse();
+
+    const loadTasks = async () => {
+      try {
+        const taskData = await fetchTasksByCourse(courseId || '');
+        setTasks(taskData);
+      } catch (err) {
+        console.error('Failed to load tasks:', err);
+      }
+    };
+
+    loadTasks();
     console.log(`Fetching course details for ID: ${courseId}`);
   }, [courseId]);
 
@@ -221,8 +239,8 @@ const CourseEditPage: React.FC = () => {
               <TextField
                 fullWidth
                 label="Learning Objectives"
-                name="learning_objectives"
-                value={formData.learning_objectives}
+                name="learningObjectives"
+                value={formData.learningObjectives}
                 onChange={handleChange}
                 variant="outlined"
                 multiline
@@ -264,6 +282,22 @@ const CourseEditPage: React.FC = () => {
           </Grid>
         </form>
       </Paper>
+
+      {/* Task List */}
+      <Box mt={3}>
+        <Typography variant="h5" gutterBottom>Tasks</Typography>
+        {tasks.length > 0 ? (
+          <ul>
+            {tasks.map((task, index) => (
+              <li key={index}>
+                <Typography variant="body1">{task.title}</Typography>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <Typography variant="body2">No tasks available for this course.</Typography>
+        )}
+      </Box>
 
       {/* Success message */}
       <Snackbar
