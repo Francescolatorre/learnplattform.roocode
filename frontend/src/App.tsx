@@ -12,6 +12,8 @@ import { MainLayout } from './components/layout/MainLayout';
 import Dashboard from './features/dashboard/Dashboard';
 import Profile from './features/profile/Profile';
 import CoursesPage from './features/courses/CoursesPage';
+import CourseTasksPage from './features/courses/CourseTasksPage';
+import CourseEditPage from './features/courses/CourseEditPage';
 
 type Task = {
   title: string;
@@ -42,6 +44,8 @@ const App: React.FC = () => {
               <Route path="/profile" element={<ProtectedRoute><MainLayout><Profile /></MainLayout></ProtectedRoute>} />
               <Route path="/courses" element={<ProtectedRoute><MainLayout><CoursesPage /></MainLayout></ProtectedRoute>} />
               <Route path="/courses/:courseId" element={<ProtectedRoute><MainLayout><CourseDetailsPage /></MainLayout></ProtectedRoute>} />
+              <Route path="/courses/:courseId/edit" element={<ProtectedRoute><MainLayout><CourseEditPage /></MainLayout></ProtectedRoute>} />
+              <Route path="/courses/:courseId/tasks" element={<ProtectedRoute><MainLayout><CourseTasksPage /></MainLayout></ProtectedRoute>} />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
             </Routes>
           </Router>

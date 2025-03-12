@@ -98,7 +98,7 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ open, onClose, onSave, task, is
             onChange={handleChange}
             margin="normal"
           />
-          
+
           <TextField
             fullWidth
             required
@@ -110,7 +110,7 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ open, onClose, onSave, task, is
             multiline
             rows={4}
           />
-          
+
           <FormControl fullWidth margin="normal">
             <InputLabel id="published-label">Published</InputLabel>
             <Select
@@ -124,7 +124,7 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ open, onClose, onSave, task, is
               <MenuItem value="false">No</MenuItem>
             </Select>
           </FormControl>
-          
+
           <TextField
             fullWidth
             label="Order"
@@ -151,18 +151,18 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ open, onClose, onSave, task, is
 const CourseTasksPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
-  
+
   const [courseName, setCourseName] = useState('');
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  
+
   // Dialog state
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentTask, setCurrentTask] = useState<Partial<Task>>({});
   const [isEditing, setIsEditing] = useState(false);
-  
+
   // Delete confirmation
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<number | null>(null);
@@ -171,19 +171,19 @@ const CourseTasksPage: React.FC = () => {
   useEffect(() => {
     const loadCourseAndTasks = async () => {
       if (!courseId) return;
-      
+
       try {
         setLoading(true);
-        
+
         // Fetch course details
         const courseResult = await fetchCourseDetails(courseId);
         if ('error' in courseResult) {
           setError(`Failed to load course: ${courseResult.error.message}`);
           return;
         }
-        
+
         setCourseName(courseResult.title);
-        
+
         // Fetch tasks for this course
         const token = localStorage.getItem('access_token');
         console.log('Fetching tasks for course ID:', courseId);
@@ -195,7 +195,7 @@ const CourseTasksPage: React.FC = () => {
           }
         });
         console.log('API response:', tasksResponse.data);
-        
+
         // Handle different API response formats
         let taskData = [];
         if (Array.isArray(tasksResponse.data)) {
@@ -206,11 +206,11 @@ const CourseTasksPage: React.FC = () => {
           console.warn('Unexpected API response format:', tasksResponse.data);
           taskData = [];
         }
-        
+
         // Sort tasks by order
         const sortedTasks = [...taskData].sort((a: Task, b: Task) => a.order - b.order);
         setTasks(sortedTasks);
-        
+
       } catch (err: any) {
         console.error('Failed to load course tasks:', err);
         setError(err.response?.data?.detail || 'Failed to load course tasks');
@@ -218,7 +218,7 @@ const CourseTasksPage: React.FC = () => {
         setLoading(false);
       }
     };
-    
+
     loadCourseAndTasks();
   }, [courseId]);
 
@@ -250,7 +250,7 @@ const CourseTasksPage: React.FC = () => {
   // Confirm task deletion
   const confirmDelete = async () => {
     if (!taskToDelete) return;
-    
+
     try {
       const token = localStorage.getItem('access_token');
       await axios.delete(`${API_URL}/learning-tasks/${taskToDelete}/`, {
@@ -259,11 +259,11 @@ const CourseTasksPage: React.FC = () => {
           'Content-Type': 'application/json'
         }
       });
-      
+
       // Remove task from state
       setTasks(tasks.filter(task => task.id !== taskToDelete));
       setSuccess('Task deleted successfully');
-      
+
     } catch (err: any) {
       console.error('Failed to delete task:', err);
       setError(err.response?.data?.detail || 'Failed to delete task');
@@ -277,7 +277,7 @@ const CourseTasksPage: React.FC = () => {
   const handleSaveTask = async (taskData: Partial<Task>) => {
     try {
       const token = localStorage.getItem('access_token');
-      
+
       if (isEditing && taskData.id) {
         // Update existing task
         const response = await axios.put(
@@ -290,18 +290,18 @@ const CourseTasksPage: React.FC = () => {
             }
           }
         );
-        
+
         // Update task in state
-        setTasks(tasks.map(task => 
+        setTasks(tasks.map(task =>
           task.id === taskData.id ? response.data : task
         ));
-        
+
         setSuccess('Task updated successfully');
       } else {
         // Create new task
         const taskPayload = { ...taskData, course: parseInt(courseId!, 10) };
         console.log('Creating new task:', taskPayload);
-        
+
         const response = await axios.post(
           `${API_URL}/learning-tasks/`,
           taskPayload,
@@ -313,12 +313,12 @@ const CourseTasksPage: React.FC = () => {
           }
         );
         console.log('Create task response:', response.data);
-        
+
         // Add new task to state
         setTasks([...tasks, response.data]);
         setSuccess('Task created successfully');
       }
-      
+
     } catch (err: any) {
       console.error('Failed to save task:', err);
       setError(err.response?.data?.detail || 'Failed to save task');
@@ -337,8 +337,8 @@ const CourseTasksPage: React.FC = () => {
     <Box p={3}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
         <Box>
-          <Button 
-            variant="outlined" 
+          <Button
+            variant="outlined"
             onClick={() => navigate(`/courses/${courseId}`)}
             sx={{ mb: 2 }}
           >
@@ -346,25 +346,26 @@ const CourseTasksPage: React.FC = () => {
           </Button>
           <Typography variant="h4">Tasks for: {courseName}</Typography>
         </Box>
-        <Button 
-          variant="contained" 
-          color="primary" 
+        <Button
+          variant="contained"
+          color="primary"
           startIcon={<AddIcon />}
-          onClick={handleCreateTask}
+          onClick={() => navigate(`/courses/${courseId}/edit`)}
+         sx={{ display: ['admin', 'instructor'].includes(localStorage.getItem('user_role') || '') ? 'block' : 'none' }}
         >
           Add Task
         </Button>
       </Box>
-      
+
       <Paper elevation={2}>
         {tasks.length === 0 ? (
           <Box p={3} textAlign="center">
             <Typography variant="body1" color="textSecondary">
               No tasks have been created for this course yet.
             </Typography>
-            <Button 
-              variant="contained" 
-              color="primary" 
+            <Button
+              variant="contained"
+              color="primary"
               startIcon={<AddIcon />}
               onClick={handleCreateTask}
               sx={{ mt: 2 }}
@@ -401,12 +402,16 @@ const CourseTasksPage: React.FC = () => {
                     }
                   />
                   <ListItemSecondaryAction>
-                    <IconButton edge="end" onClick={() => handleEditTask(task)}>
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton edge="end" onClick={() => handleDeletePrompt(task.id)} sx={{ ml: 1 }}>
-                      <DeleteIcon />
-                    </IconButton>
+                    {['admin', 'instructor'].includes(localStorage.getItem('user_role') || '') && (
+                      <React.Fragment>
+                        <IconButton edge="end" onClick={() => handleEditTask(task)}>
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton edge="end" onClick={() => handleDeletePrompt(task.id)} sx={{ ml: 1 }}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </React.Fragment>
+                    )}
                   </ListItemSecondaryAction>
                 </ListItem>
               </React.Fragment>
@@ -414,7 +419,7 @@ const CourseTasksPage: React.FC = () => {
           </List>
         )}
       </Paper>
-      
+
       {/* Task Dialog */}
       <TaskDialog
         open={dialogOpen}
@@ -423,7 +428,7 @@ const CourseTasksPage: React.FC = () => {
         task={currentTask}
         isEditing={isEditing}
       />
-      
+
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
         <DialogTitle>Confirm Deletion</DialogTitle>
@@ -439,7 +444,7 @@ const CourseTasksPage: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      
+
       {/* Success Snackbar */}
       <Snackbar
         open={!!success}
@@ -451,7 +456,7 @@ const CourseTasksPage: React.FC = () => {
           {success}
         </Alert>
       </Snackbar>
-      
+
       {/* Error Snackbar */}
       <Snackbar
         open={!!error}

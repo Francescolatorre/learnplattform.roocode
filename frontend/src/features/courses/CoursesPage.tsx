@@ -222,7 +222,16 @@ const CoursesPage: React.FC = () => {
             <Grid item xs={12} sm={6} md={4} key={course.id}>
               <Card variant="outlined" sx={{ height: '100%' }}>
                 <CardActionArea
-                  onClick={() => navigate(`/courses/${course.id}`)}
+                  onClick={() => {
+                    const storedUser = localStorage.getItem('user');
+                    const userRole = storedUser ? JSON.parse(storedUser).role : 'unknown';
+                    const path = `/courses/${course.id}/${['admin', 'instructor'].includes(userRole) ? 'edit' : ''}`;
+                    console.log(`Navigating to: ${path}`);
+                    console.log(`User Role: ${userRole}`);
+                    console.log(`Course ID: ${course.id}`);
+                    console.log(`Course Title: ${course.title}`);
+                    navigate(path);
+                  }}
                   sx={{ height: '100%' }}
                 >
                   <CardContent sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
