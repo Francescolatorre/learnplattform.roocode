@@ -10,6 +10,7 @@ import LoginForm from './features/auth/LoginForm';
 import RegisterForm from './features/auth/RegisterForm';
 import { MainLayout } from './components/layout/MainLayout';
 import Dashboard from './features/dashboard/Dashboard';
+import ProgressTrackingUI from './features/dashboard/ProgressTrackingUI';
 import Profile from './features/profile/Profile';
 import CoursesPage from './features/courses/CoursesPage';
 import CourseTasksPage from './features/courses/CourseTasksPage';
@@ -46,6 +47,7 @@ const App: React.FC = () => {
               <Route path="/courses/:courseId" element={<ProtectedRoute><MainLayout><CourseDetailsPage /></MainLayout></ProtectedRoute>} />
               <Route path="/courses/:courseId/edit" element={<ProtectedRoute><MainLayout><CourseEditPage /></MainLayout></ProtectedRoute>} />
               <Route path="/courses/:courseId/tasks" element={<ProtectedRoute><MainLayout><CourseTasksPage /></MainLayout></ProtectedRoute>} />
+              <Route path="/progress-tracking/:courseId" element={<ProtectedRoute><MainLayout><ProgressTrackingUI courseId={':courseId'} /></MainLayout></ProtectedRoute>} />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
             </Routes>
           </Router>

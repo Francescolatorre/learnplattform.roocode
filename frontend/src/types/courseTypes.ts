@@ -37,3 +37,32 @@ export interface CourseError {
   message: string;
   code: number;
 }
+
+export interface CourseStructure {
+  courseId: string;
+  courseTitle: string;
+  modules: ModuleStructure[];
+  learningObjectives: LearningObjective[];
+}
+
+export interface ModuleStructure {
+  id: string;
+  title: string;
+  description: string;
+  position: number;
+  sections: SectionStructure[];
+}
+
+export interface SectionStructure {
+  id: string;
+  title: string;
+  position: number;
+  taskIds: string[];
+}
+
+export interface LearningObjective {
+  id: string;
+  title: string;
+  description: string;
+  relatedTaskIds: string[];
+}
