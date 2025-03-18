@@ -20,7 +20,7 @@ const modalStyles = {
   modalContent: {
     backgroundColor: 'white',
     padding: '20px',
-    borderRadius: '5px',
+    borderRadius: '8px',
     width: '80%',
     maxWidth: '600px',
     maxHeight: '80%',
@@ -30,36 +30,104 @@ const modalStyles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '15px'
+    marginBottom: '15px',
+    borderBottom: '2px solid #007bff',
+    paddingBottom: '10px'
+  },
+  modalTitle: {
+    fontSize: '24px',
+    color: '#333',
+    margin: 0
+  },
+  closeButton: {
+    background: 'none',
+    border: 'none',
+    fontSize: '24px',
+    cursor: 'pointer',
+    color: '#666'
   },
   modalFooter: {
     display: 'flex',
     justifyContent: 'flex-end',
-    marginTop: '15px'
+    marginTop: '15px',
+    paddingTop: '15px',
+    borderTop: '1px solid #eee'
   },
   button: {
-    padding: '8px 16px',
+    padding: '10px 16px',
     margin: '0 5px',
     borderRadius: '4px',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    fontWeight: 'bold',
+    border: 'none',
+    transition: 'background-color 0.3s'
   },
   saveButton: {
-    backgroundColor: '#4CAF50',
-    color: 'white',
-    border: 'none'
+    backgroundColor: '#28a745',
+    color: 'white'
   },
   cancelButton: {
-    backgroundColor: '#f44336',
-    color: 'white',
-    border: 'none'
+    backgroundColor: '#dc3545',
+    color: 'white'
   },
   inputField: {
     width: '100%',
-    padding: '10px',
-    marginBottom: '15px',
+    padding: '12px',
+    marginBottom: '20px',
     border: '1px solid #ddd',
     borderRadius: '4px',
-    fontSize: '16px'
+    fontSize: '16px',
+    boxSizing: 'border-box'
+  },
+  label: {
+    display: 'block',
+    marginBottom: '8px',
+    fontWeight: 'bold',
+    color: '#555'
+  },
+  taskList: {
+    marginTop: '20px'
+  },
+  taskItem: {
+    backgroundColor: 'white',
+    borderRadius: '8px',
+    padding: '15px',
+    marginBottom: '15px',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+    border: '1px solid #eee'
+  },
+  taskTitle: {
+    fontSize: '20px',
+    color: '#333',
+    marginBottom: '10px',
+    fontWeight: 'bold'
+  },
+  taskDescription: {
+    fontSize: '16px',
+    color: '#555',
+    marginBottom: '15px',
+    lineHeight: '1.5'
+  },
+  taskActions: {
+    display: 'flex',
+    justifyContent: 'flex-end'
+  },
+  actionButton: {
+    padding: '8px 12px',
+    margin: '0 5px',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    border: 'none',
+    fontWeight: 'bold',
+    transition: 'background-color 0.3s'
+  },
+  editButton: {
+    backgroundColor: '#007bff',
+    color: 'white'
+  },
+  deleteButton: {
+    backgroundColor: '#dc3545',
+    color: 'white'
   }
 };
 
@@ -177,11 +245,16 @@ const TaskManagementUI: React.FC<TaskManagementUIProps> = ({ courseId, taskDescr
         <div style={modalStyles.modal as React.CSSProperties}>
           <div style={modalStyles.modalContent as React.CSSProperties}>
             <div style={modalStyles.modalHeader as React.CSSProperties}>
-              <h2>Edit Task</h2>
-              <button onClick={() => setIsModalOpen(false)}>×</button>
+              <h2 style={modalStyles.modalTitle as React.CSSProperties}>Edit Task</h2>
+              <button
+                style={modalStyles.closeButton as React.CSSProperties}
+                onClick={() => setIsModalOpen(false)}
+              >
+                ×
+              </button>
             </div>
             <div>
-              <label htmlFor="taskTitle">Task Title:</label>
+              <label style={modalStyles.label as React.CSSProperties} htmlFor="taskTitle">Task Title:</label>
               <input
                 id="taskTitle"
                 type="text"
@@ -191,7 +264,7 @@ const TaskManagementUI: React.FC<TaskManagementUIProps> = ({ courseId, taskDescr
               />
             </div>
             <div>
-              <label htmlFor="taskDescription">Task Description:</label>
+              <label style={modalStyles.label as React.CSSProperties} htmlFor="taskDescription">Task Description:</label>
               <textarea
                 id="taskDescription"
                 value={editingDescription}
@@ -216,18 +289,30 @@ const TaskManagementUI: React.FC<TaskManagementUIProps> = ({ courseId, taskDescr
           </div>
         </div>
       )}
-      {tasks.map(task => (
-        <div key={task.id}>
-          <h3>{task.title}</h3>
-          <p>{task.description}</p>
-          {userRole === 'instructor' || userRole === 'admin' ? (
-            <>
-              <button onClick={() => openModal(task.id, task.description, task.title)}>Edit Task</button>
-              <button onClick={() => handleDeleteTask(task.id)}>Delete Task</button>
-            </>
-          ) : null}
-        </div>
-      ))}
+      <div style={modalStyles.taskList as React.CSSProperties}>
+        {tasks.map(task => (
+          <div key={task.id} style={modalStyles.taskItem as React.CSSProperties}>
+            <h3 style={modalStyles.taskTitle as React.CSSProperties}>{task.title}</h3>
+            <p style={modalStyles.taskDescription as React.CSSProperties}>{task.description}</p>
+            {userRole === 'instructor' || userRole === 'admin' ? (
+              <div style={modalStyles.taskActions as React.CSSProperties}>
+                <button
+                  style={{...modalStyles.actionButton, ...modalStyles.editButton} as React.CSSProperties}
+                  onClick={() => openModal(task.id, task.description, task.title)}
+                >
+                  Edit Task
+                </button>
+                <button
+                  style={{...modalStyles.actionButton, ...modalStyles.deleteButton} as React.CSSProperties}
+                  onClick={() => handleDeleteTask(task.id)}
+                >
+                  Delete Task
+                </button>
+              </div>
+            ) : null}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
