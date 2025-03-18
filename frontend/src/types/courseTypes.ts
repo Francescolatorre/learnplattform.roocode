@@ -14,6 +14,7 @@ export interface CourseDetails {
   visibility?: string;
   learningObjectives?: string;
   prerequisites?: string;
+  progress?: number; // Added progress property
 }
 
 export interface Course {

@@ -1,9 +1,19 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { fileURLToPath } from 'url';
+import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+      '@features': path.resolve(__dirname, 'src/features'),
+      '@components': path.resolve(__dirname, 'src/components'),
+      '@hooks': path.resolve(__dirname, 'src/hooks'),
+      '@theme': path.resolve(__dirname, 'src/theme'),
+      '@utils': path.resolve(__dirname, 'src/utils')
+    }
+  },
   server: {
     proxy: {
       '/api': {
@@ -12,10 +22,5 @@ export default defineConfig({
         secure: false
       }
     }
-  },
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-    },
   }
 });

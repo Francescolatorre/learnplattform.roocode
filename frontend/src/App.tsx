@@ -1,20 +1,21 @@
 import React from 'react';
-import CourseDetailsPage from './features/courses/CoursesPage';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { theme } from './theme/theme';
-import { AuthProvider } from './features/auth/AuthContext';
-import ErrorBoundary from './components/ErrorBoundary';
-import LoginForm from './features/auth/LoginForm';
-import RegisterForm from './features/auth/RegisterForm';
-import { MainLayout } from './components/layout/MainLayout';
-import Dashboard from './features/dashboard/Dashboard';
-import ProgressTrackingUI from './features/dashboard/ProgressTrackingUI';
-import Profile from './features/profile/Profile';
-import CoursesPage from './features/courses/CoursesPage';
-import CourseTasksPage from './features/courses/CourseTasksPage';
-import CourseEditPage from './features/courses/CourseEditPage';
+import { theme } from '@theme/theme';
+import { AuthProvider } from '@features/auth/AuthContext';
+import ErrorBoundary from '@components/ErrorBoundary';
+import LoginForm from '@features/auth/LoginForm';
+import RegisterForm from '@features/auth/RegisterForm';
+import { MainLayout } from '@components/layout/MainLayout';
+import Dashboard from '@features/dashboard/Dashboard';
+import ProgressTrackingUI from '@features/dashboard/ProgressTrackingUI';
+import Profile from '@features/profile/Profile';
+import CoursesPage from '@features/courses/CoursesPage';
+import CourseTasksPage from '@features/courses/CourseTasksPage';
+import CourseEditPage from '@features/courses/CourseEditPage';
+import InstructorViews from '@features/instructor/InstructorViews';
+import CourseDetailsPage from './pages/CourseDetailsPage';
 
 type Task = {
   title: string;
@@ -47,7 +48,8 @@ const App: React.FC = () => {
               <Route path="/courses/:courseId" element={<ProtectedRoute><MainLayout><CourseDetailsPage /></MainLayout></ProtectedRoute>} />
               <Route path="/courses/:courseId/edit" element={<ProtectedRoute><MainLayout><CourseEditPage /></MainLayout></ProtectedRoute>} />
               <Route path="/courses/:courseId/tasks" element={<ProtectedRoute><MainLayout><CourseTasksPage /></MainLayout></ProtectedRoute>} />
-              <Route path="/progress-tracking/:courseId" element={<ProtectedRoute><MainLayout><ProgressTrackingUI courseId={':courseId'} /></MainLayout></ProtectedRoute>} />
+              <Route path="/progress-tracking/:courseId" element={<ProtectedRoute><MainLayout><ProgressTrackingUI courseId={useParams().courseId} /></MainLayout></ProtectedRoute>} />
+              <Route path="/instructor" element={<ProtectedRoute><MainLayout><InstructorViews /></MainLayout></ProtectedRoute>} />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
             </Routes>
           </Router>

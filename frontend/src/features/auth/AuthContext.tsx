@@ -25,23 +25,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchUserDetails = async () => {
     const token = localStorage.getItem('access_token');
-    const storedUser = localStorage.getItem('user');
-    
-    if (token && storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
 
-        // Handle missing or empty role
-        if (!parsedUser.role) {
-          console.warn('User role is missing. Assigning default role: "user"');
-          parsedUser.role = 'user';
-        }
-        
-        setUser(parsedUser);
+    if (token) {
+      try {
+        // Corrected to use the refresh token for fetching user details
+        const response = await refreshAccessToken(token);
+        const userData = response.user;
+
+        setUser(userData);
         setIsAuthenticated(true);
-        
+
       } catch {
-        // If parsing fails, log out
         await logout();
       }
     }
@@ -54,21 +48,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (usernameOrEmail: string, password: string) => {
     try {
       const response = await apiLogin(usernameOrEmail, password);
-      
-      // Store tokens and user
+
+      // Store tokens only
       localStorage.setItem('access_token', response.access);
       localStorage.setItem('refresh_token', response.refresh);
-      localStorage.setItem('user', JSON.stringify(response.user));
-      
+
       // Set user and authentication state
       setUser(response.user);
       setIsAuthenticated(true);
     } catch (error) {
       console.error('Login failed:', error);
-      // Clear any existing tokens and user
+      // Clear any existing tokens
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
-      localStorage.removeItem('user');
       setUser(null);
       setIsAuthenticated(false);
       throw new Error('Login failed');
@@ -81,11 +73,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (refreshToken) {
         await apiLogout(refreshToken);
       }
-      
+
       // Clear tokens and user state
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
-      localStorage.removeItem('user');
       setUser(null);
       setIsAuthenticated(false);
     } catch {
@@ -93,7 +84,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Even if logout fails, clear local storage
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
-      localStorage.removeItem('user');
       setUser(null);
       setIsAuthenticated(false);
     }
@@ -109,19 +99,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { access } = await refreshAccessToken(refreshToken);
       localStorage.setItem('access_token', access);
     } catch {
-      // If refresh fails, log out the user
       await logout();
       throw new Error('Token refresh failed');
     }
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      isAuthenticated, 
-      login, 
-      logout, 
-      refreshToken 
+    <AuthContext.Provider value={{
+      user,
+      isAuthenticated,
+      login,
+      logout,
+      refreshToken
     }}>
       {children}
     </AuthContext.Provider>

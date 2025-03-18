@@ -17,9 +17,9 @@ export const useCourse = (courseId: string) => {
         setError(result.error || { message: 'An error occurred', code: 0 });
       }
     } catch (err) {
-      setError({ 
-        message: err instanceof Error ? err.message : 'An unexpected error occurred', 
-        code: 0 
+      setError({
+        message: err instanceof Error ? err.message : 'An unexpected error occurred',
+        code: 0
       });
     }
   };
@@ -28,18 +28,21 @@ export const useCourse = (courseId: string) => {
     const getCourseDetails = async () => {
       try {
         const data = await fetchCourseDetails(courseId);
-        
+
+        // Log the API response to the console
+        console.log('API Response:', data);
+
         // Type guard to check if the result is an error
         if ('error' in data) {
           setError(data.error || { message: 'An error occurred', code: 0 });
         } else {
           setCourse(data);
-          setProgress(data.progress);
+          setProgress(data.progress !== undefined ? data.progress : 0); // Ensure progress is defined
         }
       } catch (err) {
-        setError({ 
-          message: err instanceof Error ? err.message : 'An unexpected error occurred', 
-          code: 0 
+        setError({
+          message: err instanceof Error ? err.message : 'An unexpected error occurred',
+          code: 0
         });
       } finally {
         setLoading(false);

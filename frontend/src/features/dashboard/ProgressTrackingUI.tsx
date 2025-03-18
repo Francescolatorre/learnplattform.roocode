@@ -27,11 +27,10 @@ import {
 } from 'chart.js';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import { format, parseISO, isAfter, isBefore, addDays } from 'date-fns';
-import { fetchStudentProgress, fetchCourseStructure } from "@/services/progressService";
-import { CourseProgress, ModuleProgress, TaskProgress } from '../types/progressTypes';
-import UpcomingTasksList from './UpcomingTasksList';
-import RecentActivityList from './RecentActivityList';
-import ProgressSummaryCard from './ProgressSummaryCard';
+import { fetchStudentProgress, fetchCourseStructure } from '../../services/progressService';
+import { CourseProgress, ModuleProgress, TaskProgress } from '../../types/progressTypes';
+import UpcomingTasksList from '../../features/dashboard/UpcomingTasksList';
+import ProgressSummaryCard from '../../features/dashboard/ProgressSummaryCard';
 
 // Register Chart.js components
 ChartJS.register(
@@ -164,16 +163,22 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
         const twoWeeksFromNow = addDays(now, 14);
 
         return progressData.taskProgress
-            .filter(task =>
-                task.status === 'pending' &&
-                task.dueDate &&
-                isAfter(parseISO(task.dueDate), now) &&
-                isBefore(parseISO(task.dueDate), twoWeeksFromNow)
-            )
+            .filter(task => {
+                const dueDate = task.dueDate || ''; // Default to empty string if null
+                return task.status === 'pending' &&
+                    dueDate &&
+                    isAfter(parseISO(dueDate), now) &&
+                    isBefore(parseISO(dueDate), twoWeeksFromNow);
+            })
+            .filter(task => task.dueDate !== null) // Filter out tasks with null dueDate
             .sort((a, b) => {
                 if (!a.dueDate || !b.dueDate) return 0;
                 return parseISO(a.dueDate).getTime() - parseISO(b.dueDate).getTime();
-            });
+            })
+            .map(task => ({
+                title: task.title,
+                dueDate: task.dueDate as string // Ensure dueDate is a string
+            }));
     };
 
     // Calculate overall completion percentage
@@ -272,6 +277,7 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
                     <Tab label="Modules" />
                     <Tab label="Performance" />
                     <Tab label="Activity" />
+                    <Tab label="Task Details" /> {/* New Tab */}
                 </Tabs>
                 <Divider />
             </Box>
@@ -371,25 +377,63 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
                         recentActivity={progressData.recentActivity}
                     />
                 )}
+
+                {activeTab === 4 && (
+                    // Task Details tab content
+                    <TaskDetailsView
+                        taskProgress={progressData.taskProgress}
+                    />
+                )}
             </Box>
         </Box>
     );
 };
 
 // Additional components would be implemented separately
-const ModuleProgressView = ({ moduleProgress, courseStructure }) => {
+const ModuleProgressView = ({ moduleProgress, courseStructure }: { moduleProgress: ModuleProgress[]; courseStructure: any; }) => {
     // Implementation details...
     return <div>Module Progress View</div>;
 };
 
-const PerformanceAnalysisView = ({ taskProgress }) => {
+const PerformanceAnalysisView = ({ taskProgress }: { taskProgress: TaskProgress[]; }) => {
     // Implementation details...
     return <div>Performance Analysis View</div>;
 };
 
-const ActivityHistoryView = ({ recentActivity }) => {
+const ActivityHistoryView = ({ recentActivity }: { recentActivity: any; }) => {
     // Implementation details...
     return <div>Activity History View</div>;
+};
+
+const TaskDetailsView = ({ taskProgress }: { taskProgress: TaskProgress[]; }) => {
+    // Implementation details...
+    return (
+        <Box>
+            <Typography variant="h6" gutterBottom>
+                Task Details
+            </Typography>
+            <Grid container spacing={3}>
+                {taskProgress.map(task => (
+                    <Grid item xs={12} md={6} key={task.taskId}>
+                        <Card>
+                            <CardContent>
+                                <Typography variant="h6">{task.title}</Typography>
+                                <Typography variant="body2">
+                                    Due Date: {task.dueDate ? format(parseISO(task.dueDate), 'PPP') : 'N/A'}
+                                </Typography>
+                                <Typography variant="body2">
+                                    Status: {task.status}
+                                </Typography>
+                                <Typography variant="body2">
+                                    Score: {task.score !== null ? `${task.score}%` : 'N/A'}
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                ))}
+            </Grid>
+        </Box>
+    );
 };
 
 export default ProgressTrackingUI;

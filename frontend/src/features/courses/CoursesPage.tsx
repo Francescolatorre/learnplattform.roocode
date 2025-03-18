@@ -4,16 +4,11 @@ import {
   Box,
   Typography,
   Grid,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  CircularProgress,
-  SelectChangeEvent,
   Button,
   Card,
   CardContent,
-  CardActionArea
+  CardActionArea,
+  CircularProgress
 } from '@mui/material';
 import { fetchCourses, fetchCourseDetails } from '../../services/courseService';
 import { Course, CourseError } from '../../types/courseTypes';
@@ -57,8 +52,6 @@ const CoursesPage: React.FC = () => {
 
   useEffect(() => {
     const loadCourseDetails = async () => {
-      console.log(`Fetching details for courseId: ${courseId}`);
-      console.log(`Current courses array: ${JSON.stringify(courses)}`);
       if (!courseId) return;
 
       try {
@@ -68,7 +61,6 @@ const CoursesPage: React.FC = () => {
         if ('error' in result) {
           setError(result.error);
         } else {
-          // Find the course in the list and replace it with the detailed version
           const courseIndex = courses.findIndex(c => c.id.toString() === courseId);
           if (courseIndex >= 0) {
             const updatedCourses = [...courses];
@@ -77,7 +69,6 @@ const CoursesPage: React.FC = () => {
           }
           setSelectedCourse(result);
 
-          // Fetch tasks for the selected course
           const taskData = await fetchTasksByCourse(courseId);
           setTasks(taskData);
         }
@@ -127,6 +118,9 @@ const CoursesPage: React.FC = () => {
   if (selectedCourse) {
     return (
       <Box p={3}>
+        <Button variant="outlined" onClick={() => navigate('/dashboard')}>
+          Dashboard
+        </Button>
         <Button variant="outlined" onClick={() => navigate('/courses')}>
           Back to All Courses
         </Button>
@@ -222,16 +216,7 @@ const CoursesPage: React.FC = () => {
             <Grid item xs={12} sm={6} md={4} key={course.id}>
               <Card variant="outlined" sx={{ height: '100%' }}>
                 <CardActionArea
-                  onClick={() => {
-                    const storedUser = localStorage.getItem('user');
-                    const userRole = storedUser ? JSON.parse(storedUser).role : 'unknown';
-                    const path = `/courses/${course.id}/${['admin', 'instructor'].includes(userRole) ? 'edit' : ''}`;
-                    console.log(`Navigating to: ${path}`);
-                    console.log(`User Role: ${userRole}`);
-                    console.log(`Course ID: ${course.id}`);
-                    console.log(`Course Title: ${course.title}`);
-                    navigate(path);
-                  }}
+                  onClick={() => navigate(`/courses/${course.id}`)} // Navigate to course detail view
                   sx={{ height: '100%' }}
                 >
                   <CardContent sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>

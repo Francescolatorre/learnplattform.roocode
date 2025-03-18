@@ -19,3 +19,38 @@ export const fetchTasksByCourse = async (courseId: string) => {
     throw error;
   }
 };
+
+// New function to update a task
+export const updateTask = async (taskId: string, updatedDescription: string) => {
+  try {
+    const token = localStorage.getItem('access_token');
+    const response = await axios.put(`${API_URL}/learning-tasks/${taskId}/`, {
+      description: updatedDescription
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error updating task:', error);
+    throw error;
+  }
+};
+
+// New function to delete a task
+export const deleteTask = async (taskId: string) => {
+  try {
+    const token = localStorage.getItem('access_token');
+    await axios.delete(`${API_URL}/learning-tasks/${taskId}/`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+  } catch (error) {
+    console.error('Error deleting task:', error);
+    throw error;
+  }
+};

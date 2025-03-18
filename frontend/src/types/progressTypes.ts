@@ -22,7 +22,7 @@ export interface ModuleProgress {
 
 export interface TaskProgress {
   taskId: string;
-  taskTitle: string;
+  title: string;
   moduleId: string;
   taskType: string;
   status: 'pending' | 'completed' | 'graded';
@@ -31,7 +31,7 @@ export interface TaskProgress {
   score: number | null;
   maxScore: number;
   attempts: number;
-  maxAttempts: number | null;
+  maxAttempts: number;
   timeSpent: number | null; // in seconds
 }
 
