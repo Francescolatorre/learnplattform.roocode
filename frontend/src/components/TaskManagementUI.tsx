@@ -52,6 +52,14 @@ const modalStyles = {
     backgroundColor: '#f44336',
     color: 'white',
     border: 'none'
+  },
+  inputField: {
+    width: '100%',
+    padding: '10px',
+    marginBottom: '15px',
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    fontSize: '16px'
   }
 };
 
@@ -62,6 +70,7 @@ interface RichTextEditorProps {
 
 const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange }) => {
   const editorRef = useRef<HTMLDivElement>(null);
+  const [editorInstance, setEditorInstance] = useState<any>(null);
 
   useEffect(() => {
     if (editorRef.current) {
@@ -80,6 +89,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange }) => {
         onChange(editor.root.innerHTML);
       });
 
+      setEditorInstance(editor);
+
       return () => {
         editor.off('text-change');
       };
@@ -87,11 +98,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange }) => {
   }, [onChange]);
 
   useEffect(() => {
-    if (editorRef.current) {
-      const editor = new Quill(editorRef.current);
-      editor.root.innerHTML = value;
+    if (editorInstance && value !== editorInstance.root.innerHTML) {
+      editorInstance.root.innerHTML = value;
     }
-  }, [value]);
+  }, [value, editorInstance]);
 
   return <div ref={editorRef} />;
 };
@@ -109,18 +119,31 @@ const TaskManagementUI: React.FC<TaskManagementUIProps> = ({ courseId, taskDescr
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
   const [editingDescription, setEditingDescription] = useState('');
+  const [editingTitle, setEditingTitle] = useState('');
 
   const handleEditTask = async () => {
+    console.log('handleEditTask called');
+    console.log('currentTaskId:', currentTaskId);
+    console.log('editingTitle:', editingTitle);
+    console.log('editingDescription:', editingDescription);
+
     if (currentTaskId) {
       try {
-        await updateTask(currentTaskId, editingDescription);
+        console.log('Calling updateTask with:', currentTaskId, editingDescription, editingTitle);
+        const updatedTask = await updateTask(currentTaskId, editingDescription, editingTitle);
+        console.log('updateTask response:', updatedTask);
 
         // Update the task in the local state
-        setTasks(tasks.map(task =>
-          task.id === currentTaskId
-            ? { ...task, description: editingDescription }
-            : task
-        ));
+        setTasks(prevTasks => {
+          console.log('Previous tasks:', prevTasks);
+          const updatedTasks = prevTasks.map(task =>
+            task.id === currentTaskId
+              ? { ...task, description: editingDescription, title: editingTitle }
+              : task
+          );
+          console.log('Updated tasks:', updatedTasks);
+          return updatedTasks;
+        });
 
         // Close modal after successful update
         setIsModalOpen(false);
@@ -140,11 +163,12 @@ const TaskManagementUI: React.FC<TaskManagementUIProps> = ({ courseId, taskDescr
     }
   };
 
-  const openModal = (taskId: string, description: string) => {
+  const openModal = (taskId: string, description: string, title: string) => {
     setCurrentTaskId(taskId);
     setEditingDescription(description);
+    setEditingTitle(title);
     setIsModalOpen(true);
-    console.log('Opening modal for task:', taskId, 'with description:', description);
+    console.log('Opening modal for task:', taskId, 'with description:', description, 'and title:', title);
   };
 
   return (
@@ -156,7 +180,25 @@ const TaskManagementUI: React.FC<TaskManagementUIProps> = ({ courseId, taskDescr
               <h2>Edit Task</h2>
               <button onClick={() => setIsModalOpen(false)}>×</button>
             </div>
-            <RichTextEditor value={editingDescription} onChange={setEditingDescription} />
+            <div>
+              <label htmlFor="taskTitle">Task Title:</label>
+              <input
+                id="taskTitle"
+                type="text"
+                value={editingTitle}
+                onChange={(e) => setEditingTitle(e.target.value)}
+                style={modalStyles.inputField as React.CSSProperties}
+              />
+            </div>
+            <div>
+              <label htmlFor="taskDescription">Task Description:</label>
+              <textarea
+                id="taskDescription"
+                value={editingDescription}
+                onChange={(e) => setEditingDescription(e.target.value)}
+                style={{...modalStyles.inputField, height: '150px'} as React.CSSProperties}
+              />
+            </div>
             <div style={modalStyles.modalFooter as React.CSSProperties}>
               <button
                 style={{...modalStyles.button, ...modalStyles.cancelButton} as React.CSSProperties}
@@ -176,10 +218,11 @@ const TaskManagementUI: React.FC<TaskManagementUIProps> = ({ courseId, taskDescr
       )}
       {tasks.map(task => (
         <div key={task.id}>
+          <h3>{task.title}</h3>
           <p>{task.description}</p>
           {userRole === 'instructor' || userRole === 'admin' ? (
             <>
-              <button onClick={() => openModal(task.id, task.description)}>Edit Task</button>
+              <button onClick={() => openModal(task.id, task.description, task.title)}>Edit Task</button>
               <button onClick={() => handleDeleteTask(task.id)}>Delete Task</button>
             </>
           ) : null}

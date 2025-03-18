@@ -20,13 +20,41 @@ export const fetchTasksByCourse = async (courseId: string) => {
   }
 };
 
-// New function to update a task
-export const updateTask = async (taskId: string, updatedDescription: string) => {
+// Function to get a single task by ID
+export const getTaskById = async (taskId: string) => {
   try {
     const token = localStorage.getItem('access_token');
-    const response = await axios.put(`${API_URL}/learning-tasks/${taskId}/`, {
-      description: updatedDescription
-    }, {
+    const response = await axios.get(`${API_URL}/learning-tasks/${taskId}/`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching task:', error);
+    throw error;
+  }
+};
+
+// Updated function to update a task
+export const updateTask = async (taskId: string, updatedDescription: string, updatedTitle?: string) => {
+  try {
+    const token = localStorage.getItem('access_token');
+
+    // First, get the current task data
+    const currentTask = await getTaskById(taskId);
+    console.log('Current task data:', currentTask);
+
+    // Update the description and title (if provided)
+    const updatedTask = {
+      ...currentTask,
+      description: updatedDescription,
+      ...(updatedTitle && { title: updatedTitle })
+    };
+    console.log('Sending updated task data:', updatedTask);
+
+    const response = await axios.put(`${API_URL}/learning-tasks/${taskId}/`, updatedTask, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
