@@ -1,9 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button } from '@mui/material';
+import { useAuth } from '../features/auth/AuthContext';
+
 
 const MainNavigation: React.FC = () => {
-    const userRole = localStorage.getItem('user_role');
+    const user = useAuth().user;
+    const userRole = user?.role || localStorage.getItem('user_role');
 
     return (
         <AppBar position="static">

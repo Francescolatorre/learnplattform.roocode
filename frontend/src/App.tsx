@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { use } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ThemeProvider } from '@mui/material/styles';
@@ -18,6 +18,7 @@ import CourseEditPage from '@features/courses/CourseEditPage';
 import InstructorViews from '@features/instructor/InstructorViews';
 import CourseDetailsPage from './pages/CourseDetailsPage';
 import CourseEnrollmentPage from '@features/courses/CourseEnrollmentPage';
+import { useAuth } from '@features/auth/AuthContext';
 
 type Task = {
   title: string;
@@ -30,8 +31,11 @@ type Task = {
 };
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const isAuthenticated = localStorage.getItem('access_token') !== null;
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+  const { isAuthenticated } = useAuth();
+  const isTokenAvailable = localStorage.getItem('access_token') !== null;
+
+  // Use both the context state and token existence for most reliable check
+  return (isAuthenticated || isTokenAvailable) ? <>{children}</> : <Navigate to="/login" replace />;
 };
 
 const App: React.FC = () => {
@@ -52,6 +56,7 @@ const App: React.FC = () => {
               <Route path="/courses" element={<ProtectedRoute><MainLayout><CoursesPage /></MainLayout></ProtectedRoute>} />
               <Route path="/courses/:courseId" element={<ProtectedRoute><MainLayout><CourseEnrollmentPage /></MainLayout></ProtectedRoute>} />
               <Route path="/courses/:courseId/edit" element={<ProtectedRoute><MainLayout><CourseEditPage /></MainLayout></ProtectedRoute>} />
+              <Route path="/courses-old/:courseId" element={<ProtectedRoute><MainLayout><CourseDetailsPage /></MainLayout></ProtectedRoute>} />
               <Route path="/courses/:courseId/tasks" element={<ProtectedRoute><MainLayout><CourseTasksPage /></MainLayout></ProtectedRoute>} />
               <Route path="/progress-tracking/:courseId" element={<ProtectedRoute><MainLayout><ProgressTrackingUI courseId={useParams().courseId} /></MainLayout></ProtectedRoute>} />
               <Route path="/instructor" element={<ProtectedRoute><MainLayout><InstructorViews /></MainLayout></ProtectedRoute>} />

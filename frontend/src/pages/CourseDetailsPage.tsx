@@ -105,6 +105,9 @@ const CourseDetailsPage: React.FC = () => {
   const [tasks, setTasks] = useState<any[]>([]); // Correct type for tasks
   const [courseProgress, setCourseProgress] = useState<CourseProgress | null>(null);
   const { user } = useAuth(); // Use context to get user information
+  // Get the user role from the context or local storage
+  const userRole = user?.role || localStorage.getItem('user_role') || 'student';
+  console.log("User role in CourseDetailsPage:", userRole);
 
   useEffect(() => {
     const loadTasks = async () => {
@@ -138,8 +141,8 @@ const CourseDetailsPage: React.FC = () => {
   if (error) return <div style={styles.errorContainer}>Error: {error.message}</div>;
   if (!course) return <div style={styles.errorContainer}>Course not found</div>;
 
-  const userRole = user?.role || 'student'; // Use context to get user role
-  console.log("User role in CourseDetailsPage:", userRole);
+
+
 
   return (
     <div style={styles.container}>
