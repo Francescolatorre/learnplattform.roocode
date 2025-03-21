@@ -130,17 +130,41 @@ class ProgressService {
         }
     }
 
-    async fetchAllStudentsProgress(courseId: string): Promise<CourseProgress[]> {
+    public async fetchAllStudentsProgress(courseId: string): Promise<CourseProgress[]> {
         try {
             const response = await this.axiosInstance.get(`/courses/${courseId}/student-progress/`);
-            return response.data;
+
+            // Handle the case where the API returns an object instead of an array
+            if (Array.isArray(response.data)) {
+                return response.data;
+            } else if (response.data && typeof response.data === 'object') {
+                // If it's a single object, wrap it in an array
+                if (response.data.courseId || response.data.course_id) {
+                    return [response.data];
+                }
+
+                // If it has a results property that's an array, return that
+                if (Array.isArray(response.data.results)) {
+                    return response.data.results;
+                }
+
+                // Last resort: convert object to array of values
+                const possibleArray = Object.values(response.data);
+                if (Array.isArray(possibleArray) && possibleArray.length > 0) {
+                    return possibleArray;
+                }
+            }
+
+            // If we couldn't extract an array from the response, return an empty array
+            console.warn('Unable to extract student progress data from response:', response.data);
+            return [];
         } catch (error) {
             console.error('Error fetching all students progress:', error);
-            throw error;
+            return [];
         }
     }
 
-    async getQuizHistory(courseId: string, studentId?: string): Promise<QuizHistory[]> {
+    public async getQuizHistory(courseId: string, studentId?: string): Promise<QuizHistory[]> {
         try {
             const endpoint = studentId
                 ? `/students/${studentId}/quiz-performance/`
@@ -161,7 +185,19 @@ class ProgressService {
         }
     }
 
-    async updateTaskProgress(
+    public async getContentEffectivenessData(courseId: string): Promise<ContentEffectivenessData> {
+        try {
+            const response = await this.axiosInstance.get(
+                `/courses/${courseId}/content-effectiveness`
+            );
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching content effectiveness data:', error);
+            throw error;
+        }
+    }
+
+    public async updateTaskProgress(
         courseId: string,
         taskId: string,
         progressData: {
@@ -183,7 +219,7 @@ class ProgressService {
         }
     }
 
-    async submitTask(
+    public async submitTask(
         courseId: string,
         taskId: string,
         submissionData: any
@@ -200,7 +236,7 @@ class ProgressService {
         }
     }
 
-    async gradeSubmission(
+    public async gradeSubmission(
         courseId: string,
         taskId: string,
         studentId: string,
@@ -221,24 +257,14 @@ class ProgressService {
             throw error;
         }
     }
-
-    async getContentEffectivenessData(courseId: string): Promise<ContentEffectivenessData> {
-        try {
-            const response = await this.axiosInstance.get(
-                `/courses/${courseId}/content-effectiveness`
-            );
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching content effectiveness data:', error);
-            throw error;
-        }
-    }
 }
 
+// Create a singleton instance
 export const progressService = new ProgressService();
 
-// Exported methods for backward compatibility
-export const {
-    fetchStudentProgress,
-    fetchCourseStructure
-} = progressService;
+// Export all methods for backward compatibility
+export const fetchStudentProgress = progressService.fetchStudentProgress.bind(progressService);
+export const fetchCourseStructure = progressService.fetchCourseStructure.bind(progressService);
+export const fetchAllStudentsProgress = progressService.fetchAllStudentsProgress.bind(progressService);
+export const getQuizHistory = progressService.getQuizHistory.bind(progressService);
+export const getContentEffectivenessData = progressService.getContentEffectivenessData.bind(progressService);

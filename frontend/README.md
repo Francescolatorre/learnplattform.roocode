@@ -1,50 +1,87 @@
-# React + TypeScript + Vite
+# Frontend Architecture Improvements
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+This document outlines the architectural improvements made to the frontend React TypeScript codebase, focusing on reducing code duplication, improving reusability, and enhancing overall code quality.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Shared UI Components
 
-## Expanding the ESLint configuration
+### 1. DataTable
+A flexible, generic table component with:
+- Dynamic column configuration
+- Pagination support
+- Loading and error states
+- Customizable styling
+- Type-safe generic implementation
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### 2. StatusChip
+An intelligent status indicator component featuring:
+- Automatic color mapping
+- Customizable status representations
+- Flexible labeling
+- Consistent theming
 
-- Configure the top-level `parserOptions` property like this:
+### 3. ProgressIndicator
+A versatile progress visualization component with:
+- Linear and circular progress modes
+- Intelligent color coding
+- Configurable thresholds
+- Responsive design
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## API Layer Improvements
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### 1. ApiService
+A centralized API management solution providing:
+- Automatic token management
+- Comprehensive error handling
+- Resource-specific service creation
+- Type-safe generic methods
+- Flexible configuration
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+### 2. useApiResource Hook
+A powerful hook factory for:
+- Generic resource management
+- Automatic state handling
+- CRUD operations
+- Type-safe implementations
+- Caching and performance optimization
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+### 3. useCourseData Hook
+A comprehensive course data management hook with:
+- Full course lifecycle operations
+- Enrollment management
+- React Query integration
+- Automatic state and error handling
+
+## Key Benefits
+
+- **Reduced Code Duplication**: Centralized, reusable components
+- **Improved Type Safety**: TypeScript generics
+- **Enhanced Performance**: Optimized data fetching and caching
+- **Consistent User Experience**: Standardized UI components
+- **Flexible Architecture**: Easily extensible design
+
+## Best Practices Implemented
+
+- Modular component design
+- Comprehensive error handling
+- Performance optimization
+- Type-safe implementations
+- Consistent theming and styling
+
+## Getting Started
+
+1. Explore shared components in `src/components/common/`
+2. Review API services in `src/services/`
+3. Utilize hooks in `src/hooks/`
+
+## Future Improvements
+
+- Expand component library
+- Add more comprehensive testing
+- Implement advanced caching strategies
+- Enhance type definitions
+
+## Contributing
+
+Please follow our coding guidelines and contribute to improving the frontend architecture.
