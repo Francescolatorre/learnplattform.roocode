@@ -1,21 +1,30 @@
 # Active Context
 
 ## Current Work
-- Defining and activating tasks for student use cases based on the product context.
+- Consolidating tasks and aligning project focus on priority student use cases.
+- Implementing core API functionality according to OpenAPI specification.
+- Continuing model consolidation and UI development for task progress tracking.
 
 ## Recent Changes
-- Added detailed task files for each student use case.
-- Updated progress tracking in `progress.md`.
+- Consolidated task structure to eliminate obsolete and duplicate tasks.
+- Created comprehensive task overview in `tasks/Documentation_overview.md`.
+- Identified inconsistencies in task status tracking across different files.
 
 ## Active Tasks
-- **Personalized Learning Path Task**: TODO
-- **Adaptive Assessment Task**: TODO
-- **Skill Progression Tracking Task**: TODO
-- **AI-Powered Submission Evaluation Task**: TODO
-- **Course Exploration and Enrollment Task**: TODO
-- **Student Progress Tracking Interface Task**: TODO
+- **API Implementation Completion** (TASK-API-IMPLEMENTATION-COMPLETION): IN_PROGRESS
+- **Model Consolidation** (TASK-MODEL-CONSOLIDATION-002): IN_PROGRESS
+- **Task Progress Tracking UI** (TASK-UI-005): IN_PROGRESS
+- **Course Creation Feature** (TASK-CREATION-001): IN_PROGRESS
+
+## Priority TODO Tasks
+- **Personalized Learning Path** (Task_Personalized_Learning_Path_Task): TODO
+- **Adaptive Assessment** (Task_Adaptive_Assessment_Task): TODO
+- **Skill Progression Tracking** (Task_Skill_Progression_Tracking_Task): TODO
+- **AI-Powered Submission Evaluation** (Task_AI_Powered_Submission_Evaluation_Task): TODO
+- **Course Exploration and Enrollment** (Task_Course_Exploration_and_Enrollment_Task): TODO
 
 ## Next Steps
-- Begin implementation of tasks in Code mode.
-- Monitor task progress and update statuses accordingly.
-- Initiate development of the Student Progress Tracking Interface Task.
+- Archive obsolete task files to memory_bank/archive/
+- Update progress.md to reflect the consolidated task list
+- Rename task files to follow consistent naming convention
+- Update project_status.md to align with the consolidated view

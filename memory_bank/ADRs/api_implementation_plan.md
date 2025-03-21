@@ -5,6 +5,8 @@ In Progress
 
 ## Context
 We are in the process of recreating the backend for the Learning Platform. The database models have been defined and migrations have been applied. Now we need to implement the API endpoints according to the provided OpenAPI specification.
+## Open Issues
+ - None
 
 ## Decision
 We will implement the API using Django REST Framework (DRF) with the following components:
