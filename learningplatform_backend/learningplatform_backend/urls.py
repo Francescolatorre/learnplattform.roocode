@@ -20,6 +20,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 from core import views
+from core.progress_api import EnhancedCourseEnrollmentViewSet, EnhancedTaskProgressViewSet, EnhancedQuizAttemptViewSet, CourseAnalyticsAPI, CourseStudentProgressAPI, CourseTaskAnalyticsAPI, StudentProgressAPI, StudentQuizPerformanceAPI
 
 # API router
 router = DefaultRouter()
@@ -30,6 +31,10 @@ router.register(r'learning-tasks', views.LearningTaskViewSet)
 router.register(r'quiz-tasks', views.QuizTaskViewSet)
 router.register(r'quiz-questions', views.QuizQuestionViewSet)
 router.register(r'quiz-options', views.QuizOptionViewSet)
+router.register(r'course-enrollments', views.CourseEnrollmentViewSet)
+router.register(r'task-progress', EnhancedTaskProgressViewSet)
+router.register(r'quiz-attempts', EnhancedQuizAttemptViewSet)
+router.register(r'enrollments', EnhancedCourseEnrollmentViewSet)
 
 # JWT auth URLs
 auth_urls = [
@@ -39,10 +44,21 @@ auth_urls = [
     path('logout/', views.LogoutView.as_view(), name='logout'),
 ]
 
+# Analytics URLs
+analytics_urls = [
+    path('courses/<int:pk>/analytics/', CourseAnalyticsAPI.as_view(), name='course_analytics'),
+    path('courses/<int:pk>/student-progress/', CourseStudentProgressAPI.as_view(), name='course_student_progress'),
+    path('courses/<int:pk>/task-analytics/', CourseTaskAnalyticsAPI.as_view(), name='course_task_analytics'),
+    path('students/<int:pk>/progress/', StudentProgressAPI.as_view(), name='student_progress'),
+    path('students/<int:pk>/quiz-performance/', StudentQuizPerformanceAPI.as_view(), name='student_quiz_performance'),
+]
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('api/v1/', include(router.urls)),
+    path('api/v1/', include(analytics_urls)),
     path('auth/', include(auth_urls)),
     path('api-auth/', include('rest_framework.urls')),  # DRF browsable API login
     path('health/', views.health_check, name='health_check'),
 ]
+

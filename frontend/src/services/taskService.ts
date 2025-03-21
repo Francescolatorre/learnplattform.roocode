@@ -1,84 +1,128 @@
 import axios from 'axios';
+import { z } from 'zod';
+import { useAuth } from '../features/auth/AuthContext';
+
+// Enhanced Type Definitions with Validation
+const TaskSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  description: z.string(),
+  course: z.number(),
+  is_published: z.boolean(),
+  max_submissions: z.number().optional(),
+  deadline: z.string().optional(),
+  created_at: z.string().optional(),
+  updated_at: z.string().optional()
+});
+
+const TaskCreationSchema = TaskSchema.omit({
+  id: true,
+  created_at: true,
+  updated_at: true
+}).extend({
+  attachment: z.instanceof(File).optional()
+});
+
+export type Task = z.infer<typeof TaskSchema>;
+export type TaskCreationData = z.infer<typeof TaskCreationSchema>;
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const API_URL = `${API_BASE_URL}/api/v1`;
 
-export const fetchTasksByCourse = async (courseId: string) => {
+function getAuthHeaders() {
+  const accessToken = localStorage.getItem('access_token');
+  return {
+    'Authorization': `Bearer ${accessToken}`,
+    'Content-Type': 'application/json'
+  };
+}
+
+function handleError(error: unknown, context: string) {
+  console.error(`${context}:`, error);
+  // TODO: Implement more robust error handling
+  // Potential integration with global error tracking system
+}
+
+export async function fetchTasksByCourse(courseId: string | number): Promise<Task[]> {
   try {
-    const token = localStorage.getItem('access_token');
-    const response = await axios.get(`${API_URL}/learning-tasks/by_course/`, {
-      params: { course_id: courseId },
+    const response = await axios.get<Task[]>(`${API_URL}/tasks/course/${courseId}/`, {
+      headers: getAuthHeaders()
+    });
+    return response.data.map(task => TaskSchema.parse(task));
+  } catch (error) {
+    handleError(error, 'Failed to fetch tasks for course');
+    return [];
+  }
+}
+
+export async function createTask(taskData: TaskCreationData): Promise<Task> {
+  const formData = new FormData();
+  Object.entries(taskData).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      formData.append(key, value instanceof File ? value : String(value));
+    }
+  });
+
+  try {
+    const response = await axios.post<Task>(`${API_URL}/tasks/`, formData, {
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        ...getAuthHeaders(),
+        'Content-Type': 'multipart/form-data'
       }
     });
-    return response.data;
+    return TaskSchema.parse(response.data);
   } catch (error) {
-    console.error('Error fetching tasks:', error);
+    handleError(error, 'Task creation failed');
     throw error;
   }
-};
+}
 
-// Function to get a single task by ID
-export const getTaskById = async (taskId: string) => {
+export async function updateTask(
+  taskId: string,
+  description: string,
+  title: string
+): Promise<Task> {
   try {
-    const token = localStorage.getItem('access_token');
-    const response = await axios.get(`${API_URL}/learning-tasks/${taskId}/`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-    return response.data;
+    const response = await axios.patch<Task>(`${API_URL}/tasks/${taskId}/`,
+      { description, title },
+      { headers: getAuthHeaders() }
+    );
+    return TaskSchema.parse(response.data);
   } catch (error) {
-    console.error('Error fetching task:', error);
+    handleError(error, 'Task update failed');
     throw error;
   }
-};
+}
 
-// Updated function to update a task
-export const updateTask = async (taskId: string, updatedDescription: string, updatedTitle?: string) => {
+export async function deleteTask(taskId: string): Promise<void> {
   try {
-    const token = localStorage.getItem('access_token');
-
-    // First, get the current task data
-    const currentTask = await getTaskById(taskId);
-    console.log('Current task data:', currentTask);
-
-    // Update the description and title (if provided)
-    const updatedTask = {
-      ...currentTask,
-      description: updatedDescription,
-      ...(updatedTitle && { title: updatedTitle })
-    };
-    console.log('Sending updated task data:', updatedTask);
-
-    const response = await axios.put(`${API_URL}/learning-tasks/${taskId}/`, updatedTask, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error updating task:', error);
-    throw error;
-  }
-};
-
-// New function to delete a task
-export const deleteTask = async (taskId: string) => {
-  try {
-    const token = localStorage.getItem('access_token');
-    await axios.delete(`${API_URL}/learning-tasks/${taskId}/`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+    await axios.delete(`${API_URL}/tasks/${taskId}/`, {
+      headers: getAuthHeaders()
     });
   } catch (error) {
-    console.error('Error deleting task:', error);
+    handleError(error, 'Error deleting task');
     throw error;
   }
+}
+
+// React Hook for task creation (for backward compatibility)
+export const useTaskCreation = () => {
+  const { user } = useAuth();
+
+  const handleTaskCreation = async (taskData: Omit<TaskCreationData, 'course'>) => {
+    if (!user) {
+      throw new Error('User must be logged in to create a task');
+    }
+
+    // TODO: Replace with actual course selection logic
+    const courseId = 1;
+
+    return createTask({
+      ...taskData,
+      course: courseId,
+      is_published: taskData.is_published || false
+    });
+  };
+
+  return { createTask: handleTaskCreation };
 };

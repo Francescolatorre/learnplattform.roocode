@@ -32,6 +32,9 @@
   - **Progress**: Development of course creation feature is in progress.
 
 ## DONE
+- TASK-001: User Progress Tracking Models
+  - **Completion Date**: 2025-03-21
+  - **Summary**: Models for tracking user progress through courses and learning activities have been implemented, including CourseEnrollment, TaskProgress, QuizAttempt, and QuizResponse models with appropriate relationships and helper methods.
 - TASK-MODEL-UPDATE-PLAN-001: Draft Model Update Plan
   - **Completion Date**: 2025-03-19
   - **Summary**: Plan for updating data models across the learning platform has been completed.
@@ -119,6 +122,7 @@
 - UI_COMPONENTS_DEVELOPMENT
 
 ### Completed Tasks:
+- TASK-001
 - TASK-MODEL-UPDATE-PLAN-001
 - TASK-UI-006
 - TASK-API-002

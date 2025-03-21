@@ -3,7 +3,10 @@ import { useParams } from 'react-router-dom';
 import { useCourse } from '../hooks/useCourse';
 import TaskManagementUI from '../components/TaskManagementUI';
 import { fetchTasksByCourse } from '../services/taskService';
-import { useAuth } from '../features/auth/AuthContext'; // Import useAuth hook
+import { fetchStudentProgress } from '../services/progressService';
+import { useAuth } from '../features/auth/AuthContext';
+import { CourseProgress } from '../types/progressTypes';
+import { LinearProgress, Typography, Box } from '@mui/material';
 
 // Styles for the course details page
 const styles = {
@@ -83,6 +86,13 @@ const styles = {
     padding: '15px',
     borderRadius: '8px',
     marginTop: '20px'
+  },
+  progressSection: {
+    marginBottom: '20px',
+    backgroundColor: 'white',
+    borderRadius: '8px',
+    padding: '15px',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
   }
 };
 
@@ -93,6 +103,7 @@ const CourseDetailsPage: React.FC = () => {
   const { course, loading, error } = useCourse(courseId);
   const [taskDescription, setTaskDescription] = useState("");
   const [tasks, setTasks] = useState<any[]>([]); // Correct type for tasks
+  const [courseProgress, setCourseProgress] = useState<CourseProgress | null>(null);
   const { user } = useAuth(); // Use context to get user information
 
   useEffect(() => {
@@ -108,6 +119,21 @@ const CourseDetailsPage: React.FC = () => {
     loadTasks();
   }, [courseId]);
 
+  useEffect(() => {
+    const loadProgress = async () => {
+      try {
+        const progress = await fetchStudentProgress(courseId);
+        setCourseProgress(progress);
+      } catch (error) {
+        console.error("Failed to fetch course progress:", error);
+      }
+    };
+
+    if (course) {
+      loadProgress();
+    }
+  }, [course, courseId]);
+
   if (loading) return <div style={styles.loadingContainer}>Loading course details...</div>;
   if (error) return <div style={styles.errorContainer}>Error: {error.message}</div>;
   if (!course) return <div style={styles.errorContainer}>Course not found</div>;
@@ -122,10 +148,45 @@ const CourseDetailsPage: React.FC = () => {
         <p style={styles.description}>{course.description}</p>
       </div>
 
+      {/* Progress Section */}
+      {courseProgress && (
+        <div style={styles.progressSection}>
+          <Typography variant="h6" style={{ marginBottom: '10px', color: '#007bff' }}>
+            Course Progress
+          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <Box sx={{ width: '100%', mr: 1 }}>
+              <LinearProgress
+                variant="determinate"
+                value={courseProgress.completionPercentage}
+                color="primary"
+              />
+            </Box>
+            <Box sx={{ minWidth: 35 }}>
+              <Typography variant="body2" color="text.secondary">
+                {`${Math.round(courseProgress.completionPercentage)}%`}
+              </Typography>
+            </Box>
+          </Box>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+            <Typography variant="body2">
+              Completed Tasks: {courseProgress.completedTasks} / {courseProgress.totalTasks}
+            </Typography>
+            <Typography variant="body2">
+              Average Score: {courseProgress.averageScore.toFixed(2)}
+            </Typography>
+          </Box>
+        </div>
+      )}
+
       <div style={styles.infoSection}>
         <div style={styles.infoCard}>
           <h3 style={styles.infoTitle}>Instructor</h3>
-          <p style={styles.infoContent}>{course.instructor || 'Not assigned'}</p>
+          <p style={styles.infoContent}>
+            {course.creator_details
+              ? course.creator_details.display_name || course.creator_details.username
+              : 'Not assigned'}
+          </p>
         </div>
 
         <div style={styles.infoCard}>
@@ -135,13 +196,21 @@ const CourseDetailsPage: React.FC = () => {
 
         <div style={styles.infoCard}>
           <h3 style={styles.infoTitle}>Prerequisites</h3>
-          <p style={styles.infoContent}>{course.prerequisites || 'None'}</p>
+          <p style={styles.infoContent}>
+            {Array.isArray(course.prerequisites)
+              ? course.prerequisites.join(', ')
+              : (course.prerequisites || 'None')}
+          </p>
         </div>
       </div>
 
       <div style={styles.infoCard}>
         <h3 style={styles.infoTitle}>Learning Objectives</h3>
-        <p style={styles.infoContent}>{course.learningObjectives || 'No learning objectives specified'}</p>
+        <p style={styles.infoContent}>
+          {Array.isArray(course.learning_objectives)
+            ? course.learning_objectives.join(', ')
+            : (course.learning_objectives || 'No learning objectives specified')}
+        </p>
       </div>
 
       <div style={styles.tasksSection}>

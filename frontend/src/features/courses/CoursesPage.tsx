@@ -8,14 +8,18 @@ import {
   Card,
   CardContent,
   CardActionArea,
-  CircularProgress
+  CircularProgress,
+  LinearProgress
 } from '@mui/material';
 import { fetchCourses, fetchCourseDetails } from '../../services/courseService';
+import { fetchStudentProgress } from '../../services/progressService';
 import { Course, CourseError } from '../../types/courseTypes';
+import { CourseProgress } from '../../types/progressTypes';
 import { fetchTasksByCourse } from '../../services/taskService';
 
 const CoursesPage: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
+  const [courseProgress, setCourseProgress] = useState<{[courseId: string]: CourseProgress}>({});
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<CourseError | null>(null);
@@ -35,6 +39,27 @@ const CoursesPage: React.FC = () => {
         } else {
           setCourses(result.courses);
           setError(null);
+
+          // Fetch progress for each course
+          const progressPromises = result.courses.map(async (course) => {
+            try {
+              const progress = await fetchStudentProgress(course.id.toString());
+              return { courseId: course.id.toString(), progress };
+            } catch (progressError) {
+              console.error(`Failed to fetch progress for course ${course.id}:`, progressError);
+              return null;
+            }
+          });
+
+          const progressResults = await Promise.all(progressPromises);
+          const progressMap = progressResults.reduce((acc, result) => {
+            if (result) {
+              acc[result.courseId] = result.progress;
+            }
+            return acc;
+          }, {} as {[courseId: string]: CourseProgress});
+
+          setCourseProgress(progressMap);
         }
       } catch {
         setError({
@@ -156,7 +181,7 @@ const CoursesPage: React.FC = () => {
             <Grid item xs={12} md={6}>
               <Typography variant="subtitle1">Learning Objectives</Typography>
               <Typography variant="body2">
-                {selectedCourse.learningObjectives || 'No learning objectives specified.'}
+                {selectedCourse.learning_objectives?.join(', ') || 'No learning objectives specified.'}
               </Typography>
             </Grid>
           </Grid>
@@ -233,6 +258,24 @@ const CoursesPage: React.FC = () => {
                       <Typography variant="caption" color="textSecondary" display="block">
                         Version: {course.version || '1.0'}
                       </Typography>
+
+                      {/* Progress Tracking */}
+                      {courseProgress[course.id.toString()] && (
+                        <Box mt={1}>
+                          <Typography variant="caption" color="textSecondary">
+                            Progress
+                          </Typography>
+                          <LinearProgress
+                            variant="determinate"
+                            value={courseProgress[course.id.toString()].completionPercentage}
+                            color="primary"
+                            sx={{ height: 6, borderRadius: 2, mt: 0.5 }}
+                          />
+                          <Typography variant="caption" color="textSecondary">
+                            {`${Math.round(courseProgress[course.id.toString()].completionPercentage)}% Completed`}
+                          </Typography>
+                        </Box>
+                      )}
                     </Box>
                   </CardContent>
                 </CardActionArea>
