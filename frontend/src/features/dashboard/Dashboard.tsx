@@ -4,6 +4,77 @@ import { useAuth } from '../auth/AuthContext';
 import { fetchStudentProgress } from '../../services/progressService';
 import { CourseProgress } from '../../types/progressTypes';
 
+// Debug component for tracking progress fetch issues
+const ProgressDebugger: React.FC = () => {
+  const { user, isAuthenticated } = useAuth();
+  const [debugInfo, setDebugInfo] = useState<{
+    isAuthenticated: boolean;
+    userRole: string | null;
+    accessToken: string | null;
+    progressFetchResult: string;
+  }>({
+    isAuthenticated: false,
+    userRole: null,
+    accessToken: null,
+    progressFetchResult: 'Not attempted'
+  });
+
+  useEffect(() => {
+    const runDiagnostics = async () => {
+      const accessToken = localStorage.getItem('access_token');
+
+      setDebugInfo(prev => ({
+        ...prev,
+        isAuthenticated,
+        userRole: user?.role || localStorage.getItem('user_role'),
+        accessToken
+      }));
+
+      if (isAuthenticated && accessToken) {
+        try {
+          // Try fetching progress for a sample course
+          await fetchStudentProgress('1');
+          setDebugInfo(prev => ({
+            ...prev,
+            progressFetchResult: 'Success'
+          }));
+        } catch (error: any) {
+          setDebugInfo(prev => ({
+            ...prev,
+            progressFetchResult: `Failed: ${error.response?.status || error.message}`
+          }));
+        }
+      }
+    };
+
+    runDiagnostics();
+  }, [user, isAuthenticated]);
+
+  return (
+    <Paper sx={{ p: 2, mt: 2 }}>
+      <Typography variant="h6" gutterBottom>Progress Fetch Diagnostics</Typography>
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6}>
+          <Typography variant="body2">
+            Authentication Status: {debugInfo.isAuthenticated ? 'Authenticated' : 'Not Authenticated'}
+          </Typography>
+          <Typography variant="body2">
+            User Role: {debugInfo.userRole || 'Not Set'}
+          </Typography>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Typography variant="body2">
+            Access Token Present: {debugInfo.accessToken ? 'Yes' : 'No'}
+          </Typography>
+          <Typography variant="body2" color={debugInfo.progressFetchResult === 'Success' ? 'success.main' : 'error.main'}>
+            Progress Fetch Result: {debugInfo.progressFetchResult}
+          </Typography>
+        </Grid>
+      </Grid>
+    </Paper>
+  );
+};
+
 const Dashboard: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
   const userRole = user?.role || 'Not assigned';
@@ -35,61 +106,10 @@ const Dashboard: React.FC = () => {
         Dashboard
       </Typography>
 
-      {isAuthenticated && user ? (
+      {isAuthenticated ? (
         <>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <Typography variant="subtitle1" sx={{ mr: 2 }}>
-              User Role:
-            </Typography>
-            <Chip
-              label={userRole}
-              className="user-role"
-              color="primary"
-              variant="outlined"
-            />
-          </Box>
-
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={4}>
-              <Paper elevation={3} sx={{ p: 2 }}>
-                <Typography variant="h6">Quick Overview</Typography>
-                <Typography>Welcome to your dashboard, {user.username}!</Typography>
-              </Paper>
-            </Grid>
-
-            {courseProgress && (
-              <Grid item xs={12} md={8}>
-                <Paper elevation={3} sx={{ p: 2 }}>
-                  <Typography variant="h6">Course Progress</Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                    <Box sx={{ width: '100%', mr: 1 }}>
-                      <LinearProgress
-                        variant="determinate"
-                        value={courseProgress.completionPercentage}
-                        color="primary"
-                      />
-                    </Box>
-                    <Box sx={{ minWidth: 35 }}>
-                      <Typography variant="body2" color="text.secondary">
-                        {`${Math.round(courseProgress.completionPercentage)}%`}
-                      </Typography>
-                    </Box>
-                  </Box>
-                  <Box sx={{ mt: 2 }}>
-                    <Typography variant="body2">
-                      {`Completed Tasks: ${courseProgress.completedTasks} / ${courseProgress.totalTasks}`}
-                    </Typography>
-                    <Typography variant="body2">
-                      {`Average Score: ${courseProgress.averageScore.toFixed(2)}`}
-                    </Typography>
-                    <Typography variant="body2">
-                      {`Total Time Spent: ${(courseProgress.totalTimeSpent / 3600).toFixed(2)} hours`}
-                    </Typography>
-                  </Box>
-                </Paper>
-              </Grid>
-            )}
-          </Grid>
+          {/* Add ProgressDebugger to help diagnose issues */}
+          <ProgressDebugger />
         </>
       ) : (
         <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
