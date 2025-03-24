@@ -1,29 +1,30 @@
 # ruff: noqa: F401 (suppress unused import warnings)
+from django.core.cache import cache
 from django.db.models import Avg, F  # Explicitly used in analytics methods
-from django.utils import timezone
 from django.shortcuts import get_object_or_404  # Used in analytics methods
-from rest_framework import viewsets, permissions, filters
+from django.utils import timezone
+from rest_framework import filters, permissions, viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated  # Ensure correct import
 from rest_framework.response import Response
 from rest_framework.views import APIView  # Base class for analytics views
-from django.core.cache import cache
 
+from .models import QuizQuestion  # Added QuizQuestion import
 from .models import (
     Course,
     CourseEnrollment,
-    TaskProgress,
     LearningTask,
-    QuizTask,
     QuizAttempt,
     QuizResponse,
+    QuizTask,
+    TaskProgress,
     User,
-    QuizQuestion,  # Added QuizQuestion import
 )
 from .serializers import (
     CourseEnrollmentSerializer,
-    TaskProgressSerializer,
     QuizAttemptSerializer,
     QuizResponseSerializer,
+    TaskProgressSerializer,
 )
 
 
@@ -120,7 +121,7 @@ class EnhancedCourseEnrollmentViewSet(viewsets.ModelViewSet):
 
     queryset = CourseEnrollment.objects.all()
     serializer_class = CourseEnrollmentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]  # Ensure correct usage
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["course__title", "status"]
     ordering_fields = ["enrollment_date", "status"]
@@ -174,15 +175,20 @@ class EnhancedCourseEnrollmentViewSet(viewsets.ModelViewSet):
 
 class EnhancedTaskProgressViewSet(viewsets.ModelViewSet):
     """
-    API endpoint for task progress tracking with enhanced filtering and analytics.
+    API endpoint for task progress tracking.
     """
 
     queryset = TaskProgress.objects.all()
     serializer_class = TaskProgressSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ["task__title", "status"]
-    ordering_fields = ["completion_date", "status"]
+    permission_classes = [IsAuthenticated]  # Ensure correct usage
+
+    def get_queryset(self):
+        """
+        Allow students to view only their own task progress.
+        """
+        if self.request.user.role == "student":
+            return TaskProgress.objects.filter(user=self.request.user)
+        return super().get_queryset()
 
     def _is_admin_or_instructor(self, user):
         """Safely check if user is admin or instructor."""
@@ -251,7 +257,7 @@ class EnhancedQuizAttemptViewSet(viewsets.ModelViewSet):
 
     queryset = QuizAttempt.objects.all()
     serializer_class = QuizAttemptSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]  # Ensure correct usage
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["quiz__title"]
     ordering_fields = ["submission_date", "score"]
@@ -569,128 +575,132 @@ class CourseStudentProgressAPI(APIView):
     and engagement levels for instructors and administrators.
     """
 
-    permission_classes = [permissions.IsAuthenticated, IsInstructorOrAdmin]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_permissions(self):
+        """
+        Allow students to access their own progress and instructors/admins to access all progress.
+        """
+        if self.request.user.is_authenticated and self.request.user.role == "student":
+            return [permissions.IsAuthenticated()]
+        return [permissions.IsAuthenticated, IsInstructorOrAdmin()]
 
     def get(self, request, pk=None):
-        """
-        Get detailed progress data for all students enrolled in a course
+        try:
+            course = get_object_or_404(Course, pk=pk)
 
-        Parameters:
-            pk (int): The course ID
+            # If the user is a student, ensure they are enrolled in the course
+            if request.user.role == "student":
+                if not CourseEnrollment.objects.filter(
+                    user=request.user, course=course
+                ).exists():
+                    return Response(
+                        {
+                            "error": "You do not have permission to view this course's progress."
+                        },
+                        status=403,
+                    )
 
-        Returns:
-            List of student progress data including:
-            - student_info: basic user information
-            - enrollment_status: active, completed, dropped
-            - progress_summary: overall completion percentage
-            - task_completion: detailed breakdown by task
-            - assessment_performance: quiz and assignment scores
-            - engagement_metrics: activity frequency, last access
-        """
-        course = get_object_or_404(Course, pk=pk)
-
-        # Try to get cached data first
-        cache_key = f"course_student_progress_{pk}"
-        cached_data = cache.get(cache_key)
-
-        if cached_data:
-            return Response(cached_data)
-
-        # Get all enrollments for this course
-        enrollments = CourseEnrollment.objects.filter(course=course).select_related(
-            "user"
-        )
-
-        student_progress_data = []
-
-        for enrollment in enrollments:
-            user = enrollment.user
-
-            # Get task progress for this user
-            user_task_progress = TaskProgress.objects.filter(
-                user=user, task__course=course
-            ).select_related("task")
-
-            # Calculate completion percentage
-            total_tasks = LearningTask.objects.filter(course=course).count()
-            completed_tasks = user_task_progress.filter(status="completed").count()
-
-            completion_percentage = (
-                (completed_tasks / total_tasks) * 100 if total_tasks > 0 else 0
-            )
-
-            # Get quiz performance
-            quiz_attempts = QuizAttempt.objects.filter(
-                user=user, quiz__course=course, is_submitted=True
-            )
-
-            avg_quiz_score = quiz_attempts.aggregate(Avg("score"))["score__avg"] or 0
-
-            # Detailed task breakdown
-            task_breakdown = []
-            for task in LearningTask.objects.filter(course=course):
-                progress = user_task_progress.filter(task=task).first()
-
-                task_breakdown.append(
-                    {
-                        "task_id": task.id,
-                        "task_title": task.title,
-                        "task_type": task.type,
-                        "status": progress.status if progress else "not_started",
-                        "completion_date": (
-                            progress.completion_date if progress else None
-                        ),
-                    }
+                # Return only the student's own progress
+                user_task_progress = TaskProgress.objects.filter(
+                    user=request.user, task__course=course
+                ).select_related("task")
+                total_tasks = LearningTask.objects.filter(course=course).count()
+                completed_tasks = user_task_progress.filter(status="completed").count()
+                completion_percentage = (
+                    (completed_tasks / total_tasks) * 100 if total_tasks > 0 else 0
                 )
 
-            # Recent activity - last 5 task progress updates
-            recent_activity = user_task_progress.order_by("-updated_at")[:5].values(
-                "task__title", "status", "updated_at"
+                student_progress_data = {
+                    "student_info": {
+                        "id": request.user.id,
+                        "username": request.user.username,
+                        "email": request.user.email,
+                        "full_name": f"{getattr(request.user, 'first_name', '')} {getattr(request.user, 'last_name', '')}".strip(),
+                    },
+                    "progress_summary": {
+                        "completion_percentage": round(completion_percentage, 2),
+                        "completed_tasks": completed_tasks,
+                        "total_tasks": total_tasks,
+                    },
+                    "task_completion": [
+                        {
+                            "task_id": task.id,
+                            "task_title": task.title,
+                            "task_type": task.type,
+                            "status": progress.status if progress else "not_started",
+                            "completion_date": (
+                                progress.completion_date if progress else None
+                            ),
+                        }
+                        for task in LearningTask.objects.filter(course=course)
+                        for progress in [user_task_progress.filter(task=task).first()]
+                    ],
+                }
+
+                return Response(student_progress_data)
+
+            # For instructors/admins, return progress for all students
+            enrollments = CourseEnrollment.objects.filter(course=course).select_related(
+                "user"
+            )
+            student_progress_data = []
+
+            for enrollment in enrollments:
+                user = enrollment.user
+                user_task_progress = TaskProgress.objects.filter(
+                    user=user, task__course=course
+                ).select_related("task")
+                total_tasks = LearningTask.objects.filter(course=course).count()
+                completed_tasks = user_task_progress.filter(status="completed").count()
+                completion_percentage = (
+                    (completed_tasks / total_tasks) * 100 if total_tasks > 0 else 0
+                )
+
+                student_data = {
+                    "student_info": {
+                        "id": user.id,
+                        "username": user.username,
+                        "email": user.email,
+                        "full_name": f"{getattr(user, 'first_name', '')} {getattr(user, 'last_name', '')}".strip(),
+                    },
+                    "progress_summary": {
+                        "completion_percentage": round(completion_percentage, 2),
+                        "completed_tasks": completed_tasks,
+                        "total_tasks": total_tasks,
+                    },
+                    "task_completion": [
+                        {
+                            "task_id": task.id,
+                            "task_title": task.title,
+                            "task_type": task.type,
+                            "status": progress.status if progress else "not_started",
+                            "completion_date": (
+                                progress.completion_date if progress else None
+                            ),
+                        }
+                        for task in LearningTask.objects.filter(course=course)
+                        for progress in [user_task_progress.filter(task=task).first()]
+                    ],
+                }
+
+                student_progress_data.append(student_data)
+
+            # Sort by completion percentage (descending)
+            student_progress_data.sort(
+                key=lambda x: x["progress_summary"]["completion_percentage"],
+                reverse=True,
             )
 
-            # Compile student data
-            student_data = {
-                "student_info": {
-                    "id": user.id,
-                    "username": user.username,
-                    "email": user.email,
-                    "full_name": f"{getattr(user, 'first_name', '')} {getattr(user, 'last_name', '')}".strip(),
-                },
-                "enrollment_status": {
-                    "status": enrollment.status,
-                    "enrollment_date": enrollment.enrollment_date,
-                },
-                "progress_summary": {
-                    "completion_percentage": round(completion_percentage, 2),
-                    "completed_tasks": completed_tasks,
-                    "total_tasks": total_tasks,
-                },
-                "task_completion": task_breakdown,
-                "assessment_performance": {
-                    "average_quiz_score": round(avg_quiz_score, 2),
-                    "quiz_attempts": quiz_attempts.count(),
-                },
-                "engagement_metrics": {
-                    "recent_activity": list(recent_activity),
-                    "last_access": (
-                        user_task_progress.order_by("-updated_at").first().updated_at
-                        if user_task_progress.exists()
-                        else None
-                    ),
-                },
-            }
-
-            student_progress_data.append(student_data)
-
-        # Sort by completion percentage (descending)
-        student_progress_data.sort(
-            key=lambda x: x["progress_summary"]["completion_percentage"], reverse=True
-        )
-
-        # Cache the data for 30 minutes
-        cache.set(cache_key, student_progress_data, 30 * 60)
-
-        return Response(student_progress_data)
+            return Response(student_progress_data)
+        except Course.DoesNotExist:
+            return Response({"error": "Course not found."}, status=404)
+        except Exception as e:
+            # Log the error for debugging
+            logger.error(f"Error fetching student progress for course {pk}: {str(e)}")
+            return Response(
+                {"error": f"An unexpected error occurred: {str(e)}"}, status=500
+            )
 
 
 class CourseTaskAnalyticsAPI(APIView):
@@ -768,7 +778,6 @@ class CourseTaskAnalyticsAPI(APIView):
                     quiz_attempts = QuizAttempt.objects.filter(
                         quiz=quiz_task, is_submitted=True
                     )
-
                     avg_quiz_score = (
                         quiz_attempts.aggregate(Avg("score"))["score__avg"] or 0
                     )
@@ -1018,7 +1027,8 @@ class StudentProgressAPI(APIView):
 
 
 class StudentQuizPerformanceAPI(APIView):
-    """API endpoint for retrieving detailed quiz performance data for a specific student.
+    """
+    API endpoint for retrieving detailed quiz performance data for a specific student.
     Provides analytics on quiz attempts, scores, and question-level performance.
     """
 
@@ -1113,7 +1123,6 @@ class StudentQuizPerformanceAPI(APIView):
 
         # Group attempts by course
         course_attempts = {}
-
         for attempt in quiz_attempts:
             course_id = attempt.quiz.course.id
             course_title = attempt.quiz.course.title

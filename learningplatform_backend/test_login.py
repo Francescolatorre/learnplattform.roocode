@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-import urllib.request
-import urllib.parse
 import json
 import sys
+import urllib.parse
+import urllib.request
+
 
 def test_endpoint(url, method='GET', data=None, headers=None):
     """Test any endpoint and return the response"""

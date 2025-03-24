@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 import os
-import time
 import subprocess
 import sys
+import time
+
 
 # Colors for terminal output
 class Colors:

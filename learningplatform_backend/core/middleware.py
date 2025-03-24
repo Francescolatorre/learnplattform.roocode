@@ -1,12 +1,13 @@
-import logging
 import json
-import time
-import sys
+import logging
 import os
+import sys
+import time
 
 # Add the parent directory to the Python path so we can import logs_setup
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from logs_setup import log_request, log_response, auth_logger, api_logger
+from logs_setup import api_logger, auth_logger, log_request, log_response
+
 
 class RequestLoggingMiddleware:
     """Middleware to log all requests and responses"""

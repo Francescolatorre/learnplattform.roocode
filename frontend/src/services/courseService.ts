@@ -6,60 +6,67 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const API_URL = `${API_BASE_URL}/api/v1`;
 
 const getAuthToken = () => {
-  return localStorage.getItem('access_token') || '';
+  const token = localStorage.getItem('access_token');
+  if (!token) {
+    console.error('No access token found in localStorage.');
+    throw new Error('Authentication token is missing. Please log in again.');
+  }
+  return token;
 };
 
-export const fetchCourses = async (category?: string, sortOrder?: string, page?: number, includeReviews?: boolean): Promise<{ courses: Course[], error: CourseError | null }> => {
+export const fetchCourses = async (role?: string): Promise<Course[]> => {
   try {
     const token = getAuthToken();
-    const params = new URLSearchParams();
-    if (category) params.append('category', category);
-    if (sortOrder) params.append('sortOrder', sortOrder);
-    if (page) params.append('page', page.toString());
-    if (includeReviews) params.append('includeReviews', includeReviews.toString());
-    
-    const response = await axios.get(`${API_URL}/courses/`, {
-      params,
+    const endpoint = role === 'instructor' ? '/instructor/courses' : role === 'admin' ? '/courses' : '/courses';
+    const response = await axios.get(`${API_URL}${endpoint}`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
 
-    return { courses: response.data.results || response.data, error: null };
+    // Ensure the response data is an array
+    if (Array.isArray(response.data)) {
+      return response.data;
+    } else if (response.data && typeof response.data === 'object') {
+      // Handle cases where the response is an object with a `results` property
+      return response.data.results || [];
+    } else {
+      console.warn('Unexpected response format:', response.data);
+      return [];
+    }
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      const status = error.response?.status || 0;
-      switch (status) {
-        case 401:
-          return { courses: [], error: { message: 'Unauthorized. Please log in again.', code: 401 } };
-        case 403:
-          return { courses: [], error: { message: 'Access forbidden. You do not have permission to view courses.', code: 403 } };
-        case 404:
-          return { courses: [], error: { message: 'The requested resource was not found. Please check the URL and try again.', code: 404 } };
-        case 500:
-          return { courses: [], error: { message: 'An internal server error occurred. Please try again later.', code: 500 } };
-        default:
-          return { courses: [], error: { message: `An error occurred: ${error.message}`, code: status } };
-      }
+      console.error('Error fetching courses:', {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
+      throw new Error(
+        error.response?.data?.message || `Failed to fetch courses. Status: ${error.response?.status}`
+      );
     }
-    return { courses: [], error: { message: 'An unexpected error occurred. Please try again later.', code: 0 } };
+    console.error('Unexpected error fetching courses:', error);
+    throw new Error('An unexpected error occurred while fetching courses.');
   }
 };
 
-export const fetchCourseDetails = async (courseId: string, includeReviews?: boolean, page?: number): Promise<CourseDetails | { error: CourseError }> => {
+export const fetchCourseDetails = async (
+  courseId: string,
+  includeReviews?: boolean,
+  page?: number
+): Promise<CourseDetails | { error: CourseError }> => {
   try {
     const token = getAuthToken();
     const params = new URLSearchParams();
     if (includeReviews) params.append('includeReviews', includeReviews.toString());
     if (page) params.append('page', page.toString());
-    
+
     const response = await axios.get(`${API_URL}/courses/${courseId}/`, {
       params,
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
     });
 
     return response.data as CourseDetails;
@@ -83,16 +90,45 @@ export const fetchCourseDetails = async (courseId: string, includeReviews?: bool
   }
 };
 
-export const updateCourseProgress = async (courseId: string, progress: number): Promise<{ success: boolean, error: CourseError | null }> => {
+export const updateCourseDetails = async (courseId: string, courseData: any) => {
   try {
     const token = getAuthToken();
-    await axios.post(`${API_URL}/courses/${courseId}/progress/`, 
+    const response = await axios.put(`${API_URL}/courses/${courseId}/`, courseData, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Ensure the token is included
+      },
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Error updating course details:', {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
+      throw new Error(
+        error.response?.data?.message || `Failed to update course details. Status: ${error.response?.status}`
+      );
+    }
+    console.error('Unexpected error updating course details:', error);
+    throw new Error('An unexpected error occurred while updating course details.');
+  }
+};
+
+export const updateCourseProgress = async (
+  courseId: string,
+  progress: number
+): Promise<{ success: boolean; error: CourseError | null }> => {
+  try {
+    const token = getAuthToken();
+    await axios.post(
+      `${API_URL}/courses/${courseId}/progress/`,
       { progress },
       {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
-        }
+        },
       }
     );
 
@@ -122,9 +158,9 @@ export const fetchCourseVersions = async (courseId: string): Promise<CourseVersi
     const token = getAuthToken();
     const response = await axios.get(`${API_URL}/courses/${courseId}/versions/`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
     });
 
     return response.data as CourseVersion[];

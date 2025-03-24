@@ -1,13 +1,11 @@
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import (
-    User, Course, CourseVersion, StatusTransition,
-    LearningTask, QuizTask, QuizQuestion, QuizOption
-,
-    CourseEnrollment, TaskProgress, QuizAttempt, QuizResponse
-)
+
+from .models import (Course, CourseEnrollment, CourseVersion, LearningTask,
+                     QuizAttempt, QuizOption, QuizQuestion, QuizResponse,
+                     QuizTask, StatusTransition, TaskProgress, User)
 
 
 class UserSerializer(serializers.ModelSerializer):

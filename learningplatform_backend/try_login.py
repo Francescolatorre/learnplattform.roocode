@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-import subprocess
 import json
+import subprocess
 import sys
+
 
 def run_powershell(command):
     """Run a PowerShell command and return the result"""

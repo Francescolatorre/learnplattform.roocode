@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography, Container, Paper, Box } from '@mui/material';
 import { useAuth } from '../auth/AuthContext';
+import withAuth from '../auth/withAuth';
 
 const Profile: React.FC = () => {
   const { user } = useAuth();
@@ -28,4 +29,4 @@ const Profile: React.FC = () => {
   );
 };
 
-export default Profile;
+export default withAuth(Profile);

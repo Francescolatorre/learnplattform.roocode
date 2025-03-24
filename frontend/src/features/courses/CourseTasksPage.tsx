@@ -29,6 +29,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { fetchCourseDetails } from '../../services/courseService';
 import axios from 'axios';
+import withAuth from '../auth/withAuth';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const API_URL = `${API_BASE_URL}/api/v1`;
@@ -351,7 +352,7 @@ const CourseTasksPage: React.FC = () => {
           color="primary"
           startIcon={<AddIcon />}
           onClick={() => navigate(`/courses/${courseId}/edit`)}
-         sx={{ display: ['admin', 'instructor'].includes(localStorage.getItem('user_role') || '') ? 'block' : 'none' }}
+          sx={{ display: ['admin', 'instructor'].includes(localStorage.getItem('user_role') || '') ? 'block' : 'none' }}
         >
           Add Task
         </Button>
@@ -472,4 +473,4 @@ const CourseTasksPage: React.FC = () => {
   );
 };
 
-export default CourseTasksPage;
+export default withAuth(CourseTasksPage);

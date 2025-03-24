@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-import subprocess
 import json
+import subprocess
 import sys
+
 
 def run_windows_command(command):
     """Run a command on the Windows host using PowerShell"""

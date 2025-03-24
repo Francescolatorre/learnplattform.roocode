@@ -1,11 +1,12 @@
+import datetime
+
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils import timezone
-import datetime
-from django.contrib.auth import get_user_model
-from core.models import (
-    Course, LearningTask, QuizTask, QuizQuestion, QuizOption,
-    CourseEnrollment, TaskProgress, QuizAttempt, QuizResponse
-)
+
+from core.models import (Course, CourseEnrollment, LearningTask, QuizAttempt,
+                         QuizOption, QuizQuestion, QuizResponse, QuizTask,
+                         TaskProgress)
 
 User = get_user_model()
 

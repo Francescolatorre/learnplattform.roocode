@@ -11,16 +11,21 @@ export default defineConfig({
       '@components': path.resolve(__dirname, 'src/components'),
       '@hooks': path.resolve(__dirname, 'src/hooks'),
       '@theme': path.resolve(__dirname, 'src/theme'),
-      '@utils': path.resolve(__dirname, 'src/utils')
-    }
+      '@utils': path.resolve(__dirname, 'src/utils'),
+    },
   },
   server: {
     proxy: {
       '/api': {
         target: 'http://localhost:8000',
         changeOrigin: true,
-        secure: false
-      }
-    }
-  }
+        secure: false,
+      },
+    },
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/setupTests.ts', // Optional: Add setup file if needed
+  },
 });

@@ -1,11 +1,12 @@
 """
 Utility functions for the learning platform backend.
 """
-import os
-import sys
-import socket
-import requests
 import logging
+import os
+import socket
+import sys
+
+import requests
 
 # Configure Python's root logger for basic console output
 logging.basicConfig(
@@ -17,7 +18,7 @@ logging.basicConfig(
 def import_logs_setup():
     """Import the logs_setup module safely"""
     try:
-        from logs_setup import django_logger, auth_logger, api_logger
+        from logs_setup import api_logger, auth_logger, django_logger
         return django_logger, auth_logger, api_logger
     except ImportError:
         # If logs_setup isn't available, return default loggers

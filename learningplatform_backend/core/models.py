@@ -1,7 +1,8 @@
-from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.utils import timezone
 import datetime
+
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.db import models
+from django.utils import timezone
 
 
 class CustomUserManager(BaseUserManager):
@@ -38,7 +39,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
-
 
     def calculate_progress_percentage(self):
         """Calculate the overall progress percentage across all tasks for this user."""
@@ -197,7 +197,6 @@ class CourseEnrollment(models.Model):
     def __str__(self):
         return f"{self.user.username} enrolled in {self.course.title}"
 
-
     def is_course_completed(self):
         """Check if all tasks in the course are completed by the user."""
         course_tasks = self.course.tasks.all()
@@ -217,8 +216,7 @@ class CourseEnrollment(models.Model):
             return 0
 
         user_progress = self.user.task_progress.filter(
-            task__in=course_tasks,
-            status="completed"
+            task__in=course_tasks, status="completed"
         )
 
         return (user_progress.count() / course_tasks.count()) * 100
@@ -241,6 +239,7 @@ class TaskProgress(models.Model):
     )
     time_spent = models.DurationField(default=datetime.timedelta(0))
     completion_date = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)  # Automatically updates on save
 
     def __str__(self):
         return f"{self.user.username} - {self.task.title} - {self.status}"
@@ -286,4 +285,3 @@ class QuizResponse(models.Model):
 
     def __str__(self):
         return f"{self.attempt.user.username} - {self.question.text[:20]} - {'Correct' if self.is_correct else 'Incorrect'}"
-

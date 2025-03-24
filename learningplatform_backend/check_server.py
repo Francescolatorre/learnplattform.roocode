@@ -2,6 +2,7 @@
 import subprocess
 import sys
 
+
 def run_powershell(command):
     """Run a basic PowerShell command"""
     ps_command = f'powershell.exe -Command "{command}"'

@@ -234,6 +234,19 @@ class ApiService {
             ...config
         });
     }
+
+    // Method to validate token
+    public async validateToken(): Promise<boolean> {
+        console.log('Validating token...');
+        try {
+            const response = await this.get('/auth/validate-token/'); // Replace with your backend's token validation endpoint
+            console.log('Token validation response status:', response.status);
+            return response.status === 200; // Ensure the response indicates a valid token
+        } catch (error) {
+            console.error('Token validation failed:', error);
+            return false;
+        }
+    }
 }
 
 // Create and export a singleton instance

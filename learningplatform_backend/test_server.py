@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-import urllib.request
 import socket
-import sys
 import subprocess
+import sys
+import urllib.request
+
 
 def check_basic_connectivity():
     """Check if the local system can make network connections at all"""

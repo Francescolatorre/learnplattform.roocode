@@ -1,88 +1,64 @@
-import { ReactNode } from 'react';
-import { 
-  Box, 
-  AppBar, 
-  Toolbar, 
-  Typography, 
-  Container, 
-  IconButton, 
-  Drawer, 
-  List, 
-  ListItemButton, 
-  ListItemIcon, 
-  ListItemText, 
-  useTheme, 
+import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  AppBar,
+  Toolbar,
+  Typography,
+  Drawer,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  IconButton,
+  useTheme,
   useMediaQuery,
-  Button,
-  Chip
+  Chip,
 } from '@mui/material';
-import { 
-  Menu as MenuIcon, 
-  School as SchoolIcon, 
-  Assignment as AssignmentIcon, 
-  Person as PersonIcon,
-  Logout as LogoutIcon
-} from '@mui/icons-material';
-import { useState } from 'react';
+import { Menu as MenuIcon, Logout as LogoutIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../features/auth/AuthContext';
+import { menuConfig } from '../../config/menuConfig';
 
-interface MainLayoutProps {
-  children: ReactNode;
-}
-
-export const MainLayout = ({ children }: MainLayoutProps) => {
+const MainLayout: React.FC = ({ children }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
   const { logout, user } = useAuth();
+  const userRole = user?.role || localStorage.getItem('user_role') || 'guest';
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/login');
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  };
-
-  const menuItems = [
-    { text: 'Courses', icon: <SchoolIcon />, path: '/courses' },
-    { text: 'My Submissions', icon: <AssignmentIcon />, path: '/submissions' },
-    { text: 'Profile', icon: <PersonIcon />, path: '/profile' },
-  ];
+  useEffect(() => {
+    console.log('MainLayout rendered');
+    console.log('menuConfig:', menuConfig);
+    console.log('userRole:', userRole);
+    console.log('Filtered menu:', menuConfig.filter(menu => menu.roles.includes(userRole)));
+  }, [userRole]); // Log only when userRole changes
 
   const handleNavigation = (path: string) => {
+    console.log(`Navigating to: ${path}`);
+    if (isMobile) setDrawerOpen(false);
     navigate(path);
-    if (isMobile) {
-      setDrawerOpen(false);
-    }
   };
 
-  const drawer = (
+  const drawerContent = (
     <Box sx={{ width: 250 }}>
-      {user && (
-        <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
-          <Typography variant="subtitle1" noWrap>
-            {user.username}
-          </Typography>
-          <Typography variant="body2" color="textSecondary" noWrap>
-            {user.email}
-          </Typography>
-        </Box>
-      )}
       <List>
-        {menuItems.map((item) => (
-          <ListItemButton 
-            key={item.text}
-            onClick={() => handleNavigation(item.path)}
-          >
-            <ListItemIcon>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.text} />
-          </ListItemButton>
-        ))}
-        <ListItemButton onClick={handleLogout}>
+        {menuConfig
+          .filter(menu => menu.roles.includes(userRole))
+          .map(menu => (
+            <ListItemButton
+              key={menu.text}
+              onClick={() => handleNavigation(menu.path)}
+              sx={{ padding: '10px 16px', '&:hover': { backgroundColor: '#f0f0f0' } }}
+            >
+              <ListItemIcon>{/* Add icons if needed */}</ListItemIcon>
+              <ListItemText
+                primary={menu.text}
+                sx={{ fontSize: '1rem', color: '#333' }}
+              />
+            </ListItemButton>
+          ))}
+        <ListItemButton onClick={logout}>
           <ListItemIcon><LogoutIcon /></ListItemIcon>
           <ListItemText primary="Logout" />
         </ListItemButton>
@@ -94,82 +70,69 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <AppBar position="fixed">
         <Toolbar>
-          <IconButton
-            color="inherit"
-            edge="start"
-            onClick={() => setDrawerOpen(!drawerOpen)}
-            sx={{ mr: 2, display: { sm: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+          {isMobile && (
+            <IconButton
+              color="inherit"
+              edge="start"
+              onClick={() => setDrawerOpen(!drawerOpen)}
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
+          <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
             Learning Platform
           </Typography>
-          {user && (
-            <>
-              <Chip 
-                label={user.role} 
-                className="user-role"
-                color="secondary"
-                sx={{ mr: 2, display: { xs: 'none', sm: 'flex' } }}
-              />
-              <Button
-                color="inherit"
-                onClick={handleLogout}
-                startIcon={<LogoutIcon />}
-                sx={{ display: { xs: 'none', sm: 'flex' } }}
-              >
-                Logout
-              </Button>
-            </>
+          {userRole && (
+            <Chip
+              label={`Role: ${userRole}`}
+              color="secondary"
+              sx={{ ml: 2, display: { xs: 'none', sm: 'flex' } }}
+            />
           )}
         </Toolbar>
       </AppBar>
 
-      <Box
-        component="nav"
-        sx={{ width: { sm: 250 }, flexShrink: { sm: 0 } }}
+      {/* Mobile Drawer */}
+      <Drawer
+        variant="temporary"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        ModalProps={{ keepMounted: true }}
+        sx={{
+          display: { xs: 'block', sm: 'none' },
+          '& .MuiDrawer-paper': { width: 250 },
+        }}
       >
-        {/* Mobile drawer */}
-        <Drawer
-          variant="temporary"
-          open={drawerOpen}
-          onClose={() => setDrawerOpen(false)}
-          ModalProps={{ keepMounted: true }}
-          sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { width: 250 },
-          }}
-        >
-          {drawer}
-        </Drawer>
+        {drawerContent}
+      </Drawer>
 
-        {/* Desktop drawer */}
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { width: 250, boxSizing: 'border-box' },
-          }}
-          open
-        >
-          {drawer}
-        </Drawer>
-      </Box>
+      {/* Desktop Drawer */}
+      <Drawer
+        variant="permanent"
+        open
+        sx={{
+          display: { xs: 'none', sm: 'block' },
+          '& .MuiDrawer-paper': { width: 250, boxSizing: 'border-box' },
+        }}
+      >
+        {drawerContent}
+      </Drawer>
 
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           p: 3,
-          width: { sm: `calc(100% - 250px)` },
-          mt: '64px', // Height of AppBar
+          ml: { sm: 30 },
+          mt: { xs: 8, sm: 8 }, // Add top margin to account for AppBar height
         }}
       >
-        <Container maxWidth="lg">
-          {children}
-        </Container>
+        {children}
       </Box>
     </Box>
   );
 };
+
+export { MainLayout };
+export default MainLayout;

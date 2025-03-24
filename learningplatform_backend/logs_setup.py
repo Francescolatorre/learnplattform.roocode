@@ -1,7 +1,7 @@
-import os
+import json
 import logging
 import logging.config
-import json
+import os
 
 # Create logs directory if it doesn't exist
 logs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')

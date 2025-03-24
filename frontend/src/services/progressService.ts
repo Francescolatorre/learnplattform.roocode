@@ -100,11 +100,20 @@ class ProgressService {
 
     public async fetchStudentProgress(courseId: string, studentId?: string): Promise<CourseProgress> {
         try {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                throw new Error('No access token found. Please log in again.');
+            }
+
             const endpoint = studentId
                 ? `/students/${studentId}/progress`
                 : `/courses/${courseId}/student-progress/`;
 
-            const response = await this.axiosInstance.get(endpoint);
+            const response = await this.axiosInstance.get(endpoint, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
             // Log the full response for debugging
             console.log('Progress Fetch Response:', {
@@ -407,3 +416,26 @@ export const getQuizHistory = progressService.getQuizHistory.bind(progressServic
 export const getContentEffectivenessData = progressService.getContentEffectivenessData.bind(progressService);
 export const updateTaskProgress = progressService.updateTaskProgress.bind(progressService);
 export const fetchAdminDashboardSummary = progressService.fetchAdminDashboardSummary.bind(progressService);
+import axios from 'axios';
+
+// Fetch instructor-specific dashboard data
+export const fetchInstructorDashboardData = async () => {
+    const token = localStorage.getItem('access_token'); // Ensure token is retrieved
+    if (!token) {
+        throw new Error('No access token found. Please log in again.');
+    }
+
+    try {
+        const response = await axios.get('/api/v1/instructor/dashboard/', {
+            headers: {
+                Authorization: `Bearer ${token}`, // Ensure the token is included
+            },
+        });
+        return response.data;
+    } catch (error: any) {
+        console.error('Error fetching instructor dashboard data:', error);
+        throw new Error(
+            error.response?.data?.error || 'An unexpected error occurred while fetching courses.'
+        );
+    }
+};

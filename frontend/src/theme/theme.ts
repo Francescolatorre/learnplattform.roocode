@@ -61,5 +61,23 @@ export const theme = createTheme({
         },
       },
     },
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          padding: '10px 16px', // Ensure proper padding
+          '&:hover': {
+            backgroundColor: '#f0f0f0', // Add hover effect
+          },
+        },
+      },
+    },
+    MuiListItemText: {
+      styleOverrides: {
+        primary: {
+          fontSize: '1rem', // Ensure consistent font size
+          color: '#333', // Ensure text is visible
+        },
+      },
+    },
   },
 });

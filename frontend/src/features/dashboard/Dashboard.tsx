@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Container, Grid, Paper, Chip, Box, LinearProgress } from '@mui/material';
+import { Typography, Container, Grid, Paper, Box, Card, CardContent, Alert, CircularProgress } from '@mui/material';
 import { useAuth } from '../auth/AuthContext';
-import { fetchStudentProgress } from '../../services/progressService';
-import { CourseProgress } from '../../types/progressTypes';
+import { fetchStudentProgress, fetchInstructorDashboardData, fetchAdminDashboardSummary } from '../../services/progressService';
+import withAuth from '../auth/withAuth';
 
 // Debug component for tracking progress fetch issues
 const ProgressDebugger: React.FC = () => {
@@ -78,48 +78,170 @@ const ProgressDebugger: React.FC = () => {
 const Dashboard: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
   const userRole = user?.role || 'Not assigned';
-  const [courseProgress, setCourseProgress] = useState<CourseProgress | null>(null);
+  const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadProgress = async () => {
+    const loadData = async () => {
       if (isAuthenticated && user) {
         try {
           setIsLoading(true);
-          // Assuming first course for now - in a real app, you'd fetch all courses or have a default
-          const progress = await fetchStudentProgress('1');
-          setCourseProgress(progress);
-        } catch (error) {
-          console.error('Failed to fetch progress:', error);
+          if (userRole === 'student') {
+            const progress = await fetchStudentProgress('1');
+            setData(progress);
+          } else if (userRole === 'instructor') {
+            const instructorData = await fetchInstructorDashboardData();
+            setData(instructorData);
+          } else if (userRole === 'admin') {
+            const adminData = await fetchAdminDashboardSummary();
+            setData(adminData);
+          }
+          setError(null);
+        } catch (error: any) {
+          console.error('Failed to fetch data:', error);
+          setError(error.message || 'Failed to load dashboard data.');
         } finally {
           setIsLoading(false);
         }
       }
     };
 
-    loadProgress();
-  }, [isAuthenticated, user]);
+    loadData();
+  }, [isAuthenticated, user, userRole]);
+
+  if (isLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ p: 3 }}>
+        <Alert severity="error">{error}</Alert>
+      </Box>
+    );
+  }
 
   return (
     <Container maxWidth="lg">
       <Typography variant="h4" gutterBottom>
-        Dashboard
+        {userRole === 'student' ? 'Student Dashboard' : userRole === 'instructor' ? 'Instructor Dashboard' : 'Admin Dashboard'}
       </Typography>
+      {userRole === 'admin' && data && (
+        <Grid container spacing={3}>
+          {/* Total Tasks */}
+          <Grid item xs={12} sm={6} md={4}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Total Tasks
+                </Typography>
+                <Typography variant="h4" color="primary">
+                  {data.totalTasks}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
 
-      {isAuthenticated ? (
-        <>
-          {/* Add ProgressDebugger to help diagnose issues */}
-          <ProgressDebugger />
-        </>
-      ) : (
-        <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
-          <Typography variant="h6" color="textSecondary">
-            Please log in to access your dashboard
-          </Typography>
-        </Paper>
+          {/* Completed Tasks */}
+          <Grid item xs={12} sm={6} md={4}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Completed Tasks
+                </Typography>
+                <Typography variant="h4" color="primary">
+                  {data.completedTasks}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Average Score */}
+          <Grid item xs={12} sm={6} md={4}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Average Score
+                </Typography>
+                <Typography variant="h4" color="primary">
+                  {data.averageScore}%
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      )}
+      {userRole === 'instructor' && data && (
+        <Grid container spacing={3}>
+          {/* Courses Created */}
+          <Grid item xs={12} sm={6} md={4}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Courses Created
+                </Typography>
+                <Typography variant="h4" color="primary">
+                  {data.courses_created}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Students Enrolled */}
+          <Grid item xs={12} sm={6} md={4}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Students Enrolled
+                </Typography>
+                <Typography variant="h4" color="primary">
+                  {data.students_enrolled}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Recent Activity */}
+          <Grid item xs={12}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Recent Activity
+                </Typography>
+                {data.recent_activity.length > 0 ? (
+                  <Box>
+                    {data.recent_activity.map((activity: any, index: number) => (
+                      <Box key={index} sx={{ mb: 2 }}>
+                        <Typography variant="body1">
+                          Task: <strong>{activity.task__title}</strong>
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          Status: {activity.status}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          Updated At: {new Date(activity.updated_at).toLocaleString()}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Box>
+                ) : (
+                  <Typography variant="body2" color="textSecondary">
+                    No recent activity.
+                  </Typography>
+                )}
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
       )}
     </Container>
   );
 };
 
-export default Dashboard;
+// Wrap Dashboard with withAuth HOC, allowing only students, instructors, and admins
+export default withAuth(Dashboard, { allowedRoles: ['student', 'instructor', 'admin'] });

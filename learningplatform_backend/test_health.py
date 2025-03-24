@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-import urllib.request
-import urllib.error
 import json
+import urllib.error
+import urllib.request
+
 
 def check_health():
     try:

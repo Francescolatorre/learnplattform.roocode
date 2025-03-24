@@ -16,10 +16,11 @@ import { fetchStudentProgress } from '../../services/progressService';
 import { Course, CourseError } from '../../types/courseTypes';
 import { CourseProgress } from '../../types/progressTypes';
 import { fetchTasksByCourse } from '../../services/taskService';
+import withAuth from '../auth/withAuth';
 
 const CoursesPage: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
-  const [courseProgress, setCourseProgress] = useState<{[courseId: string]: CourseProgress}>({});
+  const [courseProgress, setCourseProgress] = useState<{ [courseId: string]: CourseProgress }>({});
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<CourseError | null>(null);
@@ -57,7 +58,7 @@ const CoursesPage: React.FC = () => {
               acc[result.courseId] = result.progress;
             }
             return acc;
-          }, {} as {[courseId: string]: CourseProgress});
+          }, {} as { [courseId: string]: CourseProgress });
 
           setCourseProgress(progressMap);
         }
@@ -288,4 +289,4 @@ const CoursesPage: React.FC = () => {
   );
 };
 
-export default CoursesPage;
+export default withAuth(CoursesPage);
