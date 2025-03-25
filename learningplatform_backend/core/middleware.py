@@ -107,17 +107,10 @@ class DebugLoggingMiddleware:
 
     def __init__(self, get_response):
         self.get_response = get_response
-        self.logger = logging.getLogger("django")
-        print("DebugLoggingMiddleware: I am running")  # Logs to stdout
 
     def __call__(self, request):
-        # Log basic request info
-        self.logger.debug("DEBUG: %s %s", request.method, request.path)
-
-        # Process the request
         response = self.get_response(request)
-
-        # Log the response status
-        self.logger.debug("DEBUG: Response status %s", response.status_code)
-
+        print(
+            f"DEBUG: User: {request.user}, Authenticated: {request.user.is_authenticated}"
+        )
         return response

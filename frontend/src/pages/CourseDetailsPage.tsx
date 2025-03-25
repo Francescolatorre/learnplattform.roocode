@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useCourse } from '../hooks/useCourse';
 import TaskManagementUI from '../components/TaskManagementUI';
 import { fetchTasksByCourse } from '../services/taskService';
-import { fetchStudentProgress } from '../services/progressService';
+import { fetchStudentProgressByCourse } from '../services/progressService';
 import { useAuth } from '../features/auth/AuthContext';
 import { CourseProgress } from '../types/progressTypes';
 import { LinearProgress, Typography, Box } from '@mui/material';
@@ -124,18 +124,24 @@ const CourseDetailsPage: React.FC = () => {
 
   useEffect(() => {
     const loadProgress = async () => {
+      if (!courseId) {
+        console.error("Error: courseId is undefined. Cannot fetch student progress.");
+        return;
+      }
+
       try {
-        const progress = await fetchStudentProgress(courseId);
+        const progress = await fetchStudentProgressByCourse(courseId, user?.id); // Pass user ID as studentId
+        console.log('Student progress loaded:', progress);
         setCourseProgress(progress);
       } catch (error) {
-        console.error("Failed to fetch course progress:", error);
+        console.error('Failed to fetch course progress:', error.message);
       }
     };
 
     if (course) {
       loadProgress();
     }
-  }, [course, courseId]);
+  }, [course, courseId, user?.id]);
 
   if (loading) return <div style={styles.loadingContainer}>Loading course details...</div>;
   if (error) return <div style={styles.errorContainer}>Error: {error.message}</div>;

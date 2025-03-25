@@ -1,6 +1,9 @@
-from rest_framework.permissions import BasePermission
-from .models import CourseEnrollment  # Replace 'your_app' with the actual app name
 import logging  # Add logging import
+
+from rest_framework.permissions import BasePermission
+
+from .models import \
+    CourseEnrollment  # Replace 'your_app' with the actual app name
 
 # Configure logger for this module
 logger = logging.getLogger(__name__)
@@ -27,9 +30,9 @@ class IsInstructorOrAdmin(BasePermission):
 
     def has_permission(self, request, view):
         # Allow access only if the user is an instructor or admin
-        return (request.user.is_authenticated and (request.user.role == "instructor" or request.user.is_staff))
-
-
+        return request.user.is_authenticated and (
+            request.user.role == "instructor" or request.user.is_staff
+        )
 
 
 class IsEnrolledInCourse(BasePermission):
@@ -38,18 +41,27 @@ class IsEnrolledInCourse(BasePermission):
     """
 
     def has_permission(self, request, view):
-        if not request.user.is_authenticated:
+        # Extract course ID from the view kwargs
+        course_id = view.kwargs.get("course_id")
+        user = request.user
+
+        # Debug logging
+        print(f"DEBUG: Checking enrollment for user {user} in course {course_id}")
+
+        if not user.is_authenticated:
+            print("DEBUG: User is not authenticated.")
             return False
 
-        # Check if the user is a student
-        if request.user.role != "student":
-            return False
+        # Allow access to course details even if not enrolled
+        if course_id is None:
+            return True
 
-        # Check if the student is enrolled in the course
-        course_id = view.kwargs.get("pk") or request.GET.get("course")
-        if not course_id:
-            return False
-
-        return CourseEnrollment.objects.filter(
-            user=request.user, course_id=course_id
+        # Check if the user is enrolled in the course
+        is_enrolled = CourseEnrollment.objects.filter(
+            user=user, course_id=course_id
         ).exists()
+        print(
+            f"DEBUG: Enrollment status for user {user.id} in course {course_id}: {is_enrolled}"
+        )
+
+        return is_enrolled

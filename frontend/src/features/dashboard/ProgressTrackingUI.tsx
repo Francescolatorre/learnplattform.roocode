@@ -28,7 +28,7 @@ import {
 } from 'chart.js';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import { format, parseISO, isAfter, isBefore, addDays } from 'date-fns';
-import { fetchStudentProgress, fetchCourseStructure } from '../../services/progressService';
+import { fetchStudentProgress, fetchCourseStructure, fetchStudentProgressByCourse } from '../../services/progressService';
 import { CourseProgress, ModuleProgress, TaskProgress } from '../../types/progressTypes';
 import ModuleProgressView from './components/ModuleProgressView';
 import PerformanceAnalysisView from './components/PerformanceAnalysisView';
@@ -72,7 +72,16 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
         error: progressError
     } = useQuery<CourseProgress>(
         ['progress', courseId, studentId],
-        () => fetchStudentProgress(courseId, studentId),
+        () => {
+            if (!courseId) {
+                console.error("courseId is undefined. Cannot fetch progress.");
+                return;
+            }
+            if (!studentId) {
+                console.warn("studentId is not provided, fetching progress for the current user.");
+            }
+            return fetchStudentProgressByCourse(courseId, studentId || 'defaultStudentId'); // Provide a fallback
+        },
         {
             staleTime: 5 * 60 * 1000, // 5 minutes
             refetchInterval: 5 * 60 * 1000 // Refresh every 5 minutes
@@ -102,8 +111,8 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
 
         const labels = courseStructure.modules.map(module => module.title);
         const completionData = courseStructure.modules.map(module => {
-            const moduleProgress = progressData.moduleProgress.find(
-                mp => mp.moduleId === module.id
+            const moduleProgress = progressData?.moduleProgress.find(
+                (mp: ModuleProgress) => mp.moduleId === module.id
             );
             return moduleProgress ? moduleProgress.completionPercentage : 0;
         });

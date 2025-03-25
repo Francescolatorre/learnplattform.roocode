@@ -22,29 +22,25 @@ from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated  # Ensure correct import
 from rest_framework.response import Response
 from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from core import views
-from core.progress_api import (
-    CourseAnalyticsAPI,
-    CourseStudentProgressAPI,
-    CourseTaskAnalyticsAPI,
-    EnhancedCourseEnrollmentViewSet,
-    EnhancedQuizAttemptViewSet,
-    EnhancedTaskProgressViewSet,
-    StudentProgressAPI,
-    StudentQuizPerformanceAPI,
-)
-from core.views import CourseViewSet  # Import CourseViewSet for custom action
-from core.views import validate_token  # Import validate_token from core/views.py
-from core.views import InstructorDashboardAPI  # Import InstructorDashboardAPI
+from core.progress_api import (CourseAnalyticsAPI, CourseStudentProgressAPI,
+                               CourseTaskAnalyticsAPI,
+                               EnhancedCourseEnrollmentViewSet,
+                               EnhancedQuizAttemptViewSet,
+                               EnhancedTaskProgressViewSet, StudentProgressAPI,
+                               StudentQuizPerformanceAPI)
 from core.views import AdminDashboardAPI  # Import AdminDashboardAPI
-from core.views import (
-    admin_dashboard_summary,
-)  # Import the new admin dashboard summary view
+from core.views import CourseViewSet  # Import CourseViewSet for custom action
+from core.views import InstructorDashboardAPI  # Import InstructorDashboardAPI
+from core.views import \
+    validate_token  # Import validate_token from core/views.py
+from core.views import \
+    admin_dashboard_summary  # Import the new admin dashboard summary view
 
 # API router
 router = DefaultRouter()
@@ -64,12 +60,12 @@ router.register(r"tasks", views.LearningTaskViewSet)  # Ensure this is included
 # JWT auth URLs
 auth_urls = [
     path("login/", views.CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path(
+        "token/refresh/", TokenRefreshView.as_view(), name="token_refresh"
+    ),  # Ensure this is correct
     path("register/", views.RegisterView.as_view(), name="register"),
     path("logout/", views.LogoutView.as_view(), name="logout"),
-    path(
-        "validate-token/", validate_token, name="validate_token"
-    ),  # Use the imported function
+    path("validate-token/", validate_token, name="validate_token"),
 ]
 
 # Analytics URLs
@@ -137,7 +133,7 @@ urlpatterns = [
     path("api/v1/", include(router.urls)),
     path("api/v1/", include(analytics_urls)),
     path("api/v1/", include(instructor_urls)),  # Ensure instructor URLs are included
-    path("auth/", include(auth_urls)),
+    path("auth/", include(auth_urls)),  # Ensure this includes the auth URLs
     path("api-auth/", include("rest_framework.urls")),  # DRF browsable API login
     path("health/", views.health_check, name="health_check"),
     path(

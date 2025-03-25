@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  TextField, 
-  Button, 
-  Container, 
-  Typography, 
-  Box, 
-  CircularProgress 
+import {
+  TextField,
+  Button,
+  Container,
+  Typography,
+  Box,
+  CircularProgress
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
-import ErrorMessage from '../../components/ErrorMessage';
+import ErrorMessage from '@components/ErrorMessage';
 
 const LoginForm: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -44,12 +44,12 @@ const LoginForm: React.FC = () => {
 
   return (
     <Container maxWidth="xs">
-      <Box 
-        sx={{ 
-          marginTop: 8, 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center' 
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
         }}
       >
         <Typography component="h1" variant="h5">
@@ -81,9 +81,9 @@ const LoginForm: React.FC = () => {
             error={!!error}
           />
           {error && (
-            <ErrorMessage 
-              message={error} 
-              title="Login Failed" 
+            <ErrorMessage
+              message={error}
+              title="Login Failed"
               severity="error"
               onClose={() => setError(null)}
             />

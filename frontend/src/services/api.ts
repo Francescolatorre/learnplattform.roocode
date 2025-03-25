@@ -75,9 +75,12 @@ export const register = async (data: RegisterData): Promise<LoginResponse> => {
 export const logout = async (refreshToken: string) => {
   try {
     await axios.post(`${AUTH_BASE_URL}/logout/`, { refresh_token: refreshToken });
-  } catch (error) {
-    console.error('Logout failed:', error);
-    throw error;
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      console.error('Logout failed: Unauthorized. Token might already be invalid.');
+    } else {
+      console.error('Logout failed:', error);
+    }
   }
 };
 

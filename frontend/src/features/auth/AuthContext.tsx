@@ -1,5 +1,24 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { login as apiLogin, logout as apiLogout, refreshAccessToken } from '../../services/api';
+import axios from 'axios';
+import { login as apiLogin, logout as apiLogout } from '@services/api';
+
+export async function refreshAccessToken(refreshToken: string): Promise<{ access: string; refresh: string; user: User }> {
+  try {
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/auth/token/refresh/`, // Added trailing slash
+      { refresh: refreshToken },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error refreshing access token:', (error as any).response?.data || (error as any).message);
+    throw new Error('Failed to refresh access token.');
+  }
+}
 
 interface User {
   id: number;
@@ -23,23 +42,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  const clearAuthState = () => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user_role');
+    localStorage.removeItem('user');
+    setUser(null);
+    setIsAuthenticated(false);
+  };
+
   const fetchUserDetails = async () => {
     console.log('Fetching user details...');
     const accessToken = localStorage.getItem('access_token');
     const refreshToken = localStorage.getItem('refresh_token');
     const userRole = localStorage.getItem('user_role');
+    const storedUser = localStorage.getItem('user');
 
     console.log('Access token:', accessToken ? 'Exists' : 'Not found');
     console.log('Refresh token:', refreshToken ? 'Exists' : 'Not found');
     console.log('User role:', userRole ? userRole : 'Not found');
+    console.log('User:', storedUser ? 'Exists' : 'Not found');
 
     if (accessToken && userRole) {
       try {
         console.log('Access token and user role found. Setting user state...');
-        const user = { role: userRole }; // Mock user object with role
+        const parsedUser = storedUser ? JSON.parse(storedUser) : { role: userRole }; // Use stored user if available
         setIsAuthenticated(true);
-        setUser(user as User);
-        console.log('User details set:', user);
+        setUser(parsedUser as User);
+        console.log('User details set:', parsedUser);
       } catch (error) {
         console.error('Failed to set user state:', error);
         await logout();
@@ -50,12 +80,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const response = await refreshAccessToken(refreshToken);
         localStorage.setItem('access_token', response.access);
         localStorage.setItem('user_role', response.user.role);
+        localStorage.setItem('user', JSON.stringify(response.user));
         setIsAuthenticated(true);
         setUser(response.user);
         console.log('Token refreshed and user details set:', response.user);
       } catch (error) {
         console.error('Failed to refresh token:', error);
-        await logout();
+        if (error.response?.status === 401) {
+          console.warn('Refresh token is invalid or expired. Proceeding with logout.');
+          await logout(); // Gracefully handle token expiration
+        }
       }
     } else {
       console.log('No tokens found. User is not authenticated.');
@@ -84,17 +118,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('access_token', response.access);
       localStorage.setItem('refresh_token', response.refresh);
       localStorage.setItem('user_role', response.user.role);
+      localStorage.setItem('user', JSON.stringify(response.user));
 
       setUser(response.user);
       setIsAuthenticated(true);
       console.log('Login successful. User details:', response.user);
     } catch (error) {
       console.error('Login failed:', error);
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('user_role');
-      setUser(null);
-      setIsAuthenticated(false);
+      clearAuthState();
       throw new Error('Login failed');
     }
   };
@@ -106,39 +137,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (refreshToken) {
         await apiLogout(refreshToken);
       }
-
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('user_role');
-      setUser(null);
-      setIsAuthenticated(false);
       console.log('Logout successful.');
-    } catch (error) {
-      console.error('Logout failed:', error);
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('user_role');
-      setUser(null);
-      setIsAuthenticated(false);
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        console.warn('Refresh token is invalid or expired. Proceeding with logout.');
+      } else {
+        console.error('Logout failed:', error);
+      }
+    } finally {
+      clearAuthState();
     }
   };
 
   const refreshToken = async () => {
-    console.log('Refreshing token...');
-    try {
-      const response = await axios.post('/auth/token/refresh/', {
-        refresh: localStorage.getItem('refresh_token'),
-      });
-      localStorage.setItem('access_token', response.data.access);
-      console.log('Token refreshed successfully.');
-    } catch (error) {
-      console.error('Error refreshing token:', error);
-      throw error;
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (!refreshToken) {
+      throw new Error('No refresh token available');
     }
+    const response = await refreshAccessToken(refreshToken);
+    localStorage.setItem('access_token', response.access);
+    localStorage.setItem('user_role', response.user?.role || ''); // Ensure user and role exist
+    setUser(response.user || null); // Fallback to null if user is undefined
+    setIsAuthenticated(!!response.user); // Set authentication state based on user existence
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, logout, refreshToken }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated,
+        login,
+        logout,
+        refreshToken,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

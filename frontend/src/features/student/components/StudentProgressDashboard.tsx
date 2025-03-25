@@ -6,8 +6,9 @@ import {
     CircularProgress,
     Container
 } from '@mui/material';
-import { fetchStudentProgress, getQuizHistory } from '../../../services/progressService';
+import { fetchStudentProgressByCourse, getQuizHistory } from '@services/progressService';
 import { CourseProgress, QuizHistory } from '../../../types/progressTypes';
+import { useAuth } from '@features/auth/AuthContext';
 import CourseDetailView from './CourseDetailView';
 import QuizHistoryDetail from './QuizHistoryDetail';
 
@@ -18,14 +19,24 @@ interface StudentProgressDashboardProps {
 const StudentProgressDashboard: React.FC<StudentProgressDashboardProps> = ({
     courseId
 }) => {
+    const { user } = useAuth();
+
     // Fetch student progress
     const {
         data: studentProgress,
         isLoading: progressLoading,
         error: progressError
     } = useQuery<CourseProgress>(
-        ['studentProgress', courseId],
-        () => fetchStudentProgress(courseId),
+        ['studentProgress', courseId, user?.id],
+        () => {
+            if (!courseId) {
+                throw new Error('Missing required parameter: courseId');
+            }
+            if (!user?.id) {
+                throw new Error('Missing required parameter: userId');
+            }
+            return fetchStudentProgressByCourse(courseId, user.id); // Ensure both parameters are defined
+        },
         {
             staleTime: 5 * 60 * 1000, // 5 minutes
             refetchInterval: 5 * 60 * 1000 // Refresh every 5 minutes

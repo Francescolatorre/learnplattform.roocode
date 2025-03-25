@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { z } from 'zod';
 import { CourseProgress, QuizHistory, ContentEffectivenessData } from '../types/progressTypes';
 
@@ -98,108 +98,47 @@ class ProgressService {
         };
     }
 
-    public async fetchStudentProgress(courseId: string, studentId?: string): Promise<CourseProgress> {
+    public async fetchStudentProgressByUser(studentId: BigInteger | null): Promise<CourseProgress[]> {
+        if (!studentId) {
+            throw new Error('studentId is required to fetch progress for a user.');
+        }
+
         try {
-            const token = localStorage.getItem('access_token');
-            if (!token) {
-                throw new Error('No access token found. Please log in again.');
+            const response = await this.axiosInstance.get(`/students/${studentId}/progress/`);
+            return Array.isArray(response.data) ? response.data.map(item => CourseProgressSchema.parse(item)) : [];
+        } catch (error: any) {
+            console.error('Error fetching progress for user:', error.response?.data || error.message);
+
+            // Handle specific server errors
+            if (error.response?.status === 500) {
+                throw new Error('Internal Server Error: Please contact the administrator.');
             }
 
-            const endpoint = studentId
-                ? `/students/${studentId}/progress`
-                : `/courses/${courseId}/student-progress/`;
-
-            const response = await this.axiosInstance.get(endpoint, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            // Log the full response for debugging
-            console.log('Progress Fetch Response:', {
-                status: response.status,
-                data: response.data,
-                headers: response.headers
-            });
-
-            // Handle both array and object responses
-            let progressData = response.data;
-
-            // If it's an array, take the first item or return default
-            if (Array.isArray(progressData)) {
-                if (progressData.length === 0) {
-                    console.warn('Empty progress array received');
-                    return this.getDefaultProgressObject(courseId, studentId);
-                }
-                console.log('Multiple progress entries received. Using first entry.');
-                progressData = progressData[0];
-            }
-
-            // Validate response data
-            try {
-                const parsedProgress = CourseProgressSchema.parse({
-                    ...progressData,
-                    courseId: courseId,
-                    studentId: studentId || progressData.studentId || ''
-                });
-
-                console.log('Parsed Progress:', parsedProgress);
-                return parsedProgress;
-            } catch (validationError) {
-                console.warn('Invalid progress data structure:', {
-                    error: validationError,
-                    rawData: progressData
-                });
-                return this.getDefaultProgressObject(courseId, studentId);
-            }
-        } catch (error) {
-            console.error('Error fetching student progress:', {
-                error,
-                errorResponse: error.response?.data,
-                errorStatus: error.response?.status
-            });
-            return this.getDefaultProgressObject(courseId, studentId);
+            throw new Error('Failed to fetch progress for the user.');
         }
     }
 
-    public fetchCourseStructure(courseId: string): Promise<CourseStructure> {
+    public async fetchStudentProgressByCourse(courseId: string, studentId: string): Promise<CourseProgress> {
+        if (!courseId || !studentId) {
+            throw new Error('Both courseId and studentId are required to fetch progress for a specific course.');
+        }
+
         try {
-            const response = this.axiosInstance.get(`/courses/${courseId}/analytics/`);
-            return response.then(res => res.data);
-        } catch (error) {
-            console.error('Error fetching course structure:', error);
-            throw error;
+            const response = await this.axiosInstance.get(`/courses/${courseId}/student-progress/${studentId}/`);
+            return CourseProgressSchema.parse(response.data);
+        } catch (error: any) {
+            console.error('Error fetching progress for course:', error.response?.data || error.message);
+            if (error.response?.status === 404) {
+                throw new Error('The requested progress data could not be found.');
+            }
+            throw new Error('Failed to fetch progress for the course.');
         }
     }
 
     public async fetchAllStudentsProgress(courseId: string): Promise<CourseProgress[]> {
         try {
             const response = await this.axiosInstance.get(`/courses/${courseId}/student-progress/`);
-
-            // Handle the case where the API returns an object instead of an array
-            if (Array.isArray(response.data)) {
-                return response.data;
-            } else if (response.data && typeof response.data === 'object') {
-                // If it's a single object, wrap it in an array
-                if (response.data.courseId || response.data.course_id) {
-                    return [response.data];
-                }
-
-                // If it has a results property that's an array, return that
-                if (Array.isArray(response.data.results)) {
-                    return response.data.results;
-                }
-
-                // Last resort: convert object to array of values
-                const possibleArray = Object.values(response.data);
-                if (Array.isArray(possibleArray) && possibleArray.length > 0) {
-                    return possibleArray;
-                }
-            }
-
-            // If we couldn't extract an array from the response, return an empty array
-            console.warn('Unable to extract student progress data from response:', response.data);
-            return [];
+            return Array.isArray(response.data) ? response.data : [];
         } catch (error) {
             console.error('Error fetching all students progress:', error);
             return [];
@@ -213,14 +152,7 @@ class ProgressService {
                 : `/courses/${courseId}/quiz-performance/`;
 
             const response = await this.axiosInstance.get(endpoint);
-
-            // Validate response data
-            try {
-                return QuizHistorySchema.parse(response.data);
-            } catch (validationError) {
-                console.warn('Invalid quiz history data structure:', validationError);
-                return [];
-            }
+            return QuizHistorySchema.parse(response.data);
         } catch (error) {
             console.error('Error fetching quiz history:', error);
             throw error;
@@ -229,9 +161,7 @@ class ProgressService {
 
     public async getContentEffectivenessData(courseId: string): Promise<ContentEffectivenessData> {
         try {
-            const response = await this.axiosInstance.get(
-                `/courses/${courseId}/content-effectiveness`
-            );
+            const response = await this.axiosInstance.get(`/courses/${courseId}/content-effectiveness`);
             return response.data;
         } catch (error) {
             console.error('Error fetching content effectiveness data:', error);
@@ -305,54 +235,15 @@ class ProgressService {
 export const progressService = new ProgressService();
 
 // Export all methods for backward compatibility
-export const fetchStudentProgress = async (courseId: string, studentId?: string): Promise<CourseProgress> => {
-    const token = getAuthToken();
-    const endpoint = studentId
-        ? `/students/${studentId}/progress`
-        : `/courses/${courseId}/student-progress/`;
-
-    try {
-        const response = await axios.get(`${API_URL}${endpoint}`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        return CourseProgressSchema.parse(response.data);
-    } catch (error) {
-        console.error('Error fetching student progress:', error);
-        throw new Error('Failed to fetch student progress.');
-    }
-};
-
-export const updateCourseProgress = async (
-    courseId: string,
-    progress: number
-): Promise<{ success: boolean; error: CourseError | null }> => {
-    const token = getAuthToken();
-    try {
-        await axios.post(
-            `${API_URL}/courses/${courseId}/progress/`,
-            { progress },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            }
-        );
-        return { success: true, error: null };
-    } catch (error) {
-        console.error('Error updating course progress:', error);
-        return { success: false, error: { message: 'Failed to update course progress.', code: 500 } };
-    }
-};
-
-export const fetchCourseStructure = progressService.fetchCourseStructure.bind(progressService);
+export const fetchStudentProgressByUser = progressService.fetchStudentProgressByUser.bind(progressService);
+export const fetchStudentProgressByCourse = progressService.fetchStudentProgressByCourse.bind(progressService);
 export const fetchAllStudentsProgress = progressService.fetchAllStudentsProgress.bind(progressService);
 export const getQuizHistory = progressService.getQuizHistory.bind(progressService);
 export const getContentEffectivenessData = progressService.getContentEffectivenessData.bind(progressService);
 export const updateTaskProgress = progressService.updateTaskProgress.bind(progressService);
-import axios from 'axios';
+export const submitTask = progressService.submitTask.bind(progressService);
+export const gradeSubmission = progressService.gradeSubmission.bind(progressService);
 
-// Fetch instructor-specific dashboard data
 export const fetchInstructorDashboardData = async () => {
     const token = localStorage.getItem('access_token'); // Ensure token is retrieved
     if (!token) {
@@ -374,14 +265,23 @@ export const fetchInstructorDashboardData = async () => {
     }
 };
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-const API_URL = `${API_BASE_URL}/api/v1`;
-
-const getAuthToken = () => {
-    const token = localStorage.getItem('access_token');
+export const fetchCourseStructure = async (courseId: string): Promise<CourseStructure> => {
+    const token = localStorage.getItem('access_token'); // Ensure token is retrieved
     if (!token) {
-        console.error('No access token found in localStorage.');
-        throw new Error('Authentication token is missing. Please log in again.');
+        throw new Error('No access token found. Please log in again.');
     }
-    return token;
+
+    try {
+        const response = await axios.get(`/api/v1/courses/${courseId}/analytics/`, {
+            headers: {
+                Authorization: `Bearer ${token}`, // Ensure the token is included
+            },
+        });
+        return response.data;
+    } catch (error: any) {
+        console.error('Error fetching course structure:', error);
+        throw new Error(
+            error.response?.data?.error || 'An unexpected error occurred while fetching the course structure.'
+        );
+    }
 };

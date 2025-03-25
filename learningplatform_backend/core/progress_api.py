@@ -84,6 +84,8 @@ class IsInstructorOrAdmin(permissions.BasePermission):
         # Check if user has a role attribute, if not, default to False
         user_role = getattr(request.user, "role", "")
         is_staff = getattr(request.user, "is_staff", False)
+        # add logging
+        print(f"User role: {user_role}, Is staff: {is_staff}")
 
         return user_role in ["instructor", "admin"] or is_staff
 
@@ -95,24 +97,45 @@ class IsEnrolledInCourse(permissions.BasePermission):
 
     def has_permission(self, request, view):
         if not request.user.is_authenticated:
+            logger.info("Permission denied: User is not authenticated.")
             return False
 
         # Safely check user role and staff status
         user_role = getattr(request.user, "role", "")
         is_staff = getattr(request.user, "is_staff", False)
+        logger.info(
+            f"Checking permissions for user {request.user.id}: role={user_role}, is_staff={is_staff}"
+        )
 
         # Admin and instructors can access all courses
         if user_role in ["instructor", "admin"] or is_staff:
+            logger.info(
+                f"Permission granted: User {request.user.id} is an instructor/admin/staff."
+            )
             return True
 
         # For students, check if they're enrolled in the course
         course_id = view.kwargs.get("pk") or request.GET.get("course")
         if not course_id:
+            logger.warning(
+                f"Permission denied: No course ID provided for user {request.user.id}."
+            )
             return False
 
-        return CourseEnrollment.objects.filter(
+        is_enrolled = CourseEnrollment.objects.filter(
             user=request.user, course_id=course_id
         ).exists()
+
+        if is_enrolled:
+            logger.info(
+                f"Permission granted: User {request.user.id} is enrolled in course {course_id}."
+            )
+        else:
+            logger.warning(
+                f"Permission denied: User {request.user.id} is not enrolled in course {course_id}."
+            )
+
+        return is_enrolled
 
 
 # Enhanced viewsets with filtering
@@ -477,7 +500,8 @@ class CourseAnalyticsAPI(APIView):
 
         # Calculate average scores for quiz tasks
         quiz_attempts = QuizAttempt.objects.filter(
-            quiz__course=course, is_submitted=True
+            quiz__course=course,
+            completion_status="submitted",  # Replace 'is_submitted' with a valid field
         )
 
         avg_quiz_score = quiz_attempts.aggregate(Avg("score"))["score__avg"] or 0
@@ -989,9 +1013,7 @@ class StudentProgressAPI(APIView):
             )
 
             # Get quiz performance
-            quiz_attempts = QuizAttempt.objects.filter(
-                user=user, quiz__course=course, is_submitted=True
-            )
+            quiz_attempts = QuizAttempt.objects.filter(user=user, quiz__course=course)
 
             avg_quiz_score = quiz_attempts.aggregate(Avg("score"))["score__avg"] or 0
 

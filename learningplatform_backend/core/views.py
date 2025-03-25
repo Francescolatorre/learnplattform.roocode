@@ -1,4 +1,7 @@
 import logging  # Add logging import
+
+from django.db import models  # Add this import for using models.Sum
+from django.db.models import Avg
 from django.http import JsonResponse
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.authentication import get_authorization_header
@@ -9,8 +12,12 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-from django.db.models import Avg
-from django.db import models  # Add this import for using models.Sum
+
+from core.permissions import (  # Import the custom permissions
+    IsEnrolledInCourse,
+    IsInstructorOrAdmin,
+    IsStudentOrReadOnly,
+)
 
 from .models import (
     Course,
@@ -42,7 +49,6 @@ from .serializers import (
     TaskProgressSerializer,
     UserSerializer,
 )
-from core.permissions import IsStudentOrReadOnly  # Import the custom permission
 
 # Configure logger for this module
 logger = logging.getLogger(__name__)
@@ -125,7 +131,12 @@ class CourseViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
 
-    @action(detail=False, methods=["get"], url_path="instructor/courses")
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="instructor/courses",
+        permission_classes=[IsInstructorOrAdmin],  # Apply IsInstructorOrAdmin
+    )
     def instructor_courses(self, request):
         """
         Fetch courses created by the instructor or all courses for admin.
@@ -157,6 +168,64 @@ class CourseViewSet(viewsets.ModelViewSet):
                 {"error": "An unexpected error occurred while fetching courses."},
                 status=500,
             )
+
+    @action(
+        detail=True,
+        methods=["get"],
+        url_path="student-progress",
+        permission_classes=[IsAuthenticated],  # Allow all authenticated users
+    )
+    def student_progress(self, request, pk=None):
+        """
+        Fetch student progress for a specific course.
+        """
+        try:
+            course = self.get_object()
+
+            # Check if the user is enrolled
+            is_enrolled = CourseEnrollment.objects.filter(
+                user=request.user, course_id=course.id
+            ).exists()
+
+            if not is_enrolled:
+                # Return limited course details for non-enrolled users
+                return Response(
+                    {
+                        "course_title": course.title,
+                        "description": course.description,
+                        "learning_objectives": course.learning_objectives,
+                        "prerequisites": course.prerequisites,
+                        "message": "Enroll in the course to access progress details.",
+                    },
+                    status=200,
+                )
+
+            # Fetch progress for the authenticated student
+            progress = TaskProgress.objects.filter(
+                user=request.user, task__course_id=course.id
+            )
+            if not progress.exists():
+                return Response(
+                    {"message": "No progress found for this course."}, status=404
+                )
+
+            serializer = TaskProgressSerializer(progress, many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            logger.error(f"Error fetching student progress for course {pk}: {str(e)}")
+            return Response(
+                {"error": "An unexpected error occurred while fetching progress."},
+                status=500,
+            )
+
+    def get_permissions(self):
+        """
+        Allow students to view course details.
+        """
+        if self.action == "retrieve" and self.request.user.is_authenticated:
+            if self.request.user.role == "student":
+                return [permissions.IsAuthenticated()]
+        return super().get_permissions()
 
 
 class CourseVersionViewSet(viewsets.ModelViewSet):
@@ -453,3 +522,17 @@ def admin_dashboard_summary(request):
         )["total_time"]
         or 0,
     }
+    return Response(data)
+
+
+class StudentProgressView(APIView):
+    permission_classes = [IsAuthenticated, IsEnrolledInCourse]
+
+    def get(self, request, course_id):
+        # Debug logging
+        print(
+            f"DEBUG: Accessing student progress for course {course_id} by user {request.user}"
+        )
+
+        # ...existing logic...
+        return Response({"message": "Student progress data"})

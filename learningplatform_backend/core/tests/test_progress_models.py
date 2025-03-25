@@ -3,20 +3,11 @@ import datetime
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils import timezone
-
-from core.models import (
-    Course,
-    CourseEnrollment,
-    LearningTask,
-    QuizAttempt,
-    QuizOption,
-    QuizQuestion,
-    QuizResponse,
-    QuizTask,
-    TaskProgress,
-)
-
 from rest_framework.test import APIClient
+
+from core.models import (Course, CourseEnrollment, LearningTask, QuizAttempt,
+                         QuizOption, QuizQuestion, QuizResponse, QuizTask,
+                         TaskProgress)
 
 User = get_user_model()
 

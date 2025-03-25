@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams, BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -77,12 +77,7 @@ const App: React.FC = () => {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <AuthProvider>
-            <Router
-              future={{
-                v7_startTransition: true, // Opt into React.startTransition wrapping
-                v7_relativeSplatRoutes: true, // Opt into new relative splat route behavior
-              }}
-            >
+            <BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}> {/* Enable future flags */}
               <Routes>
                 <Route path="/login" element={<LoginForm />} />
                 <Route path="/register" element={<RegisterForm />} />
@@ -123,7 +118,7 @@ const App: React.FC = () => {
                 <Route path="/courses/:courseId/details" element={<ProtectedRoute><MainLayout><CourseDetailsPage /></MainLayout></ProtectedRoute>} />
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
               </Routes>
-            </Router>
+            </BrowserRouter>
           </AuthProvider>
         </ThemeProvider>
       </QueryClientProvider>
