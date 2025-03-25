@@ -1,73 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Typography,
-  Grid,
-  Button,
-  Card,
-  CardContent,
-  CardActionArea,
-  CircularProgress,
-  LinearProgress
-} from '@mui/material';
-import { fetchCourses, fetchCourseDetails } from '../../services/courseService';
-import { fetchStudentProgress } from '../../services/progressService';
-import { Course, CourseError } from '../../types/courseTypes';
-import { CourseProgress } from '../../types/progressTypes';
-import { fetchTasksByCourse } from '../../services/taskService';
-import withAuth from '../auth/withAuth';
+import { fetchCourses } from '@services/courseService';
+import { Box, Typography, CircularProgress, Alert, List, ListItem, ListItemText } from '@mui/material';
 
 const CoursesPage: React.FC = () => {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [courseProgress, setCourseProgress] = useState<{ [courseId: string]: CourseProgress }>({});
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<CourseError | null>(null);
-  const [tasks, setTasks] = useState<{ title: string }[]>([]);
-  const { courseId } = useParams<{ courseId: string }>();
-  const navigate = useNavigate();
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadCourses = async () => {
       try {
         setLoading(true);
-        const result = await fetchCourses();
-
-        if (result.error) {
-          setError(result.error);
-          setCourses([]);
-        } else {
-          setCourses(result.courses);
-          setError(null);
-
-          // Fetch progress for each course
-          const progressPromises = result.courses.map(async (course) => {
-            try {
-              const progress = await fetchStudentProgress(course.id.toString());
-              return { courseId: course.id.toString(), progress };
-            } catch (progressError) {
-              console.error(`Failed to fetch progress for course ${course.id}:`, progressError);
-              return null;
-            }
-          });
-
-          const progressResults = await Promise.all(progressPromises);
-          const progressMap = progressResults.reduce((acc, result) => {
-            if (result) {
-              acc[result.courseId] = result.progress;
-            }
-            return acc;
-          }, {} as { [courseId: string]: CourseProgress });
-
-          setCourseProgress(progressMap);
-        }
-      } catch {
-        setError({
-          message: 'An unexpected error occurred while fetching courses',
-          code: 0
-        });
-        setCourses([]);
+        const response = await fetchCourses();
+        setCourses(response.results);
+        setError(null);
+      } catch (err: any) {
+        console.error('Error fetching courses:', err);
+        setError(err.message || 'Failed to load courses.');
       } finally {
         setLoading(false);
       }
@@ -76,217 +25,44 @@ const CoursesPage: React.FC = () => {
     loadCourses();
   }, []);
 
-  useEffect(() => {
-    const loadCourseDetails = async () => {
-      if (!courseId) return;
-
-      try {
-        setLoading(true);
-        const result = await fetchCourseDetails(courseId);
-
-        if ('error' in result) {
-          setError(result.error);
-        } else {
-          const courseIndex = courses.findIndex(c => c.id.toString() === courseId);
-          if (courseIndex >= 0) {
-            const updatedCourses = [...courses];
-            updatedCourses[courseIndex] = result;
-            setCourses(updatedCourses);
-          }
-          setSelectedCourse(result);
-
-          const taskData = await fetchTasksByCourse(courseId);
-          setTasks(taskData);
-        }
-      } catch {
-        setError({
-          message: 'An unexpected error occurred while fetching course details',
-          code: 0
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (courseId) {
-      if (!loading) {
-        loadCourseDetails();
-      }
-    } else {
-      setSelectedCourse(null);
-    }
-  }, [courseId]);
-
-  if (loading && courses.length === 0) {
+  if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="300px">
         <CircularProgress />
       </Box>
     );
   }
 
-  if (error && courses.length === 0) {
+  if (error) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100vh" flexDirection="column">
-        <Typography color="error" variant="h6" gutterBottom>
-          Error: {error.message}
-        </Typography>
-        {error.code && (
-          <Typography variant="body2" color="textSecondary">
-            Error Code: {error.code}
-          </Typography>
-        )}
-      </Box>
+      <Alert severity="error" sx={{ mb: 3 }}>
+        {error}
+      </Alert>
     );
   }
 
-  // Display course details if a course is selected
-  if (selectedCourse) {
+  if (courses.length === 0) {
     return (
-      <Box p={3}>
-        <Button variant="outlined" onClick={() => navigate('/dashboard')}>
-          Dashboard
-        </Button>
-        <Button variant="outlined" onClick={() => navigate('/courses')}>
-          Back to All Courses
-        </Button>
-
-        <Box mt={3}>
-          <Typography variant="h4" gutterBottom>
-            {selectedCourse.title}
-          </Typography>
-
-          <Typography variant="body1" paragraph>
-            {selectedCourse.description}
-          </Typography>
-
-          <Grid container spacing={2} mt={2}>
-            <Grid item xs={12} md={6}>
-              <Typography variant="subtitle1">Course Details</Typography>
-              <Box mt={1}>
-                <Typography variant="body2">
-                  <strong>Status:</strong> {selectedCourse.status || 'Draft'}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Version:</strong> {selectedCourse.version || '1.0'}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Created:</strong> {selectedCourse.created_at ? new Date(selectedCourse.created_at).toLocaleDateString() : 'N/A'}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Last Updated:</strong> {selectedCourse.updated_at ? new Date(selectedCourse.updated_at).toLocaleDateString() : 'N/A'}
-                </Typography>
-              </Box>
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-              <Typography variant="subtitle1">Learning Objectives</Typography>
-              <Typography variant="body2">
-                {selectedCourse.learning_objectives?.join(', ') || 'No learning objectives specified.'}
-              </Typography>
-            </Grid>
-          </Grid>
-
-          <Box mt={4}>
-            {['admin', 'instructor'].includes(localStorage.getItem('user_role') || '') && (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => navigate(`/courses/${selectedCourse.id}/edit`)}
-              >
-                Edit Course
-              </Button>
-            )}
-            <Button
-              variant="outlined"
-              color="primary"
-              sx={{ ml: 2 }}
-              onClick={() => navigate(`/courses/${selectedCourse.id}/tasks`)}
-            >
-              View Tasks
-            </Button>
-          </Box>
-
-          {/* Task List */}
-          <Box mt={3}>
-            <Typography variant="h5" gutterBottom>Tasks</Typography>
-            {tasks.length > 0 ? (
-              <ul>
-                {tasks.map((task, index) => (
-                  <li key={index}>
-                    <Typography variant="body1">{task.title}</Typography>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <Typography variant="body2">No tasks available for this course.</Typography>
-            )}
-          </Box>
-        </Box>
-      </Box>
+      <Alert severity="info" sx={{ mb: 3 }}>
+        No courses available.
+      </Alert>
     );
   }
 
-  // Display list of courses
   return (
-    <Box p={3}>
-      <Typography variant="h4" gutterBottom>Courses</Typography>
-
-      {courses.length === 0 ? (
-        <Typography variant="body1" color="textSecondary">
-          No courses found.
-        </Typography>
-      ) : (
-        <Grid container spacing={3}>
-          {courses.map((course) => (
-            <Grid item xs={12} sm={6} md={4} key={course.id}>
-              <Card variant="outlined" sx={{ height: '100%' }}>
-                <CardActionArea
-                  onClick={() => navigate(`/courses/${course.id}`)} // Navigate to course detail view
-                  sx={{ height: '100%' }}
-                >
-                  <CardContent sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                    <Typography variant="h6" gutterBottom>
-                      {course.title}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary" sx={{ flexGrow: 1 }}>
-                      {course.description}
-                    </Typography>
-                    <Box mt={2}>
-                      <Typography variant="caption" color="textSecondary" display="block">
-                        Status: {course.status || 'Draft'}
-                      </Typography>
-                      <Typography variant="caption" color="textSecondary" display="block">
-                        Version: {course.version || '1.0'}
-                      </Typography>
-
-                      {/* Progress Tracking */}
-                      {courseProgress[course.id.toString()] && (
-                        <Box mt={1}>
-                          <Typography variant="caption" color="textSecondary">
-                            Progress
-                          </Typography>
-                          <LinearProgress
-                            variant="determinate"
-                            value={courseProgress[course.id.toString()].completionPercentage}
-                            color="primary"
-                            sx={{ height: 6, borderRadius: 2, mt: 0.5 }}
-                          />
-                          <Typography variant="caption" color="textSecondary">
-                            {`${Math.round(courseProgress[course.id.toString()].completionPercentage)}% Completed`}
-                          </Typography>
-                        </Box>
-                      )}
-                    </Box>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      )}
+    <Box>
+      <Typography variant="h4" gutterBottom>
+        Available Courses
+      </Typography>
+      <List>
+        {courses.map((course: any) => (
+          <ListItem key={course.id}>
+            <ListItemText primary={course.title} secondary={course.description} />
+          </ListItem>
+        ))}
+      </List>
     </Box>
   );
 };
 
-export default withAuth(CoursesPage);
+export default CoursesPage;

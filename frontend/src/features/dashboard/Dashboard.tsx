@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Container, Grid, Paper, Box, Card, CardContent, Alert, CircularProgress } from '@mui/material';
 import { useAuth } from '../auth/AuthContext';
-import { fetchStudentProgress, fetchInstructorDashboardData, fetchAdminDashboardSummary } from '../../services/progressService';
+import { fetchStudentProgress, fetchInstructorDashboardData } from '../../services/progressService';
+import { fetchAdminDashboardSummary } from '../../services/courseService'; // Updated import
 import withAuth from '../auth/withAuth';
 
 // Debug component for tracking progress fetch issues
@@ -100,7 +101,11 @@ const Dashboard: React.FC = () => {
           setError(null);
         } catch (error: any) {
           console.error('Failed to fetch data:', error);
-          setError(error.message || 'Failed to load dashboard data.');
+          if (error.response?.status === 403) {
+            setError('You do not have permission to access this resource.');
+          } else {
+            setError(error.message || 'Failed to load dashboard data.');
+          }
         } finally {
           setIsLoading(false);
         }

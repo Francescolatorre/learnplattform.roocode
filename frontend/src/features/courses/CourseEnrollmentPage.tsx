@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
 import {
@@ -12,13 +12,16 @@ import {
   CardActions,
   Grid,
   Alert,
-  AlertTitle
+  AlertTitle,
+  CircularProgress
 } from '@mui/material';
-import { useCourseData } from '../../hooks/useCourseData';
-import DataTable from '../../components/common/DataTable';
-import StatusChip from '../../components/common/StatusChip';
-import ProgressIndicator from '../../components/common/ProgressIndicator';
+import { useCourseData } from '@hooks/useCourseData';
+import DataTable from '@components/common/DataTable';
+import StatusChip from '@components/common/StatusChip';
+import ProgressIndicator from '@components/common/ProgressIndicator';
 import { Course } from '../../types/courseTypes';
+import { fetchCourses, enrollInCourse } from '@services/courseService';
+import { useAuth } from '@features/auth/AuthContext';
 
 // Extend Course with additional enrollment-specific properties
 interface EnrollableCourse extends Course {
@@ -29,213 +32,114 @@ interface EnrollableCourse extends Course {
 }
 
 const CourseEnrollmentPage: React.FC = () => {
-  const {
-    courses,
-
-    isLoadingCourses,
-    coursesError,
-    enrollInCourse,
-    unenrollFromCourse,
-    isEnrolling,
-    isUnenrolling
-  } = useCourseData();
-
-  // Fetch student progress for debugging
-  const fetchStudentProgress = async (courseId: number) => {
-    try {
-      console.log(`Attempting to fetch student progress for course ${courseId}`);
-      const response = await axios.get(`/api/v1/courses/${courseId}/student-progress/`);
-      console.log('Student Progress Response:', response.data);
-    } catch (error) {
-      console.error('Error fetching student progress:', error);
-    }
-  };
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [enrolling, setEnrolling] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log('CourseEnrollmentPage: Component Mounted');
-    console.log('Courses:', courses);
-    console.log('Loading Courses:', isLoadingCourses);
-    console.log('Courses Error:', coursesError);
-
-    // Attempt to fetch student progress for the first course
-    if (courses.length > 0) {
-      fetchStudentProgress(courses[0].id);
-    }
-
-    return () => console.log('CourseEnrollmentPage: Component Unmounted');
-  }, [courses, isLoadingCourses, coursesError]);
-
-
-  const [selectedCourse, setSelectedCourse] = useState<EnrollableCourse | null>(null);
-
-  // Course enrollment columns
-  const courseColumns = [
-    {
-      id: 'title',
-      label: 'Course Title',
-      minWidth: 170,
-      format: (value: string, row: EnrollableCourse) => (
-        <Box>
-          <Typography variant="subtitle1">{value}</Typography>
-          <Typography variant="body2" color="textSecondary">
-            {console.log('Course Row:', row)}
-            {row.instructor || 'Unknown Instructor'}
-          </Typography>
-          <Typography variant="body2" color="textSecondary">
-            {row.instructor || 'Unknown Instructor'}
-          </Typography>
-        </Box>
-      )
-    },
-    {
-      id: 'status',
-      label: 'Status',
-      format: (value: string) => (
-        <StatusChip
-          status={value}
-          colorMapping={{
-            'draft': 'default',
-            'published': 'success',
-            'archived': 'secondary'
-          }}
-        />
-      )
-    },
-    {
-      id: 'visibility',
-      label: 'Visibility',
-      format: (value: string) => (
-        <StatusChip
-          status={value}
-          colorMapping={{
-            'public': 'success',
-            'private': 'error',
-            'restricted': 'warning'
-          }}
-        />
-      )
-    }
-  ];
-
-  const handleEnroll = async (course: EnrollableCourse) => {
-    try {
-      await enrollInCourse(course.id);
-
-      // Attempt to fetch student progress after enrollment
-      if (course.id) {
-        fetchStudentProgress(course.id);
+    const loadCourses = async () => {
+      try {
+        setLoading(true);
+        const response = await fetchCourses();
+        setCourses(response.results);
+        setError(null);
+      } catch (err: any) {
+        console.error('Error fetching courses:', err);
+        setError(err.message || 'Failed to load courses.');
+      } finally {
+        setLoading(false);
       }
+    };
 
-      setSelectedCourse(null);
-    } catch (error) {
-      console.error('Enrollment failed', error);
-    }
-  };
+    loadCourses();
+  }, []);
 
-  const handleUnenroll = async (course: EnrollableCourse) => {
+  const handleEnroll = async (courseId: string) => {
     try {
-      await unenrollFromCourse(course.id);
-      setSelectedCourse(null);
-    } catch (error) {
-      console.error('Unenrollment failed', error);
+      setEnrolling(true);
+      setError(null);
+      await enrollInCourse(courseId);
+      setSuccessMessage('Successfully enrolled in the course!');
+      // Update the course list to reflect the enrollment status
+      setCourses((prevCourses) =>
+        prevCourses.map((course: any) =>
+          course.id === courseId ? { ...course, enrolled: true } : course
+        )
+      );
+    } catch (err) {
+      console.error('Error enrolling in course:', err);
+      setError('Failed to enroll in the course. Please try again later.');
+    } finally {
+      setEnrolling(false);
     }
   };
 
-  // Transform courses to EnrollableCourse type
-  const enrollableCourses: EnrollableCourse[] = courses.map(course => ({
-    ...course,
-    instructor: 'Unknown', // This would typically come from backend or creator details
-    difficulty: 'beginner', // Default value, replace with actual data
-    enrollmentStatus: course.status === 'published' ? 'open' : 'closed',
-    progress: undefined // Optional progress
-  }));
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="300px">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert severity="error" sx={{ mb: 3 }}>
+        {error}
+      </Alert>
+    );
+  }
 
   return (
-    <Box sx={{ flexGrow: 1, p: 3 }}>
+    <Box>
       <Typography variant="h4" gutterBottom>
         Course Enrollment
       </Typography>
-
-      {coursesError && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          <AlertTitle>Error Loading Courses</AlertTitle>
-          {coursesError.message}
+      {successMessage && (
+        <Alert severity="success" sx={{ mb: 3 }}>
+          {successMessage}
         </Alert>
       )}
-
       <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
-          <DataTable
-            columns={courseColumns}
-            data={enrollableCourses}
-            loading={isLoadingCourses}
-            keyExtractor={(course) => course.id}
-            onRowClick={setSelectedCourse}
-            pagination
-          />
-        </Grid>
-
-        <Grid item xs={12} md={4}>
-          {selectedCourse ? (
+        {courses.map((course: any) => (
+          <Grid item xs={12} sm={6} md={4} key={course.id}>
             <Card>
               <CardContent>
-                <Typography variant="h5" gutterBottom>
-                  {selectedCourse.title}
+                <Typography variant="h6">{course.title}</Typography>
+                <Typography variant="body2" color="textSecondary" paragraph>
+                  {course.description}
                 </Typography>
-                <Typography variant="body1" color="textSecondary" paragraph>
-                  {selectedCourse.description}
-                </Typography>
-
-                {selectedCourse.learning_objectives && (
-                  <Box sx={{ mt: 2 }}>
-                    <Typography variant="subtitle2">Learning Objectives</Typography>
-                    <ul>
-                      {selectedCourse.learning_objectives.map((obj, index) => (
-                        <li key={index}>{obj}</li>
-                      ))}
-                    </ul>
-                  </Box>
-                )}
-
-                {selectedCourse.progress !== undefined && (
-                  <Box sx={{ mt: 2 }}>
-                    <Typography variant="subtitle2">Course Progress</Typography>
-                    <ProgressIndicator
-                      value={selectedCourse.progress}
-                      variant="linear"
-                    />
-                  </Box>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => navigate(`/courses/${course.id}/details`)}
+                  sx={{ mt: 1, mr: 1 }}
+                >
+                  View Details
+                </Button>
+                {course.enrolled ? (
+                  <Typography variant="body2" color="success.main" sx={{ mt: 1 }}>
+                    You are already enrolled in this course.
+                  </Typography>
+                ) : (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleEnroll(course.id)}
+                    disabled={enrolling}
+                    sx={{ mt: 1 }}
+                  >
+                    {enrolling ? 'Enrolling...' : 'Enroll'}
+                  </Button>
                 )}
               </CardContent>
-
-              <CardActions>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleEnroll(selectedCourse)}
-                  disabled={isEnrolling || selectedCourse.status !== 'published'}
-                >
-                  {isEnrolling ? 'Enrolling...' : 'Enroll in Course'}
-                </Button>
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  color="secondary"
-                  onClick={() => handleUnenroll(selectedCourse)}
-                  disabled={isUnenrolling}
-                >
-                  {isUnenrolling ? 'Unenrolling...' : 'Unenroll'}
-                </Button>
-              </CardActions>
             </Card>
-          ) : (
-            <Alert severity="info">
-              <AlertTitle>Select a Course</AlertTitle>
-              Click on a course in the table to view details and enroll
-            </Alert>
-          )}
-        </Grid>
+          </Grid>
+        ))}
       </Grid>
     </Box>
   );

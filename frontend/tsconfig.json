@@ -18,22 +18,28 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "paths": {
-      "@features/*": [
-        "src/features/*"
-      ],
       "@components/*": [
-        "src/components/*"
+        "components/*"
+      ],
+      "@features/*": [
+        "features/*"
+      ],
+      "@pages/*": [
+        "pages/*"
+      ],
+      "@services/*": [
+        "services/*"
+      ],
+      "@types/*": [
+        "types/*"
       ],
       "@hooks/*": [
-        "src/hooks/*"
+        "hooks/*"
       ],
       "@theme/*": [
-        "src/theme/*"
-      ],
-      "@utils/*": [
-        "src/utils/*"
+        "theme/*"
       ]
     },
     "types": [

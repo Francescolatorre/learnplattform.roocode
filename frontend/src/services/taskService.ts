@@ -4,7 +4,7 @@ import { useAuth } from '../features/auth/AuthContext';
 
 // Enhanced Type Definitions with Validation
 const TaskSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   title: z.string(),
   description: z.string(),
   course: z.number(),

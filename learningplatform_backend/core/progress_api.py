@@ -1,4 +1,6 @@
 # ruff: noqa: F401 (suppress unused import warnings)
+import logging  # Add a logger for this module
+
 from django.core.cache import cache
 from django.db.models import Avg, F  # Explicitly used in analytics methods
 from django.shortcuts import get_object_or_404  # Used in analytics methods
@@ -568,6 +570,9 @@ class CourseAnalyticsAPI(APIView):
         return Response(analytics_data)
 
 
+logger = logging.getLogger(__name__)  # Add a logger for this module
+
+
 class CourseStudentProgressAPI(APIView):
     """
     API endpoint for retrieving detailed progress data for all students in a specific course.
@@ -581,19 +586,38 @@ class CourseStudentProgressAPI(APIView):
         """
         Allow students to access their own progress and instructors/admins to access all progress.
         """
-        if self.request.user.is_authenticated and self.request.user.role == "student":
-            return [permissions.IsAuthenticated()]
-        return [permissions.IsAuthenticated, IsInstructorOrAdmin()]
+        user_role = getattr(self.request.user, "role", "")
+        logger.info(
+            f"[CourseStudentProgressAPI] Checking permissions for user {self.request.user.id} with role '{user_role}'"
+        )
+        if user_role == "student":
+            return [permissions.IsAuthenticated(), IsEnrolledInCourse()]
+        elif user_role in ["instructor", "admin"]:
+            return [permissions.IsAuthenticated(), IsInstructorOrAdmin()]
+        return [permissions.IsAuthenticated()]
 
     def get(self, request, pk=None):
+        logger.info(
+            f"[CourseStudentProgressAPI] Received request for course progress. User: {request.user.id}, Course ID: {pk}"
+        )
         try:
             course = get_object_or_404(Course, pk=pk)
+            logger.info(
+                f"[CourseStudentProgressAPI] Course found: {course.title} (ID: {course.id})"
+            )
 
             # If the user is a student, ensure they are enrolled in the course
             if request.user.role == "student":
+                logger.info(
+                    f"[CourseStudentProgressAPI] User {request.user.id} is a student. Checking enrollment."
+                )
                 if not CourseEnrollment.objects.filter(
                     user=request.user, course=course
                 ).exists():
+                    logger.warning(
+                        f"[CourseStudentProgressAPI] Permission denied for user {request.user.id}. "
+                        f"User is not enrolled in course {course.id}."
+                    )
                     return Response(
                         {
                             "error": "You do not have permission to view this course's progress."
@@ -601,6 +625,9 @@ class CourseStudentProgressAPI(APIView):
                         status=403,
                     )
 
+                logger.info(
+                    f"[CourseStudentProgressAPI] User {request.user.id} is enrolled in course {course.id}. Retrieving progress."
+                )
                 # Return only the student's own progress
                 user_task_progress = TaskProgress.objects.filter(
                     user=request.user, task__course=course
@@ -638,9 +665,15 @@ class CourseStudentProgressAPI(APIView):
                     ],
                 }
 
+                logger.info(
+                    f"[CourseStudentProgressAPI] Progress data retrieved successfully for user {request.user.id}."
+                )
                 return Response(student_progress_data)
 
             # For instructors/admins, return progress for all students
+            logger.info(
+                f"[CourseStudentProgressAPI] User {request.user.id} is an instructor/admin. Retrieving progress for all students."
+            )
             enrollments = CourseEnrollment.objects.filter(course=course).select_related(
                 "user"
             )
@@ -692,12 +725,19 @@ class CourseStudentProgressAPI(APIView):
                 reverse=True,
             )
 
+            logger.info(
+                f"[CourseStudentProgressAPI] Progress data retrieved successfully for course {course.id}."
+            )
             return Response(student_progress_data)
         except Course.DoesNotExist:
+            logger.error(
+                f"[CourseStudentProgressAPI] Course with ID {pk} does not exist."
+            )
             return Response({"error": "Course not found."}, status=404)
         except Exception as e:
-            # Log the error for debugging
-            logger.error(f"Error fetching student progress for course {pk}: {str(e)}")
+            logger.error(
+                f"[CourseStudentProgressAPI] Error fetching student progress for course {pk}: {str(e)}"
+            )
             return Response(
                 {"error": f"An unexpected error occurred: {str(e)}"}, status=500
             )

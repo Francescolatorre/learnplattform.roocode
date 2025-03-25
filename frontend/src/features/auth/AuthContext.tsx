@@ -126,26 +126,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const refreshToken = async () => {
     console.log('Refreshing token...');
     try {
-      const refreshToken = localStorage.getItem('refresh_token');
-      if (!refreshToken) {
-        console.error('No refresh token found in localStorage');
-        throw new Error('No refresh token');
-      }
-
-      const response = await refreshAccessToken(refreshToken);
-      console.log('Token refresh response:', response);
-
-      if (!response || !response.access) {
-        console.error('Invalid response from refresh token API');
-        throw new Error('Invalid response from token refresh');
-      }
-
-      localStorage.setItem('access_token', response.access);
-      return response;
+      const response = await axios.post('/auth/token/refresh/', {
+        refresh: localStorage.getItem('refresh_token'),
+      });
+      localStorage.setItem('access_token', response.data.access);
+      console.log('Token refreshed successfully.');
     } catch (error) {
-      console.error('Token refresh failed:', error);
-      await logout();
-      throw new Error('Token refresh failed');
+      console.error('Error refreshing token:', error);
+      throw error;
     }
   };
 

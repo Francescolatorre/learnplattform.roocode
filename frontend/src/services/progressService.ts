@@ -299,123 +299,57 @@ class ProgressService {
             throw error;
         }
     }
-    public async fetchAdminDashboardSummary(): Promise<CourseProgress> {
-        try {
-            const response = await this.axiosInstance.get('/dashboard/admin-summary/');
-
-            console.log('Admin Dashboard Summary Response:', {
-                status: response.status,
-                data: response.data,
-                headers: response.headers
-            });
-
-            // If no data is returned, provide a default admin summary
-            if (!response.data || Object.keys(response.data).length === 0) {
-                return this.createDefaultAdminSummary();
-            }
-
-            // Create an admin-specific progress object
-            const adminSummary: CourseProgress = {
-                courseId: 'admin-dashboard',
-                studentId: 'admin',
-                completedTasks: response.data.total_completed_tasks || 0,
-                totalTasks: response.data.total_tasks || 0,
-                averageScore: response.data.overall_average_score || 0,
-                completionPercentage: response.data.overall_completion_percentage || 0,
-                totalTimeSpent: response.data.total_time_spent || 0,
-                achievedObjectives: response.data.achieved_objectives || 0,
-                totalObjectives: response.data.total_objectives || 0,
-                moduleProgress: (response.data.module_summaries || []).map(module => ({
-                    moduleId: module.id || 'unknown',
-                    moduleTitle: module.title || 'Unknown Module',
-                    completionPercentage: module.completion_percentage || 0,
-                    completedTasks: module.completed_tasks || 0,
-                    totalTasks: module.total_tasks || 0,
-                    averageScore: module.average_score || null,
-                    taskProgress: [],
-                    timeSpent: module.total_time_spent || 0
-                })),
-                taskProgress: (response.data.recent_tasks || []).map(task => ({
-                    taskId: task.id || 'unknown',
-                    moduleId: task.module_id || 'unknown',
-                    title: task.title || 'Unnamed Task',
-                    taskType: task.type || 'unknown',
-                    status: task.status || 'unknown',
-                    score: task.score || null,
-                    maxScore: task.max_score || 0,
-                    attempts: task.attempts || 0,
-                    maxAttempts: task.max_attempts || 0,
-                    timeSpent: task.time_spent || null,
-                    dueDate: task.due_date || null,
-                    submissionDate: task.submission_date || null
-                })),
-                recentActivity: (response.data.recent_activities || []).map(activity => ({
-                    id: activity.id || 'unknown',
-                    studentId: activity.student_id || 'unknown',
-                    courseId: activity.course_id || 'unknown',
-                    moduleId: activity.module_id || 'unknown',
-                    taskId: activity.task_id,
-                    activityType: activity.type || 'unknown',
-                    timestamp: activity.timestamp || new Date().toISOString(),
-                    taskTitle: activity.task_title,
-                    score: activity.score,
-                    achievementTitle: activity.achievement_title,
-                    achievementDescription: activity.achievement_description
-                }))
-            };
-
-            return adminSummary;
-        } catch (error) {
-            console.error('Error fetching admin dashboard summary:', {
-                error,
-                errorResponse: error.response?.data,
-                errorStatus: error.response?.status
-            });
-            return this.createDefaultAdminSummary();
-        }
-    }
-
-    // Create a default admin summary when no data is available
-    private createDefaultAdminSummary(): CourseProgress {
-        return {
-            courseId: 'admin-dashboard',
-            studentId: 'admin',
-            completedTasks: 0,
-            totalTasks: 0,
-            averageScore: 0,
-            completionPercentage: 0,
-            totalTimeSpent: 0,
-            achievedObjectives: 0,
-            totalObjectives: 0,
-            moduleProgress: [
-                {
-                    moduleId: 'default-admin-module',
-                    moduleTitle: 'Platform Overview',
-                    completionPercentage: 0,
-                    completedTasks: 0,
-                    totalTasks: 0,
-                    averageScore: null,
-                    taskProgress: [],
-                    timeSpent: 0
-                }
-            ],
-            taskProgress: [],
-            recentActivity: []
-        };
-    }
 }
 
 // Create a singleton instance
 export const progressService = new ProgressService();
 
 // Export all methods for backward compatibility
-export const fetchStudentProgress = progressService.fetchStudentProgress.bind(progressService);
+export const fetchStudentProgress = async (courseId: string, studentId?: string): Promise<CourseProgress> => {
+    const token = getAuthToken();
+    const endpoint = studentId
+        ? `/students/${studentId}/progress`
+        : `/courses/${courseId}/student-progress/`;
+
+    try {
+        const response = await axios.get(`${API_URL}${endpoint}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return CourseProgressSchema.parse(response.data);
+    } catch (error) {
+        console.error('Error fetching student progress:', error);
+        throw new Error('Failed to fetch student progress.');
+    }
+};
+
+export const updateCourseProgress = async (
+    courseId: string,
+    progress: number
+): Promise<{ success: boolean; error: CourseError | null }> => {
+    const token = getAuthToken();
+    try {
+        await axios.post(
+            `${API_URL}/courses/${courseId}/progress/`,
+            { progress },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        return { success: true, error: null };
+    } catch (error) {
+        console.error('Error updating course progress:', error);
+        return { success: false, error: { message: 'Failed to update course progress.', code: 500 } };
+    }
+};
+
 export const fetchCourseStructure = progressService.fetchCourseStructure.bind(progressService);
 export const fetchAllStudentsProgress = progressService.fetchAllStudentsProgress.bind(progressService);
 export const getQuizHistory = progressService.getQuizHistory.bind(progressService);
 export const getContentEffectivenessData = progressService.getContentEffectivenessData.bind(progressService);
 export const updateTaskProgress = progressService.updateTaskProgress.bind(progressService);
-export const fetchAdminDashboardSummary = progressService.fetchAdminDashboardSummary.bind(progressService);
 import axios from 'axios';
 
 // Fetch instructor-specific dashboard data
@@ -438,4 +372,16 @@ export const fetchInstructorDashboardData = async () => {
             error.response?.data?.error || 'An unexpected error occurred while fetching courses.'
         );
     }
+};
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = `${API_BASE_URL}/api/v1`;
+
+const getAuthToken = () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+        console.error('No access token found in localStorage.');
+        throw new Error('Authentication token is missing. Please log in again.');
+    }
+    return token;
 };

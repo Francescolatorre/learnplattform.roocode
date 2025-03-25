@@ -14,89 +14,61 @@ const getAuthToken = () => {
   return token;
 };
 
-export const fetchCourses = async (role?: string): Promise<Course[]> => {
+export const fetchCourses = async (): Promise<{ results: Course[] }> => {
+  const token = getAuthToken();
   try {
-    const token = getAuthToken();
-    const endpoint = role === 'instructor' ? '/instructor/courses' : role === 'admin' ? '/courses' : '/courses';
-    const response = await axios.get(`${API_URL}${endpoint}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    const response = await axios.get(`${API_URL}/courses/`, {
+      headers: { Authorization: `Bearer ${token}` }
     });
-
-    // Ensure the response data is an array
-    if (Array.isArray(response.data)) {
-      return response.data;
-    } else if (response.data && typeof response.data === 'object') {
-      // Handle cases where the response is an object with a `results` property
-      return response.data.results || [];
-    } else {
-      console.warn('Unexpected response format:', response.data);
-      return [];
-    }
+    console.log('fetchCourses response:', response.data); // Log the response
+    return response.data; // Ensure the full response is returned
   } catch (error) {
+    console.error('Error in fetchCourses:', error); // Log the error
     if (axios.isAxiosError(error)) {
-      console.error('Error fetching courses:', {
-        message: error.message,
-        status: error.response?.status,
-        data: error.response?.data,
-      });
       throw new Error(
         error.response?.data?.message || `Failed to fetch courses. Status: ${error.response?.status}`
       );
     }
-    console.error('Unexpected error fetching courses:', error);
-    throw new Error('An unexpected error occurred while fetching courses.');
+    throw new Error('An unexpected error occurred while fetching courses');
   }
 };
 
-export const fetchCourseDetails = async (
-  courseId: string,
-  includeReviews?: boolean,
-  page?: number
-): Promise<CourseDetails | { error: CourseError }> => {
+export const fetchCourseDetails = async (courseId: string, userId: string) => {
+  const token = getAuthToken();
   try {
-    const token = getAuthToken();
-    const params = new URLSearchParams();
-    if (includeReviews) params.append('includeReviews', includeReviews.toString());
-    if (page) params.append('page', page.toString());
-
-    const response = await axios.get(`${API_URL}/courses/${courseId}/`, {
-      params,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
+    const courseResponse = await axios.get(`${API_URL}/courses/${courseId}/`, {
+      headers: { Authorization: `Bearer ${token}` },
     });
 
-    return response.data as CourseDetails;
+    const enrollmentResponse = await axios.get(`${API_URL}/course-enrollments/`, {
+      headers: { Authorization: `Bearer ${token}` },
+      params: { course: courseId },
+    });
+
+    return {
+      courseData: courseResponse.data,
+      enrollmentData: enrollmentResponse.data,
+    };
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      const status = error.response?.status || 0;
-      switch (status) {
-        case 401:
-          return { error: { message: 'Unauthorized. Please log in again.', code: 401 } };
-        case 403:
-          return { error: { message: 'Access forbidden. You do not have permission to view course details.', code: 403 } };
-        case 404:
-          return { error: { message: 'The requested resource was not found. Please check the URL and try again.', code: 404 } };
-        case 500:
-          return { error: { message: 'An internal server error occurred. Please try again later.', code: 500 } };
-        default:
-          return { error: { message: `An error occurred: ${error.message}`, code: status } };
-      }
-    }
-    return { error: { message: 'An unexpected error occurred. Please try again later.', code: 0 } };
+    console.error('Error fetching course details:', error);
+    throw new Error('Failed to fetch course details.');
   }
+};
+
+export const enrollInCourse = async (courseId: string) => {
+  const token = localStorage.getItem('access_token');
+  await axios.post(
+    '/api/v1/course-enrollments/',
+    { course: courseId, status: 'active' },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
 };
 
 export const updateCourseDetails = async (courseId: string, courseData: any) => {
   try {
     const token = getAuthToken();
-    const response = await axios.put(`${API_URL}/courses/${courseId}/`, courseData, {
-      headers: {
-        Authorization: `Bearer ${token}`, // Ensure the token is included
-      },
+    const response = await axios.put(`${API_URL} / courses / ${courseId} / `, courseData, {
+      headers: { Authorization: `Bearer ${token}` }
     });
     return response.data;
   } catch (error) {
@@ -131,7 +103,6 @@ export const updateCourseProgress = async (
         },
       }
     );
-
     return { success: true, error: null };
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -162,10 +133,30 @@ export const fetchCourseVersions = async (courseId: string): Promise<CourseVersi
         'Content-Type': 'application/json',
       },
     });
-
     return response.data as CourseVersion[];
   } catch (error) {
     console.error('Failed to fetch course versions:', error);
     throw error;
+  }
+};
+
+export const fetchStudentProgress = async (courseId: number) => {
+  const token = getAuthToken();
+  const response = await axios.get(`${API_URL}/courses/${courseId}/student-progress/`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const fetchAdminDashboardSummary = async (): Promise<any> => {
+  const token = getAuthToken();
+  try {
+    const response = await axios.get(`${API_URL}/dashboard/admin-summary/`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching admin dashboard summary:', error);
+    throw new Error('Failed to fetch admin dashboard summary.');
   }
 };

@@ -1,26 +1,26 @@
-import React, { use, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { theme } from '@theme/theme'; // Ensure this matches the actual file structure
-import { AuthProvider } from '@features/auth/AuthContext';
+import { theme } from '@theme/theme';
+import { AuthProvider, useAuth } from '@features/auth/AuthContext'; // Ensure useAuth is imported
 import ErrorBoundary from '@components/ErrorBoundary';
 import LoginForm from '@features/auth/LoginForm';
 import RegisterForm from '@features/auth/RegisterForm';
-import { MainLayout } from './components/layout/MainLayout';
+import { MainLayout } from '@components/layout/MainLayout';
 import Dashboard from '@features/dashboard/Dashboard';
 import ProgressTrackingUI from '@features/dashboard/ProgressTrackingUI';
 import Profile from '@features/profile/Profile';
 import CoursesPage from '@features/courses/CoursesPage';
-import CourseTasksPage from '@features/courses/CourseTasksPage';
+import CourseTasksPage from '@pages/CourseTasksPage';
 import EditCourse from '@features/courses/EditCourse';
 import InstructorViews from '@features/instructor/InstructorViews';
-import CourseDetailsPage from './pages/CourseDetailsPage';
+import CourseDetailsPage from '@pages/CourseDetailsPage';
 import CourseEnrollmentPage from '@features/courses/CourseEnrollmentPage';
-import { useAuth } from '@features/auth/AuthContext';
 import InstructorCoursesPage from '@features/instructor/InstructorCoursesPage';
-import AdminCoursesPage from '@features/admin/AdminCoursesPage'; // Import AdminCoursesPage
+import AdminCoursesPage from '@features/admin/AdminCoursesPage';
+import TaskViewPage from '@pages/TaskViewPage';
 
 type Task = {
   title: string;
@@ -33,7 +33,7 @@ type Task = {
 };
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, refreshToken } = useAuth();
+  const { isAuthenticated, refreshToken } = useAuth(); // useAuth is now correctly imported
   const isTokenAvailable = localStorage.getItem('access_token') !== null;
   const [loading, setLoading] = React.useState(true);
 
@@ -88,11 +88,12 @@ const App: React.FC = () => {
                 <Route path="/register" element={<RegisterForm />} />
                 <Route path="/dashboard" element={<ProtectedRoute><MainLayout><Dashboard /></MainLayout></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><MainLayout><Profile /></MainLayout></ProtectedRoute>} />
-                <Route path="/courses" element={<ProtectedRoute><MainLayout><CoursesPage /></MainLayout></ProtectedRoute>} />
+                <Route path="/courses" element={<ProtectedRoute><MainLayout><CourseEnrollmentPage /></MainLayout></ProtectedRoute>} />
                 <Route path="/courses/:courseId" element={<ProtectedRoute><MainLayout><CourseEnrollmentPage /></MainLayout></ProtectedRoute>} />
                 <Route path="/courses/:courseId/edit" element={<ProtectedRoute><MainLayout><EditCourse /></MainLayout></ProtectedRoute>} />
                 <Route path="/courses-old/:courseId" element={<ProtectedRoute><MainLayout><CourseDetailsPage /></MainLayout></ProtectedRoute>} />
                 <Route path="/courses/:courseId/tasks" element={<ProtectedRoute><MainLayout><CourseTasksPage /></MainLayout></ProtectedRoute>} />
+                <Route path="/courses/:courseId/tasks/:taskId" element={<ProtectedRoute><MainLayout><TaskViewPage /></MainLayout></ProtectedRoute>} />
                 <Route path="/progress-tracking/:courseId" element={<ProtectedRoute><MainLayout><ProgressTrackingUI courseId={useParams().courseId} /></MainLayout></ProtectedRoute>} />
                 <Route path="/instructor" element={<ProtectedRoute><MainLayout><InstructorViews /></MainLayout></ProtectedRoute>} />
                 <Route
@@ -117,6 +118,9 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 />
+                <Route path="/my-submission" element={<ProtectedRoute><MainLayout><div>My Submission Page (Placeholder)</div></MainLayout></ProtectedRoute>} />
+                <Route path="/enrollment" element={<ProtectedRoute><MainLayout><CourseEnrollmentPage /></MainLayout></ProtectedRoute>} />
+                <Route path="/courses/:courseId/details" element={<ProtectedRoute><MainLayout><CourseDetailsPage /></MainLayout></ProtectedRoute>} />
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
               </Routes>
             </Router>

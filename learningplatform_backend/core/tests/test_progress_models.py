@@ -4,9 +4,19 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils import timezone
 
-from core.models import (Course, CourseEnrollment, LearningTask, QuizAttempt,
-                         QuizOption, QuizQuestion, QuizResponse, QuizTask,
-                         TaskProgress)
+from core.models import (
+    Course,
+    CourseEnrollment,
+    LearningTask,
+    QuizAttempt,
+    QuizOption,
+    QuizQuestion,
+    QuizResponse,
+    QuizTask,
+    TaskProgress,
+)
+
+from rest_framework.test import APIClient
 
 User = get_user_model()
 
@@ -18,7 +28,7 @@ class CourseEnrollmentModelTest(TestCase):
             username="testuser",
             email="test@example.com",
             password="testpassword",
-            role="student"
+            role="student",
         )
 
         # Create test course
@@ -27,7 +37,7 @@ class CourseEnrollmentModelTest(TestCase):
             description="Test Description",
             status="published",
             visibility="public",
-            creator=self.user
+            creator=self.user,
         )
 
         # Create test tasks
@@ -36,7 +46,7 @@ class CourseEnrollmentModelTest(TestCase):
             title="Task 1",
             description="Task 1 Description",
             order=1,
-            is_published=True
+            is_published=True,
         )
 
         self.task2 = LearningTask.objects.create(
@@ -44,14 +54,12 @@ class CourseEnrollmentModelTest(TestCase):
             title="Task 2",
             description="Task 2 Description",
             order=2,
-            is_published=True
+            is_published=True,
         )
 
         # Create enrollment
         self.enrollment = CourseEnrollment.objects.create(
-            user=self.user,
-            course=self.course,
-            status="active"
+            user=self.user, course=self.course, status="active"
         )
 
         # Create task progress
@@ -59,13 +67,11 @@ class CourseEnrollmentModelTest(TestCase):
             user=self.user,
             task=self.task1,
             status="completed",
-            completion_date=timezone.now()
+            completion_date=timezone.now(),
         )
 
         self.progress2 = TaskProgress.objects.create(
-            user=self.user,
-            task=self.task2,
-            status="in_progress"
+            user=self.user, task=self.task2, status="in_progress"
         )
 
     def test_enrollment_creation(self):
@@ -109,7 +115,7 @@ class TaskProgressModelTest(TestCase):
             username="testuser",
             email="test@example.com",
             password="testpassword",
-            role="student"
+            role="student",
         )
 
         # Create test course
@@ -118,7 +124,7 @@ class TaskProgressModelTest(TestCase):
             description="Test Description",
             status="published",
             visibility="public",
-            creator=self.user
+            creator=self.user,
         )
 
         # Create test task
@@ -127,7 +133,7 @@ class TaskProgressModelTest(TestCase):
             title="Test Task",
             description="Test Task Description",
             order=1,
-            is_published=True
+            is_published=True,
         )
 
         # Create task progress
@@ -135,7 +141,7 @@ class TaskProgressModelTest(TestCase):
             user=self.user,
             task=self.task,
             status="in_progress",
-            time_spent=datetime.timedelta(minutes=30)
+            time_spent=datetime.timedelta(minutes=30),
         )
 
     def test_task_progress_creation(self):
@@ -165,7 +171,7 @@ class QuizAttemptModelTest(TestCase):
             username="testuser",
             email="test@example.com",
             password="testpassword",
-            role="student"
+            role="student",
         )
 
         # Create test course
@@ -174,7 +180,7 @@ class QuizAttemptModelTest(TestCase):
             description="Test Description",
             status="published",
             visibility="public",
-            creator=self.user
+            creator=self.user,
         )
 
         # Create quiz task
@@ -185,51 +191,33 @@ class QuizAttemptModelTest(TestCase):
             order=1,
             is_published=True,
             time_limit_minutes=30,
-            pass_threshold=70
+            pass_threshold=70,
         )
 
         # Create quiz questions
         self.question1 = QuizQuestion.objects.create(
-            quiz=self.quiz,
-            text="Question 1",
-            points=10,
-            order=1
+            quiz=self.quiz, text="Question 1", points=10, order=1
         )
 
         self.question2 = QuizQuestion.objects.create(
-            quiz=self.quiz,
-            text="Question 2",
-            points=10,
-            order=2
+            quiz=self.quiz, text="Question 2", points=10, order=2
         )
 
         # Create options for questions
         self.option1_1 = QuizOption.objects.create(
-            question=self.question1,
-            text="Option 1",
-            is_correct=True,
-            order=1
+            question=self.question1, text="Option 1", is_correct=True, order=1
         )
 
         self.option1_2 = QuizOption.objects.create(
-            question=self.question1,
-            text="Option 2",
-            is_correct=False,
-            order=2
+            question=self.question1, text="Option 2", is_correct=False, order=2
         )
 
         self.option2_1 = QuizOption.objects.create(
-            question=self.question2,
-            text="Option 1",
-            is_correct=False,
-            order=1
+            question=self.question2, text="Option 1", is_correct=False, order=1
         )
 
         self.option2_2 = QuizOption.objects.create(
-            question=self.question2,
-            text="Option 2",
-            is_correct=True,
-            order=2
+            question=self.question2, text="Option 2", is_correct=True, order=2
         )
 
         # Create quiz attempt
@@ -238,7 +226,7 @@ class QuizAttemptModelTest(TestCase):
             quiz=self.quiz,
             score=80,
             time_taken=datetime.timedelta(minutes=20),
-            completion_status="completed"
+            completion_status="completed",
         )
 
         # Create quiz responses
@@ -247,7 +235,7 @@ class QuizAttemptModelTest(TestCase):
             question=self.question1,
             selected_option=self.option1_1,
             is_correct=True,
-            time_spent=datetime.timedelta(minutes=5)
+            time_spent=datetime.timedelta(minutes=5),
         )
 
         self.response2 = QuizResponse.objects.create(
@@ -255,7 +243,7 @@ class QuizAttemptModelTest(TestCase):
             question=self.question2,
             selected_option=self.option2_1,
             is_correct=False,
-            time_spent=datetime.timedelta(minutes=5)
+            time_spent=datetime.timedelta(minutes=5),
         )
 
     def test_quiz_attempt_creation(self):
@@ -275,7 +263,7 @@ class QuizAttemptModelTest(TestCase):
             quiz=self.quiz,
             score=90,
             time_taken=datetime.timedelta(minutes=15),
-            completion_status="completed"
+            completion_status="completed",
         )
 
         # The new attempt should be the latest
@@ -290,7 +278,7 @@ class QuizResponseModelTest(TestCase):
             username="testuser",
             email="test@example.com",
             password="testpassword",
-            role="student"
+            role="student",
         )
 
         # Create test course
@@ -299,7 +287,7 @@ class QuizResponseModelTest(TestCase):
             description="Test Description",
             status="published",
             visibility="public",
-            creator=self.user
+            creator=self.user,
         )
 
         # Create quiz task
@@ -310,30 +298,21 @@ class QuizResponseModelTest(TestCase):
             order=1,
             is_published=True,
             time_limit_minutes=30,
-            pass_threshold=70
+            pass_threshold=70,
         )
 
         # Create quiz question
         self.question = QuizQuestion.objects.create(
-            quiz=self.quiz,
-            text="Test Question",
-            points=10,
-            order=1
+            quiz=self.quiz, text="Test Question", points=10, order=1
         )
 
         # Create options for question
         self.option1 = QuizOption.objects.create(
-            question=self.question,
-            text="Option 1",
-            is_correct=True,
-            order=1
+            question=self.question, text="Option 1", is_correct=True, order=1
         )
 
         self.option2 = QuizOption.objects.create(
-            question=self.question,
-            text="Option 2",
-            is_correct=False,
-            order=2
+            question=self.question, text="Option 2", is_correct=False, order=2
         )
 
         # Create quiz attempt
@@ -342,7 +321,7 @@ class QuizResponseModelTest(TestCase):
             quiz=self.quiz,
             score=100,
             time_taken=datetime.timedelta(minutes=10),
-            completion_status="completed"
+            completion_status="completed",
         )
 
         # Create quiz response
@@ -351,7 +330,7 @@ class QuizResponseModelTest(TestCase):
             question=self.question,
             selected_option=self.option1,
             is_correct=True,
-            time_spent=datetime.timedelta(minutes=2)
+            time_spent=datetime.timedelta(minutes=2),
         )
 
     def test_quiz_response_creation(self):
@@ -370,7 +349,7 @@ class UserProgressMethodsTest(TestCase):
             username="testuser",
             email="test@example.com",
             password="testpassword",
-            role="student"
+            role="student",
         )
 
         # Create test course
@@ -379,7 +358,7 @@ class UserProgressMethodsTest(TestCase):
             description="Test Description",
             status="published",
             visibility="public",
-            creator=self.user
+            creator=self.user,
         )
 
         # Create test tasks
@@ -388,7 +367,7 @@ class UserProgressMethodsTest(TestCase):
             title="Task 1",
             description="Task 1 Description",
             order=1,
-            is_published=True
+            is_published=True,
         )
 
         self.task2 = LearningTask.objects.create(
@@ -396,7 +375,7 @@ class UserProgressMethodsTest(TestCase):
             title="Task 2",
             description="Task 2 Description",
             order=2,
-            is_published=True
+            is_published=True,
         )
 
         # Create quiz task
@@ -407,7 +386,7 @@ class UserProgressMethodsTest(TestCase):
             order=3,
             is_published=True,
             time_limit_minutes=30,
-            pass_threshold=70
+            pass_threshold=70,
         )
 
         # Create task progress
@@ -415,13 +394,11 @@ class UserProgressMethodsTest(TestCase):
             user=self.user,
             task=self.task1,
             status="completed",
-            completion_date=timezone.now()
+            completion_date=timezone.now(),
         )
 
         self.progress2 = TaskProgress.objects.create(
-            user=self.user,
-            task=self.task2,
-            status="in_progress"
+            user=self.user, task=self.task2, status="in_progress"
         )
 
         # Create quiz attempt
@@ -431,7 +408,7 @@ class UserProgressMethodsTest(TestCase):
             score=80,
             time_taken=datetime.timedelta(minutes=20),
             completion_status="completed",
-            attempt_date=timezone.now() - datetime.timedelta(days=1)
+            attempt_date=timezone.now() - datetime.timedelta(days=1),
         )
 
         self.attempt2 = QuizAttempt.objects.create(
@@ -440,7 +417,7 @@ class UserProgressMethodsTest(TestCase):
             score=90,
             time_taken=datetime.timedelta(minutes=15),
             completion_status="completed",
-            attempt_date=timezone.now()
+            attempt_date=timezone.now(),
         )
 
     def test_calculate_progress_percentage(self):
@@ -467,3 +444,20 @@ class UserProgressMethodsTest(TestCase):
         # Test with specific quiz
         latest_attempt = self.user.get_latest_quiz_attempt(quiz=self.quiz)
         self.assertEqual(latest_attempt, self.attempt2)
+
+
+class TaskProgressViewSetTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = User.objects.create_user(
+            username="studentuser",
+            email="student@example.com",
+            password="password",
+            role="student",
+        )
+        self.task = LearningTask.objects.create(
+            title="Test Task",
+            description="Test Task Description",
+            order=1,
+            is_published=True,
+        )

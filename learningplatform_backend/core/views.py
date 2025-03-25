@@ -1,3 +1,4 @@
+import logging  # Add logging import
 from django.http import JsonResponse
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.authentication import get_authorization_header
@@ -41,14 +42,20 @@ from .serializers import (
     TaskProgressSerializer,
     UserSerializer,
 )
+from core.permissions import IsStudentOrReadOnly  # Import the custom permission
+
+# Configure logger for this module
+logger = logging.getLogger(__name__)
 
 
+# Example usage of logger
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def health_check(request):
     """
     Simple health check endpoint to verify the API is running
     """
+    logger.info("Health check endpoint accessed.")  # Log to file
     return Response({"status": "healthy"}, status=status.HTTP_200_OK)
 
 
@@ -111,7 +118,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     API endpoint for courses
     """
 
-    queryset = Course.objects.all()
+    queryset = Course.objects.all().order_by("id")  # Ensure consistent ordering
     serializer_class = CourseSerializer
     permission_classes = [IsAuthenticated]
 
@@ -174,6 +181,26 @@ class LearningTaskViewSet(viewsets.ModelViewSet):
     serializer_class = LearningTaskSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    @action(detail=False, methods=["get"], url_path="course/(?P<course_id>[^/.]+)")
+    def tasks_by_course(self, request, course_id=None):
+        """
+        Fetch tasks for a specific course.
+        """
+        try:
+            tasks = LearningTask.objects.filter(course_id=course_id).order_by("order")
+            if not tasks.exists():
+                return Response(
+                    {"error": "No tasks found for this course."}, status=404
+                )
+            serializer = self.get_serializer(tasks, many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            logger.error(f"Error fetching tasks for course {course_id}: {str(e)}")
+            return Response(
+                {"error": "An unexpected error occurred while fetching tasks."},
+                status=500,
+            )
+
 
 class QuizTaskViewSet(viewsets.ModelViewSet):
     """
@@ -210,7 +237,7 @@ class CourseEnrollmentViewSet(viewsets.ModelViewSet):
     API endpoint for course enrollments
     """
 
-    queryset = CourseEnrollment.objects.all()
+    queryset = CourseEnrollment.objects.all().order_by("id")
     serializer_class = CourseEnrollmentSerializer
     permission_classes = [IsAuthenticated]
 
@@ -234,7 +261,10 @@ class TaskProgressViewSet(viewsets.ModelViewSet):
 
     queryset = TaskProgress.objects.all()
     serializer_class = TaskProgressSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        IsStudentOrReadOnly,
+    ]  # Add custom permission
 
     def get_queryset(self):
         """
@@ -423,4 +453,3 @@ def admin_dashboard_summary(request):
         )["total_time"]
         or 0,
     }
-    return Response(data)

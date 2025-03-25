@@ -79,6 +79,9 @@ class Course(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        ordering = ["id"]  # Default ordering by ID
+
 
 class CourseVersion(models.Model):
     course = models.ForeignKey(
@@ -193,6 +196,7 @@ class CourseEnrollment(models.Model):
 
     class Meta:
         unique_together = ["user", "course"]
+        ordering = ["-enrollment_date"]  # Add default ordering by enrollment date
 
     def __str__(self):
         return f"{self.user.username} enrolled in {self.course.title}"
