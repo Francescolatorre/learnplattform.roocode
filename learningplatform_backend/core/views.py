@@ -172,19 +172,19 @@ class CourseViewSet(viewsets.ModelViewSet):
     @action(
         detail=True,
         methods=["get"],
-        url_path="student-progress",
+        url_path="student-progress/(?P<user_id>[^/.]+)",  # Add user_id to the URL
         permission_classes=[IsAuthenticated],  # Allow all authenticated users
     )
-    def student_progress(self, request, pk=None):
+    def student_progress(self, request, pk=None, user_id=None):
         """
-        Fetch student progress for a specific course.
+        Fetch student progress for a specific course and user.
         """
         try:
             course = self.get_object()
 
             # Check if the user is enrolled
             is_enrolled = CourseEnrollment.objects.filter(
-                user=request.user, course_id=course.id
+                user_id=user_id, course_id=course.id
             ).exists()
 
             if not is_enrolled:
@@ -200,9 +200,9 @@ class CourseViewSet(viewsets.ModelViewSet):
                     status=200,
                 )
 
-            # Fetch progress for the authenticated student
+            # Fetch progress for the specified user
             progress = TaskProgress.objects.filter(
-                user=request.user, task__course_id=course.id
+                user_id=user_id, task__course_id=course.id
             )
             if not progress.exists():
                 return Response(
@@ -215,6 +215,49 @@ class CourseViewSet(viewsets.ModelViewSet):
             logger.error(f"Error fetching student progress for course {pk}: {str(e)}")
             return Response(
                 {"error": "An unexpected error occurred while fetching progress."},
+                status=500,
+            )
+
+    @action(
+        detail=True,
+        methods=["get"],
+        url_path="details",
+        permission_classes=[IsAuthenticated],
+    )
+    def course_details(self, request, pk=None):
+        """
+        Fetch course details without progress data.
+        """
+        try:
+            logger.info(f"Fetching course details for course ID: {pk}")
+            course = self.get_object()
+
+            # Fetch tasks related to the course
+            tasks = LearningTask.objects.filter(course=course)
+            logger.info(f"Found {tasks.count()} tasks for course ID: {pk}")
+
+            return Response(
+                {
+                    "id": course.id,
+                    "title": course.title,
+                    "description": course.description,
+                    "learning_objectives": course.learning_objectives,
+                    "prerequisites": course.prerequisites,
+                    "tasks": [
+                        {"id": task.id, "title": task.title, "type": task.type}
+                        for task in tasks
+                    ],
+                }
+            )
+        except Course.DoesNotExist:
+            logger.error(f"Course with ID {pk} does not exist.")
+            return Response({"error": "Course not found."}, status=404)
+        except Exception as e:
+            logger.error(f"Error fetching course details for course ID {pk}: {str(e)}")
+            return Response(
+                {
+                    "error": "An unexpected error occurred while fetching course details."
+                },
                 status=500,
             )
 
@@ -399,7 +442,6 @@ def validate_token(request):
         return Response(
             {"detail": "Authorization header missing or invalid."}, status=401
         )
-
     try:
         token = auth_header[1].decode("utf-8")
         AccessToken(token)  # Validate the token
@@ -439,7 +481,6 @@ class InstructorDashboardAPI(APIView):
 
         # Fetch courses created by the instructor
         courses_created = Course.objects.filter(creator=request.user).count()
-
         # Fetch students enrolled in the instructor's courses
         students_enrolled = (
             CourseEnrollment.objects.filter(course__creator=request.user)
@@ -447,7 +488,6 @@ class InstructorDashboardAPI(APIView):
             .distinct()
             .count()
         )
-
         # Fetch recent activity in the instructor's courses
         recent_activity = (
             TaskProgress.objects.filter(task__course__creator=request.user)
@@ -536,3 +576,40 @@ class StudentProgressView(APIView):
 
         # ...existing logic...
         return Response({"message": "Student progress data"})
+
+
+def get_course_details(request, course_id):
+    # Check if the user is enrolled
+    is_enrolled = CourseEnrollment.objects.filter(
+        user=request.user, course_id=course_id
+    ).exists()
+
+    if not is_enrolled:
+        # Return limited course details for non-enrolled users
+        course = Course.objects.get(id=course_id)
+        return Response(
+            {
+                "course": {
+                    "id": course.id,
+                    "title": course.title,
+                    "description": course.description,
+                },
+                "progress": [],
+            }
+        )
+
+    # Fetch full course details including progress for enrolled users
+    course = Course.objects.get(id=course_id)
+    tasks = Task.objects.filter(course=course)
+    progress = CourseProgress.objects.filter(user=request.user, course_id=course_id)
+    return Response(
+        {
+            "course": {
+                "id": course.id,
+                "title": course.title,
+                "description": course.description,
+                "tasks": [{"id": task.id, "title": task.title} for task in tasks],
+            },
+            "progress": [{"task_id": p.task_id, "status": p.status} for p in progress],
+        }
+    )

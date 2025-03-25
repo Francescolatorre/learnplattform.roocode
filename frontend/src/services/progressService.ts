@@ -229,6 +229,16 @@ class ProgressService {
             throw error;
         }
     }
+
+    public async fetchCourseDetails(courseId: string): Promise<any> {
+        try {
+            const response = await this.axiosInstance.get(`/courses/${courseId}/details/`);
+            return response.data;
+        } catch (error: any) {
+            console.error('Error fetching course details:', error.response?.data || error.message);
+            throw new Error('Failed to fetch course details.');
+        }
+    }
 }
 
 // Create a singleton instance
@@ -236,13 +246,14 @@ export const progressService = new ProgressService();
 
 // Export all methods for backward compatibility
 export const fetchStudentProgressByUser = progressService.fetchStudentProgressByUser.bind(progressService);
-export const fetchStudentProgressByCourse = progressService.fetchStudentProgressByCourse.bind(progressService);
+export const fetchStudentProgressByCourse = progressService.fetchStudentProgressByCourse.bind(progressService); // Keep this export
 export const fetchAllStudentsProgress = progressService.fetchAllStudentsProgress.bind(progressService);
 export const getQuizHistory = progressService.getQuizHistory.bind(progressService);
 export const getContentEffectivenessData = progressService.getContentEffectivenessData.bind(progressService);
 export const updateTaskProgress = progressService.updateTaskProgress.bind(progressService);
 export const submitTask = progressService.submitTask.bind(progressService);
 export const gradeSubmission = progressService.gradeSubmission.bind(progressService);
+export const fetchCourseDetails = progressService.fetchCourseDetails.bind(progressService);
 
 export const fetchInstructorDashboardData = async () => {
     const token = localStorage.getItem('access_token'); // Ensure token is retrieved

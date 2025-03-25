@@ -1316,3 +1316,14 @@ class StudentQuizPerformanceAPI(APIView):
         cache.set(cache_key, performance_data, 15 * 60)
 
         return Response(performance_data)
+
+
+class CourseProgressAPI(APIView):
+    permission_classes = [IsAuthenticated, IsEnrolledInCourse]
+
+    def get(self, request, course_id):
+        # Fetch progress data for enrolled users
+        progress = CourseProgress.objects.filter(user=request.user, course_id=course_id)
+        return Response(
+            {"progress": [{"task_id": p.task_id, "status": p.status} for p in progress]}
+        )

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, CircularProgress, Alert } from '@mui/material';
 import { useAuth } from '../auth/AuthContext';
-import { fetchInstructorDashboardData, fetchStudentProgressByUser } from '../../services/progressService';
+import { fetchInstructorDashboardData, fetchStudentProgressByUser, fetchCourseDetails } from '../../services/progressService';
 import { fetchAdminDashboardSummary } from '../../services/courseService';
 import withAuth from '../auth/withAuth';
 import StudentDashboard from './StudentDashboard';
@@ -10,7 +10,7 @@ import AdminDashboard from './AdminDashboard';
 
 const Dashboard: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
-  const userRole = user?.role || 'Not assigned';
+  const userRole = user?.role || 'Not assigned'; // Ensure user.role is retrieved correctly
   const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,11 +21,14 @@ const Dashboard: React.FC = () => {
         try {
           setIsLoading(true);
           if (userRole === 'student') {
-            /* no data here */
+            // for the moment we dont any data to display, will decide later what to display
+            setData({});  // for the moment we dont any data to display, will decide later what to display
           } else if (userRole === 'instructor') {
+            // This triggers the fetchInstructorDashboardData API call
             const instructorData = await fetchInstructorDashboardData();
             setData(instructorData);
           } else if (userRole === 'admin') {
+            // This triggers the fetchAdminDashboardSummary API call
             const adminData = await fetchAdminDashboardSummary();
             setData(adminData);
           }
@@ -38,8 +41,8 @@ const Dashboard: React.FC = () => {
       }
     };
 
-    loadData();
-  }, [isAuthenticated, user, userRole]);
+    loadData(); // This runs on component mount
+  }, [isAuthenticated, user, userRole]); // Dependencies that trigger re-runs
 
   if (isLoading) {
     return (
