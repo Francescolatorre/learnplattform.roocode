@@ -26,21 +26,28 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
 from core import views
-from core.progress_api import (CourseAnalyticsAPI, CourseStudentProgressAPI,
-                               CourseTaskAnalyticsAPI,
-                               EnhancedCourseEnrollmentViewSet,
-                               EnhancedQuizAttemptViewSet,
-                               EnhancedTaskProgressViewSet, StudentProgressAPI,
-                               StudentQuizPerformanceAPI)
+from core.progress_api import (
+    CourseAnalyticsAPI,
+    CourseStudentProgressAPI,
+    CourseTaskAnalyticsAPI,
+    EnhancedCourseEnrollmentViewSet,
+    EnhancedQuizAttemptViewSet,
+    EnhancedTaskProgressViewSet,
+    StudentProgressAPI,
+    StudentQuizPerformanceAPI,
+)
 from core.views import AdminDashboardAPI  # Import AdminDashboardAPI
 from core.views import CourseViewSet  # Import CourseViewSet for custom action
 from core.views import InstructorDashboardAPI  # Import InstructorDashboardAPI
-from core.views import \
-    validate_token  # Import validate_token from core/views.py
-from core.views import \
-    admin_dashboard_summary  # Import the new admin dashboard summary view
+from core.views import validate_token  # Import validate_token from core/views.py
+from core.views import (
+    admin_dashboard_summary,
+)  # Import the new admin dashboard summary view
 
 # API router
 router = DefaultRouter()
@@ -128,6 +135,16 @@ def validate_token(request):
         return Response({"detail": str(e)}, status=401)
 
 
+schema_view = get_schema_view(
+    openapi.Info(
+        title="API Documentation",
+        default_version="v1",
+        description="API documentation for the backend",
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/", include(router.urls)),
@@ -149,4 +166,10 @@ urlpatterns = [
     path(
         "api/v1/admin/dashboard/", AdminDashboardAPI.as_view(), name="admin_dashboard"
     ),
+    path(
+        "swagger/",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
+    path("openapi.json", schema_view.without_ui(cache_timeout=0), name="schema-json"),
 ]

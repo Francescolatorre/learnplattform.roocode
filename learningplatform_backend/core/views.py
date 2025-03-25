@@ -344,6 +344,9 @@ class QuizOptionViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+from django.contrib.auth.models import AnonymousUser
+
+
 class CourseEnrollmentViewSet(viewsets.ModelViewSet):
     """
     API endpoint for course enrollments
@@ -354,13 +357,26 @@ class CourseEnrollmentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        """
-        Filter enrollments to only show those belonging to the current user
-        unless the user is staff/admin
-        """
-        if self.request.user.is_staff or self.request.user.role == "admin":
-            return CourseEnrollment.objects.all()
-        return CourseEnrollment.objects.filter(user=self.request.user)
+        # Handle schema generation for Swagger
+        if getattr(self, "swagger_fake_view", False):
+            return CourseEnrollment.objects.none()
+
+        # Handle AnonymousUser
+        if isinstance(self.request.user, AnonymousUser):
+            return CourseEnrollment.objects.none()
+
+        # Regular queryset logic
+        queryset = CourseEnrollment.objects.all()
+
+        # Safely check user role and staff status
+        user_role = getattr(self.request.user, "role", None)
+        is_staff = getattr(self.request.user, "is_staff", False)
+
+        if is_staff or user_role == "admin":
+            return queryset
+
+        # Filter enrollments for the current user
+        return queryset.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

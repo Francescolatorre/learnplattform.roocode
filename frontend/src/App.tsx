@@ -16,11 +16,12 @@ import CoursesPage from '@features/courses/CoursesPage';
 import CourseTasksPage from '@pages/CourseTasksPage';
 import EditCourse from '@features/courses/EditCourse';
 import InstructorViews from '@features/instructor/InstructorViews';
-import CourseDetailsPage from '@pages/CourseDetailsPage';
+import CourseDetailsPage from '@features/courses/CourseDetailsPage';
 import CourseEnrollmentPage from '@features/courses/CourseEnrollmentPage';
 import InstructorCoursesPage from '@features/instructor/InstructorCoursesPage';
 import AdminCoursesPage from '@features/admin/AdminCoursesPage';
 import TaskViewPage from '@pages/TaskViewPage';
+import InstructorCourseDetailPage from '@pages/InstructorCourseDetailPage';
 
 type Task = {
   title: string;
@@ -116,6 +117,7 @@ const App: React.FC = () => {
                 <Route path="/my-submission" element={<ProtectedRoute><MainLayout><div>My Submission Page (Placeholder)</div></MainLayout></ProtectedRoute>} />
                 <Route path="/enrollment" element={<ProtectedRoute><MainLayout><CourseEnrollmentPage /></MainLayout></ProtectedRoute>} />
                 <Route path="/courses/:courseId/details" element={<ProtectedRoute><MainLayout><CourseDetailsPage /></MainLayout></ProtectedRoute>} />
+                <Route path="/admin/courses/:courseId/details" element={<ProtectedRoute><MainLayout><InstructorCourseDetailPage /></MainLayout></ProtectedRoute>} />
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
               </Routes>
             </BrowserRouter>

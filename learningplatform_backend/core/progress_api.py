@@ -10,6 +10,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated  # Ensure correct import
 from rest_framework.response import Response
 from rest_framework.views import APIView  # Base class for analytics views
+from django.contrib.auth.models import AnonymousUser
 
 from .models import QuizQuestion  # Added QuizQuestion import
 from .models import (
@@ -158,6 +159,14 @@ class EnhancedCourseEnrollmentViewSet(viewsets.ModelViewSet):
         return user_role in ["admin", "instructor"] or is_staff
 
     def get_queryset(self):
+        # Handle schema generation for Swagger
+        if getattr(self, "swagger_fake_view", False):
+            return CourseEnrollment.objects.none()
+
+        # Handle AnonymousUser
+        if isinstance(self.request.user, AnonymousUser):
+            return CourseEnrollment.objects.none()
+
         """
         Filter enrollments to only show those belonging to the current user
         unless the user is staff/admin/instructor
@@ -208,20 +217,14 @@ class EnhancedTaskProgressViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]  # Ensure correct usage
 
     def get_queryset(self):
-        """
-        Allow students to view only their own task progress.
-        """
-        if self.request.user.role == "student":
-            return TaskProgress.objects.filter(user=self.request.user)
-        return super().get_queryset()
+        # Handle schema generation for Swagger
+        if getattr(self, "swagger_fake_view", False):
+            return TaskProgress.objects.none()
 
-    def _is_admin_or_instructor(self, user):
-        """Safely check if user is admin or instructor."""
-        user_role = getattr(user, "role", "")
-        is_staff = getattr(user, "is_staff", False)
-        return user_role in ["admin", "instructor"] or is_staff
+        # Handle AnonymousUser
+        if isinstance(self.request.user, AnonymousUser):
+            return TaskProgress.objects.none()
 
-    def get_queryset(self):
         """
         Filter task progress to only show those belonging to the current user
         unless the user is staff/admin/instructor
@@ -294,6 +297,14 @@ class EnhancedQuizAttemptViewSet(viewsets.ModelViewSet):
         return user_role in ["admin", "instructor"] or is_staff
 
     def get_queryset(self):
+        # Handle schema generation for Swagger
+        if getattr(self, "swagger_fake_view", False):
+            return QuizAttempt.objects.none()
+
+        # Handle AnonymousUser
+        if isinstance(self.request.user, AnonymousUser):
+            return QuizAttempt.objects.none()
+
         """
         Filter quiz attempts to only show those belonging to the current user
         unless the user is staff/admin/instructor

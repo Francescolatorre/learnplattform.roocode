@@ -18,6 +18,14 @@ const CourseProgressSchema = z.object({
     recentActivity: z.array(z.any()).optional().default([])
 });
 
+const NonEnrolledCourseSchema = z.object({
+    course_title: z.string(),
+    description: z.string(),
+    learning_objectives: z.string(),
+    prerequisites: z.string(),
+    message: z.string(),
+});
+
 const QuizHistorySchema = z.array(z.object({
     quizId: z.string(),
     moduleId: z.string(),
@@ -118,13 +126,23 @@ class ProgressService {
         }
     }
 
-    public async fetchStudentProgressByCourse(courseId: string, studentId: string): Promise<CourseProgress> {
+    public async fetchStudentProgressByCourse(courseId: string, studentId: string): Promise<CourseProgress | null> {
         if (!courseId || !studentId) {
             throw new Error('Both courseId and studentId are required to fetch progress for a specific course.');
         }
 
         try {
             const response = await this.axiosInstance.get(`/courses/${courseId}/student-progress/${studentId}/`);
+            console.log('API Response:', response.data);
+
+            // Check if the response contains a "message" field (indicating non-enrollment)
+            if (response.data.message) {
+                console.warn('User is not enrolled in the course:', response.data.message);
+                const nonEnrolledData = NonEnrolledCourseSchema.parse(response.data);
+                return null; // Return null or handle non-enrolled case separately
+            }
+
+            // Parse progress data for enrolled users
             return CourseProgressSchema.parse(response.data);
         } catch (error: any) {
             console.error('Error fetching progress for course:', error.response?.data || error.message);
@@ -239,6 +257,19 @@ class ProgressService {
             throw new Error('Failed to fetch course details.');
         }
     }
+    public async checkEnrollmentStatus(courseId: string, userId: string): Promise<boolean> {
+        if (!courseId || !userId) {
+            throw new Error('Both courseId and userId are required to check enrollment status.');
+        }
+        try {
+            const response = await this.axiosInstance.get(`/courses/${courseId}/enrollment-status/${userId}`);
+            return response.data.isEnrolled; // Assume the API returns { isEnrolled: true/false }
+        }
+        catch (error: any) {
+            console.error('Error checking enrollment status:', error.response?.data || error.message);
+        }
+        return false;
+    };
 }
 
 // Create a singleton instance
@@ -254,6 +285,7 @@ export const updateTaskProgress = progressService.updateTaskProgress.bind(progre
 export const submitTask = progressService.submitTask.bind(progressService);
 export const gradeSubmission = progressService.gradeSubmission.bind(progressService);
 export const fetchCourseDetails = progressService.fetchCourseDetails.bind(progressService);
+export const checkEnrollmentStatus = progressService.checkEnrollmentStatus.bind(progressService);
 
 export const fetchInstructorDashboardData = async () => {
     const token = localStorage.getItem('access_token'); // Ensure token is retrieved

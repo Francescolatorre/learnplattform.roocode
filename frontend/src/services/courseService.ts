@@ -33,23 +33,21 @@ export const fetchCourses = async (): Promise<{ results: Course[] }> => {
   }
 };
 
-export const fetchCourseDetails = async (courseId: string, userId: string) => {
+export const fetchCourseDetails = async (courseId: string): Promise<Course> => {
   const token = getAuthToken();
   try {
-    const courseResponse = await axios.get(`${API_URL}/courses/${courseId}/`, {
+    const response = await axios.get(`${API_URL}/courses/${courseId}/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    const enrollmentResponse = await axios.get(`${API_URL}/course-enrollments/`, {
-      headers: { Authorization: `Bearer ${token}` },
-      params: { course: courseId },
-    });
-
+    const courseData = response.data;
     return {
-      courseData: courseResponse.data,
-      enrollmentData: enrollmentResponse.data,
+      title: courseData.course_title, // Map `course_title` to `title`
+      description: courseData.description,
+      learning_objectives: courseData.learning_objectives || 'No learning objectives provided.',
+      prerequisites: courseData.prerequisites || 'No prerequisites provided.',
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching course details:', error);
     throw new Error('Failed to fetch course details.');
   }
