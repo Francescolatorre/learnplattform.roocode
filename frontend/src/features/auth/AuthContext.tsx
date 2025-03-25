@@ -78,15 +78,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         console.log('Attempting to refresh token...');
         const response = await refreshAccessToken(refreshToken);
-        localStorage.setItem('access_token', response.access);
-        localStorage.setItem('user_role', response.user.role);
-        localStorage.setItem('user', JSON.stringify(response.user));
-        setIsAuthenticated(true);
-        setUser(response.user);
-        console.log('Token refreshed and user details set:', response.user);
+        if (response.user) { // Add defensive check
+          localStorage.setItem('access_token', response.access);
+          localStorage.setItem('user_role', response.user.role);
+          localStorage.setItem('user', JSON.stringify(response.user));
+          setIsAuthenticated(true);
+          setUser(response.user);
+          console.log('Token refreshed and user details set:', response.user);
+        } else {
+          throw new Error('User data missing in token refresh response.');
+        }
       } catch (error) {
         console.error('Failed to refresh token:', error);
-        if (error.response?.status === 401) {
+        if ((error as any).response?.status === 401) {
           console.warn('Refresh token is invalid or expired. Proceeding with logout.');
           await logout(); // Gracefully handle token expiration
         }
