@@ -31,19 +31,24 @@ from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from core import views
-from core.progress_api import (CourseAnalyticsAPI, CourseStudentProgressAPI,
-                               CourseTaskAnalyticsAPI,
-                               EnhancedCourseEnrollmentViewSet,
-                               EnhancedQuizAttemptViewSet,
-                               EnhancedTaskProgressViewSet, StudentProgressAPI,
-                               StudentQuizPerformanceAPI)
+from core.progress_api import (
+    CourseAnalyticsAPI,
+    CourseStudentProgressAPI,
+    CourseTaskAnalyticsAPI,
+    EnhancedCourseEnrollmentViewSet,
+    EnhancedQuizAttemptViewSet,
+    EnhancedTaskProgressViewSet,
+    StudentProgressAPI,
+    StudentQuizPerformanceAPI,
+)
 from core.views import AdminDashboardAPI  # Import AdminDashboardAPI
 from core.views import CourseViewSet  # Import CourseViewSet for custom action
 from core.views import InstructorDashboardAPI  # Import InstructorDashboardAPI
-from core.views import \
-    validate_token  # Import validate_token from core/views.py
-from core.views import \
-    admin_dashboard_summary  # Import the new admin dashboard summary view
+from core.views import validate_token  # Import validate_token from core/views.py
+from core.views import (
+    admin_dashboard_summary,
+)  # Import the new admin dashboard summary view
+from core.views import UserProfileAPI  # Import the UserProfileAPI view
 
 # API router
 router = DefaultRouter()
@@ -162,6 +167,9 @@ urlpatterns = [
     path(
         "api/v1/admin/dashboard/", AdminDashboardAPI.as_view(), name="admin_dashboard"
     ),
+    path(
+        "users/profile/", UserProfileAPI.as_view(), name="user_profile"
+    ),  # Add user profile route
     path(
         "swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),

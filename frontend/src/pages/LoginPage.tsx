@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useAuth } from '../features/auth/AuthContext';
+import authService from '@services/authService';
+import { useAuth } from '@features/auth/AuthContext';
 
 const LoginPage: React.FC = () => {
     const { login } = useAuth();
@@ -11,10 +12,12 @@ const LoginPage: React.FC = () => {
         e.preventDefault();
         setError(null);
         try {
-            await login(usernameOrEmail, password);
+            await authService.login(usernameOrEmail, password); // Use authService for login
+            await login(usernameOrEmail, password); // Update context state
             window.location.href = '/dashboard'; // Redirect to dashboard
         } catch (err: any) {
-            setError(err.message || 'Login failed.');
+            console.error('Login failed:', err);
+            setError('Invalid username or password.');
         }
     };
 

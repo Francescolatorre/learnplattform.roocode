@@ -7,6 +7,7 @@ import { fetchStudentProgressByCourse } from '../services/progressService';
 import { useAuth } from '../features/auth/AuthContext';
 import { CourseProgress } from '../types/progressTypes';
 import { LinearProgress, Typography, Box } from '@mui/material';
+import { courseService } from '@services/apiService';
 
 // Styles for the course details page
 const styles = {
@@ -112,7 +113,7 @@ const CourseDetailsPage: React.FC = () => {
   useEffect(() => {
     const loadTasks = async () => {
       try {
-        const fetchedTasks = await fetchTasksByCourse(courseId);
+        const fetchedTasks = await courseService.get(`/courses/${courseId}/tasks/`);
         setTasks(fetchedTasks);
       } catch (error) {
         console.error("Failed to fetch tasks:", error);
@@ -130,9 +131,17 @@ const CourseDetailsPage: React.FC = () => {
       }
 
       try {
-        const progress = await fetchStudentProgressByCourse(courseId, user?.id); // Pass user ID as studentId
+        const progress = await courseService.get(`/courses/${courseId}/student-progress/${user?.id}/`, {
+          includeDetails: false,
+        });
         console.log('Student progress loaded:', progress);
-        setCourseProgress(progress);
+
+        if (progress.message) {
+          setCourseProgress(null); // No progress details available
+          setTaskDescription(progress.message); // Display the message from the API
+        } else {
+          setCourseProgress(progress);
+        }
       } catch (error) {
         console.error('Failed to fetch course progress:', error.message);
       }
@@ -145,10 +154,18 @@ const CourseDetailsPage: React.FC = () => {
 
   if (loading) return <div style={styles.loadingContainer}>Loading course details...</div>;
   if (error) return <div style={styles.errorContainer}>Error: {error.message}</div>;
-  if (!course) return <div style={styles.errorContainer}>Course not found</div>;
 
+  console.log('Course data:', course); // Debugging log
 
-
+  if (!course || Object.keys(course).length === 0) {
+    return (
+      <div style={styles.errorContainer}>
+        <Typography variant="body1" color="textSecondary">
+          Course details not available. <br /> Dude, where's my course?
+        </Typography>
+      </div>
+    );
+  }
 
   return (
     <div style={styles.container}>
@@ -156,6 +173,15 @@ const CourseDetailsPage: React.FC = () => {
         <h1 style={styles.title}>{course.title}</h1>
         <p style={styles.description}>{course.description}</p>
       </div>
+
+      {/* Enrollment Prompt */}
+      {taskDescription && !courseProgress && (
+        <div style={styles.errorContainer}>
+          <Typography variant="body1" color="textSecondary">
+            {taskDescription}
+          </Typography>
+        </div>
+      )}
 
       {/* Progress Section */}
       {courseProgress && (

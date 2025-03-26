@@ -1,56 +1,28 @@
 import { useState, useEffect } from 'react';
-import { fetchCourseDetails, updateCourseProgress } from '../services/courseService';
-import { CourseDetails, CourseError } from '../types/courseTypes';
+import { courseService } from '@services/apiService';
 
 export const useCourse = (courseId: string) => {
-  const [course, setCourse] = useState<CourseDetails | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<CourseError | null>(null);
-  const [progress, setProgress] = useState<number>(0);
-
-  const updateProgress = async (newProgress: number) => {
-    try {
-      const result = await updateCourseProgress(courseId, newProgress);
-      if (result.success) {
-        setProgress(newProgress);
-      } else if (result.error) {
-        setError(result.error || { message: 'An error occurred', code: 0 });
-      }
-    } catch (err) {
-      setError({
-        message: err instanceof Error ? err.message : 'An unexpected error occurred',
-        code: 0
-      });
-    }
-  };
+  const [course, setCourse] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const getCourseDetails = async () => {
+    const fetchCourse = async () => {
       try {
-        const data = await fetchCourseDetails(courseId);
-
-        // Log the API response to the console
-        console.log('API Response:', data);
-
-        // Type guard to check if the result is an error
-        if ('error' in data) {
-          setError(data.error || { message: 'An error occurred', code: 0 });
-        } else {
-          setCourse(data);
-          setProgress(data.progress !== undefined ? data.progress : 0); // Ensure progress is defined
-        }
-      } catch (err) {
-        setError({
-          message: err instanceof Error ? err.message : 'An unexpected error occurred',
-          code: 0
-        });
+        setLoading(true);
+        const data = await courseService.get(`/courses/${courseId}/`);
+        console.log('Fetched course data:', data); // Debugging log
+        setCourse(data);
+      } catch (err: any) {
+        console.error('Error fetching course:', err);
+        setError(err);
       } finally {
         setLoading(false);
       }
     };
 
-    getCourseDetails();
+    fetchCourse();
   }, [courseId]);
 
-  return { course, loading, error, progress, updateProgress };
+  return { course, loading, error };
 };

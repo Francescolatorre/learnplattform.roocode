@@ -14,19 +14,41 @@ from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from core.permissions import (  # Import the custom permissions
-    IsEnrolledInCourse, IsInstructorOrAdmin, IsStudentOrReadOnly)
+    IsEnrolledInCourse,
+    IsInstructorOrAdmin,
+    IsStudentOrReadOnly,
+)
 
-from .models import (Course, CourseEnrollment, CourseVersion, LearningTask,
-                     QuizAttempt, QuizOption, QuizQuestion, QuizResponse,
-                     QuizTask, StatusTransition, TaskProgress, User)
-from .serializers import (CourseEnrollmentSerializer, CourseSerializer,
-                          CourseVersionSerializer,
-                          CustomTokenObtainPairSerializer,
-                          LearningTaskSerializer, QuizAttemptSerializer,
-                          QuizOptionSerializer, QuizQuestionSerializer,
-                          QuizResponseSerializer, QuizTaskSerializer,
-                          RegisterSerializer, StatusTransitionSerializer,
-                          TaskProgressSerializer, UserSerializer)
+from .models import (
+    Course,
+    CourseEnrollment,
+    CourseVersion,
+    LearningTask,
+    QuizAttempt,
+    QuizOption,
+    QuizQuestion,
+    QuizResponse,
+    QuizTask,
+    StatusTransition,
+    TaskProgress,
+    User,
+)
+from .serializers import (
+    CourseEnrollmentSerializer,
+    CourseSerializer,
+    CourseVersionSerializer,
+    CustomTokenObtainPairSerializer,
+    LearningTaskSerializer,
+    QuizAttemptSerializer,
+    QuizOptionSerializer,
+    QuizQuestionSerializer,
+    QuizResponseSerializer,
+    QuizTaskSerializer,
+    RegisterSerializer,
+    StatusTransitionSerializer,
+    TaskProgressSerializer,
+    UserSerializer,
+)
 
 # Configure logger for this module
 logger = logging.getLogger(__name__)
@@ -607,3 +629,21 @@ def get_course_details(request, course_id):
             "progress": [{"task_id": p.task_id, "status": p.status} for p in progress],
         }
     )
+
+
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from .serializers import UserSerializer
+
+
+class UserProfileAPI(APIView):
+    """
+    API endpoint to fetch the authenticated user's profile.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)

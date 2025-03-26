@@ -80,7 +80,7 @@ const CourseDetailsPage: React.FC = () => {
     if (!course) {
         return (
             <Alert severity="info" sx={{ mb: 3 }}>
-                Course details not available.
+                Course details not available. <br/>Dude, where's my course?
             </Alert>
         );
     }

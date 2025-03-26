@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { login as apiLogin, logout as apiLogout, refreshAccessToken as apiRefreshToken } from '@services/api'; // Use api.ts
+import authService from '@services/authService';
 
 interface User {
   id: number;
@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (accessToken && userRole) {
       try {
         console.log('Access token and user role found. Setting user state...');
-        const parsedUser = storedUser ? JSON.parse(storedUser) : { role: userRole }; // Use stored user if available
+        const parsedUser = storedUser ? JSON.parse(storedUser) : { role: userRole };
         setIsAuthenticated(true);
         setUser(parsedUser as User);
         console.log('User details set:', parsedUser);
@@ -57,14 +57,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } else if (refreshToken) {
       try {
         console.log('Attempting to refresh token...');
-        const response = await refreshAccessToken(refreshToken);
-        if (response.user) { // Add defensive check
-          localStorage.setItem('access_token', response.access);
-          localStorage.setItem('user_role', response.user.role);
-          localStorage.setItem('user', JSON.stringify(response.user));
+        const response = await authService.refreshToken(refreshToken); // Use authService
+        const { access, user } = response;
+        if (user) {
+          localStorage.setItem('access_token', access);
+          localStorage.setItem('user_role', user.role);
+          localStorage.setItem('user', JSON.stringify(user));
           setIsAuthenticated(true);
-          setUser(response.user);
-          console.log('Token refreshed and user details set:', response.user);
+          setUser(user);
+          console.log('Token refreshed and user details set:', user);
         } else {
           throw new Error('User data missing in token refresh response.');
         }
@@ -72,7 +73,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         console.error('Failed to refresh token:', error);
         if ((error as any).response?.status === 401) {
           console.warn('Refresh token is invalid or expired. Proceeding with logout.');
-          await logout(); // Gracefully handle token expiration
+          await logout();
         }
       }
     } else {
@@ -81,35 +82,23 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  useEffect(() => {
-    console.log('AuthProvider mounted. Checking for tokens...');
-    const initializeAuth = async () => {
-      try {
-        await fetchUserDetails();
-      } catch (error) {
-        console.error('Error during initialization:', error);
-      }
-    };
-
-    initializeAuth();
-  }, []);
-
   const login = async (usernameOrEmail: string, password: string) => {
     console.log('Attempting login for:', usernameOrEmail);
     try {
-      const response = await apiLogin(usernameOrEmail, password);
+      const response = await authService.login(usernameOrEmail, password); // Use authService
+      const { access, refresh, user } = response;
 
       console.log('Login API response:', response);
 
-      if (response.access && response.refresh && response.user) {
-        localStorage.setItem('access_token', response.access);
-        localStorage.setItem('refresh_token', response.refresh);
-        localStorage.setItem('user_role', response.user.role);
-        localStorage.setItem('user', JSON.stringify(response.user));
+      if (access && refresh && user) {
+        localStorage.setItem('access_token', access);
+        localStorage.setItem('refresh_token', refresh);
+        localStorage.setItem('user_role', user.role);
+        localStorage.setItem('user', JSON.stringify(user));
 
-        setUser(response.user);
+        setUser(user);
         setIsAuthenticated(true);
-        console.log('Login successful. User details:', response.user);
+        console.log('Login successful. User details:', user);
       } else {
         throw new Error('Invalid API response: Missing required fields');
       }
@@ -125,12 +114,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const refreshToken = localStorage.getItem('refresh_token');
       if (refreshToken) {
-        await apiLogout(refreshToken);
+        await authService.logout(refreshToken); // Use authService
       }
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {
-      clearAuthState(); // Ensure all user-related state is cleared
+      clearAuthState();
     }
   };
 
@@ -139,12 +128,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (!refreshToken) {
       throw new Error('No refresh token available');
     }
-    const response = await refreshAccessToken(refreshToken);
-    localStorage.setItem('access_token', response.access);
-    localStorage.setItem('user_role', response.user?.role || ''); // Ensure user and role exist
-    setUser(response.user || null); // Fallback to null if user is undefined
-    setIsAuthenticated(!!response.user); // Set authentication state based on user existence
+    const response = await authService.refreshToken(refreshToken); // Use authService
+    const { access, user } = response;
+    localStorage.setItem('access_token', access);
+    localStorage.setItem('user_role', user?.role || '');
+    setUser(user || null);
+    setIsAuthenticated(!!user);
   };
+
+  useEffect(() => {
+    console.log('AuthProvider mounted. Checking for tokens...');
+    const initializeAuth = async () => {
+      try {
+        await fetchUserDetails();
+      } catch (error) {
+        console.error('Error during initialization:', error);
+      }
+    };
+
+    initializeAuth();
+  }, []);
 
   return (
     <AuthContext.Provider
