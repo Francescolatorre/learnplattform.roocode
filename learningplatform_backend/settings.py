@@ -1,3 +1,7 @@
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -15,19 +19,19 @@ LOGGING = {
         "file_debug": {
             "level": "DEBUG",
             "class": "logging.FileHandler",
-            "filename": "logs/debug.log",
+            "filename": os.path.join(BASE_DIR, "logs/debug.log"),
             "formatter": "verbose",
         },
         "file_api": {
             "level": "INFO",
             "class": "logging.FileHandler",
-            "filename": "logs/api.log",
+            "filename": os.path.join(BASE_DIR, "logs/api.log"),
             "formatter": "verbose",
         },
         "file_auth": {
             "level": "INFO",
             "class": "logging.FileHandler",
-            "filename": "logs/auth.log",
+            "filename": os.path.join(BASE_DIR, "logs/auth.log"),
             "formatter": "verbose",
         },
         "console": {
@@ -53,4 +57,18 @@ LOGGING = {
             "propagate": False,
         },
     },
+}
+
+INSTALLED_APPS = [
+    # ...existing apps...
+    "rest_framework",
+    "rest_framework_simplejwt",
+    # ...existing apps...
+]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    "EXCEPTION_HANDLER": "learningplatform_backend.core.exception_handler.custom_exception_handler",
 }

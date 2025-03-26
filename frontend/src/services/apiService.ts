@@ -1,21 +1,20 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-const API_VERSION = 'api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'; // Ensure this does not include `api/v1`
 
 class ApiService {
     private instance: AxiosInstance;
     private baseURL: string;
 
-    constructor(baseURL = API_BASE_URL, version = API_VERSION) {
-        this.baseURL = `${baseURL}/${version}`;
+    constructor(baseURL = API_BASE_URL, version = 'api/v1') {
+        this.baseURL = `${baseURL}/${version}`; // Default base URL with version
 
         this.instance = axios.create({
-            baseURL: this.baseURL,
+            baseURL: this.baseURL, // Default baseURL
             timeout: 15000, // 15 seconds
             headers: {
-                'Content-Type': 'application/json'
-            }
+                'Content-Type': 'application/json',
+            },
         });
 
         // Add request interceptor to include auth token
@@ -23,51 +22,39 @@ class ApiService {
             (config) => {
                 const token = localStorage.getItem('access_token');
                 if (token) {
-                    config.headers['Authorization'] = `Bearer ${token}`;
+                    config.headers['Authorization'] = `Bearer ${token}`; // Use JWT Bearer token
                 }
                 return config;
             },
-            (error) => {
-                return Promise.reject(error);
-            }
+            (error) => Promise.reject(error)
         );
 
         // Add response interceptor for token refresh
         this.instance.interceptors.response.use(
-            (response) => {
-                return response;
-            },
+            (response) => response,
             async (error) => {
                 const originalRequest = error.config;
 
-                // If error is 401 (Unauthorized) and we haven't already tried to refresh
                 if (error.response?.status === 401 && !originalRequest._retry) {
                     originalRequest._retry = true;
 
                     try {
-                        // Try to refresh the token
                         const refreshToken = localStorage.getItem('refresh_token');
                         if (!refreshToken) {
-                            // If no refresh token, user must login again
                             this.handleLogout();
                             return Promise.reject(error);
                         }
 
                         const response = await axios.post(`${API_BASE_URL}/auth/token/refresh/`, {
-                            refresh: refreshToken
+                            refresh: refreshToken,
                         });
 
-                        // Save the new access token
                         const { access } = response.data;
                         localStorage.setItem('access_token', access);
 
-                        // Update the original request with the new token
                         originalRequest.headers['Authorization'] = `Bearer ${access}`;
-
-                        // Retry the original request
                         return this.instance(originalRequest);
                     } catch (refreshError) {
-                        // If token refresh fails, user must login again
                         this.handleLogout();
                         return Promise.reject(refreshError);
                     }
@@ -81,16 +68,17 @@ class ApiService {
     private handleLogout() {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
-
-        // Redirect to login page - this assumes you're using React Router
-        // If not using client-side routing, you may want to handle this differently
         window.location.href = '/login';
     }
 
-    // Generic request method
-    public async request<T>(config: AxiosRequestConfig): Promise<T> {
+    // Generic request method with optional custom base URL
+    public async request<T>(config: AxiosRequestConfig, customBaseURL?: string): Promise<T> {
         try {
-            const response: AxiosResponse<T> = await this.instance(config);
+            const instance = customBaseURL
+                ? axios.create({ baseURL: customBaseURL, timeout: 15000 })
+                : this.instance;
+
+            const response: AxiosResponse<T> = await instance(config);
             return response.data;
         } catch (error) {
             return this.handleError<T>(error);
@@ -98,22 +86,22 @@ class ApiService {
     }
 
     // Helper methods for common HTTP methods
-    public async get<T>(endpoint: string, params = {}, config = {}): Promise<T> {
+    public async get<T>(endpoint: string, params = {}, config = {}, customBaseURL?: string): Promise<T> {
         return this.request<T>({
             method: 'GET',
             url: endpoint,
-            params,
+            params: { ...params, includeArchived: true }, // Add default query parameter for including archived data
             ...config
-        });
+        }, customBaseURL);
     }
 
-    public async post<T>(endpoint: string, data = {}, config = {}): Promise<T> {
+    public async post<T>(endpoint: string, data = {}, config = {}, customBaseURL?: string): Promise<T> {
         return this.request<T>({
             method: 'POST',
             url: endpoint,
             data,
             ...config
-        });
+        }, customBaseURL);
     }
 
     public async put<T>(endpoint: string, data = {}, config = {}): Promise<T> {
@@ -172,6 +160,20 @@ class ApiService {
                         throw new Error(fieldErrors);
                     }
                 }
+            }
+
+            // Handle specific HTTP status codes
+            if (error.response?.status === 401) {
+                throw new Error('Unauthorized access. Please log in again.');
+            }
+            if (error.response?.status === 403) {
+                throw new Error('Forbidden. You do not have permission to perform this action.');
+            }
+            if (error.response?.status === 404) {
+                throw new Error('Resource not found.');
+            }
+            if (error.response?.status === 500) {
+                throw new Error('Internal server error. Please try again later.');
             }
 
             // Fallback error message
@@ -237,21 +239,41 @@ class ApiService {
 
     // Method to validate token
     public async validateToken(): Promise<boolean> {
-        console.log('Validating token...');
         try {
-            const response = await this.get('/auth/validate-token/'); // Replace with your backend's token validation endpoint
-            console.log('Token validation response status:', response.status);
-            return response.status === 200; // Ensure the response indicates a valid token
+            const response = await this.get<any>('/auth/validate-token/'); // Ensure correct endpoint
+            return true;
         } catch (error) {
             console.error('Token validation failed:', error);
             return false;
+        }
+    }
+
+    // Method to fetch user profile
+    public async fetchUserProfile(): Promise<any> {
+        try {
+            const response = await this.get('/users/profile/');
+            return response; // Return user profile data
+        } catch (error) {
+            console.error('Error fetching user profile:', error);
+            throw new Error('Failed to fetch user profile.');
+        }
+    }
+
+    // Method to fetch user activity logs
+    public async fetchUserActivityLogs(userId: string): Promise<any> {
+        try {
+            const response = await this.get(`/users/${userId}/activity-logs/`);
+            return response; // Return activity logs
+        } catch (error) {
+            console.error('Error fetching user activity logs:', error);
+            throw new Error('Failed to fetch user activity logs.');
         }
     }
 }
 
 // Create and export a singleton instance
 const apiService = new ApiService();
-export default apiService;
+export default apiService; // Ensure this default export exists
 
 // Export pre-configured resource services for common endpoints
 export const courseService = apiService.createResourceService('courses');

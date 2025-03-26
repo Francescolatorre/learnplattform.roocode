@@ -9,7 +9,7 @@ import {
   Alert,
   Snackbar
 } from '@mui/material';
-import { requestPasswordReset } from '../../services/api';
+import { requestPasswordReset } from '@services/api';
 import { AxiosError } from 'axios';
 
 const ForgotPasswordForm: React.FC = () => {

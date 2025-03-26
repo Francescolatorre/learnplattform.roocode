@@ -3,6 +3,14 @@ import { Grid, Card, CardContent, Typography } from '@mui/material';
 import DashboardLayout from './DashboardLayout';
 
 const AdminDashboard: React.FC<{ data: any }> = ({ data }) => {
+    if (!data) {
+        return <div>Loading...</div>; // Add a loading state
+    }
+    // Add a default value or null check for data
+    const totalTasks = data?.totalTasks ?? 0; // Default to 0 if data or totalTasks is null
+    const completedTasks = data?.completedTasks ?? 0; // Default to 0 if data or completedTasks is null
+    const averageScore = data?.averageScore ?? 0; // Default to 0 if data or averageScore is null
+
     return (
         <DashboardLayout title="Admin Dashboard">
             <Grid container spacing={3}>
@@ -14,7 +22,7 @@ const AdminDashboard: React.FC<{ data: any }> = ({ data }) => {
                                 Total Tasks
                             </Typography>
                             <Typography variant="h4" color="primary">
-                                {data.totalTasks}
+                                {totalTasks}
                             </Typography>
                         </CardContent>
                     </Card>
@@ -28,7 +36,7 @@ const AdminDashboard: React.FC<{ data: any }> = ({ data }) => {
                                 Completed Tasks
                             </Typography>
                             <Typography variant="h4" color="primary">
-                                {data.completedTasks}
+                                {completedTasks}
                             </Typography>
                         </CardContent>
                     </Card>
@@ -42,7 +50,7 @@ const AdminDashboard: React.FC<{ data: any }> = ({ data }) => {
                                 Average Score
                             </Typography>
                             <Typography variant="h4" color="primary">
-                                {data.averageScore}%
+                                {averageScore}%
                             </Typography>
                         </CardContent>
                     </Card>

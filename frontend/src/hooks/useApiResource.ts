@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'; // Ensure this matches Swagger
 
 // Generic type for response data
 type ApiResponse<T> = {
@@ -39,6 +39,20 @@ const handleError = (error: unknown): string => {
             }
         }
 
+        // Handle specific HTTP status codes
+        if (axiosError.response?.status === 401) {
+            return 'Unauthorized access. Please log in again.';
+        }
+        if (axiosError.response?.status === 403) {
+            return 'Forbidden. You do not have permission to perform this action.';
+        }
+        if (axiosError.response?.status === 404) {
+            return 'Resource not found.';
+        }
+        if (axiosError.response?.status === 500) {
+            return 'Internal server error. Please try again later.';
+        }
+
         // Fallback to status text or generic message
         return axiosError.response?.statusText || 'Network error occurred';
     }
@@ -60,11 +74,11 @@ function getAuthHeaders(): Record<string, string> {
  */
 export function createApiHook<T, ID = string | number>(endpoint: string) {
     // Form the full URL for the resource
-    const resourceUrl = `${API_BASE_URL}/api/v1/${endpoint}`;
+    const resourceUrl = `${API_BASE_URL}/api/v1/${endpoint}`; // Ensure correct API version and path
 
     // Hook for fetching a collection of resources
-    const useCollection = (config: AxiosRequestConfig = {}): ApiResponse<T[]> => {
-        const [data, setData] = useState<T[] | null>(null);
+    const useCollection = (config: AxiosRequestConfig = {}): ApiResponse<{ count: number; next: string | null; previous: string | null; results: T[] }> => {
+        const [data, setData] = useState<{ count: number; next: string | null; previous: string | null; results: T[] } | null>(null);
         const [loading, setLoading] = useState<boolean>(true);
         const [error, setError] = useState<string | null>(null);
 
@@ -73,7 +87,7 @@ export function createApiHook<T, ID = string | number>(endpoint: string) {
             setError(null);
 
             try {
-                const response = await axios.get<T[]>(resourceUrl, {
+                const response = await axios.get<{ count: number; next: string | null; previous: string | null; results: T[] }>(resourceUrl, {
                     ...config,
                     headers: {
                         ...getAuthHeaders(),
@@ -87,7 +101,7 @@ export function createApiHook<T, ID = string | number>(endpoint: string) {
             } finally {
                 setLoading(false);
             }
-        }, []);
+        }, [resourceUrl, config]); // Added `resourceUrl` and `config` to dependency array
 
         useEffect(() => {
             fetchData();
@@ -100,7 +114,7 @@ export function createApiHook<T, ID = string | number>(endpoint: string) {
                 });
 
                 // Update the local data state if successful
-                setData(prevData => prevData ? [...prevData, response.data] : [response.data]);
+                setData(prevData => prevData ? { ...prevData, results: [...prevData.results, response.data] } : { count: 1, next: null, previous: null, results: [response.data] });
 
                 return response.data;
             } catch (err) {
@@ -117,9 +131,11 @@ export function createApiHook<T, ID = string | number>(endpoint: string) {
 
                 // Update the local data state if successful
                 setData(prevData =>
-                    prevData ? prevData.map(item =>
-                        (item as any).id === id ? response.data : item
-                    ) : null
+                    prevData ? {
+                        ...prevData, results: prevData.results.map(item =>
+                            (item as any).id === id ? response.data : item
+                        )
+                    } : null
                 );
 
                 return response.data;
@@ -137,7 +153,7 @@ export function createApiHook<T, ID = string | number>(endpoint: string) {
 
                 // Remove the item from local state
                 setData(prevData =>
-                    prevData ? prevData.filter(item => (item as any).id !== id) : null
+                    prevData ? { ...prevData, results: prevData.results.filter(item => (item as any).id !== id) } : null
                 );
 
                 return true;

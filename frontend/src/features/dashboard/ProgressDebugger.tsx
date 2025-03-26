@@ -31,7 +31,7 @@ const ProgressDebugger: React.FC = () => {
             if (isAuthenticated && accessToken) {
                 try {
                     // Try fetching progress for a sample course
-                    await fetchStudentProgressByCourse('1', user?.id || 'defaultStudentId');
+                    await fetchStudentProgressByCourse('1', String(user?.id) || 'defaultStudentId');
                     setDebugInfo(prev => ({
                         ...prev,
                         progressFetchResult: 'Success'

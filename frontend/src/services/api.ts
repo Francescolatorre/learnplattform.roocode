@@ -1,34 +1,9 @@
-import axios from 'axios';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-const AUTH_BASE_URL = `${API_BASE_URL}/auth`;  // Updated to remove /api/v1
-
-const apiClient = axios.create({
-  baseURL: `${API_BASE_URL}/api/v1`,
-  timeout: 10000,
-});
-
-apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access_token');
-  if (token) {
-    config.headers['Authorization'] = `Bearer ${token}`;
-  }
-  return config;
-});
-
-export default apiClient;
+import apiService from './apiService'; // Import the default export from apiService
 
 interface LoginResponse {
-
   user: {
-    id: number;
-    username: string;
-    email: string;
-    role: string;
-    display_name: string;
-  };
-  access: string;
-  refresh: string;
+    refresh: string;
+  }; // Fixed formatting
 }
 
 interface RegisterData {
@@ -43,84 +18,52 @@ interface PasswordResetResponse {
   detail: string;
 }
 
-export const login = async (usernameOrEmail: string, password: string): Promise<LoginResponse> => {
-  try {
-    const response = await axios.post<LoginResponse>(`${AUTH_BASE_URL}/login/`, {
-      username: usernameOrEmail, // Changed from username_or_email to match backend
-      password: password
-    });
+const AUTH_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'; // Use base URL without `/api/v1`
 
-    return response.data;
-
-  } catch (error) {
-    console.error('Login failed:', error);
-    throw error;
-  }
+export const login = async (usernameOrEmail: string, password: string): Promise<{ access: string; refresh: string }> => {
+  return apiService.post<{ access: string; refresh: string }>(
+    '/auth/login/',
+    { username: usernameOrEmail, password },
+    {},
+    AUTH_BASE_URL // Ensure the correct base URL is used
+  );
 };
 
 export const register = async (data: RegisterData): Promise<LoginResponse> => {
-  try {
-    const response = await axios.post<LoginResponse>(`${AUTH_BASE_URL}/register/`, {
-      ...data,
-      role: data.role || 'user'
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Registration failed:', error);
-    throw error;
-  }
+  return apiService.post<LoginResponse>(
+    '/auth/register/',
+    { ...data, role: data.role || 'user' },
+    {},
+    AUTH_BASE_URL // Ensure the correct base URL is used
+  );
 };
 
-
-export const logout = async (refreshToken: string) => {
-  try {
-    await axios.post(`${AUTH_BASE_URL}/logout/`, { refresh_token: refreshToken });
-  } catch (error: any) {
-    if (error.response?.status === 401) {
-      console.error('Logout failed: Unauthorized. Token might already be invalid.');
-    } else {
-      console.error('Logout failed:', error);
-    }
-  }
+export const logout = async (refreshToken: string): Promise<void> => {
+  await apiService.post('/auth/logout/', { refresh_token: refreshToken }, {}, AUTH_BASE_URL);
 };
 
-
-export const refreshAccessToken = async (refreshToken: string) => {
-  try {
-    const response = await axios.post(`${AUTH_BASE_URL}/token/refresh/`, { refresh: refreshToken });
-    return response.data;
-  } catch (error) {
-    console.error('Token refresh failed:', error);
-    throw error;
-  }
+export const refreshAccessToken = async (refreshToken: string): Promise<{ access: string }> => {
+  return apiService.post('/auth/token/refresh/', { refresh: refreshToken }, {}, AUTH_BASE_URL);
 };
-
 
 export const requestPasswordReset = async (email: string): Promise<PasswordResetResponse> => {
-  try {
-    const response = await axios.post<PasswordResetResponse>(
-      `${AUTH_BASE_URL}/password-reset/`,
-      { email }
-    );
-    return response.data;
-  } catch (error) {
-    console.error('Password reset request failed:', error);
-    throw error;
-  }
+  return apiService.post<PasswordResetResponse>('/auth/password-reset/', { email }, {}, AUTH_BASE_URL);
 };
 
 export const resetPassword = async (token: string, newPassword: string): Promise<PasswordResetResponse> => {
-  try {
-    const response = await axios.post<PasswordResetResponse>(
-      `${AUTH_BASE_URL}/password-reset/confirm/`,
-      {
-        token,
-        new_password: newPassword
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error('Password reset failed:', error);
-    throw error;
-  }
+  return apiService.post<PasswordResetResponse>(
+    '/auth/password-reset/confirm/',
+    { token, new_password: newPassword },
+    {},
+    AUTH_BASE_URL
+  );
 };
+
+// Export pre-configured resource services for common endpoints
+export const courseService = apiService.createResourceService('courses');
+export const taskService = apiService.createResourceService('tasks');
+export const moduleService = apiService.createResourceService('modules');
+export const userService = apiService.createResourceService('users');
+export const studentService = apiService.createResourceService('students');
+
+export default apiService; // Add this default export

@@ -64,6 +64,9 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   }
 
   console.log('ProtectedRoute: Authentication check complete. isAuthenticated:', isAuthenticated);
+  if (!isAuthenticated) {
+    return <Navigate to="/unauthorized" replace />; // Redirect to an unauthorized page
+  }
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 };
 

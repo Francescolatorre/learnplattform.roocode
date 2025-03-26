@@ -17,6 +17,9 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import include, path
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions
 from rest_framework.authentication import get_authorization_header
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated  # Ensure correct import
@@ -26,28 +29,21 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenRefreshView
-from rest_framework import permissions
-from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
 
 from core import views
-from core.progress_api import (
-    CourseAnalyticsAPI,
-    CourseStudentProgressAPI,
-    CourseTaskAnalyticsAPI,
-    EnhancedCourseEnrollmentViewSet,
-    EnhancedQuizAttemptViewSet,
-    EnhancedTaskProgressViewSet,
-    StudentProgressAPI,
-    StudentQuizPerformanceAPI,
-)
+from core.progress_api import (CourseAnalyticsAPI, CourseStudentProgressAPI,
+                               CourseTaskAnalyticsAPI,
+                               EnhancedCourseEnrollmentViewSet,
+                               EnhancedQuizAttemptViewSet,
+                               EnhancedTaskProgressViewSet, StudentProgressAPI,
+                               StudentQuizPerformanceAPI)
 from core.views import AdminDashboardAPI  # Import AdminDashboardAPI
 from core.views import CourseViewSet  # Import CourseViewSet for custom action
 from core.views import InstructorDashboardAPI  # Import InstructorDashboardAPI
-from core.views import validate_token  # Import validate_token from core/views.py
-from core.views import (
-    admin_dashboard_summary,
-)  # Import the new admin dashboard summary view
+from core.views import \
+    validate_token  # Import validate_token from core/views.py
+from core.views import \
+    admin_dashboard_summary  # Import the new admin dashboard summary view
 
 # API router
 router = DefaultRouter()

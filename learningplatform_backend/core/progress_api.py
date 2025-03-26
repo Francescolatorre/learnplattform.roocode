@@ -1,6 +1,7 @@
 # ruff: noqa: F401 (suppress unused import warnings)
 import logging  # Add a logger for this module
 
+from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache
 from django.db.models import Avg, F  # Explicitly used in analytics methods
 from django.shortcuts import get_object_or_404  # Used in analytics methods
@@ -10,7 +11,9 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated  # Ensure correct import
 from rest_framework.response import Response
 from rest_framework.views import APIView  # Base class for analytics views
-from django.contrib.auth.models import AnonymousUser
+from rest_framework.exceptions import (
+    ValidationError,
+)  # Import for raising validation errors
 
 from .models import QuizQuestion  # Added QuizQuestion import
 from .models import (
@@ -29,6 +32,7 @@ from .serializers import (
     QuizResponseSerializer,
     TaskProgressSerializer,
 )
+from .base_viewset import BaseViewSet  # Import the base viewset
 
 
 def _suppress_linter_warnings():
@@ -140,48 +144,17 @@ class IsEnrolledInCourse(permissions.BasePermission):
 
 
 # Enhanced viewsets with filtering
-class EnhancedCourseEnrollmentViewSet(viewsets.ModelViewSet):
+class EnhancedCourseEnrollmentViewSet(BaseViewSet):
     """
     API endpoint for course enrollments with enhanced filtering and analytics.
     """
 
-    queryset = CourseEnrollment.objects.all()
+    queryset = CourseEnrollment.objects.select_related("user", "course").all()
     serializer_class = CourseEnrollmentSerializer
-    permission_classes = [IsAuthenticated]  # Ensure correct usage
+    permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["course__title", "status"]
     ordering_fields = ["enrollment_date", "status"]
-
-    def _is_admin_or_instructor(self, user):
-        """Safely check if user is admin or instructor."""
-        user_role = getattr(user, "role", "")
-        is_staff = getattr(user, "is_staff", False)
-        return user_role in ["admin", "instructor"] or is_staff
-
-    def get_queryset(self):
-        # Handle schema generation for Swagger
-        if getattr(self, "swagger_fake_view", False):
-            return CourseEnrollment.objects.none()
-
-        # Handle AnonymousUser
-        if isinstance(self.request.user, AnonymousUser):
-            return CourseEnrollment.objects.none()
-
-        """
-        Filter enrollments to only show those belonging to the current user
-        unless the user is staff/admin/instructor
-        """
-        queryset = CourseEnrollment.objects.select_related("user", "course")
-
-        if self._is_admin_or_instructor(self.request.user):
-            # Filter by user if specified
-            user_id = self.request.GET.get("user")
-            if user_id:
-                queryset = queryset.filter(user_id=user_id)
-            return queryset
-
-        # Regular users can only see their own enrollments
-        return queryset.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -189,15 +162,14 @@ class EnhancedCourseEnrollmentViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["patch"])
     def update_status(self, request, pk=None):
         """
-        Update the enrollment status (active, completed, dropped)
+        Update the enrollment status (active, completed, dropped).
         """
         enrollment = self.get_object()
         status = request.data.get("status")
 
         if status not in ["active", "completed", "dropped"]:
-            return Response(
-                {"error": "Invalid status. Must be one of: active, completed, dropped"},
-                status=400,
+            raise ValidationError(
+                "Invalid status. Must be one of: active, completed, dropped"
             )
 
         enrollment.status = status
@@ -207,45 +179,14 @@ class EnhancedCourseEnrollmentViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class EnhancedTaskProgressViewSet(viewsets.ModelViewSet):
+class EnhancedTaskProgressViewSet(BaseViewSet):
     """
     API endpoint for task progress tracking.
     """
 
-    queryset = TaskProgress.objects.all()
+    queryset = TaskProgress.objects.select_related("user", "task").all()
     serializer_class = TaskProgressSerializer
-    permission_classes = [IsAuthenticated]  # Ensure correct usage
-
-    def get_queryset(self):
-        # Handle schema generation for Swagger
-        if getattr(self, "swagger_fake_view", False):
-            return TaskProgress.objects.none()
-
-        # Handle AnonymousUser
-        if isinstance(self.request.user, AnonymousUser):
-            return TaskProgress.objects.none()
-
-        """
-        Filter task progress to only show those belonging to the current user
-        unless the user is staff/admin/instructor
-        """
-        queryset = TaskProgress.objects.select_related("user", "task")
-
-        if self._is_admin_or_instructor(self.request.user):
-            # Filter by user if specified
-            user_id = self.request.GET.get("user")
-            if user_id:
-                queryset = queryset.filter(user_id=user_id)
-
-            # Filter by course if specified
-            course_id = self.request.GET.get("course")
-            if course_id:
-                queryset = queryset.filter(task__course_id=course_id)
-
-            return queryset
-
-        # Regular users can only see their own progress
-        return queryset.filter(user=self.request.user)
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -253,17 +194,14 @@ class EnhancedTaskProgressViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["patch"])
     def update_status(self, request, pk=None):
         """
-        Update the task progress status (not_started, in_progress, completed)
+        Update the task progress status (not_started, in_progress, completed).
         """
         progress = self.get_object()
         status = request.data.get("status")
 
         if status not in ["not_started", "in_progress", "completed"]:
-            return Response(
-                {
-                    "error": "Invalid status. Must be one of: not_started, in_progress, completed"
-                },
-                status=400,
+            raise ValidationError(
+                "Invalid status. Must be one of: not_started, in_progress, completed"
             )
 
         progress.status = status
@@ -278,66 +216,26 @@ class EnhancedTaskProgressViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class EnhancedQuizAttemptViewSet(viewsets.ModelViewSet):
+class EnhancedQuizAttemptViewSet(BaseViewSet):
     """
     API endpoint for quiz attempts with enhanced filtering and analytics.
     """
 
-    queryset = QuizAttempt.objects.all()
+    queryset = QuizAttempt.objects.select_related("user", "quiz").all()
     serializer_class = QuizAttemptSerializer
-    permission_classes = [IsAuthenticated]  # Ensure correct usage
+    permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["quiz__title"]
     ordering_fields = ["submission_date", "score"]
 
-    def _is_admin_or_instructor(self, user):
-        """Safely check if user is admin or instructor."""
-        user_role = getattr(user, "role", "")
-        is_staff = getattr(user, "is_staff", False)
-        return user_role in ["admin", "instructor"] or is_staff
-
-    def get_queryset(self):
-        # Handle schema generation for Swagger
-        if getattr(self, "swagger_fake_view", False):
-            return QuizAttempt.objects.none()
-
-        # Handle AnonymousUser
-        if isinstance(self.request.user, AnonymousUser):
-            return QuizAttempt.objects.none()
-
-        """
-        Filter quiz attempts to only show those belonging to the current user
-        unless the user is staff/admin/instructor
-        """
-        queryset = QuizAttempt.objects.select_related("user", "quiz")
-
-        if self._is_admin_or_instructor(self.request.user):
-            # Filter by user if specified
-            user_id = self.request.GET.get("user")
-            if user_id:
-                queryset = queryset.filter(user_id=user_id)
-
-            # Filter by quiz if specified
-            quiz_id = self.request.GET.get("quiz")
-            if quiz_id:
-                queryset = queryset.filter(quiz_id=quiz_id)
-
-            # Filter by course if specified
-            course_id = self.request.GET.get("course")
-            if course_id:
-                queryset = queryset.filter(quiz__course_id=course_id)
-
-            return queryset
-
-        # Regular users can only see their own quiz attempts
-        return queryset.filter(user=self.request.user)
-
     def perform_create(self, serializer):
         """
-        Create a new quiz attempt and set the user to the current user
+        Create a new quiz attempt and set the user to the current user.
         """
-        # Check if the user has exceeded the maximum number of attempts
         quiz_id = self.request.data.get("quiz")
+        if not quiz_id:
+            raise ValidationError("Quiz ID is required.")
+
         quiz = get_object_or_404(QuizTask, id=quiz_id)
 
         # Count existing attempts
@@ -347,12 +245,10 @@ class EnhancedQuizAttemptViewSet(viewsets.ModelViewSet):
 
         # Check if max attempts reached
         if quiz.max_attempts and attempt_count >= quiz.max_attempts:
-            return Response(
-                {"error": f"Maximum number of attempts ({quiz.max_attempts}) reached"},
-                status=400,
+            raise ValidationError(
+                f"Maximum number of attempts ({quiz.max_attempts}) reached"
             )
 
-        # Save the new attempt
         serializer.save(user=self.request.user, submission_date=timezone.now())
 
     @action(detail=True, methods=["post"])

@@ -1,160 +1,47 @@
-import axios from 'axios';
-import { Course, CourseDetails, CourseError } from '../types/courseTypes';
-import { CourseVersion } from '../features/courses/courseTypes';
+import apiService from './apiService';
+import { Course, CourseVersion, CourseError } from '../types/apiTypes';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-const API_URL = `${API_BASE_URL}/api/v1`;
-
-const getAuthToken = () => {
-  const token = localStorage.getItem('access_token');
-  if (!token) {
-    console.error('No access token found in localStorage.');
-    throw new Error('Authentication token is missing. Please log in again.');
-  }
-  return token;
-};
-
-export const fetchCourses = async (): Promise<{ results: Course[] }> => {
-  const token = getAuthToken();
-  try {
-    const response = await axios.get(`${API_URL}/courses/`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    console.log('fetchCourses response:', response.data); // Log the response
-    return response.data; // Ensure the full response is returned
-  } catch (error) {
-    console.error('Error in fetchCourses:', error); // Log the error
-    if (axios.isAxiosError(error)) {
-      throw new Error(
-        error.response?.data?.message || `Failed to fetch courses. Status: ${error.response?.status}`
-      );
-    }
-    throw new Error('An unexpected error occurred while fetching courses');
-  }
+export const fetchCourses = async (status: string): Promise<Course[]> => {
+  return apiService.get<Course[]>('courses/', { status });
 };
 
 export const fetchCourseDetails = async (courseId: string): Promise<Course> => {
-  const token = getAuthToken();
-  try {
-    const response = await axios.get(`${API_URL}/courses/${courseId}/`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const courseData = response.data;
-    return {
-      title: courseData.course_title, // Map `course_title` to `title`
-      description: courseData.description,
-      learning_objectives: courseData.learning_objectives || 'No learning objectives provided.',
-      prerequisites: courseData.prerequisites || 'No prerequisites provided.',
-    };
-  } catch (error: any) {
-    console.error('Error fetching course details:', error);
-    throw new Error('Failed to fetch course details.');
-  }
+  return apiService.get<Course>(`courses/${courseId}/`);
 };
 
-export const enrollInCourse = async (courseId: string) => {
-  const token = localStorage.getItem('access_token');
-  await axios.post(
-    '/api/v1/course-enrollments/',
-    { course: courseId, status: 'active' },
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
+export const enrollInCourse = async (courseId: string): Promise<void> => {
+  await apiService.post('course-enrollments/', { course: courseId, status: 'active' });
 };
 
-export const updateCourseDetails = async (courseId: string, courseData: any) => {
-  try {
-    const token = getAuthToken();
-    const response = await axios.put(`${API_URL} / courses / ${courseId} / `, courseData, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error('Error updating course details:', {
-        message: error.message,
-        status: error.response?.status,
-        data: error.response?.data,
-      });
-      throw new Error(
-        error.response?.data?.message || `Failed to update course details. Status: ${error.response?.status}`
-      );
-    }
-    console.error('Unexpected error updating course details:', error);
-    throw new Error('An unexpected error occurred while updating course details.');
-  }
+export const updateCourseDetails = async (courseId: string, courseData: Partial<Course>, includeModules = false): Promise<Course> => {
+  return apiService.put<Course>(`courses/${courseId}/`, courseData, { includeModules });
 };
 
-export const updateCourseProgress = async (
-  courseId: string,
-  progress: number
-): Promise<{ success: boolean; error: CourseError | null }> => {
+export const updateCourseProgress = async (courseId: string, progress: number): Promise<{ success: boolean; error: CourseError | null }> => {
   try {
-    const token = getAuthToken();
-    await axios.post(
-      `${API_URL}/courses/${courseId}/progress/`,
-      { progress },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    await apiService.post(`courses/${courseId}/progress/`, { progress });
     return { success: true, error: null };
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      const status = error.response?.status || 0;
-      switch (status) {
-        case 401:
-          return { success: false, error: { message: 'Unauthorized. Please log in again.', code: 401 } };
-        case 403:
-          return { success: false, error: { message: 'Access forbidden. You do not have permission to update course progress.', code: 403 } };
-        case 404:
-          return { success: false, error: { message: 'The requested resource was not found. Please check the URL and try again.', code: 404 } };
-        case 500:
-          return { success: false, error: { message: 'An internal server error occurred. Please try again later.', code: 500 } };
-        default:
-          return { success: false, error: { message: `An error occurred: ${error.message}`, code: status } };
-      }
-    }
-    return { success: false, error: { message: 'An unexpected error occurred. Please try again later.', code: 0 } };
+    return { success: false, error: { message: error.message, code: error.response?.status || 0 } };
   }
 };
 
 export const fetchCourseVersions = async (courseId: string): Promise<CourseVersion[]> => {
-  try {
-    const token = getAuthToken();
-    const response = await axios.get(`${API_URL}/courses/${courseId}/versions/`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-    return response.data as CourseVersion[];
-  } catch (error) {
-    console.error('Failed to fetch course versions:', error);
-    throw error;
-  }
+  return apiService.get<CourseVersion[]>(`courses/${courseId}/versions/`);
 };
 
-export const fetchStudentProgress = async (courseId: number) => {
-  const token = getAuthToken();
-  const response = await axios.get(`${API_URL}/courses/${courseId}/student-progress/`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
+export const fetchStudentProgress = async (courseId: number): Promise<any> => {
+  return apiService.get(`courses/${courseId}/student-progress/`);
 };
 
 export const fetchAdminDashboardSummary = async (): Promise<any> => {
-  const token = getAuthToken();
-  try {
-    const response = await axios.get(`${API_URL}/dashboard/admin-summary/`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching admin dashboard summary:', error);
-    throw new Error('Failed to fetch admin dashboard summary.');
-  }
+  return apiService.get('dashboard/admin-summary/');
+};
+
+export const fetchEnrolledStudents = async (courseId: string): Promise<{ count: number; next: string | null; previous: string | null; results: any[] }> => {
+  return apiService.get(`courses/${courseId}/enrolled-students/`);
+};
+
+export const fetchCourseAnalytics = async (courseId: string): Promise<any> => {
+  return apiService.get(`courses/${courseId}/analytics/`);
 };

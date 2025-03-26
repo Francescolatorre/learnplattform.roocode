@@ -1,45 +1,47 @@
-import React from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { fetchTasksByCourse } from '../services/taskService';
+import { Task } from '../types/apiTypes';
 
-type Task = {
-  title: string;
-  status: string;
-  createdDate: string;
-  creator: string;
-  description: string;
-  actions: string;
-  courseId: string; // Add courseId to Task type
-};
+interface TaskListProps {
+  courseId: string;
+}
 
-type TaskListProps = {
-  tasks: Task[]; // Add tasks prop
-  onSelectTask: (task: Task) => void;
-};
+const TaskList: React.FC<TaskListProps> = ({ courseId }) => {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-const TaskList: React.FC<TaskListProps> = ({ tasks, onSelectTask }) => {
+  useEffect(() => {
+    const loadTasks = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await fetchTasksByCourse(courseId);
+        setTasks(data.results);
+      } catch (err: any) {
+        setError(err.message || 'Failed to load tasks.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadTasks();
+  }, [courseId]);
+
+  if (loading) return <p>Loading tasks...</p>;
+  if (error) return <p>Error: {error}</p>;
+
   return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Title</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Created Date</TableCell>
-            <TableCell>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {tasks.map((task, index) => (
-            <TableRow key={index} onClick={() => onSelectTask(task)}>
-              <TableCell>{task.title}</TableCell>
-              <TableCell>{task.status}</TableCell>
-              <TableCell>{task.createdDate}</TableCell>
-              <TableCell>{task.actions}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <div>
+      <h1>Task List</h1>
+      <ul>
+        {tasks.map(task => (
+          <li key={task.id}>
+            {task.title} - {task.description}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
 
