@@ -14,7 +14,7 @@ const InstructorDashboard: React.FC<{ data: any }> = ({ data }) => {
                                 Courses Created
                             </Typography>
                             <Typography variant="h4" color="primary">
-                                {data.courses_created}
+                                {data?.courses_created || 0}
                             </Typography>
                         </CardContent>
                     </Card>
@@ -28,7 +28,7 @@ const InstructorDashboard: React.FC<{ data: any }> = ({ data }) => {
                                 Students Enrolled
                             </Typography>
                             <Typography variant="h4" color="primary">
-                                {data.students_enrolled}
+                                {data?.students_enrolled || 0}
                             </Typography>
                         </CardContent>
                     </Card>

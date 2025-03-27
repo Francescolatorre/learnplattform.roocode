@@ -20,7 +20,7 @@ const withAuth = <P extends object>(
 
         if (allowedRoles && !allowedRoles.includes(user?.role || '')) {
             // Block access if the user's role is not allowed
-            return <Navigate to="/unauthorized" replace />;
+            return <Navigate to="/login" replace />;
         }
 
         // Render the wrapped component if authentication and role checks pass

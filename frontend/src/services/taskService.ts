@@ -36,6 +36,7 @@ function handleError(error: unknown, context: string) {
   if (axios.isAxiosError(error)) {
     if (error.response?.status === 401) {
       console.error(`${context}: Unauthorized access. Please log in again.`);
+      window.dispatchEvent(new Event('unauthorized'));
     } else if (error.response?.status === 403) {
       console.error(`${context}: Forbidden. You do not have permission to perform this action.`);
     } else if (error.response?.status === 404) {

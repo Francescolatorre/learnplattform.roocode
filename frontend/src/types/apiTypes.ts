@@ -142,3 +142,11 @@ export interface TokenRefresh {
     refresh: string;
     access?: string;
 }
+
+// Define PaginatedResponse interface
+export interface PaginatedResponse<T> {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: T[];
+}

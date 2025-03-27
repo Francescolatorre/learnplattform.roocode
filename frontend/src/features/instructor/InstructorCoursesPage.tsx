@@ -3,6 +3,10 @@ import { Box, Typography, Button, Grid, Card, CardContent, CircularProgress, Ale
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../store/appStore';
 import { fetchCourses } from '../../services/courseService';
+import { Course as ApiCourse } from '../../types/apiTypes'; // Import Course from apiTypes
+
+// Define Course type for InstructorCoursesPage, matching apiTypes.Course
+interface Course extends ApiCourse {}
 
 const InstructorCoursesPage: React.FC = () => {
     const navigate = useNavigate();
@@ -14,8 +18,11 @@ const InstructorCoursesPage: React.FC = () => {
         const loadCourses = async () => {
             try {
                 setLoading(true);
-                const courses = await fetchCourses('instructor');
-                setCourses(courses);
+                const response = await fetchCourses('instructor');
+                // Access response.results to get the array of courses
+                const coursesData = response.results || [];
+                setCourses(coursesData);
+                console.log("response from fetchCourses:", response);
                 setError(null); // Clear any previous errors
             } catch (err) {
                 console.error('Failed to fetch courses:', err);
@@ -59,26 +66,30 @@ const InstructorCoursesPage: React.FC = () => {
                 </Button>
             </Box>
             <Grid container spacing={3}>
-                {courses.map((course) => (
-                    <Grid item xs={12} sm={6} md={4} key={course.id}>
-                        <Card>
-                            <CardContent>
-                                <Typography variant="h6">{course.title}</Typography>
-                                <Typography variant="body2" color="textSecondary">
-                                    {course.description}
-                                </Typography>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    sx={{ mt: 2 }}
-                                    onClick={() => navigate(`/courses/${course.id}/edit`)}
-                                >
-                                    Manage Course
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                ))}
+                {courses.map((course) => {
+                    console.log("courses before map:", courses);
+                    console.log("course:", course);
+                    return (
+                        <Grid item xs={12} sm={6} md={4} key={course.id}>
+                            <Card>
+                                <CardContent>
+                                    <Typography variant="h6">{course.title}</Typography>
+                                    <Typography variant="body2" color="textSecondary">
+                                        {course.description}
+                                    </Typography>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        sx={{ mt: 2 }}
+                                        onClick={() => navigate(`/courses/${course.id}/edit`)}
+                                    >
+                                        Manage Course
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    );
+                })}
             </Grid>
         </Box>
     );

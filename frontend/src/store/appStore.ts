@@ -1,19 +1,14 @@
 import { create } from 'zustand'; // Use named import for create
+import { Course } from '../types/apiTypes'; // Import Course from apiTypes
 
 interface User {
     id: string;
     role: string;
 }
 
-interface Course {
-    id: string;
-    title: string;
-    description: string;
-}
-
 interface AppState {
     user: User | null;
-    courses: Course[];
+    courses: Course[]; // Use Course from apiTypes
     setUser: (user: User) => void;
     setCourses: (courses: Course[]) => void;
 }

@@ -43,6 +43,11 @@ export const theme = createTheme({
       fontSize: '1rem',
       fontWeight: 500,
     },
+    body1: {
+      fontSize: '18px',
+      color: '#555',
+      lineHeight: '1.6',
+    },
   },
   components: {
     MuiButton: {
@@ -56,17 +61,18 @@ export const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 12,
+          borderRadius: '8px',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          border: '1px solid #eee',
         },
       },
     },
     MuiListItemButton: {
       styleOverrides: {
         root: {
-          padding: '10px 16px', // Ensure proper padding
+          padding: '10px 16px',
           '&:hover': {
-            backgroundColor: '#f0f0f0', // Add hover effect
+            backgroundColor: '#f0f0f0',
           },
         },
       },
@@ -74,8 +80,68 @@ export const theme = createTheme({
     MuiListItemText: {
       styleOverrides: {
         primary: {
-          fontSize: '1rem', // Ensure consistent font size
-          color: '#333', // Ensure text is visible
+          fontSize: '1rem',
+          color: '#333',
+        },
+      },
+    },
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '20px',
+        },
+      },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        h1: {
+          fontSize: '32px',
+          color: '#333',
+          marginBottom: '15px',
+          borderBottom: '2px solid #007bff',
+          paddingBottom: '10px',
+        },
+        h2: {
+          fontSize: '24px',
+          color: '#333',
+          marginBottom: '20px',
+          borderBottom: '2px solid #28a745',
+          paddingBottom: '10px',
+        },
+        body1: {
+          fontSize: '18px',
+          color: '#555',
+          lineHeight: '1.6',
+        },
+      },
+    },
+    MuiBox: {
+      styleOverrides: {
+        root: {
+          display: 'grid',
+          gap: '20px',
+        },
+      },
+    },
+    MuiLinearProgress: {
+      styleOverrides: {
+        root: {
+          height: '8px',
+          borderRadius: '4px',
+        },
+        bar: {
+          borderRadius: '4px',
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          padding: '15px',
+          borderRadius: '8px',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
         },
       },
     },

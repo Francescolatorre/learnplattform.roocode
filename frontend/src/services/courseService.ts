@@ -1,8 +1,9 @@
 import apiService from './apiService';
-import { Course, CourseVersion, CourseError } from '../types/apiTypes';
+import { Course, CourseVersion, PaginatedResponse } from '../types/apiTypes'; // Remove CourseError import
 
-export const fetchCourses = async (status: string): Promise<Course[]> => {
-  return apiService.get<Course[]>('courses/', { status });
+// Update fetchCourses return type to PaginatedResponse<Course>
+export const fetchCourses = async (status: string): Promise<PaginatedResponse<Course>> => {
+  return apiService.get<PaginatedResponse<Course>>('courses/', { status });
 };
 
 export const fetchCourseDetails = async (courseId: string): Promise<Course> => {
@@ -17,11 +18,11 @@ export const updateCourseDetails = async (courseId: string, courseData: Partial<
   return apiService.put<Course>(`courses/${courseId}/`, courseData, { includeModules });
 };
 
-export const updateCourseProgress = async (courseId: string, progress: number): Promise<{ success: boolean; error: CourseError | null }> => {
+export const updateCourseProgress = async (courseId: string, progress: number): Promise<{ success: boolean; error: any | null }> => { // Type error as any
   try {
     await apiService.post(`courses/${courseId}/progress/`, { progress });
     return { success: true, error: null };
-  } catch (error) {
+  } catch (error: any) { // Type error as any in catch block
     return { success: false, error: { message: error.message, code: error.response?.status || 0 } };
   }
 };

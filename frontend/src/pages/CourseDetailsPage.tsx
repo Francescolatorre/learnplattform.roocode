@@ -2,113 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useCourse } from '../hooks/useCourse';
 import TaskManagementUI from '../components/TaskManagementUI';
-import { fetchTasksByCourse } from '../services/taskService';
-import { fetchStudentProgressByCourse } from '../services/progressService';
 import { useAuth } from '../features/auth/AuthContext';
 import { CourseProgress } from '../types/progressTypes';
-import { LinearProgress, Typography, Box } from '@mui/material';
+import { LinearProgress, Typography, Box, Paper, Container } from '@mui/material';
 import { courseService } from '@services/apiService';
-
-// Styles for the course details page
-const styles = {
-  container: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '20px',
-    fontFamily: 'Arial, sans-serif'
-  },
-  header: {
-    backgroundColor: '#f8f9fa',
-    borderRadius: '8px',
-    padding: '20px',
-    marginBottom: '30px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-  },
-  title: {
-    fontSize: '32px',
-    color: '#333',
-    marginBottom: '15px',
-    borderBottom: '2px solid #007bff',
-    paddingBottom: '10px'
-  },
-  description: {
-    fontSize: '18px',
-    color: '#555',
-    lineHeight: '1.6',
-    marginBottom: '20px'
-  },
-  infoSection: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-    gap: '20px',
-    marginBottom: '30px'
-  },
-  infoCard: {
-    backgroundColor: 'white',
-    borderRadius: '8px',
-    padding: '15px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
-    border: '1px solid #eee'
-  },
-  infoTitle: {
-    fontSize: '16px',
-    fontWeight: 'bold',
-    color: '#007bff',
-    marginBottom: '8px'
-  },
-  infoContent: {
-    fontSize: '16px',
-    color: '#333'
-  },
-  tasksSection: {
-    backgroundColor: 'white',
-    borderRadius: '8px',
-    padding: '20px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-  },
-  tasksTitle: {
-    fontSize: '24px',
-    color: '#333',
-    marginBottom: '20px',
-    borderBottom: '2px solid #28a745',
-    paddingBottom: '10px'
-  },
-  loadingContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '200px',
-    fontSize: '20px',
-    color: '#666'
-  },
-  errorContainer: {
-    backgroundColor: '#f8d7da',
-    color: '#721c24',
-    padding: '15px',
-    borderRadius: '8px',
-    marginTop: '20px'
-  },
-  progressSection: {
-    marginBottom: '20px',
-    backgroundColor: 'white',
-    borderRadius: '8px',
-    padding: '15px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
-  }
-};
 
 const CourseDetailsPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
-  if (!courseId) return <div style={styles.errorContainer}>Course ID not provided</div>;
+  if (!courseId) return <Box sx={{ bgcolor: 'error.light', p: 2, borderRadius: 1 }}>Course ID not provided</Box>;
 
   const { course, loading, error } = useCourse(courseId);
-  const [taskDescription, setTaskDescription] = useState("");
-  const [tasks, setTasks] = useState<any[]>([]); // Correct type for tasks
+  const [taskDescription, setTaskDescription] = useState('');
+  const [tasks, setTasks] = useState<any[]>([]);
   const [courseProgress, setCourseProgress] = useState<CourseProgress | null>(null);
-  const { user } = useAuth(); // Use context to get user information
-  // Get the user role from the context or local storage
+  const { user } = useAuth();
   const userRole = user?.role || localStorage.getItem('user_role') || 'student';
-  console.log("User role in CourseDetailsPage:", userRole);
 
   useEffect(() => {
     const loadTasks = async () => {
@@ -116,7 +24,7 @@ const CourseDetailsPage: React.FC = () => {
         const fetchedTasks = await courseService.get(`/courses/${courseId}/tasks/`);
         setTasks(fetchedTasks);
       } catch (error) {
-        console.error("Failed to fetch tasks:", error);
+        console.error('Failed to fetch tasks:', error);
       }
     };
 
@@ -125,20 +33,15 @@ const CourseDetailsPage: React.FC = () => {
 
   useEffect(() => {
     const loadProgress = async () => {
-      if (!courseId) {
-        console.error("Error: courseId is undefined. Cannot fetch student progress.");
-        return;
-      }
+      if (!courseId) return;
 
       try {
         const progress = await courseService.get(`/courses/${courseId}/student-progress/${user?.id}/`, {
           includeDetails: false,
         });
-        console.log('Student progress loaded:', progress);
-
         if (progress.message) {
-          setCourseProgress(null); // No progress details available
-          setTaskDescription(progress.message); // Display the message from the API
+          setCourseProgress(null);
+          setTaskDescription(progress.message);
         } else {
           setCourseProgress(progress);
         }
@@ -152,50 +55,42 @@ const CourseDetailsPage: React.FC = () => {
     }
   }, [course, courseId, user?.id]);
 
-  if (loading) return <div style={styles.loadingContainer}>Loading course details...</div>;
-  if (error) return <div style={styles.errorContainer}>Error: {error.message}</div>;
-
-  console.log('Course data:', course); // Debugging log
+  if (loading) return <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 200 }}>Loading course details...</Box>;
+  if (error) return <Box sx={{ bgcolor: 'error.light', p: 2, borderRadius: 1 }}>Error: {error.message}</Box>;
 
   if (!course || Object.keys(course).length === 0) {
     return (
-      <div style={styles.errorContainer}>
+      <Box sx={{ bgcolor: 'error.light', p: 2, borderRadius: 1 }}>
         <Typography variant="body1" color="textSecondary">
-          Course details not available. <br /> Dude, where's my course?
+          Course details not available.
         </Typography>
-      </div>
+      </Box>
     );
   }
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h1 style={styles.title}>{course.title}</h1>
-        <p style={styles.description}>{course.description}</p>
-      </div>
+    <Container>
+      <Paper sx={{ p: 3, mb: 3 }}>
+        <Typography variant="h1">{course.title}</Typography>
+        <Typography variant="body1">{course.description}</Typography>
+      </Paper>
 
-      {/* Enrollment Prompt */}
       {taskDescription && !courseProgress && (
-        <div style={styles.errorContainer}>
+        <Box sx={{ bgcolor: 'error.light', p: 2, borderRadius: 1 }}>
           <Typography variant="body1" color="textSecondary">
             {taskDescription}
           </Typography>
-        </div>
+        </Box>
       )}
 
-      {/* Progress Section */}
       {courseProgress && (
-        <div style={styles.progressSection}>
-          <Typography variant="h6" style={{ marginBottom: '10px', color: '#007bff' }}>
+        <Paper sx={{ p: 3, mb: 3 }}>
+          <Typography variant="h6" sx={{ mb: 2, color: 'primary.main' }}>
             Course Progress
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
             <Box sx={{ width: '100%', mr: 1 }}>
-              <LinearProgress
-                variant="determinate"
-                value={courseProgress.completionPercentage}
-                color="primary"
-              />
+              <LinearProgress variant="determinate" value={courseProgress.completionPercentage} />
             </Box>
             <Box sx={{ minWidth: 35 }}>
               <Typography variant="body2" color="text.secondary">
@@ -211,45 +106,30 @@ const CourseDetailsPage: React.FC = () => {
               Average Score: {courseProgress.averageScore.toFixed(2)}
             </Typography>
           </Box>
-        </div>
+        </Paper>
       )}
 
-      <div style={styles.infoSection}>
-        <div style={styles.infoCard}>
-          <h3 style={styles.infoTitle}>Instructor</h3>
-          <p style={styles.infoContent}>
-            {course.creator_details
-              ? course.creator_details.display_name || course.creator_details.username
-              : 'Not assigned'}
-          </p>
-        </div>
+      <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', mb: 3 }}>
+        <Paper>
+          <Typography variant="h6">Instructor</Typography>
+          <Typography variant="body1">
+            {course.creator_details?.display_name || course.creator_details?.username || 'Not assigned'}
+          </Typography>
+        </Paper>
+        <Paper>
+          <Typography variant="h6">Status</Typography>
+          <Typography variant="body1">{course.status || 'Not specified'}</Typography>
+        </Paper>
+        <Paper>
+          <Typography variant="h6">Prerequisites</Typography>
+          <Typography variant="body1">
+            {Array.isArray(course.prerequisites) ? course.prerequisites.join(', ') : course.prerequisites || 'None'}
+          </Typography>
+        </Paper>
+      </Box>
 
-        <div style={styles.infoCard}>
-          <h3 style={styles.infoTitle}>Status</h3>
-          <p style={styles.infoContent}>{course.status || 'Not specified'}</p>
-        </div>
-
-        <div style={styles.infoCard}>
-          <h3 style={styles.infoTitle}>Prerequisites</h3>
-          <p style={styles.infoContent}>
-            {Array.isArray(course.prerequisites)
-              ? course.prerequisites.join(', ')
-              : (course.prerequisites || 'None')}
-          </p>
-        </div>
-      </div>
-
-      <div style={styles.infoCard}>
-        <h3 style={styles.infoTitle}>Learning Objectives</h3>
-        <p style={styles.infoContent}>
-          {Array.isArray(course.learning_objectives)
-            ? course.learning_objectives.join(', ')
-            : (course.learning_objectives || 'No learning objectives specified')}
-        </p>
-      </div>
-
-      <div style={styles.tasksSection}>
-        <h2 style={styles.tasksTitle}>Course Tasks</h2>
+      <Paper sx={{ p: 3 }}>
+        <Typography variant="h2">Course Tasks</Typography>
         <TaskManagementUI
           courseId={courseId}
           taskDescription={taskDescription}
@@ -258,8 +138,8 @@ const CourseDetailsPage: React.FC = () => {
           setTasks={setTasks}
           userRole={userRole}
         />
-      </div>
-    </div>
+      </Paper>
+    </Container>
   );
 };
 

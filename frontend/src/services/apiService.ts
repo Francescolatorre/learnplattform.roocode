@@ -218,6 +218,8 @@ class ApiService implements ApiServiceInterface {
 
             // Handle specific HTTP status codes
             if (error.response?.status === 401) {
+                console.error('Unauthorized access. Please log in again.');
+                window.dispatchEvent(new Event('unauthorized'));
                 throw new Error('Unauthorized access. Please log in again.');
             }
             if (error.response?.status === 403) {
