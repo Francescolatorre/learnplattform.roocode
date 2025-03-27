@@ -65,7 +65,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
   console.log('ProtectedRoute: Authentication check complete. isAuthenticated:', isAuthenticated);
   if (!isAuthenticated) {
-    return <Navigate to="/unauthorized" replace />; // Redirect to an unauthorized page
+    return <Navigate to="/login" replace />; // Redirect to an unauthorized page
   }
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 };
@@ -73,14 +73,12 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 const queryClient = new QueryClient(); // Create a QueryClient instance
 
 const App: React.FC = () => {
-  console.log('App component rendered'); // Debugging log
-
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}> {/* Wrap the app with QueryClientProvider */}
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <AuthProvider>
+          <AuthProvider> {/* Ensure AuthProvider wraps the entire app */}
             <BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}> {/* Enable future flags */}
               <Routes>
                 <Route path="/login" element={<LoginForm />} />
