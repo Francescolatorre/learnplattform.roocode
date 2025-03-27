@@ -37,19 +37,14 @@ type Task = {
 };
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode; allowedRoles?: string[] }> = ({ children, allowedRoles }) => {
-  const { isAuthenticated, refreshToken, userRole } = useAuth(); // useAuth is now correctly imported
+  const { isAuthenticated, refreshToken, userRole, isAuthChecked } = useAuth(); // Add isAuthChecked
   const isTokenAvailable = localStorage.getItem('access_token') !== null;
   const [loading, setLoading] = React.useState(true);
 
   useEffect(() => {
     const initializeAuth = async () => {
-      console.log('ProtectedRoute: Initializing authentication...');
-      console.log('isAuthenticated:', isAuthenticated);
-      console.log('isTokenAvailable:', isTokenAvailable);
-
       if (!isAuthenticated && isTokenAvailable) {
         try {
-          console.log('Attempting to refresh token...');
           await refreshToken();
         } catch (error) {
           console.error('Failed to refresh token:', error);
@@ -61,16 +56,15 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; allowedRoles?: strin
     initializeAuth();
   }, [isAuthenticated, isTokenAvailable, refreshToken]);
 
-  if (loading) {
-    console.log('ProtectedRoute: Loading...');
-    return <div>Loading...</div>; // Optionally replace with a loading spinner
+  if (loading || !isAuthChecked) { // Ensure auth check is complete
+    return <div>Loading...</div>;
   }
 
-  console.log('ProtectedRoute: Authentication check complete. isAuthenticated:', isAuthenticated);
   if (!isAuthenticated || (allowedRoles && !allowedRoles.includes(userRole))) {
-    return <Navigate to="/login" replace />; // Redirect to an unauthorized page
+    return <Navigate to="/login" replace />;
   }
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+
+  return <>{children}</>;
 };
 
 const queryClient = new QueryClient(); // Create a QueryClient instance
@@ -78,20 +72,18 @@ const queryClient = new QueryClient(); // Create a QueryClient instance
 const App: React.FC = () => {
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}> {/* Wrap the app with QueryClientProvider */}
+      <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <AuthProvider> {/* Ensure AuthProvider wraps the entire app */}
-            <BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}> {/* Enable future flags */}
+            <BrowserRouter>
               <Routes>
                 <Route path="/login" element={<LoginForm />} />
                 <Route path="/register" element={<RegisterForm />} />
                 <Route path="/dashboard" element={<ProtectedRoute><MainLayout><Dashboard /></MainLayout></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><MainLayout><Profile /></MainLayout></ProtectedRoute>} />
                 <Route path="/courses" element={<ProtectedRoute><MainLayout><CourseEnrollmentPage /></MainLayout></ProtectedRoute>} />
-                <Route path="/courses/:courseId" element={<ProtectedRoute><MainLayout><CourseEnrollmentPage /></MainLayout></ProtectedRoute>} />
                 <Route path="/courses/:courseId/edit" element={<ProtectedRoute><MainLayout><EditCourse /></MainLayout></ProtectedRoute>} />
-                <Route path="/courses-old/:courseId" element={<ProtectedRoute><MainLayout><CourseDetailsPage /></MainLayout></ProtectedRoute>} />
                 <Route
                   path="/courses/:courseId/tasks"
                   element={
@@ -161,6 +153,7 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 />
+
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
               </Routes>
             </BrowserRouter>

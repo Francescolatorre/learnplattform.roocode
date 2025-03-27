@@ -58,7 +58,27 @@ class ApiService implements ApiServiceInterface {
                 }
                 return config;
             },
-            (error) => Promise.reject(error)
+            (error) => {
+                console.error('Request Error:', error);
+                return Promise.reject(error);
+            }
+        );
+
+        // Add response interceptor to handle and log errors comprehensively
+        this.instance.interceptors.response.use(
+            (response) => response,
+            (error) => {
+                console.error('API Error:', error);
+                console.error('Response status:', error.response?.status);
+                console.error('Response data:', error.response?.data);
+
+                if (error.response?.status === 401) {
+                    console.error('401 Unauthorized - NOT automatically redirecting to login');
+                    // Remove automatic redirection or logout logic from here
+                }
+
+                return Promise.reject(error);
+            }
         );
     }
 
@@ -243,7 +263,8 @@ class ApiService implements ApiServiceInterface {
 
 // Create and export a singleton instance
 const apiService = new ApiService();
-export default apiService;
+export { apiService }; // Named export
+export default apiService; // Add default export
 
 // Export pre-configured resource services for common endpoints
 export const courseService = apiService.createResourceService('courses');

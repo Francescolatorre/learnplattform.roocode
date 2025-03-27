@@ -37,7 +37,7 @@ const CourseEnrollmentPage: React.FC = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [enrolling, setEnrolling] = useState(false);
+  const [enrollingCourseId, setEnrollingCourseId] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -60,21 +60,18 @@ const CourseEnrollmentPage: React.FC = () => {
 
   const handleEnroll = async (courseId: string) => {
     try {
-      setEnrolling(true);
+      setEnrollingCourseId(courseId);
       setError(null);
       await enrollInCourse(courseId);
       setSuccessMessage('Successfully enrolled in the course!');
-      // Update the course list to reflect the enrollment status
-      setCourses((prevCourses) =>
-        prevCourses.map((course: any) =>
-          course.id === courseId ? { ...course, enrolled: true } : course
-        )
-      );
+      // Refetch courses to update enrollment status
+      const response = await fetchCourses();
+      setCourses(response.results);
     } catch (err) {
       console.error('Error enrolling in course:', err);
       setError('Failed to enroll in the course. Please try again later.');
     } finally {
-      setEnrolling(false);
+      setEnrollingCourseId(null);
     }
   };
 
@@ -130,10 +127,10 @@ const CourseEnrollmentPage: React.FC = () => {
                     variant="contained"
                     color="primary"
                     onClick={() => handleEnroll(course.id)}
-                    disabled={enrolling}
+                    disabled={enrollingCourseId === course.id}
                     sx={{ mt: 1 }}
                   >
-                    {enrolling ? 'Enrolling...' : 'Enroll'}
+                    {enrollingCourseId === course.id ? 'Enrolling...' : 'Enroll'}
                   </Button>
                 )}
               </CardContent>

@@ -12,6 +12,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean | null; // Use `null` to indicate uninitialized state
+  isAuthChecked: boolean; // Track auth check status
   login: (usernameOrEmail: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshToken: () => Promise<void>;
@@ -22,6 +23,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isAuthChecked, setIsAuthChecked] = useState(false); // Track auth check status
 
   const clearAuthState = () => {
     console.log('AuthProvider: Clearing authentication state...');
@@ -93,6 +95,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       console.error('AuthProvider: Failed to refresh token:', error);
       clearAuthState();
       throw error;
+    } finally {
+      setIsAuthChecked(true); // Mark auth check as complete
     }
   };
 
@@ -121,6 +125,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       console.log('AuthProvider: No tokens found. User is not authenticated.');
       setIsAuthenticated(false);
     }
+    setIsAuthChecked(true); // Mark auth check as complete
   };
 
   useEffect(() => {
@@ -131,10 +136,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const contextValue = useMemo(() => ({
     user,
     isAuthenticated,
+    isAuthChecked,
     login,
     logout,
     refreshToken,
-  }), [user, isAuthenticated]);
+  }), [user, isAuthenticated, isAuthChecked]);
 
   return (
     <AuthContext.Provider value={contextValue}>
@@ -145,15 +151,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
-
-  useEffect(() => {
-    console.log('useAuth: isAuthenticated:', context.isAuthenticated);
-    console.log('useAuth: user:', context.user);
-  }, [context.isAuthenticated, context.user]);
-
   return context;
 };
 

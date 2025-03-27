@@ -1,9 +1,17 @@
 import { useQuery } from 'react-query';
-import { courseService } from '@services/apiService';
+import apiService from '@services/apiService'; // Use default export
+import { useAuth } from '@features/auth/AuthContext';
 
-export const useCourse = (courseId: string) => {
-  return useQuery(['course', courseId], async () => {
-    const response = await courseService.get(`/courses/${courseId}/`);
-    return response.data;
-  });
+export const useCourse = (courseId: string | undefined) => {
+  const { isAuthenticated, isAuthChecked } = useAuth();
+
+  return useQuery(
+    ['course', courseId],
+    () => apiService.get(`/courses/${courseId}`).then((res) => res.data),
+    {
+      enabled: isAuthChecked && isAuthenticated && !!courseId, // Ensure auth is checked
+      retry: false,
+      refetchOnWindowFocus: false,
+    }
+  );
 };
