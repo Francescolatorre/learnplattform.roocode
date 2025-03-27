@@ -4,8 +4,9 @@ import { useCourse } from '../hooks/useCourse';
 import TaskManagementUI from '../components/TaskManagementUI';
 import { useAuth } from '../features/auth/AuthContext';
 import { CourseProgress } from '../types/progressTypes';
-import { LinearProgress, Typography, Box, Paper, Container } from '@mui/material';
+import { LinearProgress, Typography, Box, Paper, Container, Button, Stack } from '@mui/material';
 import { courseService } from '@services/apiService';
+import { useNavigate } from 'react-router-dom';
 
 const CourseDetailsPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -17,130 +18,164 @@ const CourseDetailsPage: React.FC = () => {
   const [courseProgress, setCourseProgress] = useState<CourseProgress | null>(null);
   const { user } = useAuth();
   const userRole = user?.role || localStorage.getItem('user_role') || 'student';
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const loadTasks = async () => {
-      try {
-        const fetchedTasks = await courseService.get(`/courses/${courseId}/tasks/`);
-        setTasks(fetchedTasks);
-      } catch (error) {
-        console.error('Failed to fetch tasks:', error);
-      }
-    };
+    console.log('CourseDetailsPage rendered for user:', user);
+    console.log('User role:', userRole);
 
-    loadTasks();
-  }, [courseId]);
-
-  useEffect(() => {
-    const loadProgress = async () => {
-      if (!courseId) return;
-
-      try {
-        const progress = await courseService.get(`/courses/${courseId}/student-progress/${user?.id}/`, {
-          includeDetails: false,
-        });
-        if (progress.message) {
-          setCourseProgress(null);
-          setTaskDescription(progress.message);
-        } else {
-          setCourseProgress(progress);
+    useEffect(() => {
+      const loadTasks = async () => {
+        try {
+          const fetchedTasks = await courseService.get(`/courses/${courseId}/tasks/`);
+          setTasks(fetchedTasks);
+        } catch (error) {
+          console.error('Failed to fetch tasks:', error);
         }
-      } catch (error) {
-        console.error('Failed to fetch course progress:', error.message);
+      };
+
+      loadTasks();
+    }, [courseId]);
+
+    useEffect(() => {
+      const loadProgress = async () => {
+        if (!courseId) return;
+
+        try {
+          const progress = await courseService.get(`/courses/${courseId}/student-progress/${user?.id}/`, {
+            includeDetails: false,
+          });
+          if (progress.message) {
+            setCourseProgress(null);
+            setTaskDescription(progress.message);
+          } else {
+            setCourseProgress(progress);
+          }
+        } catch (error) {
+          console.error('Failed to fetch course progress:', error.message);
+        }
+      };
+
+      if (course) {
+        loadProgress();
       }
-    };
+    }, [course, courseId, user?.id]);
 
-    if (course) {
-      loadProgress();
-    }
-  }, [course, courseId, user?.id]);
+    if (loading) return <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 200 }}>Loading course details...</Box>;
+    if (error) return <Box sx={{ bgcolor: 'error.light', p: 2, borderRadius: 1 }}>Error: {error.message}</Box>;
 
-  if (loading) return <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 200 }}>Loading course details...</Box>;
-  if (error) return <Box sx={{ bgcolor: 'error.light', p: 2, borderRadius: 1 }}>Error: {error.message}</Box>;
-
-  if (!course || Object.keys(course).length === 0) {
-    return (
-      <Box sx={{ bgcolor: 'error.light', p: 2, borderRadius: 1 }}>
-        <Typography variant="body1" color="textSecondary">
-          Course details not available.
-        </Typography>
-      </Box>
-    );
-  }
-
-  return (
-    <Container>
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h1">{course.title}</Typography>
-        <Typography variant="body1">{course.description}</Typography>
-      </Paper>
-
-      {taskDescription && !courseProgress && (
+    if (!course || Object.keys(course).length === 0) {
+      return (
         <Box sx={{ bgcolor: 'error.light', p: 2, borderRadius: 1 }}>
           <Typography variant="body1" color="textSecondary">
-            {taskDescription}
+            Course details not available.
           </Typography>
         </Box>
-      )}
+      );
+    }
 
-      {courseProgress && (
+    return (
+      <Container>
         <Paper sx={{ p: 3, mb: 3 }}>
-          <Typography variant="h6" sx={{ mb: 2, color: 'primary.main' }}>
-            Course Progress
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <Box sx={{ width: '100%', mr: 1 }}>
-              <LinearProgress variant="determinate" value={courseProgress.completionPercentage} />
+          <Typography variant="h1">{course.title}</Typography>
+          <Typography variant="body1">{course.description}</Typography>
+        </Paper>
+
+        {userRole === 'instructor' && (
+          <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => navigate(`/courses/${courseId}/tasks`)}
+            >
+              View Tasks
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => navigate(`/courses/${courseId}/edit`)}
+            >
+              Edit Course
+            </Button>
+          </Stack>
+        )}
+
+        {taskDescription && !courseProgress && (
+          <Box sx={{ bgcolor: 'error.light', p: 2, borderRadius: 1 }}>
+            <Typography variant="body1" color="textSecondary">
+              {taskDescription}
+            </Typography>
+          </Box>
+        )}
+
+        {courseProgress && (
+          <Paper sx={{ p: 3, mb: 3 }}>
+            <Typography variant="h6" sx={{ mb: 2, color: 'primary.main' }}>
+              Course Progress
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Box sx={{ width: '100%', mr: 1 }}>
+                <LinearProgress variant="determinate" value={courseProgress.completionPercentage} />
+              </Box>
+              <Box sx={{ minWidth: 35 }}>
+                <Typography variant="body2" color="text.secondary">
+                  {`${Math.round(courseProgress.completionPercentage)}%`}
+                </Typography>
+              </Box>
             </Box>
-            <Box sx={{ minWidth: 35 }}>
-              <Typography variant="body2" color="text.secondary">
-                {`${Math.round(courseProgress.completionPercentage)}%`}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+              <Typography variant="body2">
+                Completed Tasks: {courseProgress.completedTasks} / {courseProgress.totalTasks}
+              </Typography>
+              <Typography variant="body2">
+                Average Score: {courseProgress.averageScore.toFixed(2)}
               </Typography>
             </Box>
-          </Box>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-            <Typography variant="body2">
-              Completed Tasks: {courseProgress.completedTasks} / {courseProgress.totalTasks}
+          </Paper>
+        )}
+
+        <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', mb: 3 }}>
+          <Paper>
+            <Typography variant="h6">Instructor</Typography>
+            <Typography variant="body1">
+              {course.creator_details?.display_name || course.creator_details?.username || 'Not assigned'}
             </Typography>
-            <Typography variant="body2">
-              Average Score: {courseProgress.averageScore.toFixed(2)}
+          </Paper>
+          <Paper>
+            <Typography variant="h6">Status</Typography>
+            <Typography variant="body1">{course.status || 'Not specified'}</Typography>
+          </Paper>
+          <Paper>
+            <Typography variant="h6">Prerequisites</Typography>
+            <Typography variant="body1">
+              {Array.isArray(course.prerequisites) ? course.prerequisites.join(', ') : course.prerequisites || 'None'}
             </Typography>
-          </Box>
-        </Paper>
-      )}
+          </Paper>
+        </Box>
 
-      <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', mb: 3 }}>
-        <Paper>
-          <Typography variant="h6">Instructor</Typography>
-          <Typography variant="body1">
-            {course.creator_details?.display_name || course.creator_details?.username || 'Not assigned'}
-          </Typography>
+        <Paper sx={{ p: 3 }}>
+          <Typography variant="h2">Course Tasks</Typography>
+          <TaskManagementUI
+            courseId={courseId}
+            taskDescription={taskDescription}
+            setTaskDescription={setTaskDescription}
+            tasks={tasks}
+            setTasks={setTasks}
+            userRole={userRole}
+          />
         </Paper>
-        <Paper>
-          <Typography variant="h6">Status</Typography>
-          <Typography variant="body1">{course.status || 'Not specified'}</Typography>
-        </Paper>
-        <Paper>
-          <Typography variant="h6">Prerequisites</Typography>
-          <Typography variant="body1">
-            {Array.isArray(course.prerequisites) ? course.prerequisites.join(', ') : course.prerequisites || 'None'}
-          </Typography>
-        </Paper>
-      </Box>
 
-      <Paper sx={{ p: 3 }}>
-        <Typography variant="h2">Course Tasks</Typography>
-        <TaskManagementUI
-          courseId={courseId}
-          taskDescription={taskDescription}
-          setTaskDescription={setTaskDescription}
-          tasks={tasks}
-          setTasks={setTasks}
-          userRole={userRole}
-        />
-      </Paper>
-    </Container>
-  );
-};
+        {userRole === 'instructor' && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate(`/courses/${courseId}/edit`)}
+          >
+            Edit Course
+          </Button>
+        )}
+      </Container>
+    );
+  };
 
-export default CourseDetailsPage;
+  export default CourseDetailsPage;

@@ -22,6 +22,9 @@ import InstructorCoursesPage from '@features/instructor/InstructorCoursesPage';
 import AdminCoursesPage from '@features/admin/AdminCoursesPage';
 import TaskViewPage from '@pages/TaskViewPage';
 import InstructorCourseDetailPage from '@pages/InstructorCourseDetailPage';
+import StudentTasksPage from '@pages/StudentTasksPage';
+import InstructorTasksPage from '@pages/InstructorTasksPage';
+import AdminTasksPage from '@pages/AdminTasksPage';
 
 type Task = {
   title: string;
@@ -33,8 +36,8 @@ type Task = {
   courseId: string;
 };
 
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, refreshToken } = useAuth(); // useAuth is now correctly imported
+const ProtectedRoute: React.FC<{ children: React.ReactNode; allowedRoles?: string[] }> = ({ children, allowedRoles }) => {
+  const { isAuthenticated, refreshToken, userRole } = useAuth(); // useAuth is now correctly imported
   const isTokenAvailable = localStorage.getItem('access_token') !== null;
   const [loading, setLoading] = React.useState(true);
 
@@ -64,7 +67,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   }
 
   console.log('ProtectedRoute: Authentication check complete. isAuthenticated:', isAuthenticated);
-  if (!isAuthenticated) {
+  if (!isAuthenticated || (allowedRoles && !allowedRoles.includes(userRole))) {
     return <Navigate to="/login" replace />; // Redirect to an unauthorized page
   }
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
@@ -89,7 +92,16 @@ const App: React.FC = () => {
                 <Route path="/courses/:courseId" element={<ProtectedRoute><MainLayout><CourseEnrollmentPage /></MainLayout></ProtectedRoute>} />
                 <Route path="/courses/:courseId/edit" element={<ProtectedRoute><MainLayout><EditCourse /></MainLayout></ProtectedRoute>} />
                 <Route path="/courses-old/:courseId" element={<ProtectedRoute><MainLayout><CourseDetailsPage /></MainLayout></ProtectedRoute>} />
-                <Route path="/courses/:courseId/tasks" element={<ProtectedRoute><MainLayout><CourseTasksPage /></MainLayout></ProtectedRoute>} />
+                <Route
+                  path="/courses/:courseId/tasks"
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout>
+                        <StudentTasksPage /> {/* New page for students */}
+                      </MainLayout>
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="/courses/:courseId/tasks/:taskId" element={<ProtectedRoute><MainLayout><TaskViewPage /></MainLayout></ProtectedRoute>} />
                 <Route path="/progress-tracking/:courseId" element={<ProtectedRoute><MainLayout><ProgressTrackingUI courseId={useParams().courseId} /></MainLayout></ProtectedRoute>} />
                 <Route path="/instructor" element={<ProtectedRoute><MainLayout><InstructorViews /></MainLayout></ProtectedRoute>} />
@@ -117,8 +129,38 @@ const App: React.FC = () => {
                 />
                 <Route path="/my-submission" element={<ProtectedRoute><MainLayout><div>My Submission Page (Placeholder)</div></MainLayout></ProtectedRoute>} />
                 <Route path="/enrollment" element={<ProtectedRoute><MainLayout><CourseEnrollmentPage /></MainLayout></ProtectedRoute>} />
-                <Route path="/courses/:courseId/details" element={<ProtectedRoute><MainLayout><CourseDetailsPage /></MainLayout></ProtectedRoute>} />
+                <Route path="/courses/:courseId/details" element={<ProtectedRoute allowedRoles={['student', 'instructor', 'admin']}><MainLayout><CourseDetailsPage /></MainLayout></ProtectedRoute>} />
                 <Route path="/admin/courses/:courseId/details" element={<ProtectedRoute><MainLayout><InstructorCourseDetailPage /></MainLayout></ProtectedRoute>} />
+                <Route
+                  path="/instructor/courses/:courseId/tasks"
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout>
+                        <InstructorTasksPage /> {/* New page for instructors */}
+                      </MainLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/courses/:courseId/tasks"
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout>
+                        <AdminTasksPage /> {/* New page for admins */}
+                      </MainLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/instructor/courses/:courseId/tasks/:taskId/edit"
+                  element={
+                    <ProtectedRoute>
+                      <MainLayout>
+                        <EditCourse /> {/* Reuse EditCourse for editing tasks */}
+                      </MainLayout>
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
               </Routes>
             </BrowserRouter>

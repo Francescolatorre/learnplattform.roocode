@@ -150,3 +150,16 @@ export interface PaginatedResponse<T> {
     previous: string | null;
     results: T[];
 }
+
+export interface Task {
+    id: string;
+    title: string;
+    description: string;
+    status: string;
+}
+
+export interface TaskCreationData {
+    title: string;
+    description: string;
+    status: string;
+}

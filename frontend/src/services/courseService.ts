@@ -1,5 +1,8 @@
 import apiService from './apiService';
 import { Course, CourseVersion, PaginatedResponse } from '../types/apiTypes'; // Remove CourseError import
+import axios from 'axios';
+
+const BASE_URL = '/api/courses';
 
 // Update fetchCourses return type to PaginatedResponse<Course>
 export const fetchCourses = async (status: string): Promise<PaginatedResponse<Course>> => {
@@ -45,4 +48,30 @@ export const fetchEnrolledStudents = async (courseId: string): Promise<{ count: 
 
 export const fetchCourseAnalytics = async (courseId: string): Promise<any> => {
   return apiService.get(`courses/${courseId}/analytics/`);
+};
+
+export const CourseService = {
+  async getTasks(courseId: string) {
+    const response = await axios.get(`${BASE_URL}/${courseId}/tasks`);
+    return response.data;
+  },
+
+  async getTask(courseId: string, taskId: string) {
+    const response = await axios.get(`${BASE_URL}/${courseId}/tasks/${taskId}`);
+    return response.data;
+  },
+
+  async createTask(courseId: string, taskData: any) {
+    const response = await axios.post(`${BASE_URL}/${courseId}/tasks`, taskData);
+    return response.data;
+  },
+
+  async updateTask(courseId: string, taskId: string, taskData: any) {
+    const response = await axios.put(`${BASE_URL}/${courseId}/tasks/${taskId}`, taskData);
+    return response.data;
+  },
+
+  async deleteTask(courseId: string, taskId: string) {
+    await axios.delete(`${BASE_URL}/${courseId}/tasks/${taskId}`);
+  },
 };

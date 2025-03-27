@@ -1,6 +1,7 @@
 # Active Context
 
 ## Current Work
+- working on issue regarding user is sent to login when wanting to show course details as a student
 - Consolidating tasks and aligning project focus on priority student use cases.
 - Implementing core API functionality according to OpenAPI specification.
 - Continuing model consolidation and UI development for task progress tracking.

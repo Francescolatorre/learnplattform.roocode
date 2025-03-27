@@ -37,7 +37,7 @@ interface DataTableProps<T> {
     rowSx?: (item: T) => SxProps<Theme> | undefined;
 }
 
-function DataTable<T>({
+export const DataTable = <T,>({
     columns,
     data,
     loading = false,
@@ -49,7 +49,7 @@ function DataTable<T>({
     title,
     sx,
     rowSx
-}: DataTableProps<T>) {
+}: DataTableProps<T>) => {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
