@@ -2,6 +2,15 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+LOGIN_URL = "/nonexistent/"  # Prevent Django from redirecting to login for Swagger
+LOGOUT_REDIRECT_URL = "/"  # Optional: Set a default logout redirect
+
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),  # Ensure this directory exists
+]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")  # For production use
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -64,11 +73,24 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     # ...existing apps...
+    "corsheaders",  # Add CORS headers app
+]
+
+MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",  # Add CORS middleware
+    # ...existing middleware...
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Allow requests from the frontend
 ]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",  # Use only JWT authentication
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",  # Allow unrestricted access by default
     ],
     "EXCEPTION_HANDLER": "learningplatform_backend.core.exception_handler.custom_exception_handler",
 }

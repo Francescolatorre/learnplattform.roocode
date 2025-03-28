@@ -5,9 +5,17 @@ from django.test import TestCase
 from django.utils import timezone
 from rest_framework.test import APIClient
 
-from core.models import (Course, CourseEnrollment, LearningTask, QuizAttempt,
-                         QuizOption, QuizQuestion, QuizResponse, QuizTask,
-                         TaskProgress)
+from core.models import (
+    Course,
+    CourseEnrollment,
+    LearningTask,
+    QuizAttempt,
+    QuizOption,
+    QuizQuestion,
+    QuizResponse,
+    QuizTask,
+    TaskProgress,
+)
 
 User = get_user_model()
 
@@ -451,4 +459,25 @@ class TaskProgressViewSetTest(TestCase):
             description="Test Task Description",
             order=1,
             is_published=True,
+        )
+
+
+class CourseEnrollmentAPITest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser",
+            email="testuser@example.com",  # Add email argument
+            password="testpassword",
+        )
+        self.course = Course.objects.create(
+            title="Test Course", description="Test Description"
+        )
+        self.client.login(username="testuser", password="testpassword")
+
+    def test_enroll_in_course(self):
+        response = self.client.post(f"/api/courses/{self.course.id}/enroll/")
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(
+            CourseEnrollment.objects.filter(user=self.user, course=self.course).count(),
+            1,
         )

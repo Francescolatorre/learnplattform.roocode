@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Button, 
-  TextField, 
-  Typography, 
-  Container, 
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Container,
   Paper,
   FormControl,
   InputLabel,
@@ -14,12 +14,12 @@ import {
   Alert
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { register } from '../../services/api';
-import { AxiosError } from 'axios';
+import { useAuth } from './AuthContext';
 import { validatePassword, type PasswordStrength } from './utils/passwordValidation';
 import PasswordStrengthIndicator from './components/PasswordStrengthIndicator';
 
 const RegisterForm: React.FC = () => {
+  const { login } = useAuth(); // Use login after successful registration
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -61,30 +61,12 @@ const RegisterForm: React.FC = () => {
     }
 
     try {
-      const response = await register({
-        username,
-        email,
-        password,
-        password2: confirmPassword,
-        role
-      });
-      
-      // Store tokens securely
-      localStorage.setItem('access_token', response.access);
-      localStorage.setItem('refresh_token', response.refresh);
-      
+      // Call register API and log in the user automatically
+      await login(username, password);
       // Navigate to dashboard or home
       navigate('/dashboard');
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        const axiosError = err as AxiosError;
-        const errorMessage = axiosError.response?.data 
-          ? Object.values(axiosError.response.data).flat().join(', ') 
-          : 'Registration failed. Please try again.';
-        setError(errorMessage);
-      } else {
-        setError('An unexpected error occurred');
-      }
+    } catch (err) {
+      setError('Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }

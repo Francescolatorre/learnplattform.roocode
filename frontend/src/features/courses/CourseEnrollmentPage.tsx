@@ -20,7 +20,7 @@ import DataTable from '@components/common/DataTable';
 import StatusChip from '@components/common/StatusChip';
 import ProgressIndicator from '@components/common/ProgressIndicator';
 import { Course } from '../../types/courseTypes';
-import { fetchCourses, enrollInCourse } from '@services/courseService';
+import { fetchCourses, enrollInCourse, fetchUserCourseProgress, fetchUserEnrollments } from '@services/courseService';
 import { useAuth } from '@features/auth/AuthContext';
 
 // Extend Course with additional enrollment-specific properties
@@ -44,11 +44,34 @@ const CourseEnrollmentPage: React.FC = () => {
     const loadCourses = async () => {
       try {
         setLoading(true);
-        const response = await fetchCourses();
-        setCourses(response.results);
+
+        // Fetch courses and user enrollments
+        const [coursesResponse, enrollmentsResponse] = await Promise.all([
+          fetchCourses(),
+          fetchUserEnrollments(),
+        ]);
+
+        console.log('Enrollments Response:', enrollmentsResponse); // Debug the response
+
+        // Extract the results array from enrollmentsResponse
+        const enrollments = enrollmentsResponse.results || [];
+        console.log('Processed Enrollments:', enrollments);
+
+        const enrollmentMap = enrollments.reduce((map, enrollment) => {
+          map[enrollment.course] = enrollment.status; // Use `course` as the key
+          return map;
+        }, {});
+
+        const updatedCourses = coursesResponse.results.map((course: any) => {
+          const enrollmentStatus = enrollmentMap[course.id] || 'not_enrolled';
+          const enrolled = enrollmentStatus === 'active' || enrollmentStatus === 'in_progress';
+          return { ...course, enrolled, enrollmentStatus };
+        });
+
+        setCourses(updatedCourses);
         setError(null);
       } catch (err: any) {
-        console.error('Error fetching courses:', err);
+        console.error('Error fetching courses or enrollments:', err);
         setError(err.message || 'Failed to load courses.');
       } finally {
         setLoading(false);
@@ -64,9 +87,14 @@ const CourseEnrollmentPage: React.FC = () => {
       setError(null);
       await enrollInCourse(courseId);
       setSuccessMessage('Successfully enrolled in the course!');
+
       // Refetch courses to update enrollment status
       const response = await fetchCourses();
-      setCourses(response.results);
+      const updatedCourses = response.results.map((course: any) => ({
+        ...course,
+        enrolled: course.enrollmentStatus === 'active' || course.enrollmentStatus === 'in_progress', // Ensure enrolled status is set
+      }));
+      setCourses(updatedCourses);
     } catch (err) {
       console.error('Error enrolling in course:', err);
       setError('Failed to enroll in the course. Please try again later.');
@@ -102,41 +130,44 @@ const CourseEnrollmentPage: React.FC = () => {
         </Alert>
       )}
       <Grid container spacing={3}>
-        {courses.map((course: any) => (
-          <Grid item xs={12} sm={6} md={4} key={course.id}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6">{course.title}</Typography>
-                <Typography variant="body2" color="textSecondary" paragraph>
-                  {course.description}
-                </Typography>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  onClick={() => navigate(`/courses/${course.id}/details`)}
-                  sx={{ mt: 1, mr: 1 }}
-                >
-                  View Details
-                </Button>
-                {course.enrolled ? (
-                  <Typography variant="body2" color="success.main" sx={{ mt: 1 }}>
-                    You are already enrolled in this course.
+        {courses.map((course: any) => {
+          console.log(`Rendering course: ${course.title}, Enrolled: ${course.enrolled}`); // Log rendering logic
+          return (
+            <Grid item xs={12} sm={6} md={4} key={course.id}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6">{course.title}</Typography>
+                  <Typography variant="body2" color="textSecondary" paragraph>
+                    {course.description}
                   </Typography>
-                ) : (
                   <Button
-                    variant="contained"
+                    variant="outlined"
                     color="primary"
-                    onClick={() => handleEnroll(course.id)}
-                    disabled={enrollingCourseId === course.id}
-                    sx={{ mt: 1 }}
+                    onClick={() => navigate(`/courses/${course.id}/details`)}
+                    sx={{ mt: 1, mr: 1 }}
                   >
-                    {enrollingCourseId === course.id ? 'Enrolling...' : 'Enroll'}
+                    View Details
                   </Button>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
+                  {course.enrolled ? (
+                    <Typography variant="body2" color="success.main" sx={{ mt: 1 }}>
+                      You are already enrolled in this course.
+                    </Typography>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleEnroll(course.id)}
+                      disabled={enrollingCourseId === course.id}
+                      sx={{ mt: 1 }}
+                    >
+                      {enrollingCourseId === course.id ? 'Enrolling...' : 'Enroll'}
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            </Grid>
+          );
+        })}
       </Grid>
     </Box>
   );

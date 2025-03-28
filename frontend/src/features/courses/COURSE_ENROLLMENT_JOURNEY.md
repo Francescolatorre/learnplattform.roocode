@@ -33,22 +33,22 @@ The course enrollment process is designed to be intuitive, informative, and user
 
 ### 4. Enrollment Process
 - **Actions**:
-  * Click "Enroll" button
+  * Click "Enroll" button.
   * System validates:
-    - User authentication
-    - Course eligibility
-    - Enrollment availability
-  * Triggers `enrollInCourse()` method
-  * Shows loading state during enrollment
+    - User authentication.
+    - Course eligibility.
+    - Enrollment availability.
+  * Triggers `enrollInCourse()` method.
+  * Shows loading state during enrollment.
 
 ### 5. Enrollment Feedback
 - **Possible Outcomes**:
-  * Successful Enrollment
-    - Course added to user's course list
-    - Progress tracking activated
-  * Enrollment Failure
-    - Clear error message displayed
-    - Guidance on potential issues
+  * Successful Enrollment:
+    - Course added to user's course list.
+    - Progress tracking activated.
+  * Enrollment Failure:
+    - Clear error message displayed.
+    - Guidance on potential issues.
 
 ### 6. Post-Enrollment
 - **User Options**:

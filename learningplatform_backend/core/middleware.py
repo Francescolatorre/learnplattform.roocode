@@ -16,7 +16,7 @@ class RequestLoggingMiddleware:
         self.get_response = get_response
         self.logger = logging.getLogger("api")
         self.logger.setLevel(logging.DEBUG)
-        print("RequestLoggingMiddleware: I am running")  # Logs to stdout
+        # print("RequestLoggingMiddleware: I am running")  # Logs to stdout
         self.verbose_routes = [
             "/api/v1/courses/",
             "/api/v1/tasks/course/",
@@ -58,7 +58,7 @@ class AuthLoggingMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
         self.logger = logging.getLogger("auth")
-        print("AuthLoggingMiddleware: I am running")  # Logs to stdout
+        # print("AuthLoggingMiddleware: I am running")  # Logs to stdout
 
         # Paths that are related to authentication
         self.auth_paths = [
@@ -110,7 +110,4 @@ class DebugLoggingMiddleware:
 
     def __call__(self, request):
         response = self.get_response(request)
-        print(
-            f"DEBUG: User: {request.user}, Authenticated: {request.user.is_authenticated}"
-        )
         return response

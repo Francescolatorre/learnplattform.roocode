@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Container, Typography, Box, TextField, MenuItem, CircularProgress, Alert } from '@mui/material';
 import { fetchCourseDetails, updateCourseDetails } from '../../services/courseService';
-import { refreshToken } from '../../services/authService'; // Import refreshToken
+import { useAuth } from '@features/auth/AuthContext'; // Use useAuth for authentication
 
 const EditCourse: React.FC = () => {
     const navigate = useNavigate();

@@ -1,8 +1,8 @@
-import logging  # Add logging import
-
-from django.db import models  # Add this import for using models.Sum
+import logging
+from django.db import models
 from django.db.models import Avg
 from django.http import JsonResponse
+from django.contrib.auth.models import AnonymousUser
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.authentication import get_authorization_header
 from rest_framework.decorators import action, api_view, permission_classes
@@ -12,12 +12,6 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-
-from core.permissions import (  # Import the custom permissions
-    IsEnrolledInCourse,
-    IsInstructorOrAdmin,
-    IsStudentOrReadOnly,
-)
 
 from .models import (
     Course,
@@ -29,7 +23,6 @@ from .models import (
     QuizQuestion,
     QuizResponse,
     QuizTask,
-    StatusTransition,
     TaskProgress,
     User,
 )
@@ -45,10 +38,10 @@ from .serializers import (
     QuizResponseSerializer,
     QuizTaskSerializer,
     RegisterSerializer,
-    StatusTransitionSerializer,
     TaskProgressSerializer,
     UserSerializer,
 )
+from .permissions import IsEnrolledInCourse, IsInstructorOrAdmin, IsStudentOrReadOnly
 
 # Configure logger for this module
 logger = logging.getLogger(__name__)
@@ -212,7 +205,12 @@ class CourseViewSet(viewsets.ModelViewSet):
             serializer = TaskProgressSerializer(progress, many=True)
             return Response(serializer.data)
         except Exception as e:
-            logger.error(f"Error fetching student progress for course {pk}: {str(e)}")
+            logger.error(
+                "Error fetching student progress for course %s: %s",
+                pk,
+                str(e),
+                exc_info=True,
+            )
             return Response(
                 {"error": "An unexpected error occurred while fetching progress."},
                 status=500,
@@ -229,12 +227,12 @@ class CourseViewSet(viewsets.ModelViewSet):
         Fetch course details without progress data.
         """
         try:
-            logger.info(f"Fetching course details for course ID: {pk}")
+            logger.info("Fetching course details for course ID: %s", pk)
             course = self.get_object()
 
             # Fetch tasks related to the course
             tasks = LearningTask.objects.filter(course=course)
-            logger.info(f"Found {tasks.count()} tasks for course ID: {pk}")
+            logger.info("Found %s tasks for course ID: %s", tasks.count(), pk)
 
             return Response(
                 {
@@ -250,16 +248,43 @@ class CourseViewSet(viewsets.ModelViewSet):
                 }
             )
         except Course.DoesNotExist:
-            logger.error(f"Course with ID {pk} does not exist.")
+            logger.error("Course with ID %s does not exist.", pk)
             return Response({"error": "Course not found."}, status=404)
         except Exception as e:
-            logger.error(f"Error fetching course details for course ID {pk}: {str(e)}")
+            logger.error(
+                "Error fetching course details for course ID %s: %s",
+                pk,
+                str(e),
+                exc_info=True,
+            )
             return Response(
                 {
                     "error": "An unexpected error occurred while fetching course details."
                 },
                 status=500,
             )
+
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="enroll",
+        permission_classes=[IsAuthenticated],
+    )
+    def enroll(self, request, pk=None):
+        course = self.get_object()
+        user = request.user
+
+        if CourseEnrollment.objects.filter(user=user, course=course).exists():
+            return Response(
+                {"detail": "You are already enrolled in this course."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        CourseEnrollment.objects.create(user=user, course=course, status="active")
+        return Response(
+            {"detail": "Successfully enrolled in the course."},
+            status=status.HTTP_201_CREATED,
+        )
 
     def get_permissions(self):
         """
@@ -307,7 +332,12 @@ class LearningTaskViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(tasks, many=True)
             return Response(serializer.data)
         except Exception as e:
-            logger.error(f"Error fetching tasks for course {course_id}: {str(e)}")
+            logger.error(
+                "Error fetching tasks for course %s: %s",
+                course_id,
+                str(e),
+                exc_info=True,
+            )
             return Response(
                 {"error": "An unexpected error occurred while fetching tasks."},
                 status=500,
@@ -342,9 +372,6 @@ class QuizOptionViewSet(viewsets.ModelViewSet):
     queryset = QuizOption.objects.all()
     serializer_class = QuizOptionSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-
-from django.contrib.auth.models import AnonymousUser
 
 
 class CourseEnrollmentViewSet(viewsets.ModelViewSet):
@@ -629,12 +656,6 @@ def get_course_details(request, course_id):
             "progress": [{"task_id": p.task_id, "status": p.status} for p in progress],
         }
     )
-
-
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from .serializers import UserSerializer
 
 
 class UserProfileAPI(APIView):

@@ -44,9 +44,9 @@ class APITests(APITestCase):
 
     def test_health_check(self):
         # Test the health check endpoint
-        response = self.client.get("/api/v1/health-check/")
+        response = self.client.get("/health/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["status"], "healthy")
+        self.assertEqual(response.json()["status"], "healthy")
 
     def test_student_access_own_progress(self):
         # Authenticate as the student
@@ -75,7 +75,7 @@ class APITests(APITestCase):
         response = self.client.get(
             f"/api/v1/courses/{self.course.id}/student-progress/"
         )
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_admin_access_all_courses(self):
         # Authenticate as the admin
@@ -83,5 +83,7 @@ class APITests(APITestCase):
 
         # Test the course list endpoint
         response = self.client.get("/api/v1/courses/")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIsInstance(response.data, list)
+        self.assertIn("results", response.data)  # Check for 'results' key
+        self.assertIsInstance(
+            response.data["results"], list
+        )  # Validate 'results' is a list

@@ -54,7 +54,6 @@ const CourseEnrollment = ({ courseId }) => {
         try {
             setEnrolling(true);
             setError(null);
-
             await enrollInCourse(courseId);
             setEnrollmentStatus('active');
             setSuccessMessage('You have successfully enrolled in this course!');
@@ -121,17 +120,6 @@ const CourseEnrollment = ({ courseId }) => {
                             variant="outlined"
                         />
                     </Box>
-
-                    {course.learning_objectives && (
-                        <Box sx={{ mt: 2, mb: 3 }}>
-                            <Typography variant="subtitle1">Learning Objectives:</Typography>
-                            <Typography variant="body2">
-                                {Array.isArray(course.learning_objectives)
-                                    ? course.learning_objectives.join(', ')
-                                    : course.learning_objectives}
-                            </Typography>
-                        </Box>
-                    )}
 
                     {enrollmentStatus ? (
                         <Box sx={{ mt: 2 }}>

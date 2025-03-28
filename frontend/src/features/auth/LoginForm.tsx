@@ -12,33 +12,33 @@ import { useAuth } from './AuthContext';
 import ErrorMessage from '@components/ErrorMessage';
 
 const LoginForm: React.FC = () => {
-  const [username, setUsername] = useState('');
+  const { login } = useAuth();
+  const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { login } = useAuth();
 
   // Clear error when username or password changes
   useEffect(() => {
     if (error) {
       setError(null);
     }
-  }, [username, password]);
+  }, [usernameOrEmail, password]);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError(null);
+    setIsLoading(true);
 
     try {
-      await login(username, password);
+      await login(usernameOrEmail, password);
       navigate('/dashboard');
     } catch (err) {
       console.error('Login error:', err);
-      setError('Invalid username or password');
+      setError('Login failed. Please check your credentials and try again.');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -55,7 +55,7 @@ const LoginForm: React.FC = () => {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <Box component="form" onSubmit={handleLogin} sx={{ mt: 1, width: '100%' }}>
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
           <TextField
             margin="normal"
             required
@@ -64,8 +64,8 @@ const LoginForm: React.FC = () => {
             name="username_or_email"
             autoComplete="username"
             autoFocus
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={usernameOrEmail}
+            onChange={(e) => setUsernameOrEmail(e.target.value)}
             error={!!error}
           />
           <TextField
@@ -93,9 +93,9 @@ const LoginForm: React.FC = () => {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
-            disabled={loading}
+            disabled={isLoading}
           >
-            {loading ? <CircularProgress size={24} /> : 'Sign In'}
+            {isLoading ? <CircularProgress size={24} /> : 'Sign In'}
           </Button>
         </Box>
       </Box>

@@ -1,47 +1,6 @@
 {
+  "extends": "./tsconfig.app.json", // Extend the app-specific configuration
   "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "lib": [
-      "ESNext",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "module": "ESNext",
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "baseUrl": "./src",
-    "paths": {
-      "@components/*": [
-        "components/*"
-      ],
-      "@features/*": [
-        "features/*"
-      ],
-      "@pages/*": [
-        "pages/*"
-      ],
-      "@services/*": [
-        "services/*"
-      ],
-      "@types/*": [
-        "types/*"
-      ],
-      "@hooks/*": [
-        "hooks/*"
-      ],
-      "@theme/*": [
-        "theme/*"
-      ]
-    },
     "types": [
       "vite/client",
       "node",
@@ -49,13 +8,5 @@
       "@types/testing-library__react",
       "jest"
     ]
-  },
-  "include": [
-    "src"
-  ],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    }
-  ]
+  }
 }

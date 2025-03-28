@@ -9,6 +9,8 @@ from .views import CustomTokenObtainPairView
 from rest_framework.routers import DefaultRouter
 
 from core.views import CourseViewSet
+from django.conf import settings
+from django.conf.urls.static import static
 
 router = DefaultRouter()
 router.register(r"courses", CourseViewSet, basename="course")
@@ -21,6 +23,7 @@ schema_view = get_schema_view(
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
+    authentication_classes=[],  # Explicitly disable session authentication
 )
 
 urlpatterns = [
@@ -42,3 +45,6 @@ urlpatterns = [
     ),
     path("api/v1/", include(router.urls)),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

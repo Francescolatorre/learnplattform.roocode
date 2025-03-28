@@ -1,0 +1,53 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "lib": [
+            "ESNext",
+            "DOM",
+            "DOM.Iterable"
+        ],
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+        "baseUrl": "./src",
+        "paths": {
+            "@features/*": [
+                "features/*"
+            ],
+            "@components/*": [
+                "components/*"
+            ],
+            "@hooks/*": [
+                "hooks/*"
+            ],
+            "@theme/*": [
+                "theme/*"
+            ],
+            "@utils/*": [
+                "utils/*"
+            ],
+            "@pages/*": [
+                "pages/*"
+            ],
+            "@services/*": [
+                "services/*"
+            ],
+            "@types/*": [
+                "types/*"
+            ],
+            "@config/*": [
+                "config/*"
+            ]
+        }
+    },
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
