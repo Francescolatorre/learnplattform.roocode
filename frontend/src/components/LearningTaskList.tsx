@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import LearningTaskService from '../services/resources/learningTaskService';
+import React, {useEffect, useState} from 'react';
+import LearningTaskService from '@features/learningTasks/services/learningTaskService';
 
 const LearningTaskList: React.FC = () => {
   const [tasks, setTasks] = useState([]);

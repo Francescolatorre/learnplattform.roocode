@@ -1,6 +1,6 @@
 import React from 'react';
-import { useQuery, useMutation } from 'react-query';
-import learningTaskService from '../../../services/resources/learningTaskService';
+import {useQuery, useMutation} from 'react-query';
+import LearningTaskService from '@features/learningTasks/services/learningTaskService';
 import {
   CircularProgress,
   List,
@@ -15,17 +15,17 @@ const LearningTasksList: React.FC = () => {
     data: taskProgress,
     isLoading,
     refetch,
-  } = useQuery('taskProgress', learningTaskService.fetchTaskProgress);
+  } = useQuery('taskProgress', LearningTaskService.fetchTaskProgress);
   const mutation = useMutation(
-    ({ taskId, status }: { taskId: number; status: string }) =>
-      learningTaskService.updateTaskProgress(taskId, status),
+    ({taskId, status}: {taskId: number; status: string}) =>
+      LearningTaskService.updateTaskProgress(taskId, status),
     {
       onSuccess: () => refetch(),
     }
   );
 
   const handleCompleteTask = (taskId: number) => {
-    mutation.mutate({ taskId, status: 'completed' });
+    mutation.mutate({taskId, status: 'completed'});
   };
 
   if (isLoading) {
@@ -37,11 +37,11 @@ const LearningTasksList: React.FC = () => {
       {taskProgress?.map((progress: any) => (
         <ListItem key={progress.task.id} divider>
           <ListItemText primary={progress.task.title} secondary={progress.task.description} />
-          <div style={{ width: '100%' }}>
+          <div style={{width: '100%'}}>
             <LinearProgress
               variant="determinate"
               value={progress.status === 'completed' ? 100 : 50}
-              style={{ marginBottom: '8px' }}
+              style={{marginBottom: '8px'}}
             />
             <Button
               variant="contained"

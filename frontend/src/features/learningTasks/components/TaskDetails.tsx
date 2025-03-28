@@ -1,15 +1,15 @@
 import React from 'react';
-import { useQuery } from 'react-query';
-import learningTaskService from '../../services/resources/learningTaskService';
-import { CircularProgress, Typography, Button } from '@mui/material';
+import {useQuery} from 'react-query';
+import LearningTaskService from '@features/learningTasks/services/learningTaskService';
+import {CircularProgress, Typography, Button} from '@mui/material';
 
 interface TaskDetailsProps {
   taskId: number;
 }
 
-const TaskDetails: React.FC<TaskDetailsProps> = ({ taskId }) => {
-  const { data: taskDetails, isLoading } = useQuery(['taskDetails', taskId], () =>
-    learningTaskService.fetchTaskDetails(String(taskId))
+const TaskDetails: React.FC<TaskDetailsProps> = ({taskId}) => {
+  const {data: taskDetails, isLoading} = useQuery(['taskDetails', taskId], () =>
+    LearningTaskService.fetchTaskDetails(String(taskId))
   );
 
   if (isLoading) {

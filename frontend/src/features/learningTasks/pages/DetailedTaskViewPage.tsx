@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import LearningTaskService from '../../services/learningTaskService';
-import { ILearningTask } from '../../types/learningTaskTypes';
+import React, {useEffect, useState} from 'react';
+import {useParams} from 'react-router-dom';
+import LearningTaskService from '@features/learningTasks/services/learningTaskService';
+import {ILearningTask} from '../../types/learningTaskTypes';
 
 const DetailedTaskViewPage: React.FC = () => {
-  const { taskId } = useParams<{ taskId: string }>();
+  const {taskId} = useParams<{taskId: string}>();
   const [task, setTask] = useState<ILearningTask | null>(null);
   const [error, setError] = useState<string | null>(null);
 

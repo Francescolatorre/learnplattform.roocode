@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Box,
   Typography,
@@ -10,9 +10,9 @@ import {
   CardContent,
   Divider,
 } from '@mui/material';
-import { Link } from 'react-router-dom';
-import { fetchUserEnrollments } from '../../services/resources/courseService';
-import learningTaskService from '../../services/resources/learningTaskService';
+import {Link} from 'react-router-dom';
+import {fetchUserEnrollments} from '../../services/resources/courseService';
+import LearningTaskService from '@features/learningTasks/services/learningTaskService';
 
 interface IEnrollment {
   course: {
@@ -44,7 +44,7 @@ const StudentDashboard: React.FC = () => {
         setEnrollments(enrollmentData.results); // Use updated enrollments with course details
 
         // Fetch upcoming tasks
-        const taskData = { results: [] };
+        const taskData = {results: []};
         setUpcomingTasks(taskData.results.slice(0, 5)); // Show only the top 5 tasks
       } catch (err: any) {
         console.error('Failed to load student dashboard data:', err);
@@ -66,13 +66,13 @@ const StudentDashboard: React.FC = () => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{p: 3}}>
       <Typography variant="h4" gutterBottom>
         Student Dashboard
       </Typography>
 
       {/* Enrolled Courses with Progress */}
-      <Card sx={{ mb: 4 }}>
+      <Card sx={{mb: 4}}>
         <CardContent>
           <Typography variant="h5" gutterBottom>
             My Courses
@@ -92,7 +92,7 @@ const StudentDashboard: React.FC = () => {
                 <LinearProgress
                   variant="determinate"
                   value={enrollment.progress_percentage}
-                  sx={{ width: '30%', ml: 2 }}
+                  sx={{width: '30%', ml: 2}}
                 />
               </ListItem>
             ))}
@@ -101,7 +101,7 @@ const StudentDashboard: React.FC = () => {
       </Card>
 
       {/* Upcoming Tasks */}
-      <Card sx={{ mb: 4 }}>
+      <Card sx={{mb: 4}}>
         <CardContent>
           <Typography variant="h5" gutterBottom>
             Upcoming Learning Tasks
