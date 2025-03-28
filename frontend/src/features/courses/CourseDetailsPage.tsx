@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Typography, List, ListItem, Card, CardContent, Divider, CircularProgress } from '@mui/material';
 import { fetchCourseDetails, fetchLearningTasks } from '../../services/courseService';
+import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import markdownStyles from './CourseDetailsPage.styles';
 
 interface ICourseDetails {
     id: string;
@@ -15,6 +19,36 @@ interface ITask {
     description: string;
     order: number;
 }
+
+const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
+    return (
+        <Box sx={markdownStyles.content}>
+            <ReactMarkdown
+                components={{
+                    code({ node, inline, className, children, ...props }) {
+                        const match = /language-(\w+)/.exec(className || '');
+                        return !inline && match ? (
+                            <SyntaxHighlighter
+                                style={vscDarkPlus}
+                                language={match[1]}
+                                PreTag="div"
+                                {...props}
+                            >
+                                {String(children).replace(/\n$/, '')}
+                            </SyntaxHighlighter>
+                        ) : (
+                            <code className={className} {...props}>
+                                {children}
+                            </code>
+                        );
+                    }
+                }}
+            >
+                {content}
+            </ReactMarkdown>
+        </Box>
+    );
+};
 
 const CourseDetailsPage: React.FC = () => {
     const { courseId } = useParams<{ courseId: string }>();
@@ -34,7 +68,6 @@ const CourseDetailsPage: React.FC = () => {
                 setCourseDetails(details);
 
                 const tasks = await fetchLearningTasks(courseId);
-                console.log('Fetched Learning Tasks:', tasks); // Debug log
                 setLearningTasks(tasks);
             } catch (err: any) {
                 console.error(`Error loading course details or learning tasks for courseId: ${courseId}`, err);
@@ -60,9 +93,11 @@ const CourseDetailsPage: React.FC = () => {
             <Typography variant="h4" gutterBottom>
                 {courseDetails?.title}
             </Typography>
-            <Typography variant="body1" gutterBottom>
-                {courseDetails?.description}
-            </Typography>
+
+            {/* Render course description as Markdown */}
+            {courseDetails?.description && (
+                <MarkdownRenderer content={courseDetails.description} />
+            )}
 
             <Typography variant="h5" sx={{ mt: 4, mb: 2 }}>
                 Learning Tasks
@@ -70,16 +105,16 @@ const CourseDetailsPage: React.FC = () => {
             {Array.isArray(learningTasks) && learningTasks.length > 0 ? (
                 <List>
                     {learningTasks
-                        .sort((a, b) => a.order - b.order) // Sort tasks by order
+                        .sort((a, b) => a.order - b.order)
                         .map((task) => (
                             <ListItem key={task.id} disablePadding sx={{ mb: 2 }}>
                                 <Card variant="outlined" sx={{ width: '100%' }}>
                                     <CardContent>
                                         <Typography variant="h6">{task.title}</Typography>
                                         <Divider sx={{ my: 1 }} />
-                                        <Typography variant="body2" color="textSecondary">
-                                            {task.description}
-                                        </Typography>
+
+                                        {/* Render task description as Markdown */}
+                                        <MarkdownRenderer content={task.description} />
                                     </CardContent>
                                 </Card>
                             </ListItem>
