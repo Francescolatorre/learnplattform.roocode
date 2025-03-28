@@ -205,19 +205,21 @@ class CourseEnrollment(models.Model):
 
     def is_course_completed(self):
         """Check if all tasks in the course are completed by the user."""
-        course_tasks = self.course.tasks.all()
+        course_tasks = (
+            self.course.learning_tasks.all()
+        )  # Updated from course.tasks to course.learning_tasks
         user_progress = self.user.task_progress.filter(task__in=course_tasks)
 
-        # If the user hasn't started any tasks, the course is not completed
         if user_progress.count() < course_tasks.count():
             return False
 
-        # Check if all tasks are completed
         return all(progress.status == "completed" for progress in user_progress)
 
     def calculate_course_progress(self):
         """Calculate the percentage of completed tasks in this course."""
-        course_tasks = self.course.tasks.all()
+        course_tasks = (
+            self.course.learning_tasks.all()
+        )  # Updated from course.tasks to course.learning_tasks
         if not course_tasks.exists():
             return 0
 

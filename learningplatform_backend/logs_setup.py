@@ -99,78 +99,86 @@ api_logger = logging.getLogger("api")
 print("Logging configuration applied successfully.")
 
 
-def log_request(request, logger=None):
+def log_request(request, logger=None, log_headers=True):
     """
-    Log details about an HTTP request
+    Logs the details of an incoming request.
 
     Args:
-        request: The Django request object
-        logger: Optional logger to use (defaults to api_logger)
+        request: The Django request object.
+        logger: Optional logger to use for logging.
+        log_headers: Boolean flag to enable/disable logging of headers.
 
     Returns:
-        dict: Dictionary containing request data
+        dict: A dictionary containing logged request data.
     """
-    if logger is None:
-        logger = api_logger
-
-    # Create a dictionary of request information
+    logger = logger or logging.getLogger("request")
     request_data = {
         "method": request.method,
         "path": request.path,
-        "user": str(request.user) if hasattr(request, "user") else "Anonymous",
-        "ip": request.META.get("REMOTE_ADDR", "Unknown"),
-        "headers": {k: v for k, v in request.META.items() if k.startswith("HTTP_")},
+        "body": None,  # Default to None
     }
 
-    # Log request body for POST, PUT, PATCH requests (be careful with sensitive data)
-    if request.method in ("POST", "PUT", "PATCH") and hasattr(request, "body"):
-        try:
-            # Try to parse as JSON
-            body = json.loads(request.body.decode("utf-8"))
-            # Redact sensitive fields
-            if "password" in body:
-                body["password"] = "[REDACTED]"
-            if "token" in body:
-                body["token"] = "[REDACTED]"
-            request_data["body"] = body
-        except json.JSONDecodeError:
-            # If not JSON or other error, just note the content type
-            request_data["body"] = f"[Content-Type: {request.content_type}]"
-        except Exception as e:
-            logger.warning(f"Error processing request body: {str(e)}")
-            request_data["body"] = "[Error parsing body]"
+    # Log the body only for methods that typically include a payload
+    if request.method in {"POST", "PUT", "PATCH"}:
+        request_data["body"] = request.body.decode("utf-8") if request.body else None
 
-    # Log the request data
-    try:
-        logger.info(f"Request received: {json.dumps(request_data)}")
-    except Exception as e:
-        logger.error(f"Failed to log request: {str(e)}")
+    if log_headers:
+        sensitive_headers = {"Authorization", "Cookie"}
+        request_data["headers"] = {
+            k: (v if k not in sensitive_headers else "[FILTERED]")
+            for k, v in request.headers.items()
+        }
+    else:
+        request_data["headers"] = "[HEADERS NOT LOGGED]"
 
+    logger.info("Request Data: %s", json.dumps(request_data))
     return request_data
 
 
 def log_response(response, request_data=None, logger=None):
     """
-    Log details about an HTTP response
+    Log details about an HTTP response.
 
     Args:
-        response: The Django response object
-        request_data: Optional dictionary of request data
-        logger: Optional logger to use (defaults to api_logger)
+        response: The Django response object.
+        request_data: Optional dictionary of request data.
+        logger: Optional logger to use (defaults to api_logger).
 
     Returns:
-        dict: Dictionary containing response data
+        dict: Dictionary containing response data.
     """
     if logger is None:
         logger = api_logger
+
+    # Skip logging auth-related paths in api.log
+    auth_paths = [
+        "/auth/login/",
+        "/auth/logout/",
+        "/auth/token/refresh/",
+        "/auth/register/",
+    ]
+    if request_data and any(
+        request_data.get("path", "").startswith(path) for path in auth_paths
+    ):
+        return {}
 
     # Create a dictionary of response information
     response_data = {
         "status_code": response.status_code,
         "reason": getattr(response, "reason_phrase", ""),
         "content_type": response.get("Content-Type", "text/html"),
+        "body": None,  # Default to None
         "request": request_data or {},
     }
+
+    # Log the response body if it exists and is JSON
+    try:
+        if response.get("Content-Type", "").startswith("application/json"):
+            response_data["body"] = json.loads(response.content.decode("utf-8"))
+        else:
+            response_data["body"] = response.content.decode("utf-8")
+    except Exception as e:
+        logger.warning("Failed to decode response body: %s", str(e))
 
     # Log the response data
     try:

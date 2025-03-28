@@ -1,52 +1,46 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchCourseDetails, CourseService } from '../../services/courseService';
-import { Typography, CircularProgress, Card, CardContent, List, ListItem, ListItemText, Divider, Box } from '@mui/material';
+import { Box, Typography, List, ListItem, Card, CardContent, Divider, CircularProgress } from '@mui/material';
+import { fetchCourseDetails, fetchLearningTasks } from '../../services/courseService';
 
 interface ICourseDetails {
     id: string;
     title: string;
     description: string;
-    // Add other course fields as needed
 }
 
 interface ITask {
     id: string;
     title: string;
     description: string;
+    order: number;
 }
 
 const CourseDetailsPage: React.FC = () => {
     const { courseId } = useParams<{ courseId: string }>();
     const [courseDetails, setCourseDetails] = useState<ICourseDetails | null>(null);
-    const [tasks, setTasks] = useState<ITask[]>([]);
+    const [learningTasks, setLearningTasks] = useState<ITask[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const loadCourseDetails = async () => {
-            console.log(`Loading course details for courseId: ${courseId}`);
             try {
                 if (!courseId) {
                     throw new Error('Course ID is missing.');
                 }
 
-                const details = await fetchCourseDetails(courseId, true);
-                if (!details.title) {
-                    throw new Error('Course title is missing.');
-                }
-                console.log('Course details loaded successfully:', details);
+                const details = await fetchCourseDetails(courseId);
                 setCourseDetails(details);
 
-                const courseTasks = await CourseService.getTasks(courseId);
-                console.log(`Tasks for courseId ${courseId} loaded successfully:`, courseTasks);
-                setTasks(courseTasks);
+                const tasks = await fetchLearningTasks(courseId);
+                console.log('Fetched Learning Tasks:', tasks); // Debug log
+                setLearningTasks(tasks);
             } catch (err: any) {
-                console.error(`Error loading course details or tasks for courseId: ${courseId}`, err);
-                setError(err.message || 'Failed to load course details.');
+                console.error(`Error loading course details or learning tasks for courseId: ${courseId}`, err);
+                setError(err.message || 'Failed to load course details or learning tasks.');
             } finally {
                 setLoading(false);
-                console.log(`Finished loading course details for courseId: ${courseId}`);
             }
         };
 
@@ -54,51 +48,48 @@ const CourseDetailsPage: React.FC = () => {
     }, [courseId]);
 
     if (loading) {
-        console.log('Loading state active...');
         return <CircularProgress />;
     }
 
     if (error) {
-        console.error('Error state:', error);
         return <Typography color="error">{error}</Typography>;
     }
 
     return (
         <Box sx={{ padding: 4 }}>
-            <Card sx={{ marginBottom: 4 }}>
-                <CardContent>
-                    <Typography variant="h4" gutterBottom>
-                        {courseDetails?.title}
-                    </Typography>
-                </CardContent>
-            </Card>
+            <Typography variant="h4" gutterBottom>
+                {courseDetails?.title}
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+                {courseDetails?.description}
+            </Typography>
 
-            <Card>
-                <CardContent>
-                    <Typography variant="h5" gutterBottom>
-                        Tasks
-                    </Typography>
-                    {tasks.length > 0 ? (
-                        <List>
-                            {tasks.map((task) => (
-                                <React.Fragment key={task.id}>
-                                    <ListItem>
-                                        <ListItemText
-                                            primary={task.title}
-                                            secondary={task.description}
-                                        />
-                                    </ListItem>
-                                    <Divider />
-                                </React.Fragment>
-                            ))}
-                        </List>
-                    ) : (
-                        <Typography variant="body1" color="textSecondary">
-                            No tasks available for this course.
-                        </Typography>
-                    )}
-                </CardContent>
-            </Card>
+            <Typography variant="h5" sx={{ mt: 4, mb: 2 }}>
+                Learning Tasks
+            </Typography>
+            {Array.isArray(learningTasks) && learningTasks.length > 0 ? (
+                <List>
+                    {learningTasks
+                        .sort((a, b) => a.order - b.order) // Sort tasks by order
+                        .map((task) => (
+                            <ListItem key={task.id} disablePadding sx={{ mb: 2 }}>
+                                <Card variant="outlined" sx={{ width: '100%' }}>
+                                    <CardContent>
+                                        <Typography variant="h6">{task.title}</Typography>
+                                        <Divider sx={{ my: 1 }} />
+                                        <Typography variant="body2" color="textSecondary">
+                                            {task.description}
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            </ListItem>
+                        ))}
+                </List>
+            ) : (
+                <Typography variant="body2" color="textSecondary">
+                    No learning tasks available for this course.
+                </Typography>
+            )}
         </Box>
     );
 };

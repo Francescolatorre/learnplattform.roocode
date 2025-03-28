@@ -11,6 +11,7 @@ class ApiService {
             timeout: 15000,
             headers: {
                 'Content-Type': 'application/json',
+                Accept: 'application/json',
             },
         });
 
@@ -28,9 +29,12 @@ class ApiService {
 
         // Add response interceptor to handle errors
         this.instance.interceptors.response.use(
-            (response) => response,
+            (response) => {
+                console.log('API Response:', response); // Debug log for all responses
+                return response;
+            },
             (error) => {
-                console.error('API Error:', error);
+                console.error('API Error:', error.response || error.message); // Debug log for errors
                 return Promise.reject(error);
             }
         );

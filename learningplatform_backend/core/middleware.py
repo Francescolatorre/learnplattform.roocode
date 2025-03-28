@@ -6,7 +6,10 @@ import time
 
 # Add the parent directory to the Python path so we can import logs_setup
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from logs_setup import log_request, log_response
+from logs_setup import (
+    log_request,
+    log_response,
+)  # Ensure this matches the updated definition
 
 
 class RequestLoggingMiddleware:
@@ -16,16 +19,26 @@ class RequestLoggingMiddleware:
         self.get_response = get_response
         self.logger = logging.getLogger("api")
         self.logger.setLevel(logging.DEBUG)
-        # print("RequestLoggingMiddleware: I am running")  # Logs to stdout
         self.verbose_routes = [
             "/api/v1/courses/",
             "/api/v1/tasks/course/",
             "/api/v1/course-enrollments/",
             "/api/v1/courses/student-progress/",
+            "/api/v1/learning-tasks/",
+            "/api/v1/learning-tasks/{id}/",
+            "/api/v1/quiz-tasks/",
+            "/api/v1/quiz-tasks/{id}/",
+            "/api/v1/task-progress/",
+            "/api/v1/task-progress/{id}/",
+            "/api/v1/courses/analytics/",
+            "/api/v1/users/",
+            "/api/v1/users/{id}/",
+            "/api/v1/roles/",
         ]
+        self.log_headers = True  # Enable header logging
 
     def __call__(self, request):
-        request_data = log_request(request)
+        request_data = log_request(request, log_headers=self.log_headers)
         start_time = time.time()
 
         # Process the request
@@ -58,9 +71,6 @@ class AuthLoggingMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
         self.logger = logging.getLogger("auth")
-        # print("AuthLoggingMiddleware: I am running")  # Logs to stdout
-
-        # Paths that are related to authentication
         self.auth_paths = [
             "/auth/login/",
             "/auth/logout/",
@@ -69,11 +79,14 @@ class AuthLoggingMiddleware:
             "/api/token/",
             "/token/",
         ]
+        self.log_headers = True  # Flag to enable/disable header logging
 
     def __call__(self, request):
         # Only log auth-related requests
         if any(request.path.startswith(path) for path in self.auth_paths):
-            request_data = log_request(request, logger=self.logger)
+            request_data = log_request(
+                request, logger=self.logger, log_headers=self.log_headers
+            )
 
             # Process the request
             response = self.get_response(request)
@@ -107,7 +120,16 @@ class DebugLoggingMiddleware:
 
     def __init__(self, get_response):
         self.get_response = get_response
+        self.logger = logging.getLogger("debug")
+        self.logger.setLevel(logging.DEBUG)
+        self.log_headers = False  # Flag to enable/disable header logging
 
     def __call__(self, request):
+        if self.logger.isEnabledFor(logging.DEBUG):
+            request_data = log_request(request, log_headers=self.log_headers)
+            self.logger.debug(
+                "Request Payload: %s",
+                json.dumps(request_data.get("body", "{}")),
+            )
         response = self.get_response(request)
         return response

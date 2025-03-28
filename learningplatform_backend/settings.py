@@ -95,26 +95,29 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",  # Add CORS middleware
-    "django.middleware.security.SecurityMiddleware",CORS middleware
+    "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",e",
+    "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # Consolidated middleware
+    "learningplatform_backend.middleware.middleware.RequestLoggingMiddleware",
+    "learningplatform_backend.middleware.middleware.AuthLoggingMiddleware",
+    "learningplatform_backend.middleware.middleware.DebugLoggingMiddleware",
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Allow requests from the frontend
-]   "http://localhost:3000",  # Allow requests from the frontend
+]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",  # Use only JWT authentication
-    ],ework_simplejwt.authentication.JWTAuthentication",  # Use only JWT authentication
+    ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",  # Allow unrestricted access by default
-    ],  "rest_framework.permissions.AllowAny",  # Allow unrestricted access by default
+    ],
     "EXCEPTION_HANDLER": "learningplatform_backend.core.exception_handler.custom_exception_handler",
-}tion_handler",
+}

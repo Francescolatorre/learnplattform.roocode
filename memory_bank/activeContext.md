@@ -13,14 +13,12 @@
 - Identified inconsistencies in task status tracking across different files.
 - Completed implementation of Progress Tracking API Endpoints (TASK-003).
 - Completed implementation of Progress Tracking Frontend Components (TASK-002).
+- Completed implementation of Task Progress Tracking UI (TASK-UI-005).
 
 ## Active Tasks
 - **API Implementation Completion** (TASK-API-IMPLEMENTATION-COMPLETION): IN_PROGRESS
-- **Model Consolidation** (TASK-MODEL-CONSOLIDATION-002): IN_PROGRESS
-- **Task Progress Tracking UI** (TASK-UI-005): IN_PROGRESS
 - **Course Creation Feature** (TASK-CREATION-001): IN_PROGRESS
 - **Progress Tracking Frontend Components** (TASK-002): DONE
-- **User Progress Tracking Models** (TASK-001): DONE
 - **Progress Tracking API Endpoints** (TASK-003): DONE
 
 ## Priority TODO Tasks
@@ -35,3 +33,6 @@
 - Update progress.md to reflect the consolidated task list
 - Rename task files to follow consistent naming convention
 - Update project_status.md to align with the consolidated view
+
+## Notes
+- TASK-001 has been completed and moved to the progress log.

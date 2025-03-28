@@ -101,6 +101,23 @@ export const fetchUserEnrollments = async (): Promise<any> => {
   }
 };
 
+export const fetchLearningTasks = async (courseId: string) => {
+  try {
+    const response = await apiService.get(`/api/v1/learning-tasks/course/${courseId}/`);
+    console.log('Full Axios Response:', response); // Debug log for the full response
+
+    if (response) {
+      return response; // Return the data if it exists
+    }
+
+    console.warn('Response data is undefined:', response);
+    return []; // Return an empty array as a fallback
+  } catch (error) {
+    console.error(`Failed to fetch learning tasks for courseId: ${courseId}`, error);
+    throw error;
+  }
+};
+
 export const CourseService = {
   async getTasks(courseId: string, page: number = 1) {
     try {
