@@ -4,7 +4,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework_simplejwt.views import TokenRefreshView
-from .views import CustomTokenObtainPairView
+from .views import CustomTokenObtainPairView, LearningTaskViewSet
 
 from rest_framework.routers import DefaultRouter
 
@@ -14,6 +14,7 @@ from django.conf.urls.static import static
 
 router = DefaultRouter()
 router.register(r"courses", CourseViewSet, basename="course")
+router.register(r"learning-tasks", LearningTaskViewSet, basename="learning-task")
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -28,7 +29,6 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include("myapp.urls")),  # Replace "myapp" with your app name
     path(
         "swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),
@@ -44,6 +44,7 @@ urlpatterns = [
         "api/v1/auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"
     ),
     path("api/v1/", include(router.urls)),
+    path("api/v1/", include("learning_tasks.urls")),
 ]
 
 if settings.DEBUG:

@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { useAuth } from '@features/auth/AuthContext';
+import { useAuth } from '../../features/auth/AuthContext';
 import { menuConfig } from '../../config/menuConfig'; // Use relative path if alias is not configured
 
 const NavigationBar: React.FC = () => {

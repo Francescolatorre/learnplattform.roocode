@@ -11,6 +11,19 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")  # For production use
 
+DEBUG = True
+
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+    }
+}
+
+ROOT_URLCONF = "learningplatform_backend.urls"
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -69,28 +82,39 @@ LOGGING = {
 }
 
 INSTALLED_APPS = [
-    # ...existing apps...
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_simplejwt",
-    # ...existing apps...
     "corsheaders",  # Add CORS headers app
+    "learningplatform_backend",  # Ensure this app is listed
 ]
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",  # Add CORS middleware
-    # ...existing middleware...
+    "django.middleware.security.SecurityMiddleware",CORS middleware
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",e",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Allow requests from the frontend
-]
+]   "http://localhost:3000",  # Allow requests from the frontend
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",  # Use only JWT authentication
-    ],
+    ],ework_simplejwt.authentication.JWTAuthentication",  # Use only JWT authentication
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",  # Allow unrestricted access by default
-    ],
+    ],  "rest_framework.permissions.AllowAny",  # Allow unrestricted access by default
     "EXCEPTION_HANDLER": "learningplatform_backend.core.exception_handler.custom_exception_handler",
-}
+}tion_handler",

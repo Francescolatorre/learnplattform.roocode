@@ -64,6 +64,9 @@ class InstructorRole(models.Model):
 
 class Course(models.Model):
     title = models.CharField(max_length=255)
+    creator = models.ForeignKey(
+        "User", on_delete=models.CASCADE, related_name="courses"
+    )
     description = models.TextField()
     version = models.IntegerField(default=1)
     status = models.CharField(max_length=100)
@@ -72,9 +75,6 @@ class Course(models.Model):
     prerequisites = models.TextField(blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(default=timezone.now)
-    creator = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="created_courses", null=True
-    )
 
     def __str__(self):
         return self.title
@@ -120,7 +120,9 @@ class StatusTransition(models.Model):
 
 
 class LearningTask(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="tasks")
+    course = models.ForeignKey(
+        "core.Course", on_delete=models.CASCADE, related_name="learning_tasks"
+    )
     title = models.CharField(max_length=255)
     description = models.TextField()
     order = models.IntegerField(default=0)
