@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { z } from 'zod';
+import {z} from 'zod';
 import apiService from '../api/apiService';
-import { Task, TaskCreationData } from '../../types/apiTypes';
+import {Task, TaskCreationData} from '../../types/apiTypes';
 
 // Enhanced Type Definitions with Validation
 const TaskSchema = z.object({
@@ -30,8 +30,6 @@ export type TaskCreationData = z.infer<typeof TaskCreationSchema>;
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const API_URL = `${API_BASE_URL}/api/v1`; // Ensure correct API version
 
-// Removed `getAuthHeaders` function as it is no longer used
-
 function handleError(error: unknown, context: string) {
   if (axios.isAxiosError(error)) {
     if (error.response?.status === 401) {
@@ -54,8 +52,8 @@ function handleError(error: unknown, context: string) {
 export const fetchTasksByCourse = async (
   courseId: string,
   includeSubtasks = false
-): Promise<{ count: number; next: string | null; previous: string | null; results: Task[] }> => {
-  return apiService.get(`tasks/course/${courseId}/`, { includeSubtasks });
+): Promise<{count: number; next: string | null; previous: string | null; results: Task[]}> => {
+  return apiService.get(`tasks/course/${courseId}/`, {includeSubtasks});
 };
 
 export const createTask = async (
@@ -68,7 +66,7 @@ export const createTask = async (
       formData.append(key, value instanceof File ? value : String(value));
     }
   });
-  return apiService.post<Task>('tasks/', formData, { notifyUsers });
+  return apiService.post<Task>('tasks/', formData, {notifyUsers});
 };
 
 export const updateTask = async (taskId: string, updatedData: Partial<Task>): Promise<Task> => {
@@ -81,7 +79,7 @@ export const deleteTask = async (taskId: string): Promise<void> => {
 
 export const fetchTaskSubmissions = async (
   taskId: string
-): Promise<{ count: number; next: string | null; previous: string | null; results: any[] }> => {
+): Promise<{count: number; next: string | null; previous: string | null; results: any[]}> => {
   return apiService.get(`tasks/${taskId}/submissions/`);
 };
 
@@ -102,5 +100,5 @@ export const useTaskCreation = () => {
     });
   };
 
-  return { createTask: handleTaskCreation };
+  return {createTask: handleTaskCreation};
 };

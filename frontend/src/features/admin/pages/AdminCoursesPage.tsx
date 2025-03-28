@@ -1,87 +1,67 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Container,
-  Typography,
-  CircularProgress,
-  Alert,
-  Grid,
-  Card,
-  CardContent,
-  Button,
-} from '@mui/material';
-import { fetchCourses } from '../../../services/resources/courseService';
+import React, {useEffect, useState} from 'react';
+import {fetchCourses} from '@services/resources/courseService';
+import {Box, Typography, CircularProgress, Alert, List, ListItem, ListItemText} from '@mui/material';
 
 const AdminCoursesPage: React.FC = () => {
-  const [courses, setCourses] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadCourses = async () => {
-      setIsLoading(true);
       try {
-        const data = await fetchCourses('admin'); // Fetch courses for admin
-        setCourses(Array.isArray(data) ? data : []); // Ensure data is an array
+        setLoading(true);
+        const response = await fetchCourses();
+        setCourses(response.results);
         setError(null);
       } catch (err: any) {
-        console.error('Failed to fetch courses:', err);
-        setError('Failed to load courses.');
+        console.error('Error fetching courses:', err);
+        setError(err.message || 'Failed to load courses.');
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
 
     loadCourses();
   }, []);
 
-  if (isLoading) {
+  if (loading) {
     return (
-      <Container>
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="300px">
         <CircularProgress />
-      </Container>
+      </Box>
     );
   }
 
   if (error) {
     return (
-      <Container>
-        <Alert severity="error">{error}</Alert>
-      </Container>
+      <Alert severity="error" sx={{mb: 3}}>
+        {error}
+      </Alert>
+    );
+  }
+
+  if (courses.length === 0) {
+    return (
+      <Alert severity="info" sx={{mb: 3}}>
+        No courses available.
+      </Alert>
     );
   }
 
   return (
-    <Container>
+    <Box>
       <Typography variant="h4" gutterBottom>
         Admin Courses
       </Typography>
-      {courses.length === 0 ? (
-        <Typography>No courses available.</Typography>
-      ) : (
-        <Grid container spacing={3}>
-          {courses.map(course => (
-            <Grid item xs={12} sm={6} md={4} key={course.id}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6">{course.title}</Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    {course.description}
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    href={`/admin/courses/${course.id}/edit`}
-                    sx={{ mt: 2 }}
-                  >
-                    Edit
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      )}
-    </Container>
+      <List>
+        {courses.map((course: any) => (
+          <ListItem key={course.id}>
+            <ListItemText primary={course.title} secondary={course.description} />
+          </ListItem>
+        ))}
+      </List>
+    </Box>
   );
 };
 

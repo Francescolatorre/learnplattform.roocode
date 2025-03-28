@@ -1,32 +1,13 @@
-import apiService from '../api/apiService';
-import { ICourse, IPaginatedResponse } from '../../types/courseTypes';
+import axios from 'axios';
 
-class CourseService {
-  private static BASE_URL = '/api/v1/courses/';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
-  public static async fetchCourses(): Promise<IPaginatedResponse<ICourse>> {
-    const response = await apiService.get<IPaginatedResponse<ICourse>>(this.BASE_URL);
-    return response.data;
-  }
+export const fetchCourses = async (params = {}) => {
+  const response = await axios.get(`${API_BASE_URL}/api/v1/courses/`, {params});
+  return response.data;
+};
 
-  public static async fetchCourseById(courseId: number): Promise<ICourse> {
-    const response = await apiService.get<ICourse>(`${this.BASE_URL}${courseId}/`);
-    return response.data;
-  }
-
-  public static async createCourse(course: Partial<ICourse>): Promise<ICourse> {
-    const response = await apiService.post<ICourse>(this.BASE_URL, course);
-    return response.data;
-  }
-
-  public static async updateCourse(courseId: number, course: Partial<ICourse>): Promise<ICourse> {
-    const response = await apiService.put<ICourse>(`${this.BASE_URL}${courseId}/`, course);
-    return response.data;
-  }
-
-  public static async deleteCourse(courseId: number): Promise<void> {
-    await apiService.delete(`${this.BASE_URL}${courseId}/`);
-  }
-}
-
-export default CourseService;
+// Export other course-related services if needed
+export default {
+  fetchCourses,
+};

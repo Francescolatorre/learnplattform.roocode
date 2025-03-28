@@ -1,7 +1,6 @@
 // src/routes/AppRoutes.tsx
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import HomePage from '@pages/HomePage';
+import {Routes, Route} from 'react-router-dom';
 import CoursesPage from '@features/courses/pages/CoursesPage';
 import CourseDetailPage from '@features/courses/pages/CourseDetailsPage';
 import StudentTasksPage from '@features/learningTasks/pages/StudentTasksPage';
@@ -15,7 +14,6 @@ const AppRoutes: React.FC = () => {
   return (
     <Routes>
       {/* Public routes */}
-      <Route path="/" element={<HomePage />} />
       <Route path="/courses" element={<CoursesPage />} />
       <Route path="/courses/:courseId" element={<CourseDetailPage />} />
 

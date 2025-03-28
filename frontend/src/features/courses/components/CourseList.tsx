@@ -1,18 +1,25 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import {List, ListItem, ListItemText} from '@mui/material';
 
-const CourseList: React.FC<{ courses: { id: string; title: string }[] }> = ({ courses }) => {
+interface ICourse {
+  id: string;
+  title: string;
+  description: string;
+}
+
+interface ICourseListProps {
+  courses: ICourse[];
+}
+
+const CourseList: React.FC<ICourseListProps> = ({courses}) => {
   return (
-    <div>
-      {courses.map(course => (
-        <div key={course.id}>
-          <h3>{course.title}</h3>
-          <Link to={`/courses/${course.id}/details`}>
-            <button>View Details</button>
-          </Link>
-        </div>
+    <List>
+      {courses.map((course) => (
+        <ListItem key={course.id}>
+          <ListItemText primary={course.title} secondary={course.description} />
+        </ListItem>
       ))}
-    </div>
+    </List>
   );
 };
 
