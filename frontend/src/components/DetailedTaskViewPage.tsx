@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
-import LearningTaskService from '@features/learningTasks/services/LearningTaskService';
+import LearningTaskService from '@features/learningTasks/services/learningTaskService';
 import {ILearningTask} from '../types/learningTaskTypes';
 
 const DetailedTaskViewPage: React.FC = () => {
