@@ -40,19 +40,6 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-    def calculate_progress_percentage(self):
-        """Calculate the overall progress percentage across all tasks for this user."""
-        total_tasks = self.task_progress.count()
-        completed_tasks = self.task_progress.filter(status="completed").count()
-        return (completed_tasks / total_tasks) * 100 if total_tasks > 0 else 0
-
-    def get_latest_quiz_attempt(self, quiz=None):
-        """Get the latest quiz attempt for this user, optionally filtered by quiz."""
-        attempts = self.quiz_attempts
-        if quiz:
-            attempts = attempts.filter(quiz=quiz)
-        return attempts.order_by("-attempt_date").first()
-
 
 class InstructorRole(models.Model):
     role_name = models.CharField(max_length=100, primary_key=True)

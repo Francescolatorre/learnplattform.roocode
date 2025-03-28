@@ -2,10 +2,10 @@
 export { AuthProvider, useAuth } from './AuthContext';
 
 // Components
-export { default as LoginForm } from './LoginForm';
-export { default as RegisterForm } from './RegisterForm';
-export { default as ForgotPasswordForm } from './ForgotPasswordForm';
-export { default as ResetPasswordForm } from './ResetPasswordForm';
+export { default as LoginForm } from './components/LoginForm';
+export { default as RegisterForm } from './components/RegisterForm';
+export { default as ForgotPasswordForm } from './components/ForgotPasswordForm';
+export { default as ResetPasswordForm } from './components/ResetPasswordForm';
 export { default as PasswordStrengthIndicator } from './components/PasswordStrengthIndicator';
 
 // Routes
@@ -18,7 +18,7 @@ export {
   validatePassword,
   getPasswordStrengthColor,
   getPasswordStrengthLabel,
-  type PasswordStrength
+  type PasswordStrength,
 } from './utils/passwordValidation';
 
 // Types

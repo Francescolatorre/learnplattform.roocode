@@ -31,7 +31,10 @@ const MainLayout: React.FC = ({ children }) => {
     console.log('MainLayout rendered');
     console.log('menuConfig:', menuConfig);
     console.log('userRole:', userRole);
-    console.log('Filtered menu:', menuConfig.filter(menu => menu.roles.includes(userRole)));
+    console.log(
+      'Filtered menu:',
+      menuConfig.filter(menu => menu.roles.includes(userRole))
+    );
   }, [userRole]); // Log only when userRole changes
 
   const handleNavigation = (path: string) => {
@@ -52,14 +55,13 @@ const MainLayout: React.FC = ({ children }) => {
               sx={{ padding: '10px 16px', '&:hover': { backgroundColor: '#f0f0f0' } }}
             >
               <ListItemIcon>{/* Add icons if needed */}</ListItemIcon>
-              <ListItemText
-                primary={menu.text}
-                sx={{ fontSize: '1rem', color: '#333' }}
-              />
+              <ListItemText primary={menu.text} sx={{ fontSize: '1rem', color: '#333' }} />
             </ListItemButton>
           ))}
         <ListItemButton onClick={logout}>
-          <ListItemIcon><LogoutIcon /></ListItemIcon>
+          <ListItemIcon>
+            <LogoutIcon />
+          </ListItemIcon>
           <ListItemText primary="Logout" />
         </ListItemButton>
       </List>

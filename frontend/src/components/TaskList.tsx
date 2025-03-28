@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchTasksByCourse } from '../services/taskService';
+import { fetchTasksByCourse } from '../services/resources/taskService';
 import { Task } from '../types/apiTypes';
 
 interface TaskListProps {

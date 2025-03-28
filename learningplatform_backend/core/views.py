@@ -416,22 +416,18 @@ class TaskProgressViewSet(viewsets.ModelViewSet):
 
     queryset = TaskProgress.objects.all()
     serializer_class = TaskProgressSerializer
-    permission_classes = [
-        permissions.IsAuthenticated,
-        IsStudentOrReadOnly,
-    ]  # Add custom permission
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        """
-        Filter progress to only show those belonging to the current user
-        unless the user is staff/admin
-        """
-        if self.request.user.is_staff or self.request.user.role == "admin":
-            return TaskProgress.objects.all()
+        # Filter progress to only show those belonging to the current user
         return TaskProgress.objects.filter(user=self.request.user)
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    def partial_update(self, request, *args, **kwargs):
+        # Allow updating the status of a task
+        instance = self.get_object()
+        instance.status = request.data.get("status", instance.status)
+        instance.save()
+        return Response({"status": "Task progress updated"})
 
 
 class QuizAttemptViewSet(viewsets.ModelViewSet):

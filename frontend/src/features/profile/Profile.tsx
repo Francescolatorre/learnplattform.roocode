@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, Container, Paper, Box } from '@mui/material';
 import { useAuth } from '../auth/AuthContext';
-import withAuth from '../auth/withAuth';
+import withAuth from '../auth/hoc/withAuth';
 
 const Profile: React.FC = () => {
   const { user } = useAuth();
@@ -20,9 +20,7 @@ const Profile: React.FC = () => {
             <Typography>Role: {user.role || 'Not specified'}</Typography>
           </Box>
         ) : (
-          <Typography color="textSecondary">
-            Please log in to view your profile details.
-          </Typography>
+          <Typography color="textSecondary">Please log in to view your profile details.</Typography>
         )}
       </Paper>
     </Container>

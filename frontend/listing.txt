@@ -1,0 +1,679 @@
+.:
+total 417
+drwxr-xr-x 1 MWEA+FrancescoL 4096      0 Mar 28 15:35 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096      0 Mar 28 10:36 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096     67 Feb 13 13:01 .env
+drwxr-xr-x 1 MWEA+FrancescoL 4096      0 Mar 14 10:42 .vscode/
+-rw-r--r-- 1 MWEA+FrancescoL 4096    551 Mar 28 12:06 App.tsx
+drwxr-xr-x 1 MWEA+FrancescoL 4096      0 Mar 28 12:04 components/
+-rw-r--r-- 1 MWEA+FrancescoL 4096    734 Feb 13 12:57 eslint.config.js
+drwxr-xr-x 1 MWEA+FrancescoL 4096      0 Mar 28 15:21 frontend/
+-rw-r--r-- 1 MWEA+FrancescoL 4096   4331 Mar 26 14:29 home-page.png
+drwxr-xr-x 1 MWEA+FrancescoL 4096      0 Mar 28 12:00 hooks/
+-rw-r--r-- 1 MWEA+FrancescoL 4096    365 Mar 18 19:26 index.html
+-rw-r--r-- 1 MWEA+FrancescoL 4096    226 Mar 18 19:26 jest.config.js
+drwxr-xr-x 1 MWEA+FrancescoL 4096      0 Feb 26 12:41 language/
+-rw-r--r-- 1 MWEA+FrancescoL 4096      0 Mar 28 15:35 listing.txt
+drwxr-xr-x 1 MWEA+FrancescoL 4096      0 Mar 28 12:54 node_modules/
+-rw-r--r-- 1 MWEA+FrancescoL 4096   1556 Mar 28 12:54 package.json
+-rw-r--r-- 1 MWEA+FrancescoL 4096 238930 Mar 28 12:54 package-lock.json
+drwxr-xr-x 1 MWEA+FrancescoL 4096      0 Mar 28 12:02 pages/
+-rw-r--r-- 1 MWEA+FrancescoL 4096   1062 Mar 18 19:26 playwright.config.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096    776 Mar 18 19:26 playwright-api.config.ts
+drwxr-xr-x 1 MWEA+FrancescoL 4096      0 Mar 26 17:49 playwright-report/
+drwxr-xr-x 1 MWEA+FrancescoL 4096      0 Mar 18 19:26 public/
+-rw-r--r-- 1 MWEA+FrancescoL 4096   2382 Mar 21 15:06 README.md
+-rwxr-xr-x 1 MWEA+FrancescoL 4096   3619 Mar 18 19:26 run-tests.sh*
+drwxr-xr-x 1 MWEA+FrancescoL 4096      0 Mar 28 15:32 services/
+drwxr-xr-x 1 MWEA+FrancescoL 4096      0 Mar 28 13:40 src/
+drwxr-xr-x 1 MWEA+FrancescoL 4096      0 Mar 28 12:02 store/
+drwxr-xr-x 1 MWEA+FrancescoL 4096      0 Mar 26 17:49 test-results/
+drwxr-xr-x 1 MWEA+FrancescoL 4096      0 Mar 26 17:40 tests/
+-rw-r--r-- 1 MWEA+FrancescoL 4096    367 Mar 28 10:50 tsconfig.app.json
+-rw-r--r-- 1 MWEA+FrancescoL 4096    254 Mar 28 10:39 tsconfig.json
+-rw-r--r-- 1 MWEA+FrancescoL 4096    279 Mar 18 19:26 tsconfig.node.json
+-rw-r--r-- 1 MWEA+FrancescoL 4096   1376 Mar 28 10:59 vite.config.ts
+
+./.vscode:
+total 13
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 14 10:42 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 28 15:35 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 336 Mar 14 10:43 launch.json
+
+./components:
+total 22
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 12:04 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:35 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096  494 Mar 28 12:06 CourseDetails.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  503 Mar 28 12:06 CourseDetailsPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1092 Mar 28 12:06 CourseEnrollmentPage.tsx
+
+./frontend:
+total 16
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:35 ../
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 src/
+
+./frontend/src:
+total 4
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ../
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 assets/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 components/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 config/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 features/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 hooks/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 pages/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 routes/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 services/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 store/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 theme/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 types/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 utils/
+
+./frontend/src/assets:
+total 4
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ../
+
+./frontend/src/components:
+total 4
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ../
+
+./frontend/src/config:
+total 4
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ../
+
+./frontend/src/features:
+total 4
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ../
+
+./frontend/src/hooks:
+total 4
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ../
+
+./frontend/src/pages:
+total 4
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ../
+
+./frontend/src/routes:
+total 4
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ../
+
+./frontend/src/services:
+total 4
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ../
+
+./frontend/src/store:
+total 4
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ../
+
+./frontend/src/theme:
+total 4
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ../
+
+./frontend/src/types:
+total 4
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ../
+
+./frontend/src/utils:
+total 4
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:21 ../
+
+./hooks:
+total 16
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 28 12:00 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 28 15:35 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 726 Mar 28 12:06 useApiResource.ts
+
+./language:
+total 12
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Feb 26 12:41 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:35 ../
+
+
+
+./pages:
+total 13
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 28 12:02 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 28 15:35 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 487 Mar 28 12:06 StudentTasksPage.tsx
+
+./playwright-report:
+total 472
+drwxr-xr-x 1 MWEA+FrancescoL 4096      0 Mar 26 17:49 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096      0 Mar 28 15:35 ../
+drwxr-xr-x 1 MWEA+FrancescoL 4096      0 Mar 26 17:49 data/
+-rw-r--r-- 1 MWEA+FrancescoL 4096 469659 Mar 26 17:49 index.html
+
+./playwright-report/data:
+total 32
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 26 17:49 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 26 17:49 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 13856 Mar 26 17:49 1fbff1ab6f2bc3d05c6b21a59bba92e239eaa620.png
+-rw-r--r-- 1 MWEA+FrancescoL 4096 14545 Mar 26 17:49 2312cc8e0b2541a3448fd048a117033d25cd59c2.png
+
+./public:
+total 17
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 18 19:26 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:35 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096  247 Mar 18 19:26 index.html
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1497 Feb 13 12:57 vite.svg
+
+./services:
+total 12
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:32 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:35 ../
+
+./src:
+total 69
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 13:40 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:35 ../
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 10:21 app/
+-rw-r--r-- 1 MWEA+FrancescoL 4096  584 Mar 22 12:11 App.css
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1669 Mar 28 15:17 App.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  414 Mar 28 13:48 AppRoutes.tsx
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Feb 13 12:57 assets/
+-rw-r--r-- 1 MWEA+FrancescoL 4096    0 Mar 27 09:24 auth.tsx
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:13 components/
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 22 11:56 config/
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 21 15:14 docs/
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:14 features/
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 13:25 hooks/
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1203 Mar 22 12:11 index.css
+-rw-r--r-- 1 MWEA+FrancescoL 4096  340 Mar 28 08:48 main.tsx
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 13:31 pages/
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 27 09:50 routes/
+-rw-r--r-- 1 MWEA+FrancescoL 4096  939 Mar 28 10:10 routes.tsx
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:32 services/
+-rw-r--r-- 1 MWEA+FrancescoL 4096   51 Mar 18 19:26 setupTests.ts
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 22 13:35 store/
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 18 19:26 tests/
+-rw-r--r-- 1 MWEA+FrancescoL 4096  726 Mar 18 19:26 test-setup.ts
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Feb 13 12:59 theme/
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:06 types/
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 18 19:26 utils/
+-rw-r--r-- 1 MWEA+FrancescoL 4096   38 Feb 13 12:57 vite-env.d.ts
+
+./src/app:
+total 8
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 10:21 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 13:40 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 3674 Mar 28 10:40 routes.tsx
+
+./src/assets:
+total 12
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Feb 13 12:57 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 13:40 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 4126 Feb 13 12:57 react.svg
+
+./src/components:
+total 133
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 28 15:13 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 28 13:40 ../
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 28 13:24 auth/
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 28 13:25 common/
+-rw-r--r-- 1 MWEA+FrancescoL 4096  5854 Mar 28 09:43 CourseEnrollment.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096   860 Mar 28 15:32 CourseList.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  1062 Mar 25 07:45 CourseTasksList.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096   526 Mar 18 19:26 CourseVersionList.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096   197 Mar 18 19:26 Dashboard.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  1802 Mar 28 15:32 DetailedTaskViewPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096   946 Mar 28 15:32 EnrollmentList.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  1739 Mar 18 19:26 ErrorBoundary.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096   746 Mar 18 19:26 ErrorMessage.tsx
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 18 19:26 layout/
+-rw-r--r-- 1 MWEA+FrancescoL 4096   892 Mar 28 15:32 LearningTaskList.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  2281 Mar 25 08:08 MainLayout.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096   861 Mar 24 10:20 MainMenu.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  1386 Mar 18 19:26 MainNavigation.test.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  1930 Mar 22 12:26 MainNavigation.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096   384 Mar 28 09:42 Navbar.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  1191 Mar 28 15:32 ProgressTrackingUI.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096   130 Mar 18 19:26 README.md
+-rw-r--r-- 1 MWEA+FrancescoL 4096 13080 Mar 21 15:16 RefactoredTaskDetailsView.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 12186 Mar 25 07:23 TaskCompletion.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  1215 Mar 28 15:33 TaskList.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  9934 Mar 28 15:33 TaskManagementUI.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096   991 Mar 18 19:26 TaskOverview.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096   570 Mar 25 07:42 TaskView.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  1786 Mar 28 15:32 TaskViewPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096   859 Mar 26 18:25 TokenRefreshHandler.tsx
+
+./src/components/auth:
+total 8
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 13:24 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:13 ../
+
+./src/components/common:
+total 69
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 13:25 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:13 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 5812 Mar 27 09:50 DataTable.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  394 Mar 21 14:49 index.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  754 Mar 28 10:33 MainMenu.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1926 Mar 28 12:51 Menu.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1785 Mar 28 11:06 NavigationBar.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 2006 Mar 21 15:04 ProgressIndicator.md
+-rw-r--r-- 1 MWEA+FrancescoL 4096 4663 Mar 21 14:50 ProgressIndicator.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1518 Mar 27 18:21 ProtectedRoute.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1963 Mar 21 15:03 README.md
+-rw-r--r-- 1 MWEA+FrancescoL 4096  625 Mar 27 19:35 RoleBasedRoute.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 2353 Mar 21 15:03 StatusChip.md
+-rw-r--r-- 1 MWEA+FrancescoL 4096 3001 Mar 21 14:47 StatusChip.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1770 Mar 28 10:33 TopBar.tsx
+
+./src/components/layout:
+total 12
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 18 19:26 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:13 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 3957 Mar 22 13:41 MainLayout.tsx
+
+./src/config:
+total 8
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 22 11:56 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 28 13:40 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 769 Mar 24 10:13 menuConfig.ts
+
+./src/docs:
+total 5
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 21 15:14 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 13:40 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 2 Mar 21 15:14 CourseEnrollmentWorkflow.md
+
+./src/features:
+total 28
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:14 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 13:40 ../
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 24 11:09 admin/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 13:26 auth/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 10:19 courseDetails/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:15 courses/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 25 14:40 dashboard/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 27 19:11 enrollment/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:15 enrollments/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 27 08:49 instructor/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:15 learningTasks/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 18 19:26 profile/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 21 10:07 student/
+
+./src/features/admin:
+total 8
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 24 11:09 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:14 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 2884 Mar 28 15:32 AdminCoursesPage.tsx
+
+./src/features/auth:
+total 60
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 13:26 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:14 ../
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 07:26 __tests__/
+-rw-r--r-- 1 MWEA+FrancescoL 4096 5031 Mar 22 11:46 AuthContext.test.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 2647 Mar 28 13:26 AuthContext.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  636 Mar 26 18:25 AuthRoutes.tsx
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 18 19:26 components/
+-rw-r--r-- 1 MWEA+FrancescoL 4096 3155 Mar 26 08:49 ForgotPasswordForm.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1202 Mar 27 08:46 index.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096 2946 Mar 28 07:55 LoginForm.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1476 Mar 28 10:33 ProtectedRoute.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 5060 Mar 28 07:55 RegisterForm.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 4456 Mar 18 19:26 ResetPasswordForm.tsx
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 18 19:26 routes/
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 18 19:26 utils/
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1025 Mar 27 09:27 withAuth.tsx
+
+./src/features/auth/__tests__:
+total 12
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 07:26 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 13:26 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 5651 Mar 18 19:26 AuthComponents.test.tsx
+
+./src/features/auth/components:
+total 8
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 18 19:26 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 13:26 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1704 Mar 18 19:26 PasswordStrengthIndicator.tsx
+
+./src/features/auth/routes:
+total 12
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 18 19:26 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 13:26 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1964 Mar 18 19:26 AuthRoutes.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1305 Mar 18 19:26 RoleBasedRoute.tsx
+
+./src/features/auth/utils:
+total 8
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 18 19:26 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 13:26 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 2006 Mar 18 19:26 passwordValidation.ts
+
+./src/features/courseDetails:
+total 4
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 10:19 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:14 ../
+
+./src/features/courses:
+total 86
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 28 15:15 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 28 15:14 ../
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 28 15:15 components/
+-rw-r--r-- 1 MWEA+FrancescoL 4096  2556 Mar 28 09:38 COURSE_ENROLLMENT_JOURNEY.md
+-rw-r--r-- 1 MWEA+FrancescoL 4096  1743 Mar 18 19:26 CourseCard.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  1375 Mar 28 13:02 CourseDetailsPage.styles.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096  3004 Mar 28 15:32 CourseDetailsPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  4685 Mar 28 09:54 CourseEnrollmentPage.test.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  6308 Mar 28 09:54 CourseEnrollmentPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096   568 Mar 27 19:21 CourseList.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  1187 Mar 28 10:08 CourseProgressPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  1727 Mar 25 08:05 CoursesPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 14794 Mar 28 15:32 CourseTasksPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096   322 Mar 18 19:26 courseTypes.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096  6036 Mar 28 15:32 EditCourse.tsx
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 28 15:15 services/
+-rw-r--r-- 1 MWEA+FrancescoL 4096   989 Mar 28 10:08 TaskViewPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  4917 Mar 28 10:05 USER_JOURNEY.md
+
+./src/features/courses/components:
+total 8
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 28 15:15 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 28 15:15 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 853 Mar 28 15:15 CourseList.tsx
+
+./src/features/courses/services:
+total 8
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:15 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:15 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1253 Mar 28 15:32 courseService.ts
+
+./src/features/dashboard:
+total 59
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 25 14:40 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 28 15:14 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096  2572 Mar 26 08:26 AdminDashboard.tsx
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 21 09:19 components/
+-rw-r--r-- 1 MWEA+FrancescoL 4096  2970 Mar 28 15:32 Dashboard.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096   507 Mar 25 14:41 DashboardLayout.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  3364 Mar 27 09:18 InstructorDashboard.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  3041 Mar 25 19:14 ProgressDebugger.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096   553 Mar 18 19:26 ProgressSummaryCard.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 18290 Mar 28 15:32 ProgressTrackingUI.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  4859 Mar 28 15:32 StudentDashboard.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096   565 Mar 18 19:26 UpcomingTasksList.tsx
+
+./src/features/dashboard/components:
+total 68
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 21 09:19 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 25 14:40 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096  8226 Mar 21 09:34 ActivityHistoryView.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 11483 Mar 21 09:32 ModuleProgressView.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 15214 Mar 21 09:33 PerformanceAnalysisView.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 17892 Mar 21 09:35 TaskDetailsView.tsx
+
+./src/features/enrollment:
+total 4
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 27 19:11 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:14 ../
+
+./src/features/enrollments:
+total 4
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:15 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:14 ../
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:14 components/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:15 services/
+
+./src/features/enrollments/components:
+total 4
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 28 15:14 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 28 15:15 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 936 Mar 28 15:15 EnrollmentList.tsx
+
+./src/features/enrollments/services:
+total 4
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:15 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:15 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 2444 Mar 28 15:15 enrollmentService.ts
+
+./src/features/instructor:
+total 20
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 27 08:49 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:14 ../
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 21 10:13 components/
+-rw-r--r-- 1 MWEA+FrancescoL 4096 2074 Mar 27 09:08 CoursesPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 3970 Mar 28 15:32 InstructorCoursesPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  818 Mar 22 11:18 InstructorViews.tsx
+
+./src/features/instructor/components:
+total 48
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 21 10:13 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 27 08:49 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 27641 Mar 28 15:32 InstructorProgressDashboard.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 15084 Mar 21 10:13 StudentDetailView.tsx
+
+./src/features/learningTasks:
+total 24
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:15 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:14 ../
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:15 components/
+-rw-r--r-- 1 MWEA+FrancescoL 4096 2051 Mar 28 15:32 LearningTasksList.tsx
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:16 pages/
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:15 services/
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1056 Mar 28 15:32 TaskDetails.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1147 Mar 28 15:32 TaskListPage.tsx
+
+./src/features/learningTasks/components:
+total 24
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:15 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:15 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096  885 Mar 28 15:15 LearningTaskList.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 6842 Mar 28 15:33 TaskCreationForm.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1782 Mar 28 15:15 TaskViewPage.tsx
+
+./src/features/learningTasks/pages:
+total 9
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:16 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:15 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1798 Mar 28 15:15 DetailedTaskViewPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  487 Mar 28 15:17 StudentTasksPage.tsx
+
+./src/features/learningTasks/services:
+total 8
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:15 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:15 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1354 Mar 28 15:32 learningTaskService.ts
+
+./src/features/profile:
+total 8
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 18 19:26 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 28 15:14 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 981 Mar 22 11:18 Profile.tsx
+
+./src/features/student:
+total 8
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 21 10:07 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:14 ../
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 21 10:12 components/
+
+./src/features/student/components:
+total 32
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 21 10:12 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 21 10:07 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 9112 Mar 21 10:14 CourseDetailView.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 4048 Mar 21 10:12 ModuleProgressView.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 5393 Mar 21 10:12 QuizHistoryDetail.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 3752 Mar 25 13:14 StudentProgressDashboard.tsx
+
+./src/hooks:
+total 47
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 13:25 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 13:40 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 3320 Mar 21 15:05 README.md
+-rw-r--r-- 1 MWEA+FrancescoL 4096 9940 Mar 27 08:56 useApiResource.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096  582 Mar 27 19:32 useCourse.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096 4219 Mar 21 15:06 useCourseData.md
+-rw-r--r-- 1 MWEA+FrancescoL 4096  255 Mar 28 10:08 useCourseData.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096  276 Mar 28 10:08 useCourseProgress.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096  275 Mar 27 09:58 useCourses.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096  406 Mar 27 09:48 useCourseTasks.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096  249 Mar 28 10:08 useTaskData.ts
+
+./src/pages:
+total 69
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 13:31 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 13:40 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 2309 Mar 27 09:38 AdminTasksPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096   65 Mar 28 13:40 CourseDetailsPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1630 Mar 28 15:32 CourseEnrollmentPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1654 Mar 27 18:20 CoursesPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 3015 Mar 27 09:38 CourseTasksPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1649 Mar 28 15:33 Dashboard.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 8916 Mar 28 15:33 InstructorCourseDetailPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 2330 Mar 27 09:38 InstructorTasksPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  711 Mar 28 13:36 LearningTasksPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1926 Mar 26 18:25 LoginPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  823 Mar 26 18:25 LogoutPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  135 Mar 18 19:26 README.md
+-rw-r--r-- 1 MWEA+FrancescoL 4096 2384 Mar 27 16:08 StudentTasksPage.tsx
+-rw-r--r-- 1 MWEA+FrancescoL 4096  739 Mar 28 13:36 TaskViewPage.tsx
+
+./src/routes:
+total 8
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 27 09:50 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 13:40 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1678 Mar 27 18:20 index.tsx
+
+./src/services:
+total 12
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:32 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 13:40 ../
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:32 api/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:32 auth/
+drwxr-xr-x 1 MWEA+FrancescoL 4096 0 Mar 28 15:32 resources/
+
+./src/services/api:
+total 13
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:32 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:32 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 2441 Mar 26 17:42 api.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096  404 Mar 28 12:06 apiClient.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096 2825 Mar 28 12:41 apiService.ts
+
+./src/services/auth:
+total 8
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 28 15:32 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 28 15:32 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 796 Mar 28 15:32 authService.ts
+
+./src/services/resources:
+total 28
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:32 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:32 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1183 Mar 28 15:32 courseService.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096 2439 Mar 28 15:32 enrollmentService.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096 1342 Mar 28 15:32 learningTaskService.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096 2734 Mar 28 15:32 progressService.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096 3636 Mar 28 15:33 taskService.ts
+
+./src/store:
+total 20
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 22 13:35 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 28 13:40 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 573 Mar 27 09:12 appStore.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096 456 Mar 18 19:26 authStore.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096 607 Mar 18 19:26 courseStore.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096 940 Mar 18 19:26 quizStore.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096 164 Mar 18 19:26 README.md
+-rw-r--r-- 1 MWEA+FrancescoL 4096 796 Mar 18 19:26 taskStore.ts
+
+./src/tests:
+total 5
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 18 19:26 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 28 13:40 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 123 Mar 18 19:26 README.md
+
+./src/theme:
+total 8
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Feb 13 12:59 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 13:40 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 3050 Mar 27 08:33 theme.ts
+
+./src/types:
+total 28
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 15:06 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096    0 Mar 28 13:40 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 3496 Mar 27 10:03 apiTypes.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096  341 Mar 26 18:40 authTypes.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096  528 Mar 18 19:26 Course.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096  581 Mar 28 15:12 courseTypes.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096  497 Mar 28 15:12 enrollmentTypes.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096  409 Mar 28 15:12 learningTaskTypes.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096 4342 Mar 21 10:11 progressTypes.ts
+
+./src/utils:
+total 5
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 18 19:26 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 28 13:40 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 163 Mar 18 19:26 README.md
+
+./store:
+total 13
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 28 12:02 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 28 15:35 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 356 Mar 28 12:06 appStore.ts
+
+./test-results:
+total 17
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 26 17:49 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 28 15:35 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 243 Mar 26 17:49 .last-run.json
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 26 17:49 auth-Authentication-displays-error-with-invalid-credentials-chromium/
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 26 17:49 auth-Authentication-lead-i-049dd--login-and-access-dashboard-chromium/
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 26 17:49 auth-Authentication-shows-loading-state-during-login-chromium/
+drwxr-xr-x 1 MWEA+FrancescoL 4096   0 Mar 26 17:49 auth-Authentication-Valid-login-redirects-to-dashboard-chromium/
+
+./test-results/auth-Authentication-displays-error-with-invalid-credentials-chromium:
+total 20
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 26 17:49 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 26 17:49 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 14545 Mar 26 17:49 test-failed-1.png
+
+./test-results/auth-Authentication-lead-i-049dd--login-and-access-dashboard-chromium:
+total 20
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 26 17:49 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 26 17:49 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 13856 Mar 26 17:49 test-failed-1.png
+
+./test-results/auth-Authentication-shows-loading-state-during-login-chromium:
+total 20
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 26 17:49 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 26 17:49 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 13856 Mar 26 17:49 test-failed-1.png
+
+./test-results/auth-Authentication-Valid-login-redirects-to-dashboard-chromium:
+total 20
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 26 17:49 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 26 17:49 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 13856 Mar 26 17:49 test-failed-1.png
+
+./tests:
+total 64
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 26 17:40 ./
+drwxr-xr-x 1 MWEA+FrancescoL 4096     0 Mar 28 15:35 ../
+-rw-r--r-- 1 MWEA+FrancescoL 4096 12002 Mar 18 19:26 api.spec.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096  3522 Mar 18 19:26 api-only.spec.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096  5550 Mar 26 17:49 auth.spec.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096  1723 Mar 26 17:40 login.spec.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096  2689 Mar 18 19:26 README.md
+-rw-r--r-- 1 MWEA+FrancescoL 4096  7918 Mar 26 14:38 roles.spec.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096  1134 Mar 26 14:35 smoke.spec.ts
+-rw-r--r-- 1 MWEA+FrancescoL 4096  1736 Mar 26 14:35 views.spec.ts

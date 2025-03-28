@@ -6,14 +6,14 @@ declare const process: {
   env: {
     CI?: string;
     BASE_URL?: string;
-  }
+  };
 };
 
 const config: Config = defineConfig({
   testDir: './tests',
   timeout: 30 * 1000,
   expect: {
-    timeout: 5000
+    timeout: 5000,
   },
   fullyParallel: false,
   forbidOnly: process.env.CI === 'true',
@@ -31,7 +31,7 @@ const config: Config = defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-    }
+    },
   ],
 
   webServer: {

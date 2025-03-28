@@ -7,7 +7,9 @@ This document outlines the architectural improvements made to the frontend React
 ## Shared UI Components
 
 ### 1. DataTable
+
 A flexible, generic table component with:
+
 - Dynamic column configuration
 - Pagination support
 - Loading and error states
@@ -15,14 +17,18 @@ A flexible, generic table component with:
 - Type-safe generic implementation
 
 ### 2. StatusChip
+
 An intelligent status indicator component featuring:
+
 - Automatic color mapping
 - Customizable status representations
 - Flexible labeling
 - Consistent theming
 
 ### 3. ProgressIndicator
+
 A versatile progress visualization component with:
+
 - Linear and circular progress modes
 - Intelligent color coding
 - Configurable thresholds
@@ -31,7 +37,9 @@ A versatile progress visualization component with:
 ## API Layer Improvements
 
 ### 1. ApiService
+
 A centralized API management solution providing:
+
 - Automatic token management
 - Comprehensive error handling
 - Resource-specific service creation
@@ -39,7 +47,9 @@ A centralized API management solution providing:
 - Flexible configuration
 
 ### 2. useApiResource Hook
+
 A powerful hook factory for:
+
 - Generic resource management
 - Automatic state handling
 - CRUD operations
@@ -47,7 +57,9 @@ A powerful hook factory for:
 - Caching and performance optimization
 
 ### 3. useCourseData Hook
+
 A comprehensive course data management hook with:
+
 - Full course lifecycle operations
 - Enrollment management
 - React Query integration

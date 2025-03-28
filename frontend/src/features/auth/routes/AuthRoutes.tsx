@@ -1,9 +1,9 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import LoginForm from '../LoginForm';
-import RegisterForm from '../RegisterForm';
-import ForgotPasswordForm from '../ForgotPasswordForm';
-import ResetPasswordForm from '../ResetPasswordForm';
+import LoginForm from '../components/LoginForm';
+import RegisterForm from '../components/RegisterForm';
+import ForgotPasswordForm from '../components/ForgotPasswordForm';
+import ResetPasswordForm from '../components/ResetPasswordForm';
 import { useAuth } from '../AuthContext';
 
 interface ProtectedRouteProps {

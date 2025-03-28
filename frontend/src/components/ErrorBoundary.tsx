@@ -28,18 +28,18 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
   handleRetry = () => {
     this.setState({ hasError: false, error: undefined });
-  }
+  };
 
   render() {
     if (this.state.hasError) {
       // Custom error fallback UI
       return (
-        <Box 
-          display="flex" 
-          flexDirection="column" 
-          alignItems="center" 
-          justifyContent="center" 
-          height="100vh" 
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          height="100vh"
           textAlign="center"
           p={3}
         >
@@ -49,11 +49,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
           <Typography variant="body1" paragraph>
             {this.state.error?.message || 'An unexpected error occurred'}
           </Typography>
-          <Button 
-            variant="contained" 
-            color="primary" 
-            onClick={this.handleRetry}
-          >
+          <Button variant="contained" color="primary" onClick={this.handleRetry}>
             Try Again
           </Button>
         </Box>

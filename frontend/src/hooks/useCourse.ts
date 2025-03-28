@@ -7,7 +7,7 @@ export const useCourse = (courseId: string | undefined) => {
 
   return useQuery(
     ['course', courseId],
-    () => apiService.get(`/courses/${courseId}`).then((res) => res.data),
+    () => apiService.get(`/courses/${courseId}`).then(res => res.data),
     {
       enabled: isAuthChecked && isAuthenticated && !!courseId, // Ensure auth is checked
       retry: false,

@@ -11,7 +11,7 @@ interface RoleBasedRouteProps {
 const RoleBasedRoute: React.FC<RoleBasedRouteProps> = ({
   children,
   allowedRoles,
-  redirectTo = '/dashboard'
+  redirectTo = '/dashboard',
 }) => {
   const { user, isAuthenticated } = useAuth();
 

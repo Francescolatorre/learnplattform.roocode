@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import LoginForm from '../LoginForm';
-import RegisterForm from '../RegisterForm';
+import LoginForm from '../components/LoginForm';
+import RegisterForm from '../components/RegisterForm';
 import { login, register } from '../../../services/api';
 
 // Mock the API functions
@@ -43,7 +43,7 @@ describe('LoginForm', () => {
     const mockLoginResponse = {
       user: { id: 1, username: 'testuser', email: 'test@example.com', role: 'user' },
       access: 'mock-access-token',
-      refresh: 'mock-refresh-token'
+      refresh: 'mock-refresh-token',
     };
 
     (login as jest.Mock).mockResolvedValue(mockLoginResponse);
@@ -54,7 +54,9 @@ describe('LoginForm', () => {
       </BrowserRouter>
     );
 
-    fireEvent.change(screen.getByLabelText(/Username or Email/i), { target: { value: 'testuser' } });
+    fireEvent.change(screen.getByLabelText(/Username or Email/i), {
+      target: { value: 'testuser' },
+    });
     fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'password123' } });
     fireEvent.click(screen.getByRole('button', { name: /Sign In/i }));
 
@@ -75,7 +77,9 @@ describe('LoginForm', () => {
       </BrowserRouter>
     );
 
-    fireEvent.change(screen.getByLabelText(/Username or Email/i), { target: { value: 'testuser' } });
+    fireEvent.change(screen.getByLabelText(/Username or Email/i), {
+      target: { value: 'testuser' },
+    });
     fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'wrongpassword' } });
     fireEvent.click(screen.getByRole('button', { name: /Sign In/i }));
 
@@ -109,7 +113,7 @@ describe('RegisterForm', () => {
     const mockRegisterResponse = {
       user: { id: 1, username: 'newuser', email: 'new@example.com', role: 'user' },
       access: 'mock-access-token',
-      refresh: 'mock-refresh-token'
+      refresh: 'mock-refresh-token',
     };
 
     (register as jest.Mock).mockResolvedValue(mockRegisterResponse);
@@ -123,17 +127,21 @@ describe('RegisterForm', () => {
     fireEvent.change(screen.getByLabelText(/Username/i), { target: { value: 'newuser' } });
     fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'new@example.com' } });
     fireEvent.change(screen.getByLabelText(/^Password$/i), { target: { value: 'password123' } });
-    fireEvent.change(screen.getByLabelText(/Confirm Password/i), { target: { value: 'password123' } });
+    fireEvent.change(screen.getByLabelText(/Confirm Password/i), {
+      target: { value: 'password123' },
+    });
     fireEvent.click(screen.getByRole('button', { name: /Register/i }));
 
     await waitFor(() => {
-      expect(register).toHaveBeenCalledWith(expect.objectContaining({
-        username: 'newuser',
-        email: 'new@example.com',
-        password: 'password123',
-        password2: 'password123',
-        role: 'user'
-      }));
+      expect(register).toHaveBeenCalledWith(
+        expect.objectContaining({
+          username: 'newuser',
+          email: 'new@example.com',
+          password: 'password123',
+          password2: 'password123',
+          role: 'user',
+        })
+      );
       expect(localStorage.getItem('access_token')).toBe('mock-access-token');
       expect(localStorage.getItem('refresh_token')).toBe('mock-refresh-token');
       expect(mockedUsedNavigate).toHaveBeenCalledWith('/dashboard');
@@ -150,7 +158,9 @@ describe('RegisterForm', () => {
     fireEvent.change(screen.getByLabelText(/Username/i), { target: { value: 'newuser' } });
     fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'new@example.com' } });
     fireEvent.change(screen.getByLabelText(/^Password$/i), { target: { value: 'password123' } });
-    fireEvent.change(screen.getByLabelText(/Confirm Password/i), { target: { value: 'differentpassword' } });
+    fireEvent.change(screen.getByLabelText(/Confirm Password/i), {
+      target: { value: 'differentpassword' },
+    });
     fireEvent.click(screen.getByRole('button', { name: /Register/i }));
 
     await waitFor(() => {

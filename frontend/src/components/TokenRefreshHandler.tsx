@@ -3,24 +3,27 @@ import authService from '@services/authService';
 import { useAuth } from '@features/auth/AuthContext';
 
 const TokenRefreshHandler: React.FC = () => {
-    const { refreshToken } = useAuth();
+  const { refreshToken } = useAuth();
 
-    useEffect(() => {
-        const interval = setInterval(async () => {
-            try {
-                const refreshToken = localStorage.getItem('refresh_token');
-                if (refreshToken) {
-                    await authService.refreshToken(refreshToken); // Use authService for token refresh
-                }
-            } catch (err) {
-                console.error('Token refresh failed:', err);
-            }
-        }, 15 * 60 * 1000); // Refresh every 15 minutes
+  useEffect(() => {
+    const interval = setInterval(
+      async () => {
+        try {
+          const refreshToken = localStorage.getItem('refresh_token');
+          if (refreshToken) {
+            await authService.refreshToken(refreshToken); // Use authService for token refresh
+          }
+        } catch (err) {
+          console.error('Token refresh failed:', err);
+        }
+      },
+      15 * 60 * 1000
+    ); // Refresh every 15 minutes
 
-        return () => clearInterval(interval);
-    }, []);
+    return () => clearInterval(interval);
+  }, []);
 
-    return null;
+  return null;
 };
 
 export default TokenRefreshHandler;

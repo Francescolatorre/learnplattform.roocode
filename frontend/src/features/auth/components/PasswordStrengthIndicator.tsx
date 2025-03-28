@@ -9,7 +9,7 @@ interface PasswordStrengthIndicatorProps {
 
 const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps> = ({
   score,
-  feedback
+  feedback,
 }) => {
   const strengthColor = getPasswordStrengthColor(score);
   const strengthLabel = getPasswordStrengthLabel(score);
@@ -33,8 +33,8 @@ const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps> = ({
           backgroundColor: '#e0e0e0',
           '& .MuiLinearProgress-bar': {
             backgroundColor: strengthColor,
-            borderRadius: 4
-          }
+            borderRadius: 4,
+          },
         }}
       />
       {feedback.length > 0 && (

@@ -46,7 +46,7 @@ export const validatePassword = (password: string): PasswordStrength => {
   return {
     isValid: feedback.length === 0,
     score: Math.min(4, score), // Cap score at 4
-    feedback
+    feedback,
   };
 };
 

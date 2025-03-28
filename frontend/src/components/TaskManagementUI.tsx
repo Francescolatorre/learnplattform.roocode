@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, Dispatch, SetStateAction } from 'react';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css'; // Include the Quill CSS
-import { updateTask, deleteTask } from '../services/taskService'; // Import the API functions
+import { updateTask, deleteTask } from '../services/resources/taskService'; // Import the API functions
 
 // Add CSS for modal styling
 const modalStyles = {
@@ -15,7 +15,7 @@ const modalStyles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: '1000'
+    zIndex: '1000',
   },
   modalContent: {
     backgroundColor: 'white',
@@ -24,7 +24,7 @@ const modalStyles = {
     width: '80%',
     maxWidth: '600px',
     maxHeight: '80%',
-    overflow: 'auto'
+    overflow: 'auto',
   },
   modalHeader: {
     display: 'flex',
@@ -32,26 +32,26 @@ const modalStyles = {
     alignItems: 'center',
     marginBottom: '15px',
     borderBottom: '2px solid #007bff',
-    paddingBottom: '10px'
+    paddingBottom: '10px',
   },
   modalTitle: {
     fontSize: '24px',
     color: '#333',
-    margin: 0
+    margin: 0,
   },
   closeButton: {
     background: 'none',
     border: 'none',
     fontSize: '24px',
     cursor: 'pointer',
-    color: '#666'
+    color: '#666',
   },
   modalFooter: {
     display: 'flex',
     justifyContent: 'flex-end',
     marginTop: '15px',
     paddingTop: '15px',
-    borderTop: '1px solid #eee'
+    borderTop: '1px solid #eee',
   },
   button: {
     padding: '10px 16px',
@@ -60,15 +60,15 @@ const modalStyles = {
     cursor: 'pointer',
     fontWeight: 'bold',
     border: 'none',
-    transition: 'background-color 0.3s'
+    transition: 'background-color 0.3s',
   },
   saveButton: {
     backgroundColor: '#28a745',
-    color: 'white'
+    color: 'white',
   },
   cancelButton: {
     backgroundColor: '#dc3545',
-    color: 'white'
+    color: 'white',
   },
   inputField: {
     width: '100%',
@@ -77,16 +77,16 @@ const modalStyles = {
     border: '1px solid #ddd',
     borderRadius: '4px',
     fontSize: '16px',
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
   },
   label: {
     display: 'block',
     marginBottom: '8px',
     fontWeight: 'bold',
-    color: '#555'
+    color: '#555',
   },
   taskList: {
-    marginTop: '20px'
+    marginTop: '20px',
   },
   taskItem: {
     backgroundColor: 'white',
@@ -94,23 +94,23 @@ const modalStyles = {
     padding: '15px',
     marginBottom: '15px',
     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
-    border: '1px solid #eee'
+    border: '1px solid #eee',
   },
   taskTitle: {
     fontSize: '20px',
     color: '#333',
     marginBottom: '10px',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   taskDescription: {
     fontSize: '16px',
     color: '#555',
     marginBottom: '15px',
-    lineHeight: '1.5'
+    lineHeight: '1.5',
   },
   taskActions: {
     display: 'flex',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
   },
   actionButton: {
     padding: '8px 12px',
@@ -119,16 +119,16 @@ const modalStyles = {
     cursor: 'pointer',
     border: 'none',
     fontWeight: 'bold',
-    transition: 'background-color 0.3s'
+    transition: 'background-color 0.3s',
   },
   editButton: {
     backgroundColor: '#007bff',
-    color: 'white'
+    color: 'white',
   },
   deleteButton: {
     backgroundColor: '#dc3545',
-    color: 'white'
-  }
+    color: 'white',
+  },
 };
 
 interface RichTextEditorProps {
@@ -147,10 +147,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange }) => {
         modules: {
           toolbar: [
             ['bold', 'italic', 'underline', 'strike'],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-            ['link', 'image']
-          ]
-        }
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            ['link', 'image'],
+          ],
+        },
       });
 
       editor.on('text-change', () => {
@@ -183,7 +183,14 @@ interface TaskManagementUIProps {
   userRole: string; // New prop to determine the user's role
 }
 
-const TaskManagementUI: React.FC<TaskManagementUIProps> = ({ courseId, taskDescription, setTaskDescription, tasks, setTasks, userRole }) => {
+const TaskManagementUI: React.FC<TaskManagementUIProps> = ({
+  courseId,
+  taskDescription,
+  setTaskDescription,
+  tasks,
+  setTasks,
+  userRole,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
   const [editingDescription, setEditingDescription] = useState('');
@@ -236,7 +243,14 @@ const TaskManagementUI: React.FC<TaskManagementUIProps> = ({ courseId, taskDescr
     setEditingDescription(description);
     setEditingTitle(title);
     setIsModalOpen(true);
-    console.log('Opening modal for task:', taskId, 'with description:', description, 'and title:', title);
+    console.log(
+      'Opening modal for task:',
+      taskId,
+      'with description:',
+      description,
+      'and title:',
+      title
+    );
   };
 
   return (
@@ -254,33 +268,39 @@ const TaskManagementUI: React.FC<TaskManagementUIProps> = ({ courseId, taskDescr
               </button>
             </div>
             <div>
-              <label style={modalStyles.label as React.CSSProperties} htmlFor="taskTitle">Task Title:</label>
+              <label style={modalStyles.label as React.CSSProperties} htmlFor="taskTitle">
+                Task Title:
+              </label>
               <input
                 id="taskTitle"
                 type="text"
                 value={editingTitle}
-                onChange={(e) => setEditingTitle(e.target.value)}
+                onChange={e => setEditingTitle(e.target.value)}
                 style={modalStyles.inputField as React.CSSProperties}
               />
             </div>
             <div>
-              <label style={modalStyles.label as React.CSSProperties} htmlFor="taskDescription">Task Description:</label>
+              <label style={modalStyles.label as React.CSSProperties} htmlFor="taskDescription">
+                Task Description:
+              </label>
               <textarea
                 id="taskDescription"
                 value={editingDescription}
-                onChange={(e) => setEditingDescription(e.target.value)}
-                style={{...modalStyles.inputField, height: '150px'} as React.CSSProperties}
+                onChange={e => setEditingDescription(e.target.value)}
+                style={{ ...modalStyles.inputField, height: '150px' } as React.CSSProperties}
               />
             </div>
             <div style={modalStyles.modalFooter as React.CSSProperties}>
               <button
-                style={{...modalStyles.button, ...modalStyles.cancelButton} as React.CSSProperties}
+                style={
+                  { ...modalStyles.button, ...modalStyles.cancelButton } as React.CSSProperties
+                }
                 onClick={() => setIsModalOpen(false)}
               >
                 Cancel
               </button>
               <button
-                style={{...modalStyles.button, ...modalStyles.saveButton} as React.CSSProperties}
+                style={{ ...modalStyles.button, ...modalStyles.saveButton } as React.CSSProperties}
                 onClick={handleEditTask}
               >
                 Save Changes
@@ -297,13 +317,23 @@ const TaskManagementUI: React.FC<TaskManagementUIProps> = ({ courseId, taskDescr
             {userRole === 'instructor' || userRole === 'admin' ? (
               <div style={modalStyles.taskActions as React.CSSProperties}>
                 <button
-                  style={{...modalStyles.actionButton, ...modalStyles.editButton} as React.CSSProperties}
+                  style={
+                    {
+                      ...modalStyles.actionButton,
+                      ...modalStyles.editButton,
+                    } as React.CSSProperties
+                  }
                   onClick={() => openModal(task.id, task.description, task.title)}
                 >
                   Edit Task
                 </button>
                 <button
-                  style={{...modalStyles.actionButton, ...modalStyles.deleteButton} as React.CSSProperties}
+                  style={
+                    {
+                      ...modalStyles.actionButton,
+                      ...modalStyles.deleteButton,
+                    } as React.CSSProperties
+                  }
                   onClick={() => handleDeleteTask(task.id)}
                 >
                   Delete Task

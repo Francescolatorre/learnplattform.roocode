@@ -7,7 +7,8 @@
     "build": "vite build",
     "serve": "vite preview",
     "preview": "vite preview",
-    "test": "playwright test"
+    "test": "playwright test",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
@@ -38,7 +39,10 @@
     "@types/react-dom": "^19.0.4",
     "@types/testing-library__react": "^10.2.0",
     "@vitejs/plugin-react": "^4.3.4",
+    "eslint-import-resolver-typescript": "^4.2.5",
+    "eslint-plugin-import": "^2.31.0",
     "jsdom": "^26.0.0",
+    "prettier": "^3.5.3",
     "typescript": "^5.8.2",
     "vite": "^6.2.2",
     "vite-tsconfig-paths": "^5.1.4",

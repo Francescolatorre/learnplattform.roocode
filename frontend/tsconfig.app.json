@@ -6,9 +6,21 @@
     "noEmit": true,
     "isolatedModules": true,
     "moduleDetection": "force",
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"],
+      "@components/*": ["./components/*"],
+      "@features/*": ["./features/*"],
+      "@services/*": ["./services/*"],
+      "@store/*": ["./store/*"],
+      "@hooks/*": ["./hooks/*"],
+      "@utils/*": ["./utils/*"],
+      "@styles/*": ["./styles/*"],
+      "@assets/*": ["./assets/*"],
+      "@context/*": ["./context/*"],
+      "@pages/*": ["./pages/*"]
+    }
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

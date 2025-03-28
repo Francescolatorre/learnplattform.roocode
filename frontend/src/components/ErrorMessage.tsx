@@ -14,15 +14,15 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
   ...alertProps
 }) => {
   return (
-    <Alert 
-      variant="filled" 
-      severity={severity} 
+    <Alert
+      variant="filled"
+      severity={severity}
       className="error-message"
       {...alertProps}
-      sx={{ 
-        width: '100%', 
+      sx={{
+        width: '100%',
         mt: 2,
-        ...alertProps.sx 
+        ...alertProps.sx,
       }}
     >
       {title && <AlertTitle>{title}</AlertTitle>}

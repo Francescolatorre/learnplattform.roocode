@@ -19,6 +19,7 @@ The `ProgressIndicator` is a versatile and intelligent progress visualization co
 ## Variants
 
 ### Linear Progress
+
 ```typescript
 <ProgressIndicator
   value={65}
@@ -28,6 +29,7 @@ The `ProgressIndicator` is a versatile and intelligent progress visualization co
 ```
 
 ### Circular Progress
+
 ```typescript
 <ProgressIndicator
   value={45}
@@ -40,6 +42,7 @@ The `ProgressIndicator` is a versatile and intelligent progress visualization co
 ## Advanced Usage
 
 ### Custom Thresholds
+
 ```typescript
 <ProgressIndicator
   value={75}
@@ -52,6 +55,7 @@ The `ProgressIndicator` is a versatile and intelligent progress visualization co
 ```
 
 ### Hiding Percentage
+
 ```typescript
 <ProgressIndicator
   value={85}

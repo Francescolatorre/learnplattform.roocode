@@ -21,7 +21,7 @@ import {
   Button,
   TextField,
   InputAdornment,
-  useTheme
+  useTheme,
 } from '@mui/material';
 
 import { ChartData } from 'chart.js';
@@ -30,16 +30,17 @@ import WarningIcon from '@mui/icons-material/Warning';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import { Bar, Doughnut } from 'react-chartjs-2';
-import { fetchAllStudentsProgress, getContentEffectivenessData } from '../../../services/progressService';
+import {
+  fetchAllStudentsProgress,
+  getContentEffectivenessData,
+} from '../../../services/resources/progressService';
 import { CourseProgress } from '../../../types/progressTypes';
 
 interface InstructorProgressDashboardProps {
   courseId: string;
 }
 
-const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = ({
-  courseId
-}) => {
+const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = ({ courseId }) => {
   const theme = useTheme();
   const [activeTab, setActiveTab] = useState<number>(0);
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -49,13 +50,13 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
   const {
     data: studentsProgress,
     isLoading: progressLoading,
-    error: progressError
+    error: progressError,
   } = useQuery<CourseProgress[]>(
     ['allStudentsProgress', courseId],
     () => fetchAllStudentsProgress(courseId),
     {
       staleTime: 5 * 60 * 1000, // 5 minutes
-      refetchInterval: 5 * 60 * 1000 // Refresh every 5 minutes
+      refetchInterval: 5 * 60 * 1000, // Refresh every 5 minutes
     }
   );
 
@@ -63,14 +64,10 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
   const {
     data: contentEffectiveness,
     isLoading: effectivenessLoading,
-    error: effectivenessError
-  } = useQuery(
-    ['contentEffectiveness', courseId],
-    () => getContentEffectivenessData(courseId),
-    {
-      staleTime: 15 * 60 * 1000 // 15 minutes
-    }
-  );
+    error: effectivenessError,
+  } = useQuery(['contentEffectiveness', courseId], () => getContentEffectivenessData(courseId), {
+    staleTime: 15 * 60 * 1000, // 15 minutes
+  });
 
   // Handle tab change
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
@@ -88,10 +85,11 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
   };
 
   // Filter students based on search term
-  const filteredStudents = studentsProgress ?
-    studentsProgress.filter(student =>
-      student.studentId.toLowerCase().includes(searchTerm.toLowerCase())
-    ) : [];
+  const filteredStudents = studentsProgress
+    ? studentsProgress.filter(student =>
+        student.studentId.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   // Calculate class average completion
   const calculateClassAverage = () => {
@@ -130,8 +128,6 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
     });
   };
 
-
-
   const prepareModuleCompletionData = (): ChartData<'bar'> | null => {
     if (!studentsProgress || studentsProgress.length === 0) return null;
 
@@ -149,8 +145,12 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
         student.moduleProgress.filter(module => module.moduleId === moduleId)
       );
 
-      const totalCompletion = modulesWithId.reduce((sum, module) => sum + module.completionPercentage, 0);
-      const averageCompletion = modulesWithId.length > 0 ? totalCompletion / modulesWithId.length : 0;
+      const totalCompletion = modulesWithId.reduce(
+        (sum, module) => sum + module.completionPercentage,
+        0
+      );
+      const averageCompletion =
+        modulesWithId.length > 0 ? totalCompletion / modulesWithId.length : 0;
 
       // Get module title from the first student that has this module
       const moduleTitle = modulesWithId.length > 0 ? modulesWithId[0].moduleTitle : moduleId;
@@ -158,7 +158,7 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
       return {
         moduleId,
         moduleTitle,
-        averageCompletion
+        averageCompletion,
       };
     });
 
@@ -206,7 +206,7 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
 
       return {
         taskType,
-        averagePercentage
+        averagePercentage,
       };
     });
 
@@ -332,7 +332,11 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                         Based on {studentsProgress.length} students
                       </Typography>
                       {classAverage < 50 && (
-                        <Typography variant="body2" color="error" sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography
+                          variant="body2"
+                          color="error"
+                          sx={{ display: 'flex', alignItems: 'center' }}
+                        >
                           <WarningIcon fontSize="small" sx={{ mr: 0.5 }} />
                           Below target
                         </Typography>
@@ -349,7 +353,10 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                     Class Average Score
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Typography variant="h3" sx={{ mr: 2, color: getScoreColor(classAverageScore) }}>
+                    <Typography
+                      variant="h3"
+                      sx={{ mr: 2, color: getScoreColor(classAverageScore) }}
+                    >
                       {classAverageScore}%
                     </Typography>
                     <Box>
@@ -357,12 +364,20 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                         Across all graded tasks
                       </Typography>
                       {classAverageScore >= 70 ? (
-                        <Typography variant="body2" color="success.main" sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography
+                          variant="body2"
+                          color="success.main"
+                          sx={{ display: 'flex', alignItems: 'center' }}
+                        >
                           <TrendingUpIcon fontSize="small" sx={{ mr: 0.5 }} />
                           Above target
                         </Typography>
                       ) : (
-                        <Typography variant="body2" color="warning.main" sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography
+                          variant="body2"
+                          color="warning.main"
+                          sx={{ display: 'flex', alignItems: 'center' }}
+                        >
                           <TrendingDownIcon fontSize="small" sx={{ mr: 0.5 }} />
                           Needs improvement
                         </Typography>
@@ -378,14 +393,21 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                   <Typography variant="h6" gutterBottom>
                     At-Risk Students
                   </Typography>
-                  <Typography variant="h3" sx={{ color: atRiskStudents.length > 0 ? theme.palette.error.main : theme.palette.success.main }}>
+                  <Typography
+                    variant="h3"
+                    sx={{
+                      color:
+                        atRiskStudents.length > 0
+                          ? theme.palette.error.main
+                          : theme.palette.success.main,
+                    }}
+                  >
                     {atRiskStudents.length}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
                     {atRiskStudents.length === 0
                       ? 'No students at risk'
-                      : `${Math.round((atRiskStudents.length / studentsProgress.length) * 100)}% of class needs attention`
-                    }
+                      : `${Math.round((atRiskStudents.length / studentsProgress.length) * 100)}% of class needs attention`}
                   </Typography>
                   {atRiskStudents.length > 0 && (
                     <Button
@@ -422,10 +444,10 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                               beginAtZero: true,
                               max: 100,
                               ticks: {
-                                callback: (value) => `${value}%`
-                              }
-                            }
-                          }
+                                callback: value => `${value}%`,
+                              },
+                            },
+                          },
                         }}
                       />
                     </Box>
@@ -448,9 +470,9 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                           maintainAspectRatio: false,
                           plugins: {
                             legend: {
-                              position: 'bottom'
-                            }
-                          }
+                              position: 'bottom',
+                            },
+                          },
                         }}
                       />
                     </Box>
@@ -498,9 +520,10 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                 {filteredStudents.map(student => {
                   const completionPercentage = calculateStudentCompletion(student);
                   const isAtRisk = completionPercentage < 30 || student.averageScore < 60;
-                  const lastActivity = student.recentActivity.length > 0
-                    ? new Date(student.recentActivity[0].timestamp)
-                    : null;
+                  const lastActivity =
+                    student.recentActivity.length > 0
+                      ? new Date(student.recentActivity[0].timestamp)
+                      : null;
 
                   return (
                     <TableRow
@@ -510,7 +533,7 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                       selected={selectedStudentId === student.studentId}
                       sx={{
                         cursor: 'pointer',
-                        bgcolor: isAtRisk ? 'rgba(239, 83, 80, 0.08)' : 'inherit'
+                        bgcolor: isAtRisk ? 'rgba(239, 83, 80, 0.08)' : 'inherit',
                       }}
                     >
                       <TableCell>{student.studentId}</TableCell>
@@ -526,13 +549,11 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                               borderRadius: 4,
                               bgcolor: 'rgba(0, 0, 0, 0.1)',
                               '& .MuiLinearProgress-bar': {
-                                bgcolor: getCompletionColor(completionPercentage)
-                              }
+                                bgcolor: getCompletionColor(completionPercentage),
+                              },
                             }}
                           />
-                          <Typography variant="body2">
-                            {completionPercentage}%
-                          </Typography>
+                          <Typography variant="body2">{completionPercentage}%</Typography>
                         </Box>
                       </TableCell>
                       <TableCell>
@@ -540,7 +561,7 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                           label={`${student.averageScore.toFixed(1)}%`}
                           sx={{
                             bgcolor: getScoreColor(student.averageScore),
-                            color: 'white'
+                            color: 'white',
                           }}
                           size="small"
                         />
@@ -549,25 +570,13 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                         {student.completedTasks} / {student.totalTasks}
                       </TableCell>
                       <TableCell>
-                        {lastActivity
-                          ? lastActivity.toLocaleDateString()
-                          : 'No activity'
-                        }
+                        {lastActivity ? lastActivity.toLocaleDateString() : 'No activity'}
                       </TableCell>
                       <TableCell>
                         {isAtRisk ? (
-                          <Chip
-                            label="At Risk"
-                            color="error"
-                            size="small"
-                            icon={<WarningIcon />}
-                          />
+                          <Chip label="At Risk" color="error" size="small" icon={<WarningIcon />} />
                         ) : (
-                          <Chip
-                            label="On Track"
-                            color="success"
-                            size="small"
-                          />
+                          <Chip label="On Track" color="success" size="small" />
                         )}
                       </TableCell>
                     </TableRow>
@@ -582,11 +591,7 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
               <Typography variant="h6" gutterBottom>
                 Student Details: {selectedStudentId}
               </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{ mt: 1 }}
-              >
+              <Button variant="contained" color="primary" sx={{ mt: 1 }}>
                 View Full Profile
               </Button>
             </Paper>
@@ -600,7 +605,8 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
             Content Effectiveness Analysis
           </Typography>
           <Typography variant="body1" paragraph>
-            This analysis helps identify which content is most effective and which may need improvement.
+            This analysis helps identify which content is most effective and which may need
+            improvement.
           </Typography>
 
           {contentEffectiveness ? (
@@ -630,7 +636,7 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                                 label={`${question.successRate}%`}
                                 sx={{
                                   bgcolor: getScoreColor(question.successRate),
-                                  color: 'white'
+                                  color: 'white',
                                 }}
                                 size="small"
                               />
@@ -701,8 +707,11 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                               <Chip
                                 label={rec.priority}
                                 color={
-                                  rec.priority === 'High' ? 'error' :
-                                    rec.priority === 'Medium' ? 'warning' : 'info'
+                                  rec.priority === 'High'
+                                    ? 'error'
+                                    : rec.priority === 'Medium'
+                                      ? 'warning'
+                                      : 'info'
                                 }
                                 size="small"
                               />

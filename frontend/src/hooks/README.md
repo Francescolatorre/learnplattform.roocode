@@ -26,6 +26,7 @@ The `createApiHook` is a powerful, generic hook factory that creates reusable AP
 ## Usage Examples
 
 ### Fetching a Collection
+
 ```typescript
 // Create a hook for a specific resource
 const { useCourses } = createApiHook<Course>('courses');
@@ -46,6 +47,7 @@ function CourseList() {
 ```
 
 ### Fetching a Single Resource
+
 ```typescript
 function CourseDetails({ courseId }) {
   const { data, loading, error, update, remove } = useCourses.useResource(courseId);
@@ -64,11 +66,12 @@ function CourseDetails({ courseId }) {
 ```
 
 ### Creating a Resource
+
 ```typescript
 function CreateCourseForm() {
   const { create, error } = useCourses.useCollection();
 
-  const handleSubmit = async (courseData) => {
+  const handleSubmit = async courseData => {
     const newCourse = await create(courseData);
     if (newCourse) {
       // Handle successful creation
@@ -80,27 +83,30 @@ function CreateCourseForm() {
 ## Advanced Usage
 
 ### Custom Configuration
+
 ```typescript
 // Add custom Axios config
 const { data, loading } = useCourses.useCollection({
   params: { status: 'active' },
-  headers: { 'X-Custom-Header': 'value' }
+  headers: { 'X-Custom-Header': 'value' },
 });
 ```
 
 ### Error Handling
+
 ```typescript
 const {
   data,
   loading,
-  error,  // Detailed error message
-  refetch // Retry the request
+  error, // Detailed error message
+  refetch, // Retry the request
 } = useCourses.useCollection();
 ```
 
 ## Hook Methods
 
 ### useCollection
+
 - `data`: Array of resources
 - `loading`: Fetch in progress
 - `error`: Error message
@@ -110,6 +116,7 @@ const {
 - `remove()`: Delete a resource
 
 ### useResource
+
 - `data`: Single resource
 - `loading`: Fetch in progress
 - `error`: Error message

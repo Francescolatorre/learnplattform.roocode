@@ -12,10 +12,11 @@ interface CourseState {
   removeCourse: (courseId: string) => void;
 }
 
-const useCourseStore = create<CourseState>((set) => ({
+const useCourseStore = create<CourseState>(set => ({
   courses: [],
-  addCourse: (course: Course) => set((state) => ({ ...state, courses: [...state.courses, course] })),
-  removeCourse: (courseId: string) => set((state) => ({ ...state, courses: state.courses.filter(course => course.id !== courseId) })),
+  addCourse: (course: Course) => set(state => ({ ...state, courses: [...state.courses, course] })),
+  removeCourse: (courseId: string) =>
+    set(state => ({ ...state, courses: state.courses.filter(course => course.id !== courseId) })),
 }));
 
 export default useCourseStore;

@@ -7,12 +7,14 @@ The `useCourseData` hook is a comprehensive, feature-rich React hook for managin
 ## Key Features
 
 - **Comprehensive Course Management**:
+
   - Fetch course lists
   - Retrieve individual course details
   - Create, update, and delete courses
   - Course enrollment and unenrollment
 
 - **State Management**:
+
   - Loading states for all operations
   - Error handling
   - Automatic query invalidation
@@ -26,6 +28,7 @@ The `useCourseData` hook is a comprehensive, feature-rich React hook for managin
 ## Usage Examples
 
 ### Fetching and Displaying Courses
+
 ```typescript
 function CourseList() {
   const {
@@ -49,6 +52,7 @@ function CourseList() {
 ```
 
 ### Course Details and Operations
+
 ```typescript
 function CourseManagement() {
   const {
@@ -83,6 +87,7 @@ function CourseManagement() {
 ```
 
 ### Course Enrollment
+
 ```typescript
 function CourseEnrollment() {
   const {
@@ -113,18 +118,21 @@ function CourseEnrollment() {
 ## Hook Methods and Properties
 
 ### Course List
+
 - `courses`: Array of courses
 - `isLoadingCourses`: Loading state for course list
 - `coursesError`: Error during course list fetch
 - `refreshCourses()`: Manually refresh course list
 
 ### Single Course
+
 - `selectedCourse`: Currently selected course details
 - `isLoadingCourse`: Loading state for single course
 - `courseError`: Error during single course fetch
 - `selectCourse(id)`: Select a specific course
 
 ### Course Operations
+
 - `createCourse(data)`: Create a new course
 - `updateCourse(id, data)`: Update an existing course
 - `deleteCourse(id)`: Delete a course
@@ -133,6 +141,7 @@ function CourseEnrollment() {
 - `isDeleting`: Deleting course loading state
 
 ### Enrollment Operations
+
 - `enrollInCourse(courseId)`: Enroll in a course
 - `unenrollFromCourse(courseId)`: Unenroll from a course
 - `isEnrolling`: Enrollment loading state

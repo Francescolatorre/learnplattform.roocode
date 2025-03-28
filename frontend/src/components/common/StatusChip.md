@@ -63,6 +63,7 @@ The `StatusChip` is a flexible and intelligent component for displaying status i
 ## Default Status Mappings
 
 ### Task/Submission Statuses
+
 - `completed`: success
 - `graded`: success
 - `in_progress`: warning
@@ -70,16 +71,19 @@ The `StatusChip` is a flexible and intelligent component for displaying status i
 - `pending`: info
 
 ### Course Statuses
+
 - `draft`: default
 - `published`: success
 - `archived`: secondary
 
 ### Progress Statuses
+
 - `high`: success
 - `medium`: warning
 - `low`: error
 
 ### Other Common Statuses
+
 - `active`: success
 - `inactive`: default
 - `approved`: success

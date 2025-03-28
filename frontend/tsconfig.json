@@ -1,12 +1,6 @@
 {
   "extends": "./tsconfig.app.json", // Extend the app-specific configuration
   "compilerOptions": {
-    "types": [
-      "vite/client",
-      "node",
-      "@playwright/test",
-      "@types/testing-library__react",
-      "jest"
-    ]
+    "types": ["vite/client", "node", "@playwright/test", "@types/testing-library__react"]
   }
 }

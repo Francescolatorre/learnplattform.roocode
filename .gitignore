@@ -79,11 +79,6 @@ yarn-error.log*
 ehthumbs.db
 Thumbs.db
 
-# Pytest
-.pytest_cache/
-.coverage
-htmlcov/
-
 # Secrets
 *.key
 *.pem

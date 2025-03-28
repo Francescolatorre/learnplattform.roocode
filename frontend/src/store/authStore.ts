@@ -12,10 +12,10 @@ interface AuthState {
   logout: () => void;
 }
 
-const useAuthStore = create<AuthState>((set) => ({
+const useAuthStore = create<AuthState>(set => ({
   user: null,
-  login: (user: User) => set((state) => ({ ...state, user })),
-  logout: () => set((state) => ({ ...state, user: null })),
+  login: (user: User) => set(state => ({ ...state, user })),
+  logout: () => set(state => ({ ...state, user: null })),
 }));
 
 export default useAuthStore;
