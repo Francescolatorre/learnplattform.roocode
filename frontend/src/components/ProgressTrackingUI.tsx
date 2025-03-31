@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+
 import { fetchCourseStructure } from '../services/resources/progressService';
 
 const ProgressTrackingUI: React.FC = () => {

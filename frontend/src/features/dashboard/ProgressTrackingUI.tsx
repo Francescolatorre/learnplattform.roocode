@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useQuery } from 'react-query';
+import React, {useState} from 'react';
+import {useQuery} from '@tanstack/react-query';
 import {
   Box,
   Paper,
@@ -26,21 +26,23 @@ import {
   BarElement,
   Title,
 } from 'chart.js';
-import { Doughnut, Bar } from 'react-chartjs-2';
-import { format, parseISO, isAfter, isBefore, addDays } from 'date-fns';
+import {Doughnut, Bar} from 'react-chartjs-2';
+import {format, parseISO, isAfter, isBefore, addDays} from 'date-fns';
+
 import {
   fetchStudentProgress,
   fetchCourseStructure,
   fetchStudentProgressByCourse,
 } from '../../services/resources/progressService';
-import { CourseProgress, ModuleProgress, TaskProgress } from '../../types/progressTypes';
+import {CourseProgress, ModuleProgress, TaskProgress} from '../../types/common/progressTypes';
+import InstructorProgressDashboard from '../instructor/components/InstructorProgressDashboard';
+import UpcomingTasksList from '../../features/dashboard/UpcomingTasksList';
+import ProgressSummaryCard from '../../features/dashboard/ProgressSummaryCard';
+
 import ModuleProgressView from './components/ModuleProgressView';
 import PerformanceAnalysisView from './components/PerformanceAnalysisView';
 import ActivityHistoryView from './components/ActivityHistoryView';
 import TaskDetailsView from './components/TaskDetailsView';
-import InstructorProgressDashboard from '../instructor/components/InstructorProgressDashboard';
-import UpcomingTasksList from '../../features/dashboard/UpcomingTasksList';
-import ProgressSummaryCard from '../../features/dashboard/ProgressSummaryCard';
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
@@ -85,7 +87,7 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
   );
 
   // Fetch course structure
-  const { data: courseStructure, isLoading: structureLoading } = useQuery(
+  const {data: courseStructure, isLoading: structureLoading} = useQuery(
     ['courseStructure', courseId],
     () => fetchCourseStructure(courseId),
     {
@@ -129,12 +131,12 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
     if (!progressData) return null;
 
     // Group tasks by type and calculate average score
-    const taskTypeGroups: Record<string, { total: number; count: number }> = {};
+    const taskTypeGroups: Record<string, {total: number; count: number}> = {};
 
     progressData.taskProgress.forEach(task => {
       if (task.score !== null && task.score !== undefined) {
         if (!taskTypeGroups[task.taskType]) {
-          taskTypeGroups[task.taskType] = { total: 0, count: 0 };
+          taskTypeGroups[task.taskType] = {total: 0, count: 0};
         }
         taskTypeGroups[task.taskType].total += task.score;
         taskTypeGroups[task.taskType].count += 1;
@@ -207,7 +209,7 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
 
   if (progressLoading || structureLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+      <Box sx={{display: 'flex', justifyContent: 'center', p: 4}}>
         <CircularProgress />
       </Box>
     );
@@ -215,7 +217,7 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
 
   if (progressError) {
     return (
-      <Box sx={{ p: 2 }}>
+      <Box sx={{p: 2}}>
         <Typography color="error">
           Error loading progress data: {(progressError as Error).message}
         </Typography>
@@ -225,7 +227,7 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
 
   if (!progressData) {
     return (
-      <Box sx={{ p: 2 }}>
+      <Box sx={{p: 2}}>
         <Typography>No progress data available.</Typography>
       </Box>
     );
@@ -237,8 +239,8 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
   const upcomingTasks = prepareUpcomingTasks();
 
   return (
-    <Box sx={{ maxWidth: 1200, mx: 'auto', p: 2 }}>
-      <Paper sx={{ p: 3, mb: 3 }}>
+    <Box sx={{maxWidth: 1200, mx: 'auto', p: 2}}>
+      <Paper sx={{p: 3, mb: 3}}>
         <Typography variant="h4" component="h1" gutterBottom>
           {showInstructorView
             ? 'Instructor Dashboard'
@@ -249,7 +251,7 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
 
         {/* Instructor View Toggle */}
         {isInstructor && (
-          <Box sx={{ mb: 3, display: 'flex', justifyContent: 'flex-end' }}>
+          <Box sx={{mb: 3, display: 'flex', justifyContent: 'flex-end'}}>
             <Button
               variant="contained"
               color={showInstructorView ? 'secondary' : 'primary'}
@@ -265,14 +267,14 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
           <InstructorProgressDashboard courseId={courseId} />
         ) : (
           <>
-            <Box sx={{ mb: 4 }}>
+            <Box sx={{mb: 4}}>
               <Typography variant="h6" gutterBottom>
                 Overall Completion: {overallCompletion}%
               </Typography>
               <LinearProgress
                 variant="determinate"
                 value={overallCompletion}
-                sx={{ height: 10, borderRadius: 5 }}
+                sx={{height: 10, borderRadius: 5}}
               />
             </Box>
 
@@ -310,7 +312,7 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
       {!showInstructorView && (
         <>
           {/* Tabs for different views */}
-          <Box sx={{ mb: 3 }}>
+          <Box sx={{mb: 3}}>
             <Tabs value={activeTab} onChange={handleTabChange}>
               <Tab label="Overview" />
               <Tab label="Modules" />
@@ -333,7 +335,7 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
                         Completion by Module
                       </Typography>
                       {moduleCompletionData && (
-                        <Box sx={{ height: 300 }}>
+                        <Box sx={{height: 300}}>
                           <Bar
                             data={moduleCompletionData as any}
                             options={{
@@ -363,7 +365,7 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
                         Performance by Task Type
                       </Typography>
                       {taskTypePerformanceData && (
-                        <Box sx={{ height: 300, display: 'flex', justifyContent: 'center' }}>
+                        <Box sx={{height: 300, display: 'flex', justifyContent: 'center'}}>
                           <Doughnut
                             data={taskTypePerformanceData as any}
                             options={{

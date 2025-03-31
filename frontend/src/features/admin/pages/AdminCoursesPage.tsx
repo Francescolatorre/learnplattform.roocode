@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {fetchCourses} from '@services/resources/courseService';
 import {Box, Typography, CircularProgress, Alert, List, ListItem, ListItemText} from '@mui/material';
+
+import {fetchCourses} from '@services/resources/courseService';
 
 const AdminCoursesPage: React.FC = () => {
   const [courses, setCourses] = useState([]);

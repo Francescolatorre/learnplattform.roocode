@@ -1,7 +1,8 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useCourseProgress } from '@hooks/useCourseProgress';
 import { CircularProgress, Typography, LinearProgress, List, ListItem } from '@mui/material';
+
+import { useCourseProgress } from '@hooks/useCourseProgress';
 
 const CourseProgressPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

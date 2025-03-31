@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Card, CardContent, CardActionArea } from '@mui/material';
+
 import { Course } from '../../../types/courseTypes';
 
 interface CourseCardProps {

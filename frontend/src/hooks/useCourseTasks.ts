@@ -1,5 +1,6 @@
-import { useQuery } from 'react-query';
-import { CourseService } from '@services/courseService'; // Use the updated CourseService
+import {useQuery} from '@tanstack/react-query';
+import LearningTaskService from '@features/learningTasks/services/learningTaskService';
+import CourseService from '@features/courses/services/courseService';
 
 interface ITask {
   id: string;
@@ -10,6 +11,6 @@ interface ITask {
 
 export const useCourseTasks = (courseId: string) => {
   return useQuery<ITask[], Error>(['courseTasks', courseId], () =>
-    CourseService.getTasks(courseId)
+    LearningTaskService.fetchLearningTasksByCourse(courseId)
   );
 };

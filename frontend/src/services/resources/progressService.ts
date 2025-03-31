@@ -1,5 +1,5 @@
 import apiService from '../api/apiService';
-import { CourseProgress, QuizHistory, ContentEffectivenessData } from '../../types/apiTypes';
+import {CourseProgress, QuizHistory, ContentEffectivenessData} from '../../types/common/apiTypes';
 
 export const fetchStudentProgressByUser = async (studentId: string): Promise<CourseProgress[]> => {
   return apiService.get<CourseProgress[]>(`students/${studentId}/progress/`);

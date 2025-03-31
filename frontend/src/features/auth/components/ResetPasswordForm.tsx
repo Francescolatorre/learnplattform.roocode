@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, Typography, Container, Paper, Alert } from '@mui/material';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { AxiosError } from 'axios';
+
 import { resetPassword } from '../../../services/api';
 import { validatePassword, type PasswordStrength } from '../utils/passwordValidation';
+
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
-import { AxiosError } from 'axios';
 
 const ResetPasswordForm: React.FC = () => {
   const [password, setPassword] = useState('');

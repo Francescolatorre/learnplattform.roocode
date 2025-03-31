@@ -1,28 +1,38 @@
-import { defineConfig } from 'vite';
+import {defineConfig} from 'vite';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
-import path from 'path';
+import {resolve} from 'path';
+const customPaths = {
+  '@components': resolve(__dirname, './src/components'),
+  '@utils': resolve(__dirname, './src/utils'),
+  '@features': resolve(__dirname, './src/features'),
+  '@routes': resolve(__dirname, './src/routes'),
+  '@assets': resolve(__dirname, './src/assets'),
+  '@hooks': resolve(__dirname, './src/hooks'),
+  '@styles': resolve(__dirname, './src/styles'),
+  '@context': resolve(__dirname, './src/context'),
+  '@constants': resolve(__dirname, './src/constants'),
+  '@services': resolve(__dirname, './src/services'),
+  '@types': resolve(__dirname, './src/types'),
+  '@store': resolve(__dirname, './src/store'),
+};
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
-  define: {
-    'process.env.REACT_ROUTER_FUTURE': JSON.stringify({
-      v7_startTransition: true,
-      v7_relativeSplatPath: true,
-    }),
+  resolve: {
+    alias: customPaths,
   },
   server: {
     proxy: {
       '/api': {
         target: 'http://localhost:8000',
         changeOrigin: true,
-        secure: false,
+        secure: process.env.NODE_ENV === 'production',
       },
       '/swagger': {
         target: 'http://localhost:8000',
         changeOrigin: true,
-        secure: false,
+        secure: process.env.NODE_ENV === 'production',
       },
     },
   },

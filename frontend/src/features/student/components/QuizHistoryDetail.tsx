@@ -15,13 +15,14 @@ import {
   Grid,
   LinearProgress,
 } from '@mui/material';
-import { QuizHistory, QuizAnswer } from '../../../types/progressTypes';
+
+import {QuizHistory, QuizAnswer} from '../../../types/common/progressTypes';
 
 interface QuizHistoryDetailProps {
   quizHistory: QuizHistory;
 }
 
-const QuizHistoryDetail: React.FC<QuizHistoryDetailProps> = ({ quizHistory }) => {
+const QuizHistoryDetail: React.FC<QuizHistoryDetailProps> = ({quizHistory}) => {
   const getAnswerColor = (answer: QuizAnswer) => {
     if (answer.isCorrect) return 'success';
     return 'error';
@@ -41,8 +42,8 @@ const QuizHistoryDetail: React.FC<QuizHistoryDetailProps> = ({ quizHistory }) =>
             <Typography variant="h6" gutterBottom>
               {quizHistory.quizTitle}
             </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h4" sx={{ mr: 2 }}>
+            <Box sx={{display: 'flex', alignItems: 'center', mb: 2}}>
+              <Typography variant="h4" sx={{mr: 2}}>
                 {quizHistory.score}%
               </Typography>
               <Chip
@@ -51,8 +52,8 @@ const QuizHistoryDetail: React.FC<QuizHistoryDetailProps> = ({ quizHistory }) =>
                 size="small"
               />
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <Typography variant="body2" color="textSecondary" sx={{ mr: 2 }}>
+            <Box sx={{display: 'flex', alignItems: 'center', mb: 2}}>
+              <Typography variant="body2" color="textSecondary" sx={{mr: 2}}>
                 Time Spent: {calculateTimeSpent(quizHistory.timeSpent)}
               </Typography>
               <Typography variant="body2" color="textSecondary">
@@ -65,14 +66,14 @@ const QuizHistoryDetail: React.FC<QuizHistoryDetailProps> = ({ quizHistory }) =>
               color={
                 quizHistory.score >= 70 ? 'success' : quizHistory.score >= 50 ? 'warning' : 'error'
               }
-              sx={{ height: 10, borderRadius: 5 }}
+              sx={{height: 10, borderRadius: 5}}
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <Typography variant="subtitle1" gutterBottom>
               Performance Breakdown
             </Typography>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+            <Box sx={{display: 'flex', justifyContent: 'space-between', mb: 2}}>
               <Typography variant="body2">Total Questions: {quizHistory.answers.length}</Typography>
               <Typography variant="body2">
                 Correct Answers: {quizHistory.answers.filter(a => a.isCorrect).length}
@@ -81,7 +82,7 @@ const QuizHistoryDetail: React.FC<QuizHistoryDetailProps> = ({ quizHistory }) =>
           </Grid>
         </Grid>
 
-        <TableContainer component={Paper} variant="outlined" sx={{ mt: 2 }}>
+        <TableContainer component={Paper} variant="outlined" sx={{mt: 2}}>
           <Table>
             <TableHead>
               <TableRow>

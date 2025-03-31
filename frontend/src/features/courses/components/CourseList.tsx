@@ -1,25 +1,32 @@
-import React from 'react';
-import {List, ListItem, ListItemText} from '@mui/material';
+import React, {useEffect, useState} from 'react';
 
-interface ICourse {
-  id: string;
-  title: string;
-  description: string;
-}
+import CourseService from '@services/resources/courseService';
 
-interface ICourseListProps {
-  courses: ICourse[];
-}
+const CourseList: React.FC = () => {
+  const [courses, setCourses] = useState([]);
 
-const CourseList: React.FC<ICourseListProps> = ({courses}) => {
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await CourseService.fetchCourses();
+        setCourses(response.results);
+      } catch (error) {
+        console.error('Failed to fetch courses:', error);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
   return (
-    <List>
-      {courses.map((course) => (
-        <ListItem key={course.id}>
-          <ListItemText primary={course.title} secondary={course.description} />
-        </ListItem>
-      ))}
-    </List>
+    <div>
+      <h1>Courses</h1>
+      <ul>
+        {courses.map(course => (
+          <li key={course.id}>{course.title}</li>
+        ))}
+      </ul>
+    </div>
   );
 };
 

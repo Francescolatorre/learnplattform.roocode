@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { TextField, Button, Container, Typography, Box, CircularProgress } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
-import ErrorMessage from '@components/ErrorMessage';
+import React, {useState, useEffect} from 'react';
+import {TextField, Button, Container, Typography, Box, CircularProgress} from '@mui/material';
+import {useNavigate} from 'react-router-dom';
+
+import {useAuth} from '../context/AuthContext';
+
+import ErrorMessage from '@components/common/ErrorMessage';
 
 const LoginForm: React.FC = () => {
-  const { login } = useAuth();
+  const {login} = useAuth();
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -48,7 +50,7 @@ const LoginForm: React.FC = () => {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
+        <Box component="form" onSubmit={handleSubmit} sx={{mt: 1, width: '100%'}}>
           <TextField
             margin="normal"
             required
@@ -85,7 +87,7 @@ const LoginForm: React.FC = () => {
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            sx={{mt: 3, mb: 2}}
             disabled={isLoading}
           >
             {isLoading ? <CircularProgress size={24} /> : 'Sign In'}

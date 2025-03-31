@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, LinearProgress, Typography } from '@mui/material';
+
 import { getPasswordStrengthColor, getPasswordStrengthLabel } from '../utils/passwordValidation';
 
 interface PasswordStrengthIndicatorProps {

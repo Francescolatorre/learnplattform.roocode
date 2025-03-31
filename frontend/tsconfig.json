@@ -1,6 +1,60 @@
 {
-  "extends": "./tsconfig.app.json", // Extend the app-specific configuration
-  "compilerOptions": {
-    "types": ["vite/client", "node", "@playwright/test", "@types/testing-library__react"]
-  }
+    "compilerOptions": {
+        "target": "ESNext",
+        "lib": [
+            "ESNext",
+            "DOM",
+            "DOM.Iterable"
+        ],
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+        "jsx": "react-jsx",
+        "baseUrl": "./src",
+        "paths": {
+            "@/*": [
+                "*"
+            ],
+            "@features/*": [
+                "features/*"
+            ],
+            "@components/*": [
+                "components/*"
+            ],
+            "@hooks/*": [
+                "hooks/*"
+            ],
+            "@services/*": [
+                "services/*"
+            ],
+            "@assets/*": [
+                "assets/*"
+            ],
+            "@utils/*": [
+                "utils/*"
+            ],
+            "@types/*": [
+                "types/*"
+            ],
+            "@styles/*": [
+                "styles/*"
+            ],
+            "@pages/*": [
+                "pages/*"
+            ],
+            "@store/*": [
+                "store/*"
+            ],
+        }
+    },
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
 }

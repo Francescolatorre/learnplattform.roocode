@@ -1,17 +1,18 @@
 import React from 'react';
-import { Typography, Container, Paper, Box } from '@mui/material';
-import { useAuth } from '../auth/AuthContext';
+import {Typography, Container, Paper, Box} from '@mui/material';
+
+import {useAuth} from '../auth/context/AuthContext';
 import withAuth from '../auth/hoc/withAuth';
 
 const Profile: React.FC = () => {
-  const { user } = useAuth();
+  const {user} = useAuth();
 
   return (
     <Container maxWidth="md">
       <Typography variant="h4" gutterBottom>
         User Profile
       </Typography>
-      <Paper elevation={3} sx={{ p: 3 }}>
+      <Paper elevation={3} sx={{p: 3}}>
         <Typography variant="h6">Profile Details</Typography>
         {user ? (
           <Box>

@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { useCourse } from '../../../hooks/useCourse';
+import React, {useState, useEffect} from 'react';
+import {useParams} from 'react-router-dom';
+import {LinearProgress, Typography, Box} from '@mui/material';
+
+import {useCourse} from '../../../hooks/useCourse';
 import TaskManagementUI from '../../../components/TaskManagementUI';
-import { fetchTasksByCourse } from '../../../services/resources/taskService';
-import { fetchStudentProgressByCourse } from '../../../services/resources/progressService';
-import { useAuth } from '../../auth/AuthContext';
-import { CourseProgress } from '../../../types/progressTypes';
-import { LinearProgress, Typography, Box } from '@mui/material';
+import {fetchTasksByCourse} from '../../../services/resources/taskService';
+import {fetchStudentProgressByCourse} from '../../../services/resources/progressService';
+import {useAuth} from '../../auth/context/AuthContext';
+import {CourseProgress} from '../../../types/common/progressTypes';
 
 // Styles for the course details page
 const styles = {
@@ -97,14 +98,14 @@ const styles = {
 };
 
 const InstructorCourseDetailPage: React.FC = () => {
-  const { courseId } = useParams<{ courseId: string }>();
+  const {courseId} = useParams<{courseId: string}>();
   if (!courseId) return <div style={styles.errorContainer}>Course ID not provided</div>;
 
-  const { course, loading, error } = useCourse(courseId);
+  const {course, loading, error} = useCourse(courseId);
   const [taskDescription, setTaskDescription] = useState('');
   const [tasks, setTasks] = useState<any[]>([]); // Correct type for tasks
   const [courseProgress, setCourseProgress] = useState<CourseProgress | null>(null);
-  const { user } = useAuth(); // Use context to get user information
+  const {user} = useAuth(); // Use context to get user information
   // Get the user role from the context or local storage
   const userRole = user?.role || localStorage.getItem('user_role') || 'student';
   console.log('User role in InstructorCourseDetailPage:', userRole);
@@ -157,24 +158,24 @@ const InstructorCourseDetailPage: React.FC = () => {
       {/* Progress Section */}
       {courseProgress && (
         <div style={styles.progressSection}>
-          <Typography variant="h6" style={{ marginBottom: '10px', color: '#007bff' }}>
+          <Typography variant="h6" style={{marginBottom: '10px', color: '#007bff'}}>
             Course Progress
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <Box sx={{ width: '100%', mr: 1 }}>
+          <Box sx={{display: 'flex', alignItems: 'center', mb: 1}}>
+            <Box sx={{width: '100%', mr: 1}}>
               <LinearProgress
                 variant="determinate"
                 value={courseProgress.completionPercentage}
                 color="primary"
               />
             </Box>
-            <Box sx={{ minWidth: 35 }}>
+            <Box sx={{minWidth: 35}}>
               <Typography variant="body2" color="text.secondary">
                 {`${Math.round(courseProgress.completionPercentage)}%`}
               </Typography>
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+          <Box sx={{display: 'flex', justifyContent: 'space-between', mt: 1}}>
             <Typography variant="body2">
               Completed Tasks: {courseProgress.completedTasks} / {courseProgress.totalTasks}
             </Typography>

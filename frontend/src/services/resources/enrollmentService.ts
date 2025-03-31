@@ -1,5 +1,7 @@
 import apiService from '../api/apiService';
-import { IEnrollment, IPaginatedResponse } from '../../types/enrollmentTypes';
+import {IEnrollment} from '../../features/enrollments/types/enrollmentTypes';
+import {IPaginatedResponse} from '../../types/common/paginatedResponse';
+
 
 class EnrollmentService {
   private static BASE_URL = '/api/v1/course-enrollments/';
@@ -7,13 +9,13 @@ class EnrollmentService {
   public static async fetchUserEnrollments(): Promise<IPaginatedResponse<IEnrollment>> {
     try {
       const response = await apiService.get<IPaginatedResponse<IEnrollment>>(this.BASE_URL);
-      const mappedResults = response.data.results.map(enrollment => ({
+      const mappedResults = response.results.map(enrollment => ({
         ...enrollment,
         courseDetails: {
           ...enrollment.course_details, // Extract course details
         },
       }));
-      return { ...response.data, results: mappedResults };
+      return {...response, results: mappedResults};
     } catch (error) {
       console.error('Failed to fetch user enrollments:', error);
       throw error;
@@ -22,12 +24,12 @@ class EnrollmentService {
 
   public static async fetchCourseEnrollments(): Promise<IPaginatedResponse<IEnrollment>> {
     const response = await apiService.get<IPaginatedResponse<IEnrollment>>(this.BASE_URL);
-    return response.data;
+    return response;
   }
 
   public static async enrollInCourse(courseId: string): Promise<void> {
     try {
-      await apiService.post(this.BASE_URL, { course: courseId });
+      await apiService.post(this.BASE_URL, {course: courseId});
     } catch (error: any) {
       console.error('API Error:', error);
       console.error('Response status:', error.response?.status);
@@ -57,7 +59,7 @@ class EnrollmentService {
     courseId: string
   ): Promise<IPaginatedResponse<IEnrollment>> {
     const response = await apiService.get<IPaginatedResponse<IEnrollment>>(this.BASE_URL, {
-      params: { course: courseId },
+      params: {course: courseId},
     });
     return response.data;
   }

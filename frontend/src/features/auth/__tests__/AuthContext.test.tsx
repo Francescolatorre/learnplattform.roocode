@@ -1,8 +1,9 @@
 import React from 'react';
-import { render, act } from '@testing-library/react';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { AuthProvider, useAuth } from '../AuthContext';
-import { login as apiLogin, logout as apiLogout, refreshAccessToken } from '../../../services/api';
+import {render, act} from '@testing-library/react';
+import {describe, it, expect, beforeEach, vi} from 'vitest';
+
+import {AuthProvider, useAuth} from '../context/AuthContext';
+import {login as apiLogin, logout as apiLogout, refreshAccessToken} from '../../../services/api';
 
 vi.mock('../../services/api', () => ({
   login: vi.fn(),
@@ -11,7 +12,7 @@ vi.mock('../../services/api', () => ({
 }));
 
 const TestComponent: React.FC = () => {
-  const { user, isAuthenticated, login, logout, refreshToken } = useAuth();
+  const {user, isAuthenticated, login, logout, refreshToken} = useAuth();
 
   return (
     <div>
@@ -31,7 +32,7 @@ describe('AuthContext', () => {
   });
 
   it('should initialize as unauthenticated', () => {
-    const { getByText } = render(
+    const {getByText} = render(
       <AuthProvider>
         <TestComponent />
       </AuthProvider>
@@ -55,14 +56,14 @@ describe('AuthContext', () => {
       user: mockUser,
     });
 
-    const { getByText, getByRole } = render(
+    const {getByText, getByRole} = render(
       <AuthProvider>
         <TestComponent />
       </AuthProvider>
     );
 
     await act(async () => {
-      getByRole('button', { name: /login/i }).click();
+      getByRole('button', {name: /login/i}).click();
     });
 
     expect(localStorage.getItem('access_token')).toBe('mockAccessToken');
@@ -77,14 +78,14 @@ describe('AuthContext', () => {
     localStorage.setItem('refresh_token', 'mockRefreshToken');
     localStorage.setItem('user_role', 'user');
 
-    const { getByText, getByRole } = render(
+    const {getByText, getByRole} = render(
       <AuthProvider>
         <TestComponent />
       </AuthProvider>
     );
 
     await act(async () => {
-      getByRole('button', { name: /logout/i }).click();
+      getByRole('button', {name: /logout/i}).click();
     });
 
     expect(localStorage.getItem('access_token')).toBeNull();
@@ -108,14 +109,14 @@ describe('AuthContext', () => {
       user: mockUser,
     });
 
-    const { getByText, getByRole } = render(
+    const {getByText, getByRole} = render(
       <AuthProvider>
         <TestComponent />
       </AuthProvider>
     );
 
     await act(async () => {
-      getByRole('button', { name: /refresh token/i }).click();
+      getByRole('button', {name: /refresh token/i}).click();
     });
 
     expect(localStorage.getItem('access_token')).toBe('newMockAccessToken');
@@ -127,14 +128,14 @@ describe('AuthContext', () => {
     localStorage.setItem('refresh_token', 'mockRefreshToken');
     (refreshAccessToken as vi.Mock).mockRejectedValue(new Error('Token refresh failed'));
 
-    const { getByText, getByRole } = render(
+    const {getByText, getByRole} = render(
       <AuthProvider>
         <TestComponent />
       </AuthProvider>
     );
 
     await act(async () => {
-      getByRole('button', { name: /refresh token/i }).click();
+      getByRole('button', {name: /refresh token/i}).click();
     });
 
     expect(localStorage.getItem('access_token')).toBeNull();

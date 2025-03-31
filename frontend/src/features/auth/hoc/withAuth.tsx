@@ -1,6 +1,7 @@
 import React from 'react';
-import { useAuth } from '../AuthContext';
-import { Navigate } from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
+
+import {useAuth} from '../context/AuthContext';
 
 interface WithAuthProps {
   allowedRoles?: string[]; // Specify roles allowed to access the component
@@ -8,10 +9,10 @@ interface WithAuthProps {
 
 const withAuth = <P extends object>(
   WrappedComponent: React.ComponentType<P>,
-  { allowedRoles }: WithAuthProps = {}
+  {allowedRoles}: WithAuthProps = {}
 ) => {
   const AuthWrapper: React.FC<P> = props => {
-    const { user, isAuthenticated } = useAuth();
+    const {user, isAuthenticated} = useAuth();
 
     if (!isAuthenticated) {
       // Redirect to login if not authenticated

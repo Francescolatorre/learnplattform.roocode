@@ -1,51 +1,70 @@
-import React, {useEffect} from 'react';
-import {useApiResource} from '@hooks/useApiResource';
-import TaskList from '@features/learningTasks/components/TaskList';
-import LoadingIndicator from '@components/common/LoadingIndicator';
-import {Alert, Box, Typography} from '@mui/material';
+import React from 'react';
+import {useParams} from 'react-router-dom';
+import {Container, Typography, Paper, Button} from '@mui/material';
 
-interface ITask {
-  id: string;
-  title: string;
-  description: string;
-}
+import {useCourseTasks} from '@hooks/useCourseTasks';
+import {DataTable, Column} from '@components/common/DataTable';
+import {useAuth} from '@features/auth/context/AuthContext';
 
 const StudentTasksPage: React.FC = () => {
-  const {data: tasksData, isLoading, error} = useApiResource<{results: ITask[]}>('/api/v1/learning-tasks', {page: 1});
+  const {courseId} = useParams();
+  const {user} = useAuth();
+  const {data: tasks, isLoading, error} = useCourseTasks(courseId!);
 
-  useEffect(() => {
-    if (tasksData) {
-      console.log('Tasks data fetched:', tasksData);
-    }
-  }, [tasksData]);
+  React.useEffect(() => {
+    console.log('StudentTasksPage rendered for user:', user);
+  }, [user]);
 
-  if (isLoading) {
-    return <LoadingIndicator />;
-  }
+  const columns: Column<any>[] = [
+    {id: 'title', label: 'Task Title'},
+    {id: 'description', label: 'Description'},
+    {id: 'status', label: 'Status'},
+    {
+      id: 'actions',
+      label: 'Actions',
+      format: (_, task) => (
+        <Button variant="text" color="primary" onClick={() => alert(`Edit Task: ${task.id}`)}>
+          Edit
+        </Button>
+      ),
+    },
+  ];
 
-  if (error) {
+  if (!courseId) {
     return (
-      <Alert severity="error" sx={{mb: 3}}>
-        Failed to load tasks. Please try again later.
-      </Alert>
-    );
-  }
-
-  if (!tasksData || tasksData.results.length === 0) {
-    return (
-      <Alert severity="info" sx={{mb: 3}}>
-        No tasks available.
-      </Alert>
+      <Container maxWidth="lg">
+        <Paper sx={{p: 3, mt: 3}}>
+          <Typography variant="h5" gutterBottom>
+            Course Not Found
+          </Typography>
+          <Typography variant="body1">
+            The course you are looking for could not be found.
+          </Typography>
+        </Paper>
+      </Container>
     );
   }
 
   return (
-    <Box>
+    <Container maxWidth="lg">
       <Typography variant="h4" gutterBottom>
-        Your Learning Tasks
+        Tasks for Course {courseId}
       </Typography>
-      <TaskList tasks={tasksData.results} />
-    </Box>
+      {isLoading ? (
+        <Typography>Loading tasks...</Typography>
+      ) : error ? (
+        <Typography>Error loading tasks: {error.message}</Typography>
+      ) : (
+        <DataTable
+          columns={columns}
+          data={tasks || []}
+          loading={isLoading}
+          error={error?.message || null}
+          keyExtractor={task => task.id}
+          emptyMessage="No tasks available for this course."
+        />
+      )}
+    </Container>
   );
 };
 

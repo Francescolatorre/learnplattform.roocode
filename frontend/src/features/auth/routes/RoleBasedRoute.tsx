@@ -1,6 +1,7 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
+import {Navigate} from 'react-router-dom';
+
+import {useAuth} from '../context/AuthContext';
 
 interface RoleBasedRouteProps {
   children: React.ReactNode;
@@ -13,7 +14,7 @@ const RoleBasedRoute: React.FC<RoleBasedRouteProps> = ({
   allowedRoles,
   redirectTo = '/dashboard',
 }) => {
-  const { user, isAuthenticated } = useAuth();
+  const {user, isAuthenticated} = useAuth();
 
   if (!isAuthenticated) {
     // Redirect to login if not authenticated
@@ -29,7 +30,7 @@ const RoleBasedRoute: React.FC<RoleBasedRouteProps> = ({
 };
 
 // Generic type for component props
-type ComponentProps<P> = P & { [key: string]: unknown };
+type ComponentProps<P> = P & {[key: string]: unknown};
 
 export const withRoleBasedAccess = <P extends object>(
   WrappedComponent: React.ComponentType<P>,

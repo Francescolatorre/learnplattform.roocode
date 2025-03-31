@@ -1,10 +1,11 @@
 import React from 'react';
-import {useQuery} from 'react-query';
+import {useQuery} from '@tanstack/react-query';
 import {useParams} from 'react-router-dom';
-import {fetchCourseDetails} from '@services/resources/progressService';
-import {fetchTasksByCourse} from '@services/resources/taskService';
 import {CircularProgress, Typography, List, ListItem, ListItemText, Button} from '@mui/material';
 import {useNavigate} from 'react-router-dom';
+
+import {fetchCourseDetails} from '@services/resources/progressService';
+import {fetchTasksByCourse} from '@services/resources/taskService';
 
 const CourseDetailsPage: React.FC = () => {
     const {courseId} = useParams<{courseId: string}>(); // Extract courseId from route params

@@ -1,17 +1,20 @@
-export interface Course {
+export interface ICourse {
   id: number;
   title: string;
   description: string;
-  version: number;
-  created_at: string;
-  updated_at: string;
+  // ...other properties from the Course definition in Swagger
 }
 
-export interface CourseVersion {
+export interface ICourseDetails {
   id: number;
-  course_id: number;
-  version_number: number;
-  content: string;
-  created_at: string;
-  updated_at: string;
+  title: string;
+  description: string;
+  // ...other properties from the Course definition in Swagger
+}
+
+export interface IEnrollment {
+  id: number;
+  course: number;
+  course_details: ICourseDetails;
+  // ...other properties from the CourseEnrollment definition in Swagger
 }

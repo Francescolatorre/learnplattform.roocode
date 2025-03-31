@@ -1,6 +1,5 @@
 import React from 'react';
-import {useQuery, useMutation} from 'react-query';
-import LearningTaskService from '@features/learningTasks/services/learningTaskService';
+import {useQuery, useMutation} from '@tanstack/react-query';
 import {
   CircularProgress,
   List,
@@ -9,6 +8,8 @@ import {
   Button,
   LinearProgress,
 } from '@mui/material';
+
+import LearningTaskService from '@features/learningTasks/services/learningTaskService';
 
 const LearningTasksList: React.FC = () => {
   const {

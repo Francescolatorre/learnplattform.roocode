@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, Dispatch, SetStateAction } from 'react';
 import Quill from 'quill';
+
 import 'quill/dist/quill.snow.css'; // Include the Quill CSS
 import { updateTask, deleteTask } from '../services/resources/taskService'; // Import the API functions
 

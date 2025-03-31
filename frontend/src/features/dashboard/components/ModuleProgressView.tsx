@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Box,
   Typography,
@@ -20,8 +20,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import { ModuleProgress } from '../../../types/progressTypes';
-import { CourseStructure } from '../../../types/courseTypes';
+
+import {ModuleProgress} from '../../../types/common/progressTypes';
+import {CourseStructure} from '../../../types/courseTypes';
 
 interface ModuleProgressViewProps {
   moduleProgress: ModuleProgress[];
@@ -70,7 +71,7 @@ const ModuleProgressView: React.FC<ModuleProgressViewProps> = ({
       </Typography>
 
       {moduleProgress.length === 0 ? (
-        <Paper sx={{ p: 3, textAlign: 'center' }}>
+        <Paper sx={{p: 3, textAlign: 'center'}}>
           <Typography>No module progress data available.</Typography>
         </Paper>
       ) : (
@@ -82,13 +83,13 @@ const ModuleProgressView: React.FC<ModuleProgressViewProps> = ({
               key={module.moduleId}
               expanded={expandedModule === module.moduleId}
               onChange={handleModuleChange(module.moduleId)}
-              sx={{ mb: 2 }}
+              sx={{mb: 2}}
             >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 sx={{
                   borderLeft: `4px solid ${getStatusColor(module.completionPercentage)}`,
-                  '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.04)' },
+                  '&:hover': {bgcolor: 'rgba(0, 0, 0, 0.04)'},
                 }}
               >
                 <Grid container alignItems="center" spacing={2}>
@@ -96,7 +97,7 @@ const ModuleProgressView: React.FC<ModuleProgressViewProps> = ({
                     <Typography variant="h6">{module.moduleTitle}</Typography>
                   </Grid>
                   <Grid item xs={6} sm={3}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Box sx={{display: 'flex', alignItems: 'center'}}>
                       <LinearProgress
                         variant="determinate"
                         value={module.completionPercentage}
@@ -123,10 +124,10 @@ const ModuleProgressView: React.FC<ModuleProgressViewProps> = ({
                 </Grid>
               </AccordionSummary>
               <AccordionDetails>
-                <Box sx={{ mb: 3 }}>
+                <Box sx={{mb: 3}}>
                   <Grid container spacing={3}>
                     <Grid item xs={12} sm={4}>
-                      <Paper sx={{ p: 2, textAlign: 'center', height: '100%' }}>
+                      <Paper sx={{p: 2, textAlign: 'center', height: '100%'}}>
                         <CheckCircleIcon
                           sx={{
                             fontSize: 40,
@@ -143,7 +144,7 @@ const ModuleProgressView: React.FC<ModuleProgressViewProps> = ({
                       </Paper>
                     </Grid>
                     <Grid item xs={12} sm={4}>
-                      <Paper sx={{ p: 2, textAlign: 'center', height: '100%' }}>
+                      <Paper sx={{p: 2, textAlign: 'center', height: '100%'}}>
                         <AccessTimeIcon
                           sx={{
                             fontSize: 40,
@@ -158,7 +159,7 @@ const ModuleProgressView: React.FC<ModuleProgressViewProps> = ({
                       </Paper>
                     </Grid>
                     <Grid item xs={12} sm={4}>
-                      <Paper sx={{ p: 2, textAlign: 'center', height: '100%' }}>
+                      <Paper sx={{p: 2, textAlign: 'center', height: '100%'}}>
                         <AssignmentIcon
                           sx={{
                             fontSize: 40,
@@ -181,14 +182,14 @@ const ModuleProgressView: React.FC<ModuleProgressViewProps> = ({
 
                 {moduleStructure &&
                   moduleStructure.sections.map(section => (
-                    <Paper key={section.id} sx={{ p: 2, mb: 2 }}>
+                    <Paper key={section.id} sx={{p: 2, mb: 2}}>
                       <Typography variant="subtitle1" gutterBottom>
                         {section.title}
                       </Typography>
                       <Typography variant="body2" color="textSecondary" paragraph>
                         {section.description}
                       </Typography>
-                      <Divider sx={{ my: 1 }} />
+                      <Divider sx={{my: 1}} />
                       <List dense>
                         {section.taskIds.map((taskId, index) => (
                           <ListItem key={taskId}>

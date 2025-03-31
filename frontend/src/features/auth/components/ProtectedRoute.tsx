@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
+import React, {useEffect} from 'react';
+import {Navigate} from 'react-router-dom';
+
+import {useAuth} from '../context/AuthContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
   allowedRoles?: string[];
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
-  const { isAuthenticated, refreshToken, userRole, isAuthChecked } = useAuth();
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({children, allowedRoles}) => {
+  const {isAuthenticated, refreshToken, userRole, isAuthChecked} = useAuth();
   const isTokenAvailable = localStorage.getItem('access_token') !== null;
   const [loading, setLoading] = React.useState(!isAuthChecked);
 

@@ -1,13 +1,13 @@
-import { useQuery } from 'react-query';
+import {useQuery} from '@tanstack/react-query';
 import axios from 'axios';
-import { useMemo } from 'react';
+import {useMemo} from 'react';
 
 export function useApiResource(resourceUrl: string, params: object) {
   const queryKey = useMemo(() => [resourceUrl, JSON.stringify(params)], [resourceUrl, params]);
 
-  const { data, error, isLoading } = useQuery(
+  const {data, error, isLoading} = useQuery(
     queryKey,
-    () => axios.get(resourceUrl, { params }).then(res => res.data),
+    () => axios.get(resourceUrl, {params}).then(res => res.data),
     {
       staleTime: 5000, // Avoid refetching within 5 seconds
       refetchOnWindowFocus: false, // Prevent duplicate fetches on window focus
@@ -15,5 +15,5 @@ export function useApiResource(resourceUrl: string, params: object) {
     }
   );
 
-  return { data, error, isLoading };
+  return {data, error, isLoading};
 }

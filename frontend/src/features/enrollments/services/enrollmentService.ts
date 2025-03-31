@@ -1,5 +1,6 @@
-import apiService from '../../services/apiService';
-import { IEnrollment, IPaginatedResponse } from '../types/enrollmentTypes';
+import apiService from '@services/api/apiService';
+import {IEnrollment} from '../types/enrollmentTypes';
+import {IPaginatedResponse} from '@src/types/paginatedResponse';
 
 class EnrollmentService {
   private static BASE_URL = '/api/v1/course-enrollments/';
@@ -7,27 +8,28 @@ class EnrollmentService {
   public static async fetchUserEnrollments(): Promise<IPaginatedResponse<IEnrollment>> {
     try {
       const response = await apiService.get<IPaginatedResponse<IEnrollment>>(this.BASE_URL);
-      const mappedResults = response.data.results.map(enrollment => ({
+      const typedResponse = (await apiService.get<IPaginatedResponse<IEnrollment>>(this.BASE_URL)) as IPaginatedResponse<IEnrollment>;
+      const mappedResults = typedResponse.results.map((enrollment: IEnrollment) => ({
         ...enrollment,
         courseDetails: {
           ...enrollment.course_details, // Extract course details
         },
       }));
-      return { ...response.data, results: mappedResults };
+      return {...typedResponse, results: mappedResults};
     } catch (error) {
       console.error('Failed to fetch user enrollments:', error);
-      throw error;
+      return Promise.resolve({results: [], count: 0, next: null, previous: null});
     }
   }
 
   public static async fetchCourseEnrollments(): Promise<IPaginatedResponse<IEnrollment>> {
     const response = await apiService.get<IPaginatedResponse<IEnrollment>>(this.BASE_URL);
-    return response.data;
+    return (await apiService.get<IPaginatedResponse<IEnrollment>>(this.BASE_URL)) as IPaginatedResponse<IEnrollment>;
   }
 
   public static async enrollInCourse(courseId: string): Promise<void> {
     try {
-      await apiService.post(this.BASE_URL, { course: courseId });
+      await apiService.post(this.BASE_URL, {course: courseId});
     } catch (error: any) {
       console.error('API Error:', error);
       console.error('Response status:', error.response?.status);
@@ -57,9 +59,18 @@ class EnrollmentService {
     courseId: string
   ): Promise<IPaginatedResponse<IEnrollment>> {
     const response = await apiService.get<IPaginatedResponse<IEnrollment>>(this.BASE_URL, {
-      params: { course: courseId },
+      params: {course: courseId},
     });
     return response.data;
+  }
+  public static async fetchEnrollmentDetails(courseId: string): Promise<IEnrollment> {
+    try {
+      const response = await apiService.get<any>(`${this.BASE_URL}${courseId}/`); // Changed to any to avoid type error
+      return response.data as IEnrollment;
+    } catch (error) {
+      console.error('Failed to fetch enrollment details:', error);
+      throw error;
+    }
   }
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Box,
   Typography,
@@ -17,15 +17,16 @@ import {
   Chip,
   useTheme,
 } from '@mui/material';
-import { Bar, Radar } from 'react-chartjs-2';
-import { format, parseISO } from 'date-fns';
-import { TaskProgress } from '../../../types/progressTypes';
+import {Bar, Radar} from 'react-chartjs-2';
+import {format, parseISO} from 'date-fns';
+
+import {TaskProgress} from '../../../types/common/progressTypes';
 
 interface PerformanceAnalysisViewProps {
   taskProgress: TaskProgress[];
 }
 
-const PerformanceAnalysisView: React.FC<PerformanceAnalysisViewProps> = ({ taskProgress }) => {
+const PerformanceAnalysisView: React.FC<PerformanceAnalysisViewProps> = ({taskProgress}) => {
   const theme = useTheme();
   const [activeTab, setActiveTab] = useState<number>(0);
 
@@ -180,7 +181,7 @@ const PerformanceAnalysisView: React.FC<PerformanceAnalysisViewProps> = ({ taskP
         Analyze your performance across different types of tasks and track your progress over time.
       </Typography>
 
-      <Tabs value={activeTab} onChange={handleTabChange} sx={{ mb: 3 }}>
+      <Tabs value={activeTab} onChange={handleTabChange} sx={{mb: 3}}>
         <Tab label="Overview" />
         <Tab label="By Task Type" />
         <Tab label="Detailed Scores" />
@@ -194,7 +195,7 @@ const PerformanceAnalysisView: React.FC<PerformanceAnalysisViewProps> = ({ taskP
                 <Typography variant="h6" gutterBottom>
                   Score Distribution
                 </Typography>
-                <Box sx={{ height: 300 }}>
+                <Box sx={{height: 300}}>
                   <Bar
                     data={scoreDistributionData as any}
                     options={{
@@ -228,7 +229,7 @@ const PerformanceAnalysisView: React.FC<PerformanceAnalysisViewProps> = ({ taskP
                 <Typography variant="h6" gutterBottom>
                   Skill Proficiency
                 </Typography>
-                <Box sx={{ height: 300 }}>
+                <Box sx={{height: 300}}>
                   <Radar
                     data={skillProficiencyData as any}
                     options={{
@@ -256,7 +257,7 @@ const PerformanceAnalysisView: React.FC<PerformanceAnalysisViewProps> = ({ taskP
                 <Typography variant="h6" gutterBottom>
                   Performance Over Time
                 </Typography>
-                <Box sx={{ height: 300 }}>
+                <Box sx={{height: 300}}>
                   <Bar
                     data={performanceOverTimeData as any}
                     options={{
@@ -292,13 +293,13 @@ const PerformanceAnalysisView: React.FC<PerformanceAnalysisViewProps> = ({ taskP
 
       {activeTab === 1 && (
         <Grid container spacing={3}>
-          {averageScoresByType.map(({ type, averageScore, count }) => (
+          {averageScoresByType.map(({type, averageScore, count}) => (
             <Grid item xs={12} sm={6} md={4} key={type}>
-              <Paper sx={{ p: 3, textAlign: 'center', height: '100%' }}>
+              <Paper sx={{p: 3, textAlign: 'center', height: '100%'}}>
                 <Typography variant="h6" gutterBottom>
                   {type.replace('_', ' ')}
                 </Typography>
-                <Typography variant="h3" color="primary" sx={{ my: 2 }}>
+                <Typography variant="h3" color="primary" sx={{my: 2}}>
                   {averageScore.toFixed(1)}%
                 </Typography>
                 <Typography variant="body2" color="textSecondary">

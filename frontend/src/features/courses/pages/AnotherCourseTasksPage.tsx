@@ -1,18 +1,19 @@
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Box, Typography, Container, Paper, Button } from '@mui/material';
+import {useParams, useNavigate} from 'react-router-dom';
+import {Box, Typography, Container, Paper, Button} from '@mui/material';
+
 import CourseTasksList from '@components/CourseTasksList'; // Ensure this path is correct
-import { useAuth } from '@features/auth/AuthContext';
+import {useAuth} from '@features/auth/context/AuthContext';
 
 const AnotherCourseTasksPage = () => {
-  const { courseId } = useParams();
+  const {courseId} = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const {user} = useAuth();
 
   if (user?.role !== 'student') {
     return (
       <Container maxWidth="lg">
-        <Paper sx={{ p: 3, mt: 3 }}>
+        <Paper sx={{p: 3, mt: 3}}>
           <Typography variant="h5" gutterBottom>
             Access Denied
           </Typography>
@@ -30,7 +31,7 @@ const AnotherCourseTasksPage = () => {
   if (!courseId) {
     return (
       <Container maxWidth="lg">
-        <Paper sx={{ p: 3, mt: 3 }}>
+        <Paper sx={{p: 3, mt: 3}}>
           <Typography variant="h5" gutterBottom>
             Course Not Found
           </Typography>
@@ -47,8 +48,8 @@ const AnotherCourseTasksPage = () => {
 
   return (
     <Container maxWidth="lg">
-      <Box sx={{ py: 4 }}>
-        <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box sx={{py: 4}}>
+        <Box sx={{mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
           <Button
             variant="outlined"
             color="primary"
@@ -70,7 +71,7 @@ const AnotherCourseTasksPage = () => {
 
         <CourseTasksList courseId={courseId} />
 
-        <Box sx={{ mt: 4 }}>
+        <Box sx={{mt: 4}}>
           <Button
             variant="outlined"
             color="primary"

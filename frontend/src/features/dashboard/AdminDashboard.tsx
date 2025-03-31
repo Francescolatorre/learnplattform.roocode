@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Card, CardContent, Typography } from '@mui/material';
+
 import DashboardLayout from './components/DashboardLayout';
 
 const AdminDashboard: React.FC<{ data: any }> = ({ data }) => {

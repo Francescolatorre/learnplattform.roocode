@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Box,
   Typography,
@@ -19,12 +19,13 @@ import {
   TableBody,
   Avatar,
 } from '@mui/material';
+
 import {
   CourseProgress,
   ModuleProgress,
   TaskProgress,
   QuizHistory,
-} from '../../../types/progressTypes';
+} from '../../../types/common/progressTypes';
 import ModuleProgressView from '../../student/components/ModuleProgressView';
 import QuizHistoryDetail from '../../student/components/QuizHistoryDetail';
 
@@ -32,7 +33,7 @@ interface StudentDetailViewProps {
   studentProgress: CourseProgress;
 }
 
-const StudentDetailView: React.FC<StudentDetailViewProps> = ({ studentProgress }) => {
+const StudentDetailView: React.FC<StudentDetailViewProps> = ({studentProgress}) => {
   const [activeTab, setActiveTab] = useState(0);
   const [selectedModule, setSelectedModule] = useState<ModuleProgress | null>(null);
   const [selectedQuiz, setSelectedQuiz] = useState<QuizHistory | null>(null);
@@ -72,7 +73,7 @@ const StudentDetailView: React.FC<StudentDetailViewProps> = ({ studentProgress }
 
   return (
     <Box>
-      <Card sx={{ mb: 3 }}>
+      <Card sx={{mb: 3}}>
         <CardContent>
           <Grid container spacing={3} alignItems="center">
             <Grid item>
@@ -89,8 +90,8 @@ const StudentDetailView: React.FC<StudentDetailViewProps> = ({ studentProgress }
             </Grid>
             <Grid item xs>
               <Typography variant="h5">Student: {studentProgress.studentId}</Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                <Typography variant="body1" sx={{ mr: 2 }}>
+              <Box sx={{display: 'flex', alignItems: 'center', mt: 1}}>
+                <Typography variant="body1" sx={{mr: 2}}>
                   Overall Progress: {calculateStudentCompletion()}%
                 </Typography>
                 <Chip
@@ -110,7 +111,7 @@ const StudentDetailView: React.FC<StudentDetailViewProps> = ({ studentProgress }
         </CardContent>
       </Card>
 
-      <Tabs value={activeTab} onChange={handleTabChange} sx={{ mb: 3 }}>
+      <Tabs value={activeTab} onChange={handleTabChange} sx={{mb: 3}}>
         <Tab label="Modules" />
         <Tab label="Tasks" />
         <Tab label="Quiz History" />
@@ -126,13 +127,13 @@ const StudentDetailView: React.FC<StudentDetailViewProps> = ({ studentProgress }
                 sx={{
                   cursor: 'pointer',
                   transition: 'transform 0.2s',
-                  '&:hover': { transform: 'scale(1.02)' },
+                  '&:hover': {transform: 'scale(1.02)'},
                 }}
                 onClick={() => setSelectedModule(module)}
               >
                 <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                  <Box sx={{display: 'flex', alignItems: 'center', mb: 2}}>
+                    <Typography variant="h6" sx={{flexGrow: 1}}>
                       {module.moduleTitle}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
@@ -284,12 +285,12 @@ const StudentDetailView: React.FC<StudentDetailViewProps> = ({ studentProgress }
       )}
 
       {selectedModule && (
-        <Box sx={{ mt: 4 }}>
+        <Box sx={{mt: 4}}>
           <ModuleProgressView moduleProgress={selectedModule} />
           <Button
             variant="outlined"
             color="primary"
-            sx={{ mt: 2 }}
+            sx={{mt: 2}}
             onClick={() => setSelectedModule(null)}
           >
             Close Module Details
@@ -298,12 +299,12 @@ const StudentDetailView: React.FC<StudentDetailViewProps> = ({ studentProgress }
       )}
 
       {selectedQuiz && (
-        <Box sx={{ mt: 4 }}>
+        <Box sx={{mt: 4}}>
           <QuizHistoryDetail quizHistory={selectedQuiz} />
           <Button
             variant="outlined"
             color="primary"
-            sx={{ mt: 2 }}
+            sx={{mt: 2}}
             onClick={() => setSelectedQuiz(null)}
           >
             Close Quiz Details

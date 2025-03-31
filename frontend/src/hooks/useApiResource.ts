@@ -1,6 +1,6 @@
 import {useState, useEffect, useCallback} from 'react';
 import axios, {AxiosError, AxiosRequestConfig} from 'axios';
-import {useQuery} from 'react-query';
+import {useQuery} from '@tanstack/react-query';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'; // Ensure this matches Swagger
 

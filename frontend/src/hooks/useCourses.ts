@@ -1,5 +1,5 @@
-import { useQuery } from 'react-query';
-import { courseService } from '@services/apiService';
+import {useQuery} from '@tanstack/react-query';
+import {courseService} from '@services/apiService';
 
 export const useCourses = () => {
   return useQuery('courses', async () => {

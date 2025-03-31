@@ -1,18 +1,21 @@
-import React, { useState } from 'react';
-import { useQuery } from 'react-query';
-import { Box, Typography, CircularProgress, Container } from '@mui/material';
-import { fetchStudentProgressByCourse, getQuizHistory } from '@services/progressService';
-import { CourseProgress, QuizHistory } from '../../../types/progressTypes';
-import { useAuth } from '@features/auth/AuthContext';
+import React, {useState} from 'react';
+import {useQuery} from '@tanstack/react-query';
+import {Box, Typography, CircularProgress, Container} from '@mui/material';
+import {fetchStudentProgressByCourse, getQuizHistory} from '@services/progressService';
+
+import {CourseProgress, QuizHistory} from '../../../types/common/progressTypes';
+
 import CourseDetailView from './CourseDetailView';
 import QuizHistoryDetail from './QuizHistoryDetail';
+
+import {useAuth} from '@features/auth/context/AuthContext';
 
 interface StudentProgressDashboardProps {
   courseId: string;
 }
 
-const StudentProgressDashboard: React.FC<StudentProgressDashboardProps> = ({ courseId }) => {
-  const { user } = useAuth();
+const StudentProgressDashboard: React.FC<StudentProgressDashboardProps> = ({courseId}) => {
+  const {user} = useAuth();
 
   // Fetch student progress
   const {
@@ -49,7 +52,7 @@ const StudentProgressDashboard: React.FC<StudentProgressDashboardProps> = ({ cou
 
   if (progressLoading || quizLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+      <Box sx={{display: 'flex', justifyContent: 'center', p: 4}}>
         <CircularProgress />
       </Box>
     );
@@ -57,7 +60,7 @@ const StudentProgressDashboard: React.FC<StudentProgressDashboardProps> = ({ cou
 
   if (progressError || quizError) {
     return (
-      <Box sx={{ p: 2 }}>
+      <Box sx={{p: 2}}>
         <Typography color="error">
           Error loading data: {((progressError || quizError) as Error).message}
         </Typography>
@@ -67,18 +70,18 @@ const StudentProgressDashboard: React.FC<StudentProgressDashboardProps> = ({ cou
 
   if (!studentProgress) {
     return (
-      <Box sx={{ p: 2 }}>
+      <Box sx={{p: 2}}>
         <Typography>No student progress data available.</Typography>
       </Box>
     );
   }
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <Container maxWidth="xl" sx={{py: 4}}>
       {selectedQuiz ? (
         <Box>
           <QuizHistoryDetail quizHistory={selectedQuiz} />
-          <Box sx={{ mt: 2, textAlign: 'right' }}>
+          <Box sx={{mt: 2, textAlign: 'right'}}>
             <Typography
               variant="body2"
               color="primary"
@@ -86,7 +89,7 @@ const StudentProgressDashboard: React.FC<StudentProgressDashboardProps> = ({ cou
               sx={{
                 cursor: 'pointer',
                 display: 'inline-block',
-                '&:hover': { textDecoration: 'underline' },
+                '&:hover': {textDecoration: 'underline'},
               }}
             >
               Back to Course Progress

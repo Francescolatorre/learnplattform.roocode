@@ -1,12 +1,13 @@
-import apiService from '../../../services/api/apiService';
-import { ILearningTask, IPaginatedResponse } from '../types/learningTaskTypes';
+import apiService from '@services/api/apiService';
+import {ILearningTask} from '../types/learningTaskTypes';
+import {IPaginatedResponse} from '../../types/paginatedResponse';
 
 class LearningTaskService {
   private static BASE_URL = '/api/v1/learning-tasks/';
 
   public static async fetchLearningTasks(): Promise<IPaginatedResponse<ILearningTask>> {
-    const response = await apiService.get<IPaginatedResponse<ILearningTask>>(this.BASE_URL);
-    return response.data;
+    const response = (await apiService.get<IPaginatedResponse<ILearningTask>>(this.BASE_URL)) as IPaginatedResponse<ILearningTask>;
+    return response;
   }
 
   public static async fetchLearningTaskById(taskId: number): Promise<ILearningTask> {

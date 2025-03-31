@@ -1,7 +1,8 @@
 import axios from 'axios';
 import {z} from 'zod';
+
 import apiService from '../api/apiService';
-import {Task, TaskCreationData} from '../../types/apiTypes';
+import {Task, TaskCreationData} from '../../types/common/apiTypes';
 
 // Enhanced Type Definitions with Validation
 const TaskSchema = z.object({

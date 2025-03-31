@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import CourseService from '@features/courses/services/courseService';
 import {Box, Typography, Alert} from '@mui/material';
+
+import CourseService from '@features/courses/services/courseService';
 import CourseList from '@features/courses/components/CourseList';
 import LoadingIndicator from '@components/common/LoadingIndicator';
 

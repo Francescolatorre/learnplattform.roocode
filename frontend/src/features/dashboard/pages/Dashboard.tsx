@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, CircularProgress, Alert } from '@mui/material';
+
 import { useAuth } from '../auth/AuthContext';
 import {
   fetchInstructorDashboardData,
@@ -8,6 +9,7 @@ import {
 } from '../../services/resources/progressService';
 import { fetchAdminDashboardSummary } from '../../services/resources/courseService';
 import withAuth from '../auth/hoc/withAuth';
+
 import StudentDashboard from './StudentDashboard';
 import InstructorDashboard from './InstructorDashboard';
 import AdminDashboard from './AdminDashboard';

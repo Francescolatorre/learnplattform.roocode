@@ -1,138 +1,107 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
-  Box,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-  LinearProgress,
-  Card,
-  CardContent,
-  Divider,
+  Box, Typography, List, ListItem, ListItemText,
+  LinearProgress, Card, CardContent, Divider
 } from '@mui/material';
 import {Link} from 'react-router-dom';
-import {fetchUserEnrollments} from '../../services/resources/courseService';
+import {useQuery} from '@tanstack/react-query';
+
+import EnrollmentService from '@features/enrollments/services/enrollmentService';
+import {IEnrollment as IEnrollmentType} from '@features/enrollments/types/enrollmentTypes';
+
 import LearningTaskService from '@features/learningTasks/services/learningTaskService';
-
-interface IEnrollment {
-  course: {
-    id: string;
-    title: string;
-  };
-  progress_percentage: number;
-}
-
-interface ITask {
-  id: string;
-  title: string;
-  due_date: string;
-}
+import {ILearningTask} from '@features/learningTasks/types/learningTaskTypes';
 
 const StudentDashboard: React.FC = () => {
-  const [enrollments, setEnrollments] = useState<IEnrollment[]>([]);
-  const [upcomingTasks, setUpcomingTasks] = useState<ITask[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Fetch enrollments with React Query
+  const {
+    data: enrollmentData,
+    isLoading: enrollmentsLoading,
+    error: enrollmentsError
+  } = useQuery({
+    queryKey: ['enrollments'],
+    queryFn: () => EnrollmentService.fetchUserEnrollments()
+  });
 
-  useEffect(() => {
-    const loadDashboardData = async () => {
-      try {
-        setLoading(true);
+  // Fetch tasks with React Query (Ersetzt durch tatsächlichen Service-Aufruf)
+  const {
+    data: tasksData,
+    isLoading: tasksLoading,
+    error: tasksError
+  } = useQuery({
+    queryKey: ['upcomingTasks'],
+    queryFn: () => LearningTaskService.fetchLearningTasks()
+  });
 
-        // Fetch enrolled courses with progress
-        const enrollmentData = await fetchUserEnrollments();
-        setEnrollments(enrollmentData.results); // Use updated enrollments with course details
+  const isLoading = enrollmentsLoading || tasksLoading;
+  const error = enrollmentsError || tasksError;
 
-        // Fetch upcoming tasks
-        const taskData = {results: []};
-        setUpcomingTasks(taskData.results.slice(0, 5)); // Show only the top 5 tasks
-      } catch (err: any) {
-        console.error('Failed to load student dashboard data:', err);
-        setError(err.message || 'Failed to load dashboard data.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const enrollments = enrollmentData?.results ?? [];
+  const upcomingTasks = tasksData?.results?.slice(0, 5) ?? [];
+  const renderTasks = () => {
+    if (upcomingTasks.length === 0) {
+      return <Typography>No upcoming tasks.</Typography>;
+    }
+    return (
+      <List>
+        {upcomingTasks.map((task: ILearningTask) => (
+          <ListItem key={task.id}>
+            <ListItemText
+              primary={task.title}
+            />
+          </ListItem>
+        ))}
+      </List>
+    );
+  };
 
-    loadDashboardData();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return <Typography>Loading...</Typography>;
   }
 
   if (error) {
-    return <Typography color="error">{error}</Typography>;
+    return <Typography color="error">
+      {(error as Error).message || 'Failed to load dashboard data.'}
+    </Typography>;
   }
 
+  // JSX to render the dashboard
   return (
     <Box sx={{p: 3}}>
       <Typography variant="h4" gutterBottom>
         Student Dashboard
       </Typography>
 
-      {/* Enrolled Courses with Progress */}
-      <Card sx={{mb: 4}}>
+      <Card sx={{mb: 3}}>
         <CardContent>
-          <Typography variant="h5" gutterBottom>
-            My Courses
+          <Typography variant="h6" gutterBottom>
+            Enrolled Courses
           </Typography>
-          <List>
-            {enrollments.map(enrollment => (
-              <ListItem
-                key={enrollment.course.id}
-                component={Link}
-                to={`/courses/${enrollment.course.id}/details`}
-                button
-              >
-                <ListItemText
-                  primary={enrollment.course.title}
-                  secondary={`Progress: ${enrollment.progress_percentage}%`}
-                />
-                <LinearProgress
-                  variant="determinate"
-                  value={enrollment.progress_percentage}
-                  sx={{width: '30%', ml: 2}}
-                />
-              </ListItem>
-            ))}
-          </List>
-        </CardContent>
-      </Card>
-
-      {/* Upcoming Tasks */}
-      <Card sx={{mb: 4}}>
-        <CardContent>
-          <Typography variant="h5" gutterBottom>
-            Upcoming Learning Tasks
-          </Typography>
-          <List>
-            {upcomingTasks.map(task => (
-              <React.Fragment key={task.id}>
-                <ListItem component={Link} to={`/learning-tasks/${task.id}`} button>
+          <Divider sx={{mb: 2}} />
+          {enrollments.length === 0 ? (
+            <Typography>No enrolled courses yet.</Typography>
+          ) : (
+            <List>
+              {enrollments.map((enrollment: IEnrollmentType) => (
+                <ListItem key={enrollment.id} component={Link} to={`/courses/${enrollment.course}`}>
                   <ListItemText
-                    primary={task.title}
-                    secondary={`Due: ${new Date(task.due_date).toLocaleDateString()}`}
+                    primary={enrollment.course_details.title}
+                    secondary={enrollment.course_details.description}
                   />
                 </ListItem>
-                <Divider />
-              </React.Fragment>
-            ))}
-          </List>
+              ))}
+            </List>
+          )}
         </CardContent>
       </Card>
 
-      {/* Performance Summary */}
       <Card>
         <CardContent>
-          <Typography variant="h5" gutterBottom>
-            Performance Summary
+          <Typography variant="h6" gutterBottom>
+            Upcoming Tasks (Next 5)
           </Typography>
-          <Typography variant="body1">
-            Completed Tasks:{' '}
-            {enrollments.reduce((sum, e) => sum + (e.progress_percentage === 100 ? 1 : 0), 0)}
-          </Typography>
-          <Typography variant="body1">Total Courses: {enrollments.length}</Typography>
+          <Divider sx={{mb: 2}} />
+          {renderTasks()}
         </CardContent>
       </Card>
     </Box>

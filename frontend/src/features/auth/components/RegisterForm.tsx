@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Box,
   Button,
@@ -13,13 +13,15 @@ import {
   SelectChangeEvent,
   Alert,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
-import { validatePassword, type PasswordStrength } from '../utils/passwordValidation';
+import {useNavigate} from 'react-router-dom';
+
+import {useAuth} from '../context/AuthContext';
+import {validatePassword, type PasswordStrength} from '../utils/passwordValidation';
+
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 
 const RegisterForm: React.FC = () => {
-  const { login } = useAuth(); // Use login after successful registration
+  const {login} = useAuth(); // Use login after successful registration
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -38,7 +40,7 @@ const RegisterForm: React.FC = () => {
     if (password) {
       setPasswordStrength(validatePassword(password));
     } else {
-      setPasswordStrength({ isValid: false, score: 0, feedback: [] });
+      setPasswordStrength({isValid: false, score: 0, feedback: []});
     }
   }, [password]);
 
@@ -78,7 +80,7 @@ const RegisterForm: React.FC = () => {
 
   return (
     <Container maxWidth="xs">
-      <Paper elevation={3} sx={{ padding: 3, marginTop: 8 }}>
+      <Paper elevation={3} sx={{padding: 3, marginTop: 8}}>
         <Typography variant="h4" align="center" gutterBottom>
           Register
         </Typography>
@@ -144,7 +146,7 @@ const RegisterForm: React.FC = () => {
             </Select>
           </FormControl>
           {error && (
-            <Alert severity="error" sx={{ mt: 2 }}>
+            <Alert severity="error" sx={{mt: 2}}>
               {error}
             </Alert>
           )}
@@ -153,7 +155,7 @@ const RegisterForm: React.FC = () => {
             fullWidth
             variant="contained"
             color="primary"
-            sx={{ marginTop: 2 }}
+            sx={{marginTop: 2}}
             disabled={isLoading || !passwordStrength.isValid}
           >
             {isLoading ? 'Registering...' : 'Register'}
