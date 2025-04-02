@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -10,27 +10,27 @@ import {
   Alert,
   CircularProgress,
 } from '@mui/material';
-import {fetchCourseDetails, enrollInCourse} from '@services/courseService';
+import CourseService from '@services/resources/courseService'; // Corrected import
 
-import {useAuth} from '@features/auth/context/AuthContext';
+import { useAuth } from '@features/auth/context/AuthContext';
 
-const CourseEnrollment = ({courseId}) => {
+const CourseEnrollment = ({ courseId }) => {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
   const [error, setError] = useState(null);
   const [enrollmentStatus, setEnrollmentStatus] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const {user} = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchCourseData = async () => {
       try {
         setLoading(true);
-        const {courseData, enrollmentData} = await fetchCourseDetails(courseId, user.id);
+        const courseData = await CourseService.fetchCourseById(courseId); // Corrected usage
         setCourse(courseData);
 
-        const userEnrollment = enrollmentData.find(
+        const userEnrollment = courseData.enrollments.find(
           enrollment =>
             enrollment.user === user.id && enrollment.course.toString() === courseId.toString()
         );
@@ -56,7 +56,7 @@ const CourseEnrollment = ({courseId}) => {
     try {
       setEnrolling(true);
       setError(null);
-      await enrollInCourse(courseId);
+      await CourseService.enrollInCourse(courseId);
       setEnrollmentStatus('active');
       setSuccessMessage('You have successfully enrolled in this course!');
     } catch (err) {
@@ -77,7 +77,7 @@ const CourseEnrollment = ({courseId}) => {
 
   if (error) {
     return (
-      <Alert severity="error" sx={{mb: 3}}>
+      <Alert severity="error" sx={{ mb: 3 }}>
         {error}
       </Alert>
     );
@@ -88,9 +88,9 @@ const CourseEnrollment = ({courseId}) => {
   }
 
   return (
-    <Box sx={{mb: 4}}>
+    <Box sx={{ mb: 4 }}>
       {successMessage && (
-        <Alert severity="success" sx={{mb: 3}}>
+        <Alert severity="success" sx={{ mb: 3 }}>
           {successMessage}
         </Alert>
       )}
@@ -105,7 +105,7 @@ const CourseEnrollment = ({courseId}) => {
             {course.description}
           </Typography>
 
-          <Box sx={{display: 'flex', gap: 1, mb: 2}}>
+          <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
             <Chip
               label={course.status}
               color={course.status === 'published' ? 'success' : 'default'}
@@ -115,7 +115,7 @@ const CourseEnrollment = ({courseId}) => {
           </Box>
 
           {enrollmentStatus ? (
-            <Box sx={{mt: 2}}>
+            <Box sx={{ mt: 2 }}>
               <Alert severity="info">
                 You are already enrolled in this course.
                 {enrollmentStatus === 'active' && ' Your enrollment is active.'}
@@ -126,7 +126,7 @@ const CourseEnrollment = ({courseId}) => {
               <Button
                 variant="contained"
                 color="primary"
-                sx={{mt: 2}}
+                sx={{ mt: 2 }}
                 href={`/courses/${courseId}/tasks`}
               >
                 View Course Tasks
@@ -138,14 +138,14 @@ const CourseEnrollment = ({courseId}) => {
               color="primary"
               disabled={enrolling || course.status !== 'published'}
               onClick={handleEnroll}
-              sx={{mt: 2}}
+              sx={{ mt: 2 }}
             >
               {enrolling ? 'Enrolling...' : 'Enroll in Course'}
             </Button>
           )}
 
           {course.status !== 'published' && (
-            <Alert severity="warning" sx={{mt: 2}}>
+            <Alert severity="warning" sx={{ mt: 2 }}>
               This course is not currently published for enrollment.
             </Alert>
           )}

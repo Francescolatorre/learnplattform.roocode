@@ -1,9 +1,6 @@
 // src/services/api/api.ts
 import apiService from './apiService';
+import { API_CONFIG, setApiBaseUrl } from './apiConfig';
 
-export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
-  AUTH_BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
-};
-
+export { API_CONFIG, setApiBaseUrl }; // Export configuration and setter for external use
 export default apiService;

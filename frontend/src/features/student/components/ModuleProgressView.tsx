@@ -15,13 +15,13 @@ import {
   Paper,
 } from '@mui/material';
 
-import {ModuleProgress, TaskProgress} from '../../../types/common/progressTypes';
+import { ModuleProgress, TaskProgress } from '../../../types/common/progressTypes';
 
 interface ModuleProgressViewProps {
   moduleProgress: ModuleProgress;
 }
 
-const ModuleProgressView: React.FC<ModuleProgressViewProps> = ({moduleProgress}) => {
+const ModuleProgressView: React.FC<ModuleProgressViewProps> = ({ moduleProgress }) => {
   const calculateTaskCompletion = (task: TaskProgress) => {
     if (task.status === 'completed' || task.status === 'graded') return 100;
     if (task.status === 'in_progress') return 50;
@@ -46,8 +46,8 @@ const ModuleProgressView: React.FC<ModuleProgressViewProps> = ({moduleProgress})
   return (
     <Card>
       <CardContent>
-        <Box sx={{display: 'flex', alignItems: 'center', mb: 2}}>
-          <Typography variant="h6" sx={{flexGrow: 1}}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
             {moduleProgress.moduleTitle}
           </Typography>
           <Typography variant="body2" color="textSecondary">
@@ -57,7 +57,7 @@ const ModuleProgressView: React.FC<ModuleProgressViewProps> = ({moduleProgress})
         <LinearProgress
           variant="determinate"
           value={moduleProgress.completionPercentage}
-          sx={{mb: 2}}
+          sx={{ mb: 2 }}
         />
         <TableContainer component={Paper} variant="outlined">
           <Table size="small">
@@ -79,7 +79,7 @@ const ModuleProgressView: React.FC<ModuleProgressViewProps> = ({moduleProgress})
                     <LinearProgress
                       variant="determinate"
                       value={calculateTaskCompletion(task)}
-                      sx={{width: 100}}
+                      sx={{ width: 100 }}
                     />
                   </TableCell>
                   <TableCell>

@@ -1,6 +1,6 @@
-import {create} from 'zustand'; // Use named import for create
+import { create } from 'zustand'; // Use named import for create
 
-import {Course} from '../types/common/apiTypes'; // Import Course from apiTypes
+import { Course } from '../types/common/apiTypes'; // Import Course from apiTypes
 
 interface User {
   id: string;
@@ -17,6 +17,6 @@ interface AppState {
 export const useAppStore = create<AppState>(set => ({
   user: null,
   courses: [],
-  setUser: user => set({user}),
-  setCourses: courses => set({courses}),
+  setUser: user => set({ user }),
+  setCourses: courses => set({ courses }),
 }));

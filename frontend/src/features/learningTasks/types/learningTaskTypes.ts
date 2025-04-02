@@ -1,17 +1,4 @@
-export interface ILearningTask {
-  id: number;
-  course: number;
-  title: string;
-  description: string;
-  order: number;
-  is_published: boolean;
-  created_at: string; // ISO 8601 date string
-  updated_at: string; // ISO 8601 date string
-}
+import { LearningTask } from '@/types/common/entities';
+import { IPaginatedResponse } from '@/types/common/paginatedResponse';
 
-export interface IPaginatedResponse<T> {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: T[];
-}
+export type ILearningTask = LearningTask;

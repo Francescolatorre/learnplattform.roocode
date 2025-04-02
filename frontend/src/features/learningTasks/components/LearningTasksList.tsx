@@ -1,5 +1,5 @@
 import React from 'react';
-import {useQuery, useMutation} from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import {
   CircularProgress,
   List,
@@ -18,7 +18,7 @@ const LearningTasksList: React.FC = () => {
     refetch,
   } = useQuery('taskProgress', LearningTaskService.fetchTaskProgress);
   const mutation = useMutation(
-    ({taskId, status}: {taskId: number; status: string}) =>
+    ({ taskId, status }: { taskId: number; status: string }) =>
       LearningTaskService.updateTaskProgress(taskId, status),
     {
       onSuccess: () => refetch(),
@@ -26,7 +26,7 @@ const LearningTasksList: React.FC = () => {
   );
 
   const handleCompleteTask = (taskId: number) => {
-    mutation.mutate({taskId, status: 'completed'});
+    mutation.mutate({ taskId, status: 'completed' });
   };
 
   if (isLoading) {
@@ -38,11 +38,11 @@ const LearningTasksList: React.FC = () => {
       {taskProgress?.map((progress: any) => (
         <ListItem key={progress.task.id} divider>
           <ListItemText primary={progress.task.title} secondary={progress.task.description} />
-          <div style={{width: '100%'}}>
+          <div style={{ width: '100%' }}>
             <LinearProgress
               variant="determinate"
               value={progress.status === 'completed' ? 100 : 50}
-              style={{marginBottom: '8px'}}
+              style={{ marginBottom: '8px' }}
             />
             <Button
               variant="contained"

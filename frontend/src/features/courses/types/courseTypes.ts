@@ -1,16 +1,7 @@
-export interface ICourse {
-  id: number;
-  title: string;
-  description: string;
-  // ...other properties from the Course definition in Swagger
-}
+import { Course, CourseDetails } from '@/types/common/entities';
 
-export interface ICourseDetails {
-  id: number;
-  title: string;
-  description: string;
-  // ...other properties from the Course definition in Swagger
-}
+export type ICourse = Course;
+export type ICourseDetails = CourseDetails;
 
 export interface IEnrollment {
   id: number;

@@ -1,143 +1,156 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Button, TextField, Typography, Container, Paper, Alert } from '@mui/material';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { AxiosError } from 'axios';
+import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useForm, Controller } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
-import { resetPassword } from '../../../services/api';
 import { validatePassword, type PasswordStrength } from '../utils/passwordValidation';
 
-import PasswordStrengthIndicator from './PasswordStrengthIndicator';
-
-const ResetPasswordForm: React.FC = () => {
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
-    isValid: false,
-    score: 0,
-    feedback: [],
+const passwordSchema = z
+  .string()
+  .min(8, { message: 'Password must be at least 8 characters' })
+  .refine(validatePassword, {
+    message:
+      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
   });
 
-  const token = searchParams.get('token');
+const resetPasswordFormSchema = z
+  .object({
+    password: passwordSchema,
+    confirmPassword: z.string(),
+  })
+  .refine(data => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
 
-  useEffect(() => {
-    if (!token) {
-      setError('Invalid or missing reset token');
-    }
-  }, [token]);
+type ResetPasswordFormValues = z.infer<typeof resetPasswordFormSchema>;
 
-  useEffect(() => {
-    if (password) {
-      setPasswordStrength(validatePassword(password));
-    } else {
-      setPasswordStrength({ isValid: false, score: 0, feedback: [] });
-    }
-  }, [password]);
+const ResetPasswordForm: React.FC = () => {
+  const { token } = useParams<{ token: string }>();
+  const navigate = useNavigate();
+  const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>('Too weak');
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<ResetPasswordFormValues>({
+    resolver: zodResolver(resetPasswordFormSchema),
+    defaultValues: {
+      password: '',
+      confirmPassword: '',
+    },
+  });
 
-    if (!token) {
-      setError('Invalid or missing reset token');
-      setIsLoading(false);
-      return;
-    }
+  const password = watch('password');
 
-    if (!passwordStrength.isValid) {
-      setError('Please address all password requirements');
-      setIsLoading(false);
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      setIsLoading(false);
-      return;
-    }
+  const onSubmit = async (data: ResetPasswordFormValues) => {
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
 
     try {
-      await resetPassword(token, password);
-      // Show success message and redirect to login
-      navigate('/login', {
-        state: {
-          message: 'Password has been reset successfully. Please login with your new password.',
-        },
-      });
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        const axiosError = err as AxiosError;
-        const errorMessage = axiosError.response?.data
-          ? (axiosError.response.data as { detail?: string }).detail || 'Password reset failed'
-          : 'An error occurred while resetting your password.';
-        setError(errorMessage);
-      } else {
-        setError('An unexpected error occurred');
-      }
+      setSuccess(true);
+      setTimeout(() => {
+        navigate('/login');
+      }, 3000);
+    } catch (err: any) {
+      setError(err.message || 'Failed to reset password');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <Container maxWidth="xs">
-      <Paper elevation={3} sx={{ padding: 3, marginTop: 8 }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          Reset Password
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            label="New Password"
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            error={!!error}
-            disabled={isLoading || !token}
-          />
-          {password && (
-            <PasswordStrengthIndicator
-              score={passwordStrength.score}
-              feedback={passwordStrength.feedback}
+    <Box
+      sx={{
+        maxWidth: 400,
+        mx: 'auto',
+        mt: 4,
+        p: 3,
+        border: '1px solid #ccc',
+        borderRadius: 1,
+        boxShadow: 1,
+      }}
+    >
+      <Typography variant="h5" component="h2" align="center" mb={2}>
+        Reset Password
+      </Typography>
+      {success && (
+        <Alert severity="success" sx={{ mb: 2 }}>
+          <AlertTitle>Password Reset Successful</AlertTitle>
+          You will be redirected to login in 3 seconds...
+        </Alert>
+      )}
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          <AlertTitle>Error</AlertTitle>
+          {error}
+        </Alert>
+      )}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Controller
+          name="password"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Password"
+              type="password"
+              fullWidth
+              margin="normal"
+              error={!!errors.password}
+              helperText={errors.password?.message}
+              onChange={e => {
+                field.onChange(e);
+                setPasswordStrength(validatePassword(e.target.value));
+              }}
             />
           )}
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            label="Confirm New Password"
-            type="password"
-            value={confirmPassword}
-            onChange={e => setConfirmPassword(e.target.value)}
-            error={!!error}
-            disabled={isLoading || !token}
-          />
-          {error && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              {error}
-            </Alert>
+        />
+        <Typography
+          component="span"
+          variant="body2"
+          color={passwordStrength === 'Too weak' ? 'error' : 'success'}
+          sx={{ mb: 1 }}
+        >
+          Password Strength: {passwordStrength}
+        </Typography>
+        <Controller
+          name="confirmPassword"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Confirm Password"
+              type="password"
+              fullWidth
+              margin="normal"
+              error={!!errors.confirmPassword}
+              helperText={errors.confirmPassword?.message}
+            />
           )}
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            sx={{ mt: 3, mb: 2 }}
-            disabled={isLoading || !token || !passwordStrength.isValid}
-          >
-            {isLoading ? 'Resetting Password...' : 'Reset Password'}
-          </Button>
-        </Box>
-      </Paper>
-    </Container>
+        />
+
+        <Button variant="contained" color="primary" fullWidth type="submit" disabled={loading}>
+          {loading ? <CircularProgress size={24} /> : 'Reset Password'}
+        </Button>
+      </form>
+    </Box>
   );
 };
 

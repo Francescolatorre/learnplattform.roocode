@@ -1,15 +1,15 @@
 import React from 'react';
-import {Navigate} from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
-import {useAuth} from '@features/auth/context/AuthContext';
+import { useAuth } from '@features/auth/context/AuthContext';
 
 interface IRoleBasedRouteProps {
   children: React.ReactNode;
   requiredRole: string;
 }
 
-const RoleBasedRoute: React.FC<IRoleBasedRouteProps> = ({children, requiredRole}) => {
-  const {isAuthenticated, user} = useAuth();
+const RoleBasedRoute: React.FC<IRoleBasedRouteProps> = ({ children, requiredRole }) => {
+  const { isAuthenticated, user } = useAuth();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;

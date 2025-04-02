@@ -1,44 +1,37 @@
-import axios, { AxiosInstance } from 'axios';
+import axios from 'axios';
+import { API_CONFIG } from './apiConfig';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'; // Base URL includes /api/v1
+const axiosInstance = axios.create({
+  baseURL: API_CONFIG.BASE_URL,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+axiosInstance.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => Promise.reject(error)
+);
+
+axiosInstance.interceptors.response.use(
+  response => response,
+  async error => {
+    if (error.response?.status === 401) {
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
 
 class ApiService {
-  private instance: AxiosInstance;
-
-  constructor(baseURL: string) {
-    this.instance = axios.create({
-      baseURL, // Use the baseURL with /api/v1
-      timeout: 15000,
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-    });
-
-    // Add request interceptor to include auth token
-    this.instance.interceptors.request.use(
-      config => {
-        const token = localStorage.getItem('access_token');
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      },
-      error => Promise.reject(error)
-    );
-
-    // Add response interceptor to handle errors
-    this.instance.interceptors.response.use(
-      response => {
-        console.log('API Response:', response); // Debug log for all responses
-        return response;
-      },
-      error => {
-        console.error('API Error:', error.response || error.message); // Debug log for errors
-        return Promise.reject(error);
-      }
-    );
-  }
+  private instance = axiosInstance;
 
   public get<T>(endpoint: string, params = {}): Promise<T> {
     return this.instance.get(endpoint, { params }).then(response => response.data);
@@ -56,6 +49,7 @@ class ApiService {
     return this.instance.delete(endpoint).then(response => response.data);
   }
 
+  // Reintroduce createResourceService for reusable CRUD operations
   public createResourceService<T>(resource: string) {
     const resourcePath = resource.endsWith('/') ? resource : `${resource}/`;
 
@@ -67,8 +61,23 @@ class ApiService {
       delete: (id: string | number) => this.delete<void>(`${resourcePath}${id}/`),
     };
   }
+
+  public login<T>(usernameOrEmail: string, password: string): Promise<T> {
+    return this.instance
+      .post('/api/login', { username: usernameOrEmail, password })
+      .then(response => response.data as T);
+  }
+
+  public logout<T>(): Promise<T> {
+    return this.instance.post('/api/logout').then(response => response.data as T);
+  }
+
+  public refreshAccessToken<T>(refreshToken: string): Promise<T> {
+    return this.instance
+      .post('/api/token/refresh', { refresh: refreshToken })
+      .then(response => response.data as T);
+  }
 }
 
-// Export an instance of the ApiService class
-const apiService = new ApiService(API_BASE_URL);
+const apiService = new ApiService();
 export default apiService;

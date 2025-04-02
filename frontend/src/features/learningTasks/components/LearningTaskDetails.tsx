@@ -1,6 +1,6 @@
 import React from 'react';
-import {useQuery} from '@tanstack/react-query';
-import {CircularProgress, Typography, Button} from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
+import { CircularProgress, Typography, Button } from '@mui/material';
 
 import LearningTaskService from '@features/learningTasks/services/learningTaskService';
 
@@ -8,8 +8,8 @@ interface TaskDetailsProps {
   taskId: number;
 }
 
-const TaskDetails: React.FC<TaskDetailsProps> = ({taskId}) => {
-  const {data: taskDetails, isLoading} = useQuery(['taskDetails', taskId], () =>
+const TaskDetails: React.FC<TaskDetailsProps> = ({ taskId }) => {
+  const { data: taskDetails, isLoading } = useQuery(['taskDetails', taskId], () =>
     LearningTaskService.fetchTaskDetails(String(taskId))
   );
 

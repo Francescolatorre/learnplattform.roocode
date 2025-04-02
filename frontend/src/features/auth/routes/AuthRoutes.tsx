@@ -1,18 +1,18 @@
 import React from 'react';
-import {Routes, Route, Navigate} from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 import ForgotPasswordForm from '../components/ForgotPasswordForm';
 import ResetPasswordForm from '../components/ResetPasswordForm';
-import {useAuth} from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({children}) => {
-  const {isAuthenticated} = useAuth();
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+  const { isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
     // Redirect to login page if not authenticated
@@ -26,8 +26,8 @@ interface PublicRouteProps {
   children: React.ReactNode;
 }
 
-const PublicRoute: React.FC<PublicRouteProps> = ({children}) => {
-  const {isAuthenticated} = useAuth();
+const PublicRoute: React.FC<PublicRouteProps> = ({ children }) => {
+  const { isAuthenticated } = useAuth();
 
   if (isAuthenticated) {
     // Redirect to dashboard if already authenticated
@@ -78,5 +78,5 @@ const AuthRoutes: React.FC = () => {
 };
 
 // Export components for use in other parts of the application
-export {ProtectedRoute, PublicRoute};
+export { ProtectedRoute, PublicRoute };
 export default AuthRoutes;

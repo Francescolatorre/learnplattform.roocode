@@ -1,55 +1,46 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Card, CardContent, CardActionArea } from '@mui/material';
+import { Card, CardContent, CardActions, Typography, Button, Box } from '@mui/material';
 
-import { Course } from '../../../types/courseTypes';
-
-interface CourseCardProps {
-  course: Course;
+interface ICourseCardProps {
+  title: string;
+  description: string;
+  instructor: string;
+  onViewDetails: () => void;
+  onEnroll?: () => void;
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    navigate(`/courses/${course.id}`);
-  };
-
+const CourseCard: React.FC<ICourseCardProps> = ({
+  title,
+  description,
+  instructor,
+  onViewDetails,
+  onEnroll,
+}) => {
   return (
-    <Card variant="outlined" sx={{ height: '100%' }}>
-      <CardActionArea onClick={handleClick} sx={{ height: '100%' }}>
-        <CardContent
-          sx={{
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <Typography variant="h6" gutterBottom>
-            {course.title}
+    <Card sx={{ maxWidth: 345, m: 2 }}>
+      <CardContent>
+        <Typography variant="h5" component="div">
+          {title}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          {description}
+        </Typography>
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="subtitle2" color="text.secondary">
+            Instructor: {instructor}
           </Typography>
-
-          <Typography variant="body2" color="textSecondary" sx={{ flexGrow: 1 }}>
-            {course.description}
-          </Typography>
-
-          <Box mt={2}>
-            <Typography variant="caption" color="textSecondary" display="block">
-              Status: {course.status || 'Draft'}
-            </Typography>
-
-            <Typography variant="caption" color="textSecondary" display="block">
-              Version: {course.version || '1.0'}
-            </Typography>
-
-            {course.creator_details && (
-              <Typography variant="caption" color="textSecondary" display="block">
-                Created by: {course.creator_details.username || 'Unknown'}
-              </Typography>
-            )}
-          </Box>
-        </CardContent>
-      </CardActionArea>
+        </Box>
+      </CardContent>
+      <CardActions>
+        <Button size="small" onClick={onViewDetails}>
+          View Details
+        </Button>
+        {onEnroll && (
+          <Button size="small" onClick={onEnroll}>
+            Enroll
+          </Button>
+        )}
+      </CardActions>
     </Card>
   );
 };

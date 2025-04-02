@@ -1,12 +1,14 @@
 import apiService from '@services/api/apiService';
-import {ICourse} from '../types/courseTypes';
-import {IPaginatedResponse} from '@src/types/paginatedResponse';
+import { ICourse } from '../types/courseTypes';
+import { IPaginatedResponse } from '../../../types/common/paginatedResponse';
 
 class CourseService {
   private static BASE_URL = '/api/v1/courses/';
 
   public static async fetchCourses(): Promise<IPaginatedResponse<ICourse>> {
-    const response = (await apiService.get<IPaginatedResponse<ICourse>>(this.BASE_URL)) as IPaginatedResponse<ICourse>;
+    const response = (await apiService.get<IPaginatedResponse<ICourse>>(
+      this.BASE_URL
+    )) as IPaginatedResponse<ICourse>;
     return response;
   }
 

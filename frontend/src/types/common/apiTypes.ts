@@ -1,25 +1,5 @@
-export interface User {
-  id: number;
-  username: string;
-  email: string;
-  display_name?: string;
-  role: string;
-}
-
-export interface Course {
-  id: number;
-  title: string;
-  description: string;
-  version?: number;
-  status: string;
-  visibility: string;
-  learning_objectives?: string;
-  prerequisites?: string;
-  created_at?: string;
-  updated_at?: string;
-  creator?: number | null;
-  creator_details?: User;
-}
+import { User, Course, LearningTask, TaskProgress } from '@/types/common/entities';
+import { PaginatedResponse } from '@/types/common/paginatedResponse';
 
 export interface CourseEnrollment {
   id: number;
@@ -141,14 +121,6 @@ export interface Register {
 export interface TokenRefresh {
   refresh: string;
   access?: string;
-}
-
-// Define PaginatedResponse interface
-export interface PaginatedResponse<T> {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: T[];
 }
 
 export interface Task {

@@ -1,47 +1,16 @@
-import React, {useEffect} from 'react';
-import {Navigate} from 'react-router-dom';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '@hooks/useAuth';
 
-import {useAuth} from '../context/AuthContext';
-
-interface ProtectedRouteProps {
+interface IProtectedRouteProps {
   children: React.ReactNode;
-  allowedRoles?: string[];
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({children, allowedRoles}) => {
-  const {isAuthenticated, refreshToken, userRole, isAuthChecked} = useAuth();
-  const isTokenAvailable = localStorage.getItem('access_token') !== null;
-  const [loading, setLoading] = React.useState(!isAuthChecked);
+const ProtectedRoute: React.FC<IProtectedRouteProps> = ({ children }) => {
+  const { user } = useAuth();
 
-  useEffect(() => {
-    const initializeAuth = async () => {
-      if (!isAuthenticated && isTokenAvailable) {
-        try {
-          await refreshToken();
-        } catch (error) {
-          console.error('Failed to refresh token:', error);
-        }
-      }
-      setLoading(false);
-    };
-
-    if (!isAuthChecked) {
-      initializeAuth();
-    } else {
-      setLoading(false);
-    }
-  }, [isAuthenticated, isTokenAvailable, refreshToken, isAuthChecked]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!isAuthenticated) {
+  if (!user) {
     return <Navigate to="/login" replace />;
-  }
-
-  if (allowedRoles && !allowedRoles.includes(userRole)) {
-    return <Navigate to="/dashboard" replace />;
   }
 
   return <>{children}</>;

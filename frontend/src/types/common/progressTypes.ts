@@ -44,7 +44,7 @@ export interface TaskProgress {
   moduleId: string;
   title: string;
   taskType: string; // 'quiz', 'assignment', 'reading', 'video', etc.
-  status: string; // 'not_started', 'in_progress', 'completed', 'graded', 'pending'
+  status: 'not_started' | 'in_progress' | 'completed' | 'graded' | 'pending';
   score: number | null;
   maxScore: number;
   attempts: number;
@@ -52,6 +52,7 @@ export interface TaskProgress {
   timeSpent: number | null; // in seconds
   dueDate: string | null; // ISO date string
   submissionDate: string | null; // ISO date string
+  completion_date?: string | null; // ISO date string (from API schema)
 }
 
 /**

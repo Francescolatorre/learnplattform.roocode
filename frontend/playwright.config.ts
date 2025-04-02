@@ -10,7 +10,7 @@ declare const process: {
 };
 
 const config: Config = defineConfig({
-  testDir: './tests',
+  testDir: './src/tests',
   timeout: 30 * 1000,
   expect: {
     timeout: 5000,

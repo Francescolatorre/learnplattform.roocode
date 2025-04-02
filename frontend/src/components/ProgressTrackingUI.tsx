@@ -2,28 +2,17 @@ import React, { useEffect, useState } from 'react';
 
 import { fetchCourseStructure } from '../services/resources/progressService';
 
-const ProgressTrackingUI: React.FC = () => {
-  const [courseStructure, setCourseStructure] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+interface ProgressTrackingUIProps {
+  courseStructure: any;
+  loading: boolean;
+  error: string | null;
+}
 
-  useEffect(() => {
-    const loadCourseStructure = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await fetchCourseStructure();
-        setCourseStructure(data);
-      } catch (err: any) {
-        setError(err.message || 'Failed to load course structure.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadCourseStructure();
-  }, []);
-
+const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
+  courseStructure,
+  loading,
+  error,
+}) => {
   if (loading) return <p>Loading course structure...</p>;
   if (error) return <p>Error: {error}</p>;
 

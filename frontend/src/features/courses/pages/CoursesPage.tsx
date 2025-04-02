@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {Box, Typography, Alert} from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, Typography, Alert } from '@mui/material';
 
-import CourseService from '@features/courses/services/courseService';
+import CourseService from '@services/resources/courseService'; // Corrected import
 import CourseList from '@features/courses/components/CourseList';
 import LoadingIndicator from '@components/common/LoadingIndicator';
 
@@ -14,7 +14,7 @@ const CoursesPage: React.FC = () => {
     const loadCourses = async () => {
       try {
         setLoading(true);
-        const response = await CourseService.fetchCourses();
+        const response = await CourseService.fetchCourses(); // Corrected usage
         setCourses(response.results);
         setError(null);
       } catch (err: any) {
@@ -34,7 +34,7 @@ const CoursesPage: React.FC = () => {
 
   if (error) {
     return (
-      <Alert severity="error" sx={{mb: 3}}>
+      <Alert severity="error" sx={{ mb: 3 }}>
         {error}
       </Alert>
     );
@@ -42,7 +42,7 @@ const CoursesPage: React.FC = () => {
 
   if (courses.length === 0) {
     return (
-      <Alert severity="info" sx={{mb: 3}}>
+      <Alert severity="info" sx={{ mb: 3 }}>
         No courses available.
       </Alert>
     );

@@ -1,7 +1,7 @@
 import React from 'react';
-import {AppBar, Toolbar, Typography, IconButton, Menu, MenuItem} from '@mui/material';
+import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const TopBar: React.FC = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -17,8 +17,7 @@ const TopBar: React.FC = () => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
-        </Typography>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}></Typography>
         <IconButton edge="start" color="inherit" aria-label="menu" onClick={handleMenuOpen}>
           <MenuIcon />
         </IconButton>

@@ -1,4 +1,4 @@
-import {defineFlatConfig} from 'eslint-define-config';
+import { defineFlatConfig } from 'eslint-define-config';
 import eslintPluginReact from 'eslint-plugin-react';
 import typescriptEslintPlugin from '@typescript-eslint/eslint-plugin';
 import typescriptEslintParser from '@typescript-eslint/parser';

@@ -1,60 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Box, CircularProgress, Alert } from '@mui/material';
-
-import { useAuth } from '../auth/AuthContext';
-import {
-  fetchInstructorDashboardData,
-  fetchStudentProgressByUser,
-  fetchCourseDetails,
-} from '../../services/resources/progressService';
-import { fetchAdminDashboardSummary } from '../../services/resources/courseService';
-import withAuth from '../auth/hoc/withAuth';
-
-import StudentDashboard from './StudentDashboard';
-import InstructorDashboard from './InstructorDashboard';
-import AdminDashboard from './AdminDashboard';
+import React from 'react';
+import { Box, Typography, Grid, CircularProgress } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
+import { fetchUserProgress } from '@services/api/dashboardService';
+import ProgressIndicator from '../components/ProgressIndicator';
 
 const Dashboard: React.FC = () => {
-  const { user, isAuthenticated } = useAuth();
-  const userRole = user?.role || 'Not assigned'; // Ensure user.role is retrieved correctly
-  const [data, setData] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadData = async () => {
-      if (isAuthenticated && user) {
-        try {
-          setIsLoading(true);
-          if (userRole === 'student') {
-            // for the moment we dont any data to display, will decide later what to display
-            setData({}); // for the moment we dont any data to display, will decide later what to display
-          } else if (userRole === 'instructor') {
-            // This triggers the fetchInstructorDashboardData API call
-            const instructorData = await fetchInstructorDashboardData();
-            setData(instructorData);
-          } else if (userRole === 'admin') {
-            // This triggers the fetchAdminDashboardSummary API call
-            const adminData = await fetchAdminDashboardSummary();
-            setData(adminData);
-          }
-          setError(null);
-        } catch (error: any) {
-          setError(error.message || 'Failed to load dashboard data.');
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    loadData(); // This runs on component mount
-  }, [isAuthenticated, user, userRole]); // Dependencies that trigger re-runs
+  const { data: progressData, isLoading, error } = useQuery(['userProgress'], fetchUserProgress);
 
   if (isLoading) {
     return (
-      <Box
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
-      >
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -62,25 +17,31 @@ const Dashboard: React.FC = () => {
 
   if (error) {
     return (
-      <Box sx={{ p: 3 }}>
-        <Alert severity="error">{error}</Alert>
+      <Box sx={{ textAlign: 'center', mt: 4 }}>
+        <Typography variant="h6" color="error">
+          Failed to load progress data. Please try again later.
+        </Typography>
       </Box>
     );
   }
 
-  if (userRole === 'student') {
-    return <StudentDashboard data={data} />;
-  } else if (userRole === 'instructor') {
-    return <InstructorDashboard data={data} />;
-  } else if (userRole === 'admin') {
-    return <AdminDashboard data={data} />;
-  } else {
-    return (
-      <Box sx={{ p: 3 }}>
-        <Alert severity="warning">You do not have access to this dashboard.</Alert>
-      </Box>
-    );
-  }
+  return (
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h4" gutterBottom>
+        Dashboard
+      </Typography>
+      <Typography variant="subtitle1" gutterBottom>
+        Track your progress and performance.
+      </Typography>
+      <Grid container spacing={2}>
+        {progressData.map((progress: any) => (
+          <Grid item xs={12} sm={6} md={4} key={progress.id}>
+            <ProgressIndicator value={progress.percentage} label={progress.label} />
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  );
 };
 
-export default withAuth(Dashboard, { allowedRoles: ['student', 'instructor', 'admin'] });
+export default Dashboard;

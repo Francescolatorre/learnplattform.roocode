@@ -1,10 +1,10 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import authService from '@services/authService';
 
-import {useAuth} from '@features/auth/context/AuthContext';
+import { useAuth } from '@features/auth/context/AuthContext';
 
 const TokenRefreshHandler: React.FC = () => {
-  const {refreshToken} = useAuth();
+  const { refreshToken } = useAuth();
 
   useEffect(() => {
     const interval = setInterval(

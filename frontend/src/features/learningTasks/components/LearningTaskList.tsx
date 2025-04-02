@@ -1,22 +1,27 @@
 import React, { useEffect, useState } from 'react';
+import LearningTaskService from '../services/learningTaskService';
+import { ILearningTask } from '../types/learningTaskTypes'; // Import shared interface
 
-import LearningTaskService from '../../services/learningTaskService';
+interface LearningTaskListProps {
+  limit?: number; // Optional limit for the number of tasks to display
+}
 
-const LearningTaskList: React.FC = () => {
-  const [tasks, setTasks] = useState([]);
+const LearningTaskList: React.FC<LearningTaskListProps> = ({ limit }) => {
+  const [tasks, setTasks] = useState<ILearningTask[]>([]);
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
         const response = await LearningTaskService.fetchLearningTasks();
-        setTasks(response.results);
+        const limitedTasks = limit ? response.results.slice(0, limit) : response.results;
+        setTasks(limitedTasks);
       } catch (error) {
         console.error('Failed to fetch learning tasks:', error);
       }
     };
 
     fetchTasks();
-  }, []);
+  }, [limit]);
 
   return (
     <div>

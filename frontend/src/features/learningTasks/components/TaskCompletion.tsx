@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -16,9 +16,9 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 
-import {useAuth} from '../features/auth/context/AuthContext';
+import { useAuth } from '../features/auth/context/AuthContext';
 
-const TaskView = ({courseId, taskId}) => {
+const TaskView = ({ courseId, taskId }) => {
   const [task, setTask] = useState(null);
   const [taskProgress, setTaskProgress] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -27,7 +27,7 @@ const TaskView = ({courseId, taskId}) => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [answer, setAnswer] = useState('');
   const [timeSpent, setTimeSpent] = useState(0); // in seconds
-  const {user} = useAuth();
+  const { user } = useAuth();
 
   // Timer for tracking time spent on task
   useEffect(() => {
@@ -56,14 +56,14 @@ const TaskView = ({courseId, taskId}) => {
 
         // Fetch task details
         const taskResponse = await axios.get(`/api/v1/learning-tasks/${taskId}/`, {
-          headers: {Authorization: `Bearer ${token}`},
+          headers: { Authorization: `Bearer ${token}` },
         });
         setTask(taskResponse.data);
 
         // Fetch task progress
         const progressResponse = await axios.get(`/api/v1/task-progress/`, {
-          headers: {Authorization: `Bearer ${token}`},
-          params: {task: taskId, user: user.id},
+          headers: { Authorization: `Bearer ${token}` },
+          params: { task: taskId, user: user.id },
         });
 
         // If there's existing progress for this task
@@ -108,8 +108,8 @@ const TaskView = ({courseId, taskId}) => {
         // Update existing progress
         await axios.patch(
           `/api/v1/task-progress/${taskProgress.id}/`,
-          {status: 'in_progress'},
-          {headers: {Authorization: `Bearer ${token}`}}
+          { status: 'in_progress' },
+          { headers: { Authorization: `Bearer ${token}` } }
         );
       } else {
         // Create new progress
@@ -120,7 +120,7 @@ const TaskView = ({courseId, taskId}) => {
             status: 'in_progress',
             time_spent: 0,
           },
-          {headers: {Authorization: `Bearer ${token}`}}
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         setTaskProgress(response.data);
       }
@@ -151,7 +151,7 @@ const TaskView = ({courseId, taskId}) => {
           status: 'completed',
           // For quiz tasks, we might include answers or score here
         },
-        {headers: {Authorization: `Bearer ${token}`}}
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       // Update local state
@@ -180,8 +180,8 @@ const TaskView = ({courseId, taskId}) => {
       // Convert seconds to a format the API expects (might be ISO duration or seconds)
       await axios.patch(
         `/api/v1/task-progress/${taskProgress.id}/`,
-        {time_spent: timeSpent},
-        {headers: {Authorization: `Bearer ${token}`}}
+        { time_spent: timeSpent },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       console.log('Time spent updated:', timeSpent);
@@ -207,7 +207,7 @@ const TaskView = ({courseId, taskId}) => {
 
   if (error) {
     return (
-      <Alert severity="error" sx={{mb: 3}}>
+      <Alert severity="error" sx={{ mb: 3 }}>
         {error}
       </Alert>
     );
@@ -218,9 +218,9 @@ const TaskView = ({courseId, taskId}) => {
   }
 
   return (
-    <Box sx={{mb: 4}}>
+    <Box sx={{ mb: 4 }}>
       {successMessage && (
-        <Alert severity="success" sx={{mb: 3}} onClose={() => setSuccessMessage(null)}>
+        <Alert severity="success" sx={{ mb: 3 }} onClose={() => setSuccessMessage(null)}>
           {successMessage}
         </Alert>
       )}
@@ -254,26 +254,26 @@ const TaskView = ({courseId, taskId}) => {
           </Box>
 
           {taskProgress?.status === 'in_progress' && (
-            <Box sx={{display: 'flex', alignItems: 'center', mb: 2}}>
-              <Typography variant="body2" color="textSecondary" sx={{mr: 1}}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+              <Typography variant="body2" color="textSecondary" sx={{ mr: 1 }}>
                 Time spent: {formatTime(timeSpent)}
               </Typography>
               <LinearProgress
                 variant="determinate"
                 value={(timeSpent / 600) * 100} // Assuming 10 minutes as 100%
-                sx={{flexGrow: 1, height: 8, borderRadius: 4}}
+                sx={{ flexGrow: 1, height: 8, borderRadius: 4 }}
               />
             </Box>
           )}
 
-          <Divider sx={{my: 2}} />
+          <Divider sx={{ my: 2 }} />
 
           <Typography variant="body1" paragraph>
             {task.description}
           </Typography>
 
           {/* Task content would go here - could be quiz, assignment, etc. */}
-          <Paper elevation={1} sx={{p: 3, my: 3, bgcolor: 'background.default'}}>
+          <Paper elevation={1} sx={{ p: 3, my: 3, bgcolor: 'background.default' }}>
             <Typography variant="body1">
               Complete this task by following the instructions and submitting your work.
             </Typography>
@@ -292,7 +292,7 @@ const TaskView = ({courseId, taskId}) => {
             />
           </Paper>
 
-          <Box sx={{mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2}}>
+          <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
             {!taskProgress || taskProgress.status === 'not_started' ? (
               <Button
                 variant="contained"

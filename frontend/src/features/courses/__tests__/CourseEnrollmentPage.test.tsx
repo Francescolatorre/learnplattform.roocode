@@ -1,35 +1,25 @@
 import React from 'react';
-import {render, screen} from '@testing-library/react';
-import {
-  fetchCourses,
-  fetchUserCourseProgress,
-  fetchUserEnrollments,
-} from '@services/courseService';
-import {QueryClient, QueryClientProvider} from 'react-query';
-import {BrowserRouter} from 'react-router-dom';
+import { render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { BrowserRouter } from 'react-router-dom';
+import { vi } from 'vitest';
 
 import CourseEnrollmentPage from '../pages/StudentCourseEnrollmentPage';
 
-jest.mock('@services/courseService', () => ({
-  fetchCourses: jest.fn(),
-  fetchUserCourseProgress: jest.fn(),
-  fetchUserEnrollments: jest.fn(),
-}));
-
 const mockCourses = [
-  {id: '1', title: 'Course 1', description: 'Description 1', enrollmentStatus: 'active'},
-  {id: '2', title: 'Course 2', description: 'Description 2', enrollmentStatus: 'open'},
+  { id: '1', title: 'Course 1', description: 'Description 1', enrollmentStatus: 'active' },
+  { id: '2', title: 'Course 2', description: 'Description 2', enrollmentStatus: 'open' },
 ];
 
 const queryClient = new QueryClient();
 
 describe('CourseEnrollmentPage', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should display "You are already enrolled" for enrolled courses', async () => {
-    (fetchCourses as jest.Mock).mockResolvedValue({results: mockCourses});
+    (fetchCourses as vi.Mock).mockResolvedValue({ results: mockCourses });
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -46,7 +36,7 @@ describe('CourseEnrollmentPage', () => {
   it('should display "Enroll" button for unenrolled courses', async () => {
     (fetchCourses as jest.Mock).mockResolvedValue({
       results: [
-        {id: '3', title: 'Course 3', description: 'Description 3', enrollmentStatus: 'open'},
+        { id: '3', title: 'Course 3', description: 'Description 3', enrollmentStatus: 'open' },
       ],
     });
 
@@ -64,7 +54,7 @@ describe('CourseEnrollmentPage', () => {
   it('should not display "Enroll" button for already enrolled courses', async () => {
     (fetchCourses as jest.Mock).mockResolvedValue({
       results: [
-        {id: '1', title: 'Course 1', description: 'Description 1', enrollmentStatus: 'active'},
+        { id: '1', title: 'Course 1', description: 'Description 1', enrollmentStatus: 'active' },
       ],
     });
 
@@ -83,13 +73,13 @@ describe('CourseEnrollmentPage', () => {
   it('should correctly merge progress data with course data', async () => {
     (fetchCourses as jest.Mock).mockResolvedValue({
       results: [
-        {id: '1', title: 'Course 1', description: 'Description 1'},
-        {id: '2', title: 'Course 2', description: 'Description 2'},
+        { id: '1', title: 'Course 1', description: 'Description 1' },
+        { id: '2', title: 'Course 2', description: 'Description 2' },
       ],
     });
 
     (fetchUserCourseProgress as jest.Mock).mockResolvedValue([
-      {course_id: '1', enrollment_status: 'active', progress: 50},
+      { course_id: '1', enrollment_status: 'active', progress: 50 },
     ]);
 
     render(
@@ -107,13 +97,13 @@ describe('CourseEnrollmentPage', () => {
   it('should correctly merge enrollment data with course data', async () => {
     (fetchCourses as jest.Mock).mockResolvedValue({
       results: [
-        {id: '1', title: 'Course 1', description: 'Description 1'},
-        {id: '2', title: 'Course 2', description: 'Description 2'},
+        { id: '1', title: 'Course 1', description: 'Description 1' },
+        { id: '2', title: 'Course 2', description: 'Description 2' },
       ],
     });
 
     (fetchUserEnrollments as jest.Mock).mockResolvedValue([
-      {course_id: '1', enrollment_status: 'active'},
+      { course_id: '1', enrollment_status: 'active' },
     ]);
 
     render(

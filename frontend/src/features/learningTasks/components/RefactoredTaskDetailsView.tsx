@@ -27,7 +27,6 @@ import DataTable, { Column } from './common/DataTable'; // Adjusted path to matc
 import StatusChip from './common/StatusChip';
 import ProgressIndicator from './common/ProgressIndicator';
 
-
 interface TaskDetailsViewProps {
   taskProgress: TaskProgress[];
 }

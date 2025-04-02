@@ -1,36 +1,40 @@
 import React from 'react';
-import {
-  Box, Typography, List, ListItem, ListItemText,
-  LinearProgress, Card, CardContent, Divider
-} from '@mui/material';
-import {Link} from 'react-router-dom';
-import {useQuery} from '@tanstack/react-query';
+import { Box, Typography, CircularProgress, Card, CardContent, Divider } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
 
 import EnrollmentService from '@features/enrollments/services/enrollmentService';
-import {IEnrollment as IEnrollmentType} from '@features/enrollments/types/enrollmentTypes';
-
 import LearningTaskService from '@features/learningTasks/services/learningTaskService';
-import {ILearningTask} from '@features/learningTasks/types/learningTaskTypes';
+import CourseList from '@features/courses/components/CourseList'; // Reusable course list component
+import LearningTaskList from '@features/learningTasks/components/LearningTaskList';
+import { useAuth } from '@features/auth/context/AuthContext';
 
 const StudentDashboard: React.FC = () => {
-  // Fetch enrollments with React Query
+  const { userRole } = useAuth();
+
+  if (userRole !== 'student') {
+    return (
+      <Typography color="error">
+        Access Denied: You do not have permission to view this page.
+      </Typography>
+    );
+  }
+
   const {
     data: enrollmentData,
     isLoading: enrollmentsLoading,
-    error: enrollmentsError
+    error: enrollmentsError,
   } = useQuery({
     queryKey: ['enrollments'],
-    queryFn: () => EnrollmentService.fetchUserEnrollments()
+    queryFn: EnrollmentService.fetchUserEnrollments,
   });
 
-  // Fetch tasks with React Query (Ersetzt durch tatsächlichen Service-Aufruf)
   const {
     data: tasksData,
     isLoading: tasksLoading,
-    error: tasksError
+    error: tasksError,
   } = useQuery({
     queryKey: ['upcomingTasks'],
-    queryFn: () => LearningTaskService.fetchLearningTasks()
+    queryFn: LearningTaskService.fetchLearningTasks,
   });
 
   const isLoading = enrollmentsLoading || tasksLoading;
@@ -38,59 +42,43 @@ const StudentDashboard: React.FC = () => {
 
   const enrollments = enrollmentData?.results ?? [];
   const upcomingTasks = tasksData?.results?.slice(0, 5) ?? [];
-  const renderTasks = () => {
-    if (upcomingTasks.length === 0) {
-      return <Typography>No upcoming tasks.</Typography>;
-    }
-    return (
-      <List>
-        {upcomingTasks.map((task: ILearningTask) => (
-          <ListItem key={task.id}>
-            <ListItemText
-              primary={task.title}
-            />
-          </ListItem>
-        ))}
-      </List>
-    );
-  };
 
   if (isLoading) {
-    return <Typography>Loading...</Typography>;
+    return (
+      <Box
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (error) {
-    return <Typography color="error">
-      {(error as Error).message || 'Failed to load dashboard data.'}
-    </Typography>;
+    return (
+      <Typography color="error">
+        {enrollmentsError
+          ? 'Failed to load enrollments. Please try again later.'
+          : 'Failed to load tasks. Please try again later.'}
+      </Typography>
+    );
   }
 
-  // JSX to render the dashboard
   return (
-    <Box sx={{p: 3}}>
+    <Box sx={{ p: 3 }}>
       <Typography variant="h4" gutterBottom>
         Student Dashboard
       </Typography>
 
-      <Card sx={{mb: 3}}>
+      <Card sx={{ mb: 3 }}>
         <CardContent>
           <Typography variant="h6" gutterBottom>
             Enrolled Courses
           </Typography>
-          <Divider sx={{mb: 2}} />
+          <Divider sx={{ mb: 2 }} />
           {enrollments.length === 0 ? (
             <Typography>No enrolled courses yet.</Typography>
           ) : (
-            <List>
-              {enrollments.map((enrollment: IEnrollmentType) => (
-                <ListItem key={enrollment.id} component={Link} to={`/courses/${enrollment.course}`}>
-                  <ListItemText
-                    primary={enrollment.course_details.title}
-                    secondary={enrollment.course_details.description}
-                  />
-                </ListItem>
-              ))}
-            </List>
+            <CourseList courses={enrollments} />
           )}
         </CardContent>
       </Card>
@@ -100,8 +88,12 @@ const StudentDashboard: React.FC = () => {
           <Typography variant="h6" gutterBottom>
             Upcoming Tasks (Next 5)
           </Typography>
-          <Divider sx={{mb: 2}} />
-          {renderTasks()}
+          <Divider sx={{ mb: 2 }} />
+          {upcomingTasks.length === 0 ? (
+            <Typography>No upcoming tasks. Stay tuned for new assignments!</Typography>
+          ) : (
+            <LearningTaskList tasks={upcomingTasks} limit={5} />
+          )}
         </CardContent>
       </Card>
     </Box>

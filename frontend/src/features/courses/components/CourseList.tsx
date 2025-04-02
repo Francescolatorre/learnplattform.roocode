@@ -1,9 +1,16 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
 import CourseService from '@services/resources/courseService';
 
+// Ensure courses have a proper type
+interface ICourse {
+  id: number;
+  title: string;
+  // ...other properties...
+}
+
 const CourseList: React.FC = () => {
-  const [courses, setCourses] = useState([]);
+  const [courses, setCourses] = useState<ICourse[]>([]);
 
   useEffect(() => {
     const fetchCourses = async () => {

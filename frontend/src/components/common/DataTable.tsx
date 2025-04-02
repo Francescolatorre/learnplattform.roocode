@@ -66,7 +66,6 @@ export const DataTable = <T,>({
     ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
     : data;
 
-  // Render loading state
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
@@ -75,7 +74,6 @@ export const DataTable = <T,>({
     );
   }
 
-  // Render error state
   if (error) {
     return (
       <Box sx={{ p: 2, color: 'error.main' }}>

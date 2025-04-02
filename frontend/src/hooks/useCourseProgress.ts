@@ -1,8 +1,11 @@
-import {useQuery} from '@tanstack/react-query';
-import {apiService} from '@services/apiService';
+import { useQuery } from '@tanstack/react-query';
+import apiService from '@services/api/apiService';
 
 export const useCourseProgress = (id: string) => {
-  return useQuery(['courseProgress', id], () =>
-    apiService.get(`/api/v1/courses/${id}/progress/`).then(res => res.data)
-  );
+  return useQuery({
+    queryKey: ['courseProgress', id],
+    queryFn: () => apiService.get(`/api/v1/courses/${id}/progress/`).then(res => res.data),
+    enabled: !!id, // Only run the query if id is truthy
+    refetchOnWindowFocus: false, // Optional: Prevent refetching on window focus
+  });
 };

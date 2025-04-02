@@ -1,8 +1,8 @@
 import axios from 'axios';
-import {z} from 'zod';
+import { z } from 'zod';
 
 import apiService from '../api/apiService';
-import {Task, TaskCreationData} from '../../types/common/apiTypes';
+import { Task, TaskCreationData } from '../../types/common/apiTypes';
 
 // Enhanced Type Definitions with Validation
 const TaskSchema = z.object({
@@ -53,8 +53,8 @@ function handleError(error: unknown, context: string) {
 export const fetchTasksByCourse = async (
   courseId: string,
   includeSubtasks = false
-): Promise<{count: number; next: string | null; previous: string | null; results: Task[]}> => {
-  return apiService.get(`tasks/course/${courseId}/`, {includeSubtasks});
+): Promise<{ count: number; next: string | null; previous: string | null; results: Task[] }> => {
+  return apiService.get(`tasks/course/${courseId}/`, { includeSubtasks });
 };
 
 export const createTask = async (
@@ -67,7 +67,7 @@ export const createTask = async (
       formData.append(key, value instanceof File ? value : String(value));
     }
   });
-  return apiService.post<Task>('tasks/', formData, {notifyUsers});
+  return apiService.post<Task>('tasks/', formData, { notifyUsers });
 };
 
 export const updateTask = async (taskId: string, updatedData: Partial<Task>): Promise<Task> => {
@@ -80,7 +80,7 @@ export const deleteTask = async (taskId: string): Promise<void> => {
 
 export const fetchTaskSubmissions = async (
   taskId: string
-): Promise<{count: number; next: string | null; previous: string | null; results: any[]}> => {
+): Promise<{ count: number; next: string | null; previous: string | null; results: any[] }> => {
   return apiService.get(`tasks/${taskId}/submissions/`);
 };
 
@@ -101,5 +101,5 @@ export const useTaskCreation = () => {
     });
   };
 
-  return {createTask: handleTaskCreation};
+  return { createTask: handleTaskCreation };
 };

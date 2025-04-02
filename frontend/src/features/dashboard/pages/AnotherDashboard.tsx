@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   fetchStudentProgressByUser,
   fetchInstructorDashboardData,
 } from '../../../services/resources/progressService';
-import {CourseProgress} from '../../../types/common/apiTypes';
+import { CourseProgress } from '../../../types/common/apiTypes';
 
 const AnotherDashboard: React.FC = () => {
   const [progressData, setProgressData] = useState<CourseProgress[]>([]);

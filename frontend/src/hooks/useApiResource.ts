@@ -1,6 +1,6 @@
-import {useState, useEffect, useCallback} from 'react';
-import axios, {AxiosError, AxiosRequestConfig} from 'axios';
-import {useQuery} from '@tanstack/react-query';
+import { useState, useEffect, useCallback } from 'react';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import { useQuery } from '@tanstack/react-query';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'; // Ensure this matches Swagger
 
@@ -64,7 +64,7 @@ const handleError = (error: unknown): string => {
 
 function getAuthHeaders(): Record<string, string> {
   const token = localStorage.getItem('access_token');
-  return token ? {Authorization: `Bearer ${token}`} : {};
+  return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
 /**
@@ -78,7 +78,7 @@ export function createApiHook<T, ID = string | number>(endpoint: string) {
   // Hook for fetching a collection of resources
   const useCollection = (
     config: AxiosRequestConfig = {}
-  ): ApiResponse<{count: number; next: string | null; previous: string | null; results: T[]}> => {
+  ): ApiResponse<{ count: number; next: string | null; previous: string | null; results: T[] }> => {
     const [data, setData] = useState<{
       count: number;
       next: string | null;
@@ -127,8 +127,8 @@ export function createApiHook<T, ID = string | number>(endpoint: string) {
         // Update the local data state if successful
         setData(prevData =>
           prevData
-            ? {...prevData, results: [...prevData.results, response.data]}
-            : {count: 1, next: null, previous: null, results: [response.data]}
+            ? { ...prevData, results: [...prevData.results, response.data] }
+            : { count: 1, next: null, previous: null, results: [response.data] }
         );
 
         return response.data;
@@ -148,11 +148,11 @@ export function createApiHook<T, ID = string | number>(endpoint: string) {
         setData(prevData =>
           prevData
             ? {
-              ...prevData,
-              results: prevData.results.map(item =>
-                (item as any).id === id ? response.data : item
-              ),
-            }
+                ...prevData,
+                results: prevData.results.map(item =>
+                  (item as any).id === id ? response.data : item
+                ),
+              }
             : null
         );
 
@@ -172,7 +172,7 @@ export function createApiHook<T, ID = string | number>(endpoint: string) {
         // Remove the item from local state
         setData(prevData =>
           prevData
-            ? {...prevData, results: prevData.results.filter(item => (item as any).id !== id)}
+            ? { ...prevData, results: prevData.results.filter(item => (item as any).id !== id) }
             : null
         );
 
@@ -313,7 +313,7 @@ export const useApiResource = (endpoint: string, options: IApiResourceOptions = 
   const queryKey = [endpoint, options];
 
   const queryFn = async () => {
-    const {data} = await axios.get(endpoint, {params: options});
+    const { data } = await axios.get(endpoint, { params: options });
     return data;
   };
 

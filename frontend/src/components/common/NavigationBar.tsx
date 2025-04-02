@@ -1,13 +1,13 @@
 import React from 'react';
-import {AppBar, Toolbar, Typography, Button, Box} from '@mui/material';
-import {Link, useNavigate} from 'react-router-dom';
+import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
 
-import {menuConfig} from '../../config/menuConfig'; // Use relative path if alias is not configured
+import { menuConfig } from '../../config/menuConfig'; // Use relative path if alias is not configured
 
-import {useAuth} from '@features/auth/context/AuthContext';
+import { useAuth } from '@features/auth/context/AuthContext';
 
 const NavigationBar: React.FC = () => {
-  const {userRole, logout, isAuthenticated} = useAuth(); // Get the user's role and logout function from the AuthContext
+  const { userRole, logout, isAuthenticated } = useAuth(); // Get the user's role and logout function from the AuthContext
   const navigate = useNavigate();
 
   const handleLogoff = async () => {
@@ -19,7 +19,6 @@ const NavigationBar: React.FC = () => {
     }
   };
 
-
   const handleLogin = () => {
     // Logic to handle login (e.g., redirect to login page)
     console.log('Redirecting to login page...');
@@ -29,7 +28,7 @@ const NavigationBar: React.FC = () => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Learning Platform
         </Typography>
         <Box>

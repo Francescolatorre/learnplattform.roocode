@@ -1,100 +1,59 @@
-import React, {useState, useEffect} from 'react';
-import {TextField, Button, Container, Typography, Box, CircularProgress} from '@mui/material';
-import {useNavigate} from 'react-router-dom';
+import React, { useState } from 'react';
+import { TextField, Button, Typography, Box } from '@mui/material';
+import apiService from '@services/api/apiService';
 
-import {useAuth} from '../context/AuthContext';
-
-import ErrorMessage from '@components/common/ErrorMessage';
+export const redirectToDashboard = () => {
+  window.location.href = '/dashboard'; // Extracted for easier mocking in tests
+};
 
 const LoginForm: React.FC = () => {
-  const {login} = useAuth();
-  const [usernameOrEmail, setUsernameOrEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
-
-  // Clear error when username or password changes
-  useEffect(() => {
-    if (error) {
-      setError(null);
-    }
-  }, [usernameOrEmail, password]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    setIsLoading(true);
-
+    setError(null); // Clear previous errors
     try {
-      await login(usernameOrEmail, password);
-      navigate('/dashboard');
-    } catch (err) {
-      console.error('Login error:', err);
-      setError('Login failed. Please check your credentials and try again.');
-    } finally {
-      setIsLoading(false);
+      await apiService.login(username, password); // Pass username and password to login function
+      redirectToDashboard(); // Redirect on successful login
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.detail || 'Login failed. Please try again.';
+      setError(errorMessage); // Display detailed error message
     }
   };
 
   return (
-    <Container maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Typography component="h1" variant="h5">
-          Sign in
+    <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 400, mx: 'auto', mt: 4 }}>
+      <Typography variant="h5" gutterBottom>
+        Login
+      </Typography>
+      {error && (
+        <Typography color="error" gutterBottom>
+          {error}
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{mt: 1, width: '100%'}}>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            label="Username or Email"
-            name="username_or_email"
-            autoComplete="username"
-            autoFocus
-            value={usernameOrEmail}
-            onChange={e => setUsernameOrEmail(e.target.value)}
-            error={!!error}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            error={!!error}
-          />
-          {error && (
-            <ErrorMessage
-              message={error}
-              title="Login Failed"
-              severity="error"
-              onClose={() => setError(null)}
-            />
-          )}
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{mt: 3, mb: 2}}
-            disabled={isLoading}
-          >
-            {isLoading ? <CircularProgress size={24} /> : 'Sign In'}
-          </Button>
-        </Box>
-      </Box>
-    </Container>
+      )}
+      <TextField
+        label="Username or Email"
+        value={username}
+        onChange={e => setUsername(e.target.value)}
+        fullWidth
+        margin="normal"
+        required
+      />
+      <TextField
+        label="Password"
+        type="password"
+        value={password}
+        onChange={e => setPassword(e.target.value)}
+        fullWidth
+        margin="normal"
+        required
+      />
+      <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+        Login
+      </Button>
+    </Box>
   );
 };
 

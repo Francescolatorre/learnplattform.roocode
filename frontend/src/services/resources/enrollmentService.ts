@@ -1,7 +1,6 @@
 import apiService from '../api/apiService';
-import {IEnrollment} from '../../features/enrollments/types/enrollmentTypes';
-import {IPaginatedResponse} from '../../types/common/paginatedResponse';
-
+import { IEnrollment } from '../../features/enrollments/types/enrollmentTypes';
+import { IPaginatedResponse } from '../../types/common/paginatedResponse';
 
 class EnrollmentService {
   private static BASE_URL = '/api/v1/course-enrollments/';
@@ -15,7 +14,7 @@ class EnrollmentService {
           ...enrollment.course_details, // Extract course details
         },
       }));
-      return {...response, results: mappedResults};
+      return { ...response, results: mappedResults };
     } catch (error) {
       console.error('Failed to fetch user enrollments:', error);
       throw error;
@@ -29,7 +28,7 @@ class EnrollmentService {
 
   public static async enrollInCourse(courseId: string): Promise<void> {
     try {
-      await apiService.post(this.BASE_URL, {course: courseId});
+      await apiService.post(this.BASE_URL, { course: courseId });
     } catch (error: any) {
       console.error('API Error:', error);
       console.error('Response status:', error.response?.status);
@@ -59,7 +58,7 @@ class EnrollmentService {
     courseId: string
   ): Promise<IPaginatedResponse<IEnrollment>> {
     const response = await apiService.get<IPaginatedResponse<IEnrollment>>(this.BASE_URL, {
-      params: {course: courseId},
+      params: { course: courseId },
     });
     return response.data;
   }

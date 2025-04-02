@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {useQuery} from '@tanstack/react-query';
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
   Box,
   Typography,
@@ -23,24 +23,24 @@ import {
   InputAdornment,
   useTheme,
 } from '@mui/material';
-import {ChartData} from 'chart.js';
+import { ChartData } from 'chart.js';
 import SearchIcon from '@mui/icons-material/Search';
 import WarningIcon from '@mui/icons-material/Warning';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
-import {Bar, Doughnut} from 'react-chartjs-2';
+import { Bar, Doughnut } from 'react-chartjs-2';
 
 import {
   fetchAllStudentsProgress,
   getContentEffectivenessData,
 } from '../../../services/resources/progressService';
-import {CourseProgress} from '../../../types/common/progressTypes';
+import { CourseProgress } from '../../../types/common/progressTypes';
 
 interface InstructorProgressDashboardProps {
   courseId: string;
 }
 
-const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = ({courseId}) => {
+const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = ({ courseId }) => {
   const theme = useTheme();
   const [activeTab, setActiveTab] = useState<number>(0);
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -87,8 +87,8 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
   // Filter students based on search term
   const filteredStudents = studentsProgress
     ? studentsProgress.filter(student =>
-      student.studentId.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+        student.studentId.toLowerCase().includes(searchTerm.toLowerCase())
+      )
     : [];
 
   // Calculate class average completion
@@ -260,7 +260,7 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
 
   if (progressLoading || effectivenessLoading) {
     return (
-      <Box sx={{display: 'flex', justifyContent: 'center', p: 4}}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -268,7 +268,7 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
 
   if (progressError || effectivenessError) {
     return (
-      <Box sx={{p: 2}}>
+      <Box sx={{ p: 2 }}>
         <Typography color="error">
           Error loading data: {((progressError || effectivenessError) as Error).message}
         </Typography>
@@ -278,7 +278,7 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
 
   if (!studentsProgress || studentsProgress.length === 0) {
     return (
-      <Box sx={{p: 2}}>
+      <Box sx={{ p: 2 }}>
         <Typography>No student progress data available.</Typography>
       </Box>
     );
@@ -286,7 +286,7 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
 
   return (
     <Box>
-      <Tabs value={activeTab} onChange={handleTabChange} sx={{mb: 3}}>
+      <Tabs value={activeTab} onChange={handleTabChange} sx={{ mb: 3 }}>
         <Tab label="Class Overview" />
         <Tab label="Student Details" />
         <Tab label="Content Effectiveness" />
@@ -294,21 +294,21 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
 
       {activeTab === 0 && (
         <Box>
-          <Grid container spacing={3} sx={{mb: 3}}>
+          <Grid container spacing={3} sx={{ mb: 3 }}>
             <Grid item xs={12} md={4}>
               <Card>
                 <CardContent>
                   <Typography variant="h6" gutterBottom>
                     Class Average Completion
                   </Typography>
-                  <Box sx={{display: 'flex', alignItems: 'center'}}>
-                    <Box sx={{position: 'relative', display: 'inline-flex', mr: 2}}>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Box sx={{ position: 'relative', display: 'inline-flex', mr: 2 }}>
                       <CircularProgress
                         variant="determinate"
                         value={classAverage}
                         size={80}
                         thickness={5}
-                        sx={{color: getCompletionColor(classAverage)}}
+                        sx={{ color: getCompletionColor(classAverage) }}
                       />
                       <Box
                         sx={{
@@ -335,9 +335,9 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                         <Typography
                           variant="body2"
                           color="error"
-                          sx={{display: 'flex', alignItems: 'center'}}
+                          sx={{ display: 'flex', alignItems: 'center' }}
                         >
-                          <WarningIcon fontSize="small" sx={{mr: 0.5}} />
+                          <WarningIcon fontSize="small" sx={{ mr: 0.5 }} />
                           Below target
                         </Typography>
                       )}
@@ -352,10 +352,10 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                   <Typography variant="h6" gutterBottom>
                     Class Average Score
                   </Typography>
-                  <Box sx={{display: 'flex', alignItems: 'center'}}>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Typography
                       variant="h3"
-                      sx={{mr: 2, color: getScoreColor(classAverageScore)}}
+                      sx={{ mr: 2, color: getScoreColor(classAverageScore) }}
                     >
                       {classAverageScore}%
                     </Typography>
@@ -367,18 +367,18 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                         <Typography
                           variant="body2"
                           color="success.main"
-                          sx={{display: 'flex', alignItems: 'center'}}
+                          sx={{ display: 'flex', alignItems: 'center' }}
                         >
-                          <TrendingUpIcon fontSize="small" sx={{mr: 0.5}} />
+                          <TrendingUpIcon fontSize="small" sx={{ mr: 0.5 }} />
                           Above target
                         </Typography>
                       ) : (
                         <Typography
                           variant="body2"
                           color="warning.main"
-                          sx={{display: 'flex', alignItems: 'center'}}
+                          sx={{ display: 'flex', alignItems: 'center' }}
                         >
-                          <TrendingDownIcon fontSize="small" sx={{mr: 0.5}} />
+                          <TrendingDownIcon fontSize="small" sx={{ mr: 0.5 }} />
                           Needs improvement
                         </Typography>
                       )}
@@ -414,7 +414,7 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                       variant="outlined"
                       color="error"
                       size="small"
-                      sx={{mt: 1}}
+                      sx={{ mt: 1 }}
                       onClick={() => setActiveTab(1)}
                     >
                       View Details
@@ -433,7 +433,7 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                     Module Completion
                   </Typography>
                   {moduleCompletionData && (
-                    <Box sx={{height: 300}}>
+                    <Box sx={{ height: 300 }}>
                       <Bar
                         data={moduleCompletionData}
                         options={{
@@ -462,7 +462,7 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                     Task Type Performance
                   </Typography>
                   {taskTypePerformanceData && (
-                    <Box sx={{height: 300, display: 'flex', justifyContent: 'center'}}>
+                    <Box sx={{ height: 300, display: 'flex', justifyContent: 'center' }}>
                       <Doughnut
                         data={taskTypePerformanceData}
                         options={{
@@ -486,7 +486,7 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
 
       {activeTab === 1 && (
         <Box>
-          <Paper sx={{p: 2, mb: 3}}>
+          <Paper sx={{ p: 2, mb: 3 }}>
             <TextField
               fullWidth
               variant="outlined"
@@ -538,7 +538,7 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
                     >
                       <TableCell>{student.studentId}</TableCell>
                       <TableCell>
-                        <Box sx={{display: 'flex', alignItems: 'center'}}>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
                           <LinearProgress
                             variant="determinate"
                             value={completionPercentage}
@@ -587,11 +587,11 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
           </TableContainer>
 
           {selectedStudentId && (
-            <Paper sx={{p: 2, mt: 3}}>
+            <Paper sx={{ p: 2, mt: 3 }}>
               <Typography variant="h6" gutterBottom>
                 Student Details: {selectedStudentId}
               </Typography>
-              <Button variant="contained" color="primary" sx={{mt: 1}}>
+              <Button variant="contained" color="primary" sx={{ mt: 1 }}>
                 View Full Profile
               </Button>
             </Paper>
@@ -612,7 +612,7 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
           {contentEffectiveness ? (
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <Paper sx={{p: 2}}>
+                <Paper sx={{ p: 2 }}>
                   <Typography variant="subtitle1" gutterBottom>
                     Challenging Quiz Questions
                   </Typography>
@@ -651,7 +651,7 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
               </Grid>
 
               <Grid item xs={12}>
-                <Paper sx={{p: 2}}>
+                <Paper sx={{ p: 2 }}>
                   <Typography variant="subtitle1" gutterBottom>
                     Time Spent on Learning Tasks
                   </Typography>
@@ -683,7 +683,7 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
               </Grid>
 
               <Grid item xs={12}>
-                <Paper sx={{p: 2}}>
+                <Paper sx={{ p: 2 }}>
                   <Typography variant="subtitle1" gutterBottom>
                     Content Revision Recommendations
                   </Typography>
@@ -725,7 +725,7 @@ const InstructorProgressDashboard: React.FC<InstructorProgressDashboardProps> = 
               </Grid>
             </Grid>
           ) : (
-            <Paper sx={{p: 3, textAlign: 'center'}}>
+            <Paper sx={{ p: 3, textAlign: 'center' }}>
               <Typography>No content effectiveness data available.</Typography>
             </Paper>
           )}

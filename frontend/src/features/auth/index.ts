@@ -1,17 +1,17 @@
 // Context
-export {AuthProvider, useAuth} from './context/AuthContext';
+export { AuthProvider, useAuth } from './context/AuthContext';
 
 // Components
-export {default as LoginForm} from './components/LoginForm';
-export {default as RegisterForm} from './components/RegisterForm';
-export {default as ForgotPasswordForm} from './components/ForgotPasswordForm';
-export {default as ResetPasswordForm} from './components/ResetPasswordForm';
-export {default as PasswordStrengthIndicator} from './components/PasswordStrengthIndicator';
+export { default as LoginForm } from './components/LoginForm';
+export { default as RegisterForm } from './components/RegisterForm';
+export { default as ForgotPasswordForm } from './components/ForgotPasswordForm';
+export { default as ResetPasswordForm } from './components/ResetPasswordForm';
+export { default as PasswordStrengthIndicator } from './components/PasswordStrengthIndicator';
 
 // Routes
-export {default as AuthRoutes} from './routes/AuthRoutes';
-export {ProtectedRoute, PublicRoute} from './routes/AuthRoutes';
-export {default as RoleBasedRoute, withRoleBasedAccess} from './routes/RoleBasedRoute';
+export { default as AuthRoutes } from './routes/AuthRoutes';
+export { ProtectedRoute, PublicRoute } from './routes/AuthRoutes';
+export { default as RoleBasedRoute, withRoleBasedAccess } from './routes/RoleBasedRoute';
 
 // Utils
 export {

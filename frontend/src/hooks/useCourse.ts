@@ -1,10 +1,10 @@
-import {useQuery} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import apiService from '@services/apiService'; // Use default export
 
-import {useAuth} from '@/features/auth/context/AuthContext';
+import { useAuth } from '@/features/auth/context/AuthContext';
 
 export const useCourse = (courseId: string | undefined) => {
-  const {isAuthenticated, isAuthChecked} = useAuth();
+  const { isAuthenticated, isAuthChecked } = useAuth();
 
   return useQuery(
     ['course', courseId],

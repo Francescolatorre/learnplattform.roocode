@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
-import {Link} from 'react-router-dom';
-import {List, ListItem, Typography} from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { List, ListItem, Typography } from '@mui/material';
 
-import {fetchTasksByCourse} from '@services/resources/taskService';
+import { fetchTasksByCourse } from '@services/resources/taskService';
 
 interface ILearningTask {
   id: string;

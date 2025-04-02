@@ -1,20 +1,13 @@
 import { test, expect } from '@playwright/test';
+import { login } from '../setupTests'; // Import the login helper function
 
 // Mock login credentials
 const TEST_EMAIL = 'lead_instructor';
 const TEST_PASSWORD = 'testpass123';
 
 test.describe('Frontend Views', () => {
-  const login = async page => {
-    await page.goto('/login');
-    await page.fill('input[name="username_or_email"]', TEST_EMAIL);
-    await page.fill('input[name="password"]', TEST_PASSWORD);
-    await page.click('button[type="submit"]');
-    await page.waitForURL('/dashboard', { timeout: 10000 });
-  };
-
   test.beforeEach(async ({ page }) => {
-    await login(page);
+    await login(page, TEST_EMAIL, TEST_PASSWORD);
   });
 
   test('Dashboard view renders correctly', async ({ page }) => {

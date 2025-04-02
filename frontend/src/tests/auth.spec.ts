@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { login } from './setupTests'; // Import the login helper function from the global utility file
 
 // Centralized test configuration
 const TEST_USERS = {
@@ -23,37 +24,6 @@ test.describe('Authentication', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/login');
   });
-
-  // Centralized login helper function
-  const login = async (page, user) => {
-    console.log(`Attempting login for user: ${user.username_or_email}`);
-
-    // Wait for login form elements
-    await page.waitForSelector('input[name="username_or_email"]', {
-      state: 'visible',
-      timeout: 10000,
-    });
-    await page.waitForSelector('input[name="password"]', { state: 'visible', timeout: 10000 });
-    await page.waitForSelector('button[type="submit"]', { state: 'visible', timeout: 10000 });
-
-    // Fill login form
-    await page.fill('input[name="username_or_email"]', user.username_or_email);
-    await page.fill('input[name="password"]', user.password);
-
-    // Capture submit button
-    const submitButton = page.locator('button[type="submit"]');
-
-    // Trigger login and wait for URL to change
-    await Promise.all([
-      page.waitForURL('/dashboard', { timeout: 15000 }), // Increased timeout and precise URL matching
-      submitButton.click(),
-    ]);
-
-    // Log the current URL for debugging
-    const currentUrl = page.url();
-    console.log(`Current URL after login: ${currentUrl}`);
-    expect(currentUrl).toContain('/dashboard');
-  };
 
   test('lead instructor can login and access dashboard', async ({ page }) => {
     await login(page, TEST_USERS.lead_instructor);

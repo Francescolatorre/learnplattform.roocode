@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Button,
   Container,
@@ -11,14 +11,15 @@ import {
   Alert,
 } from '@mui/material';
 
-import {fetchCourseDetails, updateCourseDetails} from '../../../services/resources/courseService';
+import { fetchCourseDetails, updateCourseDetails } from '../../../services/resources/courseService';
+import { getUserRole } from '@utils/authUtils';
 
-import {useAuth} from '@features/auth/context/AuthContext'; // Use useAuth for authentication
+import { useAuth } from '@features/auth/context/AuthContext'; // Use useAuth for authentication
 
 const EditCourse: React.FC = () => {
   const navigate = useNavigate();
-  const {courseId} = useParams<{courseId: string}>();
-  const userRole = localStorage.getItem('user_role');
+  const { courseId } = useParams<{ courseId: string }>();
+  const userRole = getUserRole(); // Use utility function
 
   const [courseData, setCourseData] = useState({
     title: '',
@@ -70,8 +71,8 @@ const EditCourse: React.FC = () => {
   }, [courseId]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {name, value} = e.target;
-    setCourseData(prev => ({...prev, [name]: value}));
+    const { name, value } = e.target;
+    setCourseData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSave = async () => {
@@ -94,7 +95,7 @@ const EditCourse: React.FC = () => {
   if (isLoading) {
     return (
       <Box
-        sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
       >
         <CircularProgress />
       </Box>
@@ -103,7 +104,7 @@ const EditCourse: React.FC = () => {
 
   if (error) {
     return (
-      <Box sx={{p: 3}}>
+      <Box sx={{ p: 3 }}>
         <Alert severity="error">{error}</Alert>
       </Box>
     );
@@ -114,7 +115,7 @@ const EditCourse: React.FC = () => {
       <Typography variant="h4" gutterBottom>
         {userRole === 'admin' ? 'Edit Course (Admin)' : 'Edit Course (Instructor)'}
       </Typography>
-      <Box component="form" sx={{mt: 3}}>
+      <Box component="form" sx={{ mt: 3 }}>
         <TextField
           label="Title"
           name="title"
@@ -157,8 +158,8 @@ const EditCourse: React.FC = () => {
           <MenuItem value="private">Private</MenuItem>
           <MenuItem value="public">Public</MenuItem>
         </TextField>
-        <Box sx={{mt: 3}}>
-          <Button variant="contained" color="primary" sx={{mr: 2}} onClick={handleSave}>
+        <Box sx={{ mt: 3 }}>
+          <Button variant="contained" color="primary" sx={{ mr: 2 }} onClick={handleSave}>
             Save
           </Button>
           <Button variant="outlined" color="secondary" onClick={handleCancel}>

@@ -1,14 +1,14 @@
-import React, {useEffect} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {Container, Paper, Typography} from '@mui/material';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Container, Paper, Typography } from '@mui/material';
 
-import {useAuth} from '@features/auth/context/AuthContext';
-import {useCourses} from '@hooks/useCourses';
+import { useAuth } from '@features/auth/context/AuthContext';
+import { useCourses } from '@hooks/useCourses';
 
 const AnotherCoursesPage: React.FC = () => {
   const navigate = useNavigate();
-  const {user, isAuthenticated} = useAuth();
-  const {data: courses, isLoading, error} = useCourses();
+  const { user, isAuthenticated } = useAuth();
+  const { data: courses, isLoading, error } = useCourses();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -37,7 +37,7 @@ const AnotherCoursesPage: React.FC = () => {
         <Paper
           key={course.id}
           onClick={() => handleCourseClick(course.id)}
-          sx={{p: 2, mb: 2, cursor: 'pointer'}}
+          sx={{ p: 2, mb: 2, cursor: 'pointer' }}
         >
           <Typography variant="h6">{course.title}</Typography>
           <Typography variant="body2">{course.description}</Typography>

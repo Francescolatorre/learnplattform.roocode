@@ -1,4 +1,4 @@
-# Architekturentscheidungen: Frontend der Lernplattform
+# ADR-005: Architekturentscheidungen: Frontend der Lernplattform
 
 ## Entscheidung: Technologien und Struktur
 
@@ -35,26 +35,38 @@
 ```
 frontend/
 │── src/
-│   ├── api/                # API-Schicht (Kommunikation mit Backend)
-│   │   ├── axiosClient.ts  # Zentrale API-Client-Konfiguration
-│   │   ├── coursesApi.ts   # API-Funktionen für Kurse
-│   │   ├── tasksApi.ts     # API-Funktionen für Lerneinheiten & Aufgaben
-│   │   ├── quizzesApi.ts   # API-Funktionen für Multiple-Choice-Tests
-│   │   ├── authApi.ts      # API-Funktionen für Authentifizierung (Login, Logout)
-│   ├── components/         # Wiederverwendbare UI-Komponenten (Button, Card, Modal, etc.)
-│   ├── hooks/              # Custom Hooks für Zustand und API-Calls
-│   ├── pages/              # Seiten (Dashboard, Kursseite, Testseite, Login, Profil)
-│   ├── store/              # Zustand (Zustand für State-Management)
-│   ├── tests/              # End-to-End-Tests mit Playwright
-│   ├── utils/              # Hilfsfunktionen (z. B. Formatierungen, Validierungen)
-│── public/
-│── package.json
-│── playwright.config.ts    # Konfiguration für Playwright-Tests
-│── .eslintrc.json          # ESLint-Konfiguration
-│── vite.config.ts          # Vite-Konfiguration
+│   ├── core/               # Shared components, hooks, and utilities
+│   ├── courses/            # Courses domain
+│   │   ├── components/    # Course-specific components
+│   │   ├── hooks/         # Course-specific hooks
+│   │   ├── services/      # Course-specific API services
+│   │   ├── types/         # Course-specific TypeScript types
+│   │   └── ...
+│   ├── tasks/              # Tasks domain
+│   │   ├── components/    # Task-specific components
+│   │   ├── hooks/         # Task-specific hooks
+│   │   ├── services/      # Task-specific API services
+│   │   ├── types/         # Course-specific TypeScript types
+│   │   └── ...
+│   ├── users/              # Users domain
+│   │   ├── components/    # User-specific components
+│   │   ├── hooks/         # User-specific hooks
+│   │   ├── services/      # User-specific API services
+│   │   ├── types/         # Course-specific TypeScript types
+│   │   └── ...
+│   ├── app/                # Application-level components and routing
+│   ├── config/             # Configuration files
+│   ├── public/
+│   ├── ...
 ```
 
+- **core/:** Contains shared components, hooks, and utility functions used across multiple domains.
+- **courses/, tasks/, users/:** Each directory represents a bounded context, containing all the code related to that specific domain.
+- **app/:** Contains application-level components and routing logic that orchestrates the different domains.
+
 ### 9. **API-Schicht (Isolierte Kommunikation mit dem Backend)**
+
+API services are organized within each domain. Each domain has its own set of API services responsible for interacting with the backend. For example, the `courses` domain has `coursesApi.ts` for managing courses, and the `tasks` domain has `tasksApi.ts` for managing tasks.
 
 - API-Module wurden auf Basis der OpenAPI-Spezifikation erweitert:
   - `coursesApi.ts` → Kurse abrufen, erstellen, bearbeiten, löschen (`/courses/`)
@@ -89,42 +101,54 @@ frontend/
 ## **Konzeptionelle Ideen & Best Practices**
 
 ### **1. Trennung von Zustands- und UI-Logik**
+
 - React-Komponenten sollten möglichst **stateless** sein und keine Geschäftslogik enthalten.
 - Die API-Kommunikation und Datenverarbeitung erfolgt in **Hooks oder Services** (`hooks/`, `store/`).
 
+### **6. Separate Endpoints for Authentication and API Usage**
+
+- Authentication should be handled via the `/auth/` endpoint, while data retrieval and manipulation should occur through the `/api/v1/` endpoint. This separation enhances security and maintainability.
+
 ### **2. Fehlerhandling & Resilienz**
+
 - **Axios-Interceptors** für globale Fehlerbehandlung und automatische Token-Erneuerung in `axiosClient.ts`.
 - UI-Feedback durch **Snackbar-Notifications (Material UI)**.
 
 ### **3. Skalierbarkeit durch Code-Splitting**
+
 - **React Lazy Loading & Suspense** für das Laden von Modulen.
 - **Dynamisches Laden von Routen** mit `React Router`.
 
 ### **4. Performance-Optimierung**
+
 - Memoization mit `React.memo()` und `useMemo()` zur Vermeidung unnötiger Re-Renders.
 - Optimierung von API-Calls mit **React Query oder SWR (optional)**.
 - **Code-Splitting und Lazy Loading für Routen** implementieren.
 - **Strategie für Caching von API-Responses definieren**.
 
 ### **5. Sicherheit & Authentifizierung**
+
 - **JWT-Handling** mit lokalem Speicher oder `httpOnly` Cookies.
 - Zugriffsbeschränkungen mit **React Context für Auth** und Middleware in den Routen.
 
 ### **6. Testing-Ansatz verbessern**
-- **Unit-Tests für Komponenten und Hooks einführen** (Jest, Testing Library).
+
+- **Unit-Tests für Komponenten und Hooks einführen** (Vite, Testing Library).
 - **Integration-Tests für die Zusammenarbeit von Komponenten implementieren**.
 
 ### **7. Fehlerbehandlung verbessern**
+
 - **Globale Fehlerbehandlung für API-Anfragen implementieren**.
 - **Benutzerfreundliche Fehlermeldungen und Fallback-UI definieren**.
 
 ### **8. Build und Deployment**
+
 - **CI/CD-Pipeline definieren**.
 - **Build-Optimierungen für Produktionsumgebung festlegen**.
 
 ### **9. Dokumentation**
+
 - **Komponentendokumentation mit Storybook oder ähnlichen Tools einführen**.
 - **API-Nutzung und State Management dokumentieren**.
 
 Diese **Best Practices** helfen dabei, das Frontend langfristig **skalierbar, wartbar und performant** zu halten.
-
