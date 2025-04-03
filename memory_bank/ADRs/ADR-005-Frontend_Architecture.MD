@@ -35,29 +35,41 @@
 ```
 frontend/
 │── src/
-│   ├── core/               # Shared components, hooks, and utilities
-│   ├── courses/            # Courses domain
-│   │   ├── components/    # Course-specific components
-│   │   ├── hooks/         # Course-specific hooks
-│   │   ├── services/      # Course-specific API services
-│   │   ├── types/         # Course-specific TypeScript types
-│   │   └── ...
-│   ├── tasks/              # Tasks domain
-│   │   ├── components/    # Task-specific components
-│   │   ├── hooks/         # Task-specific hooks
-│   │   ├── services/      # Task-specific API services
-│   │   ├── types/         # Course-specific TypeScript types
-│   │   └── ...
-│   ├── users/              # Users domain
-│   │   ├── components/    # User-specific components
-│   │   ├── hooks/         # User-specific hooks
-│   │   ├── services/      # User-specific API services
-│   │   ├── types/         # Course-specific TypeScript types
-│   │   └── ...
-│   ├── app/                # Application-level components and routing
-│   ├── config/             # Configuration files
-│   ├── public/
-│   ├── ...
+│   ├── assets/                # Global assets (images, fonts, global styles)
+│   ├── core/                  # Shared functionality
+│   │   ├── components/        # Shared UI components
+│   │   ├── hooks/             # Shared React hooks
+│   │   ├── utils/             # Pure utility functions
+│   │   └── types/             # Shared TypeScript types
+│   │
+│   ├── courses/               # Courses domain
+│   │   ├── components/        # Course-specific components
+│   │   ├── pages/             # Course page components
+│   │   ├── hooks/             # Course-specific hooks
+│   │   ├── services/          # Course-specific API services
+│   │   ├── store/             # Course-specific state management
+│   │   ├── types/             # Course-specific TypeScript types
+│   │   └── utils/             # Course-specific utilities
+│   │
+│   ├── tasks/                 # (similar structure as courses)
+│   ├── users/                 # (similar structure as courses)
+│   │
+│   ├── routes/                # Application routing
+│   │   ├── index.tsx          # Root router
+│   │   ├── protected.tsx      # Protected routes
+│   │   └── public.tsx         # Public routes
+│   │
+│   ├── app/                   # Application-level components
+│   │   ├── layout/            # Layout components (Header, Footer, etc.)
+│   │   ├── providers/         # Context providers
+│   │   └── App.tsx            # Root application component
+│   │
+│   ├── config/                # Environment & app configuration
+│   │
+│   ├── tests/                 # Test utilities and setup
+│   │
+│   ├── main.tsx               # Application entry point
+│   └── vite-env.d.ts          # Vite environment types
 ```
 
 - **core/:** Contains shared components, hooks, and utility functions used across multiple domains.

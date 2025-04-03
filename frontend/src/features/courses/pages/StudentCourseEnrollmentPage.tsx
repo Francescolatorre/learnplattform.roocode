@@ -2,9 +2,7 @@ import React from 'react';
 import { Box, Grid, Typography, CircularProgress } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import CourseService from '@features/courses/services/courseService';
-import { IPaginatedResponse } from '../../../types/common/paginatedResponse';
-
-import CourseCard from '../components/CourseCard';
+import CourseCard from '@features/courses/components/CourseCard';
 
 const StudentCourseEnrollmentPage: React.FC = () => {
   const {

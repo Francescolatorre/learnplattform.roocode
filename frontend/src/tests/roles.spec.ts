@@ -1,6 +1,5 @@
-import { test, expect } from '@playwright/test';
-// import { UserSession } from '../setupTests'; // Removed import of UserSession
-import { Page, Route } from '@playwright/test'; // Import Page and Route types
+import {test, expect} from '@playwright/test';
+import {Page} from '@playwright/test'; // Import Page and Route types
 
 interface MockUserSession {
   // Interface for MockUserSession class
@@ -25,7 +24,7 @@ class UserSession implements MockUserSession {
       // Use this.page and add type Route to route parameter
       await route.fulfill({
         status: 200,
-        json: { role },
+        json: {role},
       });
     });
     await this.page.goto('/dashboard'); // Use this.page
@@ -45,7 +44,7 @@ const mockLogin = async (page: Page, role: string) => {
     // Add type Route to route parameter
     await route.fulfill({
       status: 200,
-      json: { role },
+      json: {role},
     });
   });
   await page.goto('/dashboard'); // Use page parameter
@@ -54,12 +53,12 @@ const mockLogin = async (page: Page, role: string) => {
 test.describe('User Roles and Permissions', () => {
   let userSession: UserSession; // Explicitly type userSession
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({page}) => {
     userSession = new UserSession(page); // Use mocked UserSession class
     await userSession.loginAs('student'); // Default login as student
   });
 
-  test('Student role can access student views', async ({ page }) => {
+  test('Student role can access student views', async ({page}) => {
     await mockLogin(page, 'student');
     await page.goto('/dashboard');
     await expect(page.locator('h4:has-text("Dashboard")')).toBeVisible();
@@ -67,7 +66,7 @@ test.describe('User Roles and Permissions', () => {
     await expect(page.locator('li:has-text("Profile")')).toBeVisible();
   });
 
-  test('Instructor role can access instructor and student views', async ({ page }) => {
+  test('Instructor role can access instructor and student views', async ({page}) => {
     await userSession.loginAs('instructor');
     await mockLogin(page, 'instructor');
     await page.goto('/dashboard');
@@ -78,7 +77,7 @@ test.describe('User Roles and Permissions', () => {
     await expect(page.locator('li:has-text("Tasks")')).toBeVisible();
   });
 
-  test('Admin role can access all views', async ({ page }) => {
+  test('Admin role can access all views', async ({page}) => {
     await userSession.loginAs('admin');
     await mockLogin(page, 'admin');
     await page.goto('/dashboard');
@@ -91,7 +90,7 @@ test.describe('User Roles and Permissions', () => {
     await expect(page.locator('li:has-text("User Management")')).toBeVisible();
   });
 
-  test('Unauthorized role redirects to login page', async ({ page }) => {
+  test('Unauthorized role redirects to login page', async ({page}) => {
     await userSession.logout();
     await page.goto('/dashboard');
     await page.waitForURL('/login');

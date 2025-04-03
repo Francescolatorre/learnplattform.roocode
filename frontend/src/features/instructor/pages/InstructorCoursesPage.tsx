@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {
   Box,
   Typography,
@@ -9,26 +9,24 @@ import {
   CircularProgress,
   Alert,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
-import { useAppStore } from '../../store/appStore';
-import { fetchCourses } from '../../services/resources/courseService';
-import { Course as ApiCourse } from '../../types/apiTypes'; // Import Course from apiTypes
+import {useAppStore} from '@store/appStore';
+import CourseService from '@features/courses/services/courseService';
 
 // Define Course type for InstructorCoursesPage, matching apiTypes.Course
-interface Course extends ApiCourse {}
+//interface Course extends ApiCourse { }
 
 const InstructorCoursesPage: React.FC = () => {
   const navigate = useNavigate();
-  const { courses, setCourses } = useAppStore();
+  const {courses, setCourses} = useAppStore();
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
-
   useEffect(() => {
     const loadCourses = async () => {
       try {
         setLoading(true);
-        const response = await fetchCourses('instructor');
+        const response = await CourseService.fetchCourses('instructor');
         // Access response.results to get the array of courses
         const coursesData = response.results || [];
         setCourses(coursesData);
@@ -46,11 +44,10 @@ const InstructorCoursesPage: React.FC = () => {
 
     loadCourses();
   }, [setCourses]);
-
   if (loading) {
     return (
       <Box
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
+        sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}
       >
         <CircularProgress />
       </Box>
@@ -59,15 +56,15 @@ const InstructorCoursesPage: React.FC = () => {
 
   if (error) {
     return (
-      <Box sx={{ p: 3 }}>
+      <Box sx={{p: 3}}>
         <Alert severity="error">{error}</Alert>
       </Box>
     );
   }
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+    <Box sx={{p: 3}}>
+      <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3}}>
         <Typography variant="h4" gutterBottom>
           Instructor Courses
         </Typography>
@@ -90,7 +87,7 @@ const InstructorCoursesPage: React.FC = () => {
                   <Button
                     variant="contained"
                     color="primary"
-                    sx={{ mt: 2 }}
+                    sx={{mt: 2}}
                     onClick={() => navigate(`/courses/${course.id}/edit`)}
                   >
                     Manage Course

@@ -127,7 +127,7 @@ const ResetPasswordForm: React.FC = () => {
           color={passwordStrength === 'Too weak' ? 'error' : 'success'}
           sx={{ mb: 1 }}
         >
-          Password Strength: {passwordStrength}
+          Password Strength: {getPasswordStrengthLabel(passwordStrength.score)}
         </Typography>
         <Controller
           name="confirmPassword"

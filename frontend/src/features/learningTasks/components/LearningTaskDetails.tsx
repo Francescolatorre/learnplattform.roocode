@@ -1,17 +1,29 @@
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { CircularProgress, Typography, Button } from '@mui/material';
+import {useQuery} from '@tanstack/react-query';
+import {CircularProgress, Typography, Button} from '@mui/material';
 
 import LearningTaskService from '@features/learningTasks/services/learningTaskService';
 
 interface TaskDetailsProps {
-  taskId: number;
+  taskId: string | undefined;
 }
 
-const TaskDetails: React.FC<TaskDetailsProps> = ({ taskId }) => {
-  const { data: taskDetails, isLoading } = useQuery(['taskDetails', taskId], () =>
-    LearningTaskService.fetchTaskDetails(String(taskId))
-  );
+const TaskDetails: React.FC<TaskDetailsProps> = ({taskId}) => {
+  const {data: taskDetails, isLoading} = useQuery({
+    queryKey: ['taskDetails', taskId],
+    queryFn: async () => {
+      if (taskId) {
+        try {
+          return await LearningTaskService.getById(taskId);
+        } catch (error) {
+          console.error("Failed to fetch task details:", error);
+          return null;
+        }
+      }
+      return null;
+    },
+    enabled: !!taskId,
+  });
 
   if (isLoading) {
     return <CircularProgress />;
@@ -23,9 +35,9 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ taskId }) => {
 
   return (
     <div>
-      <Typography variant="h5">{taskDetails.title}</Typography>
+      <Typography variant="h5">{taskDetails?.title ?? 'No Title'}</Typography>
       <Typography variant="body1" gutterBottom>
-        {taskDetails.description}
+        {taskDetails?.description ?? 'No Description'}
       </Typography>
       <Button variant="contained" color="primary">
         Start Task

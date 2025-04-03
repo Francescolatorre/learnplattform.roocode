@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Typography, Paper, Button } from '@mui/material';
 
 import { useCourseTasks } from '@hooks/useCourseTasks';
-import { DataTable } from '@components/common/DataTable';
+import { DataTable } from '@components/core/DataTable';
 
 const InstructorTasksPage: React.FC = () => {
   const { courseId } = useParams();

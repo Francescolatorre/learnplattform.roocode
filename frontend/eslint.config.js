@@ -3,6 +3,7 @@ import eslintPluginReact from 'eslint-plugin-react';
 import typescriptEslintPlugin from '@typescript-eslint/eslint-plugin';
 import typescriptEslintParser from '@typescript-eslint/parser';
 import eslintPluginImport from 'eslint-plugin-import';
+// No need to import the resolver, it's referenced by name in settings
 
 export default defineFlatConfig([
   {
@@ -15,6 +16,7 @@ export default defineFlatConfig([
         ecmaFeatures: {
           jsx: true,
         },
+        project: './tsconfig.json', // Points to your tsconfig for resolving paths
       },
       globals: {
         window: 'readonly',
@@ -25,6 +27,11 @@ export default defineFlatConfig([
       react: eslintPluginReact,
       '@typescript-eslint': typescriptEslintPlugin,
       import: eslintPluginImport,
+    },
+    settings: {
+      'import/resolver': {
+        typescript: {}, // The resolver will automatically find your tsconfig.json
+      },
     },
     rules: {
       'import/no-unresolved': 'error', // Ensure imports resolve correctly
@@ -47,6 +54,15 @@ export default defineFlatConfig([
     plugins: {
       react: eslintPluginReact,
       import: eslintPluginImport,
+    },
+    settings: {
+      'import/resolver': {
+        // For JavaScript files, we can use the same typescript resolver
+        // if your paths are defined in tsconfig.json
+        typescript: {},
+        // Alternatively, for JavaScript-only projects, you can install and use:
+        // eslint-import-resolver-alias or eslint-import-resolver-webpack
+      },
     },
     rules: {
       'import/no-unresolved': 'error',

@@ -1,76 +1,59 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Typography,
-  CircularProgress,
-  Alert,
-  List,
-  ListItem,
-  ListItemText,
-} from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { ICourse } from '@features/courses/types/courseTypes';
+import { Link } from 'react-router-dom';
+import { Button } from '@mui/material';
 
-import CourseService from '@services/resources/courseService'; // Corrected import
+import CourseService from '@features/courses/services/courseService';
 
 const AdminCoursesPage: React.FC = () => {
-  const [courses, setCourses] = useState([]);
+  const [courses, setCourses] = useState<ICourse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadCourses = async () => {
+    const fetchCourses = async () => {
       try {
-        setLoading(true);
-        const response = await CourseService.fetchCourses(); // Corrected usage
-        setCourses(response.results);
-        setError(null);
+        const data = await CourseService.fetchCourses();
+        setCourses(data.results);
       } catch (err: any) {
-        console.error('Error fetching courses:', err);
-        setError(err.message || 'Failed to load courses.');
+        setError((err as Error).message || 'Failed to load courses.');
       } finally {
         setLoading(false);
       }
     };
 
-    loadCourses();
+    fetchCourses();
   }, []);
 
+  const columns: GridColDef[] = [
+    { field: 'id', headerName: 'ID', width: 90 },
+    { field: 'title', headerName: 'Title', width: 200 },
+    { field: 'description', headerName: 'Description', width: 300 },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      width: 150,
+      renderCell: (params: any) => (
+        <Link to={`/admin/courses/${params.row.id}/edit`}>
+          <Button size="small">Edit</Button>
+        </Link>
+      ),
+    },
+  ];
+
   if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="300px">
-        <CircularProgress />
-      </Box>
-    );
+    return <div>Loading courses...</div>;
   }
 
   if (error) {
-    return (
-      <Alert severity="error" sx={{ mb: 3 }}>
-        {error}
-      </Alert>
-    );
-  }
-
-  if (courses.length === 0) {
-    return (
-      <Alert severity="info" sx={{ mb: 3 }}>
-        No courses available.
-      </Alert>
-    );
+    return <div>Error: {error}</div>;
   }
 
   return (
-    <Box>
-      <Typography variant="h4" gutterBottom>
-        Admin Courses
-      </Typography>
-      <List>
-        {courses.map((course: any) => (
-          <ListItem key={course.id}>
-            <ListItemText primary={course.title} secondary={course.description} />
-          </ListItem>
-        ))}
-      </List>
-    </Box>
+    <div style={{ height: 400, width: '100%' }}>
+      <DataGrid rows={courses || []} columns={columns} getRowId={(row: any) => row.id} />
+    </div>
   );
 };
 

@@ -1,14 +1,14 @@
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'react-router-dom';
-import { CircularProgress, Typography, List, ListItem, ListItemText, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import {useQuery} from '@tanstack/react-query';
+import {useParams, useNavigate} from 'react-router-dom';
+import {CircularProgress, Typography, List, ListItem, ListItemText, Button} from '@mui/material';
 
-import { fetchCourseDetails } from '@services/resources/progressService';
-import { fetchTasksByCourse } from '@services/resources/taskService';
+import {fetchCourseDetails} from '@services/resources/progressService';
+import {CourseDetails} from '@/types/common/apiTypes';
+import {fetchTasksByCourse} from '@services/resources/taskService';
 
 const CourseDetailsPage: React.FC = () => {
-  const { courseId } = useParams<{ courseId: string }>(); // Extract courseId from route params
+  const {courseId} = useParams<{courseId: string}>(); // Extract courseId from route params
   console.log('Course ID:', courseId); // Debug log for courseId
   const navigate = useNavigate();
 
@@ -17,7 +17,9 @@ const CourseDetailsPage: React.FC = () => {
     data: courseDetails,
     isLoading: isCourseLoading,
     error: courseError,
-  } = useQuery(['courseDetails', courseId], () => fetchCourseDetails(courseId), {
+  } = useQuery<CourseDetails>({
+    queryKey: ['courseDetails', courseId],
+    queryFn: () => fetchCourseDetails(courseId!),
     enabled: !!courseId,
   });
 
@@ -26,7 +28,9 @@ const CourseDetailsPage: React.FC = () => {
     data: learningTasks,
     isLoading: isTasksLoading,
     error: tasksError,
-  } = useQuery(['learningTasks', courseId], () => fetchTasksByCourse(courseId!), {
+  } = useQuery({
+    queryKey: ['learningTasks', courseId],
+    queryFn: () => fetchTasksByCourse(courseId!),
     enabled: !!courseId,
   });
 
@@ -52,17 +56,17 @@ const CourseDetailsPage: React.FC = () => {
   return (
     <div>
       <Typography variant="h3" gutterBottom>
-        {courseDetails.title} {/* Display course title */}
+        {courseDetails?.title}
       </Typography>
       <Typography variant="body1" gutterBottom>
-        {courseDetails.description}
+        {courseDetails?.description}
       </Typography>
       <Typography variant="h5" gutterBottom>
         Associated Learning Tasks
       </Typography>
-      {learningTasks && learningTasks.length > 0 ? (
+      {learningTasks && learningTasks.results && learningTasks.results.length > 0 ? (
         <List>
-          {learningTasks.map((task: any) => (
+          {learningTasks.results.map((task: {id: string, title: string}) => (
             <ListItem key={task.id} divider>
               <ListItemText primary={task.title} />
               <Button

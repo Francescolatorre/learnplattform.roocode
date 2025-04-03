@@ -47,3 +47,9 @@ export interface TaskProgress {
   user_details?: User;
   task_details?: LearningTask;
 }
+
+export interface UserProgress {
+  id: number;
+  percentage: number;
+  label: string;
+}

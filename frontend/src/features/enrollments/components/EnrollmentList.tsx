@@ -1,31 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import {CourseDetails, User} from '@/types/common/entities';
 
-import EnrollmentService from '../services/enrollmentService';
+interface Enrollment {
+  id: number;
+  course_details: CourseDetails;
+  user_details: User;
+  status: string;
+}
 
-const EnrollmentList: React.FC = () => {
-  const [enrollments, setEnrollments] = useState([]);
+interface EnrollmentListProps {
+  enrollments: Enrollment[];
+}
 
-  useEffect(() => {
-    const fetchEnrollments = async () => {
-      try {
-        const response = await EnrollmentService.fetchUserEnrollments();
-        setEnrollments(response.results);
-      } catch (error) {
-        console.error('Failed to fetch enrollments:', error);
-      }
-    };
-
-    fetchEnrollments();
-  }, []);
-
+const EnrollmentList: React.FC<EnrollmentListProps> = ({enrollments}) => {
   return (
     <div>
-      <h1>Enrollments</h1>
-      <ul>
-        {enrollments.map(enrollment => (
-          <li key={enrollment.id}>{enrollment.courseDetails.title}</li>
-        ))}
-      </ul>
+      {enrollments.map(enrollment => (
+        <div key={enrollment.id}>
+          <h3>{enrollment.course_details.title}</h3>
+          <p>Enrolled by: {enrollment.user_details.display_name}</p>
+          <p>Status: {enrollment.status}</p>
+        </div>
+      ))}
     </div>
   );
 };

@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom';
 import { LinearProgress, Typography, Box } from '@mui/material';
 
 import { useCourse } from '../../../hooks/useCourse';
-import TaskManagementUI from '../../../components/TaskManagementUI';
-import { fetchTasksByCourse } from '../../../services/resources/taskService';
-import { fetchStudentProgressByCourse } from '../../../services/resources/progressService';
+import TaskManagementUI from '@/features/learningTasks/components/TaskManagementUI';
+import { fetchTasksByCourse } from '@services/resources/taskService';
+import { fetchStudentProgressByCourse } from '@services/resources/progressService';
 import { useAuth } from '../../auth/context/AuthContext';
 import { CourseProgress } from '../../../types/common/progressTypes';
 

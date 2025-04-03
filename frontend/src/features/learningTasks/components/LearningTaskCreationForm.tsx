@@ -17,6 +17,7 @@ import {
 
 import { useCourses } from '../../../hooks/useCourses';
 import { createTask, TaskCreationData } from '../../../services/resources/taskService';
+import { Course } from '@/types/common/entities';
 
 interface TaskCreationFormValues {
   title: string;
@@ -28,7 +29,7 @@ interface TaskCreationFormValues {
 }
 
 const TaskCreationForm: React.FC = () => {
-  const { courses, loading: coursesLoading, error: courseError } = useCourses();
+  const { data: courses, isLoading: coursesLoading, error: courseError } = useCourses();
   const [attachment, setAttachment] = useState<File | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
@@ -54,8 +55,11 @@ const TaskCreationForm: React.FC = () => {
     try {
       setSubmitError(null);
       const taskData: TaskCreationData = {
-        ...values,
+        title: values.title,
+        description: values.description,
         course: Number(values.courseId),
+        is_published: values.is_published,
+        max_submissions: values.max_submissions,
         deadline: values.deadline ? values.deadline.toISOString() : undefined,
         attachment: attachment || undefined, // Change null to undefined
       };
@@ -150,7 +154,7 @@ const TaskCreationForm: React.FC = () => {
             onChange={formik.handleChange}
             error={formik.touched.courseId && Boolean(formik.errors.courseId)}
           >
-            {courses.map(course => (
+            {courses?.results?.map((course: Course) => (
               <MenuItem key={course.id} value={course.id}>
                 {course.title}
               </MenuItem>

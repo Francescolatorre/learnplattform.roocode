@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 
-import CourseService from '@services/resources/courseService';
+import CourseService from '@features/courses/services/courseService';
 
 // Ensure courses have a proper type
 interface ICourse {
@@ -9,22 +9,12 @@ interface ICourse {
   // ...other properties...
 }
 
-const CourseList: React.FC = () => {
-  const [courses, setCourses] = useState<ICourse[]>([]);
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const response = await CourseService.fetchCourses();
-        setCourses(response.results);
-      } catch (error) {
-        console.error('Failed to fetch courses:', error);
-      }
-    };
+export interface CourseListProps {
+  courses: ICourse[];
+}
 
-    fetchCourses();
-  }, []);
-
+const CourseList: React.FC<CourseListProps> = ({courses}) => {
   return (
     <div>
       <h1>Courses</h1>

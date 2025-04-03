@@ -2,11 +2,11 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 
-import UserProfile from '../components/UserProfile';
+import Profile from '../Profile';
 import React from 'react';
 import { mockedApiService } from '../../../setupTests'; // Use global mocks
 
-describe('UserProfile', () => {
+describe('Profile', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
@@ -23,7 +23,7 @@ describe('UserProfile', () => {
 
     render(
       <BrowserRouter>
-        <UserProfile />
+        <Profile />
       </BrowserRouter>
     );
 
@@ -38,7 +38,7 @@ describe('UserProfile', () => {
 
     render(
       <BrowserRouter>
-        <UserProfile />
+        <Profile />
       </BrowserRouter>
     );
 

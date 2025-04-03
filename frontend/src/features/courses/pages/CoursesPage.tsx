@@ -1,25 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Typography, Alert } from '@mui/material';
-
-import CourseService from '@services/resources/courseService'; // Corrected import
+import React, {useEffect, useState} from 'react';
+import {Box, Typography, Alert} from '@mui/material';
+import CourseService from '@features/courses/services/courseService';
 import CourseList from '@features/courses/components/CourseList';
-import LoadingIndicator from '@components/common/LoadingIndicator';
+import LoadingIndicator from '@components/core/LoadingIndicator';
+import {ICourse} from "@features/courses/types/courseTypes";
 
-const CoursesPage: React.FC = () => {
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
+interface CoursePageProps {
+  // You can keep this if you want to allow courses to be passed in as props
+  // otherwise remove if you're always fetching them
+  initialCourses?: ICourse[];
+}
+
+const CoursesPage: React.FC<CoursePageProps> = ({initialCourses = []}) => {
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [courses, setCourses] = useState<ICourse[]>(initialCourses);
 
   useEffect(() => {
     const loadCourses = async () => {
       try {
         setLoading(true);
-        const response = await CourseService.fetchCourses(); // Corrected usage
+        const response = await CourseService.fetchCourses();
         setCourses(response.results);
         setError(null);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error fetching courses:', err);
-        setError(err.message || 'Failed to load courses.');
+        setError((err as Error).message || 'Failed to load courses.');
       } finally {
         setLoading(false);
       }
@@ -34,7 +40,7 @@ const CoursesPage: React.FC = () => {
 
   if (error) {
     return (
-      <Alert severity="error" sx={{ mb: 3 }}>
+      <Alert severity="error" sx={{mb: 3}}>
         {error}
       </Alert>
     );
@@ -42,7 +48,7 @@ const CoursesPage: React.FC = () => {
 
   if (courses.length === 0) {
     return (
-      <Alert severity="info" sx={{ mb: 3 }}>
+      <Alert severity="info" sx={{mb: 3}}>
         No courses available.
       </Alert>
     );

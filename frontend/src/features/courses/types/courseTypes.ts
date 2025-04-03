@@ -1,4 +1,4 @@
-import { Course, CourseDetails } from '@/types/common/entities';
+import { Course, CourseDetails } from '../../../types/common/entities';
 
 export type ICourse = Course;
 export type ICourseDetails = CourseDetails;

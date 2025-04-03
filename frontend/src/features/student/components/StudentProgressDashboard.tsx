@@ -1,50 +1,50 @@
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Box, Typography, CircularProgress, Container } from '@mui/material';
-import { fetchStudentProgressByCourse, getQuizHistory } from '@services/progressService';
+import React, {useState} from 'react';
+import {useQuery} from '@tanstack/react-query';
+import {Box, Typography, CircularProgress, Container} from '@mui/material';
+import {fetchStudentProgressByCourse, getQuizHistory} from '@services/resources/progressService';
 
-import { CourseProgress, QuizHistory } from '../../../types/common/progressTypes';
+import {CourseProgress, QuizHistory} from '../../../types/common/progressTypes';
 
 import CourseDetailView from './CourseDetailView';
 import QuizHistoryDetail from './QuizHistoryDetail';
 
-import { useAuth } from '@features/auth/context/AuthContext';
+import {useAuth} from '@features/auth/context/AuthContext';
 
 interface StudentProgressDashboardProps {
   courseId: string;
 }
 
-const StudentProgressDashboard: React.FC<StudentProgressDashboardProps> = ({ courseId }) => {
-  const { user } = useAuth();
+const StudentProgressDashboard: React.FC<StudentProgressDashboardProps> = ({courseId}) => {
+  const {user} = useAuth();
 
   // Fetch student progress
   const {
     data: studentProgress,
     isLoading: progressLoading,
     error: progressError,
-  } = useQuery<CourseProgress>(
-    ['studentProgress', courseId, user?.id],
-    () => {
+  } = useQuery<CourseProgress>({
+    queryKey: ['studentProgress', courseId, user?.id],
+    queryFn: () => {
       if (!courseId) {
         throw new Error('Missing required parameter: courseId');
       }
       if (!user?.id) {
         throw new Error('Missing required parameter: userId');
       }
-      return fetchStudentProgressByCourse(courseId, user.id); // Ensure both parameters are defined
+      return fetchStudentProgressByCourse(String(courseId), String(user.id)); // Ensure both parameters are defined
     },
-    {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      refetchInterval: 5 * 60 * 1000, // Refresh every 5 minutes
-    }
-  );
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchInterval: 5 * 60 * 1000, // Refresh every 5 minutes
+  });
 
   // Fetch quiz history
   const {
-    data: quizHistory,
+    data: /*quizHistory*/ quizHistory,
     isLoading: quizLoading,
     error: quizError,
-  } = useQuery<QuizHistory[]>(['quizHistory', courseId], () => getQuizHistory(courseId), {
+  } = useQuery<QuizHistory[]>({
+    queryKey: ['quizHistory', courseId],
+    queryFn: () => getQuizHistory(courseId),
     staleTime: 15 * 60 * 1000, // 15 minutes
   });
 
@@ -52,7 +52,7 @@ const StudentProgressDashboard: React.FC<StudentProgressDashboardProps> = ({ cou
 
   if (progressLoading || quizLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+      <Box sx={{display: 'flex', justifyContent: 'center', p: 4}}>
         <CircularProgress />
       </Box>
     );
@@ -60,7 +60,7 @@ const StudentProgressDashboard: React.FC<StudentProgressDashboardProps> = ({ cou
 
   if (progressError || quizError) {
     return (
-      <Box sx={{ p: 2 }}>
+      <Box sx={{p: 2}}>
         <Typography color="error">
           Error loading data: {((progressError || quizError) as Error).message}
         </Typography>
@@ -70,18 +70,18 @@ const StudentProgressDashboard: React.FC<StudentProgressDashboardProps> = ({ cou
 
   if (!studentProgress) {
     return (
-      <Box sx={{ p: 2 }}>
+      <Box sx={{p: 2}}>
         <Typography>No student progress data available.</Typography>
       </Box>
     );
   }
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <Container maxWidth="xl" sx={{py: 4}}>
       {selectedQuiz ? (
         <Box>
           <QuizHistoryDetail quizHistory={selectedQuiz} />
-          <Box sx={{ mt: 2, textAlign: 'right' }}>
+          <Box sx={{mt: 2, textAlign: 'right'}}>
             <Typography
               variant="body2"
               color="primary"
@@ -89,7 +89,7 @@ const StudentProgressDashboard: React.FC<StudentProgressDashboardProps> = ({ cou
               sx={{
                 cursor: 'pointer',
                 display: 'inline-block',
-                '&:hover': { textDecoration: 'underline' },
+                '&:hover': {textDecoration: 'underline'},
               }}
             >
               Back to Course Progress
@@ -98,7 +98,7 @@ const StudentProgressDashboard: React.FC<StudentProgressDashboardProps> = ({ cou
         </Box>
       ) : (
         <CourseDetailView
-          courseProgress={studentProgress}
+          courseProgress={studentProgress!}
           onQuizSelect={quiz => setSelectedQuiz(quiz)}
         />
       )}

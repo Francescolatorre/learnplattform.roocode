@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent, CardActions, Typography, Button } from '@mui/material';
+import {Card, CardContent, CardActions, Typography, Button} from '@mui/material';
 
 interface ILearningTaskCardProps {
   title: string;
@@ -15,15 +15,15 @@ const LearningTaskCard: React.FC<ILearningTaskCardProps> = ({
   onViewTask,
 }) => {
   return (
-    <Card sx={{ maxWidth: 345, m: 2 }}>
+    <Card sx={{maxWidth: 345, m: 2}}>
       <CardContent>
         <Typography variant="h5" component="div">
           {title}
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+        <Typography variant="body2" color="text.secondary" sx={{mt: 1}}>
           {description}
         </Typography>
-        <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2 }}>
+        <Typography variant="subtitle2" color="text.secondary" sx={{mt: 2}}>
           Due Date: {dueDate}
         </Typography>
       </CardContent>

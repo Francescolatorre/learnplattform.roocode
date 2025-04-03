@@ -21,6 +21,7 @@ export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   resolve: {
     alias: customPaths,
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
   },
   server: {
     proxy: {

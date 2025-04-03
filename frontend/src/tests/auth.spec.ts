@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { login } from './setupTests'; // Import the login helper function from the global utility file
+import { login } from '../setupTests'; // Import the login helper function from the global utility file
 
 // Centralized test configuration
 const TEST_USERS = {
@@ -26,7 +26,11 @@ test.describe('Authentication', () => {
   });
 
   test('lead instructor can login and access dashboard', async ({ page }) => {
-    await login(page, TEST_USERS.lead_instructor);
+    await login(
+      page,
+      TEST_USERS.lead_instructor.username_or_email,
+      TEST_USERS.lead_instructor.password
+    );
 
     // Verify dashboard elements
     const dashboardTitle = await page.textContent('h4');
@@ -34,7 +38,7 @@ test.describe('Authentication', () => {
   });
 
   test('admin user can login and access dashboard', async ({ page }) => {
-    await login(page, TEST_USERS.admin);
+    await login(page, TEST_USERS.admin.username_or_email, TEST_USERS.admin.password);
 
     // Verify dashboard elements
     const dashboardTitle = await page.textContent('h4');
@@ -79,7 +83,11 @@ test.describe('Authentication', () => {
   });
 
   test('token generation and storage', async ({ page }) => {
-    await login(page, TEST_USERS.lead_instructor);
+    await login(
+      page,
+      TEST_USERS.lead_instructor.username_or_email,
+      TEST_USERS.lead_instructor.password
+    );
 
     // Check local storage for tokens
     const localStorageData = await page.evaluate(() => {
@@ -94,7 +102,11 @@ test.describe('Authentication', () => {
   });
 
   test('Valid login redirects to dashboard', async ({ page }) => {
-    await login(page, TEST_USERS.lead_instructor);
+    await login(
+      page,
+      TEST_USERS.lead_instructor.username_or_email,
+      TEST_USERS.lead_instructor.password
+    );
 
     // Verify dashboard elements
     const dashboardTitle = await page.textContent('h4');
@@ -116,7 +128,11 @@ test.describe('Authentication', () => {
   });
 
   test('Token storage and refresh', async ({ page }) => {
-    await login(page, TEST_USERS.lead_instructor);
+    await login(
+      page,
+      TEST_USERS.lead_instructor.username_or_email,
+      TEST_USERS.lead_instructor.password
+    );
 
     // Check local storage for tokens
     const localStorageData = await page.evaluate(() => {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { ILearningTask } from '../../types/learningTaskTypes';
+import { ILearningTask } from '@features/learningTasks/types/learningTaskTypes';
 
 import LearningTaskService from '@features/learningTasks/services/learningTaskService';
 
@@ -18,7 +18,7 @@ const DetailedTaskViewPage: React.FC = () => {
       }
 
       try {
-        const fetchedTask = await LearningTaskService.fetchLearningTaskById(Number(taskId));
+        const fetchedTask = await LearningTaskService.getById(Number(taskId));
         setTask(fetchedTask);
       } catch (err) {
         console.error('Failed to fetch task:', err);

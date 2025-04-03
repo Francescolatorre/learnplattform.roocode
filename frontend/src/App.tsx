@@ -4,10 +4,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import theme from './theme/theme';
+import { theme } from './theme/theme';
 import { AuthProvider } from '@features/auth/context/AuthContext';
-import ErrorBoundary from './components/common/ErrorBoundary';
-import { AppRoutes } from './routes/routes'; // Ensure correct import for AppRoutes
+import ErrorBoundary from './components/core/ErrorBoundary';
+import AppRoutes from './routes/routes.tsx';
 import NavigationBar from '@components/layout/NavigationBar';
 
 const queryClient = new QueryClient();

@@ -1,4 +1,4 @@
-import { test, expect, Page, request } from '@playwright/test';
+import {test, expect, request} from '@playwright/test';
 
 /**
  * Test user credentials for API tests
@@ -106,7 +106,7 @@ class ApiHelper {
     });
 
     const response = await requestContext.get(`/api/v1/learning-tasks/`, {
-      params: { course: courseId },
+      params: {course: courseId},
     });
     return response;
   }

@@ -3,8 +3,7 @@ import { render, act } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 import { AuthProvider, useAuth } from '../context/AuthContext';
-import { login, logout, refreshAccessToken } from '../../../services/api/authService';
-import apiService from '../../../services/api/apiService';
+import authService from '../../../services/api/apiService';
 
 const TestAuthComponent: React.FC = () => {
   const { user, isAuthenticated, login, logout, refreshToken } = useAuth();
@@ -38,12 +37,12 @@ describe('AuthContext', () => {
   });
 
   it('should log in successfully', async () => {
-    (login as vi.Mock).mockResolvedValue({
+    (authService.login as vi.Mock).mockResolvedValue({
       access: 'mockAccessToken',
       refresh: 'mockRefreshToken',
     });
 
-    (apiService.get as vi.Mock).mockResolvedValue({
+    (authService.get as vi.Mock).mockResolvedValue({
       id: 1,
       username: 'testuser',
       email: 'test@example.com',
@@ -67,7 +66,7 @@ describe('AuthContext', () => {
   });
 
   it('should handle login failure', async () => {
-    (login as vi.Mock).mockRejectedValue(new Error('Invalid credentials'));
+    (authService.login as vi.Mock).mockRejectedValue(new Error('Invalid credentials'));
 
     const { getByRole } = render(
       <AuthProvider>
@@ -103,11 +102,11 @@ describe('AuthContext', () => {
   it('should refresh token successfully', async () => {
     localStorage.setItem('refreshToken', 'mockRefreshToken');
 
-    (refreshAccessToken as vi.Mock).mockResolvedValue({
+    (authService.refreshAccessToken as vi.Mock).mockResolvedValue({
       access: 'newMockAccessToken',
     });
 
-    (apiService.get as vi.Mock).mockResolvedValue({
+    (authService.get as vi.Mock).mockResolvedValue({
       id: 1,
       username: 'testuser',
       email: 'test@example.com',

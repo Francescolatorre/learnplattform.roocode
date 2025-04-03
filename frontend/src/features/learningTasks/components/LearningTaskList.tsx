@@ -1,36 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import LearningTaskService from '../services/learningTaskService';
-import { ILearningTask } from '../types/learningTaskTypes'; // Import shared interface
+import React from 'react';
+import {LearningTask} from '@/types/common/entities';
 
 interface LearningTaskListProps {
-  limit?: number; // Optional limit for the number of tasks to display
+  tasks: LearningTask[];
 }
 
-const LearningTaskList: React.FC<LearningTaskListProps> = ({ limit }) => {
-  const [tasks, setTasks] = useState<ILearningTask[]>([]);
-
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await LearningTaskService.fetchLearningTasks();
-        const limitedTasks = limit ? response.results.slice(0, limit) : response.results;
-        setTasks(limitedTasks);
-      } catch (error) {
-        console.error('Failed to fetch learning tasks:', error);
-      }
-    };
-
-    fetchTasks();
-  }, [limit]);
-
+const LearningTaskList: React.FC<LearningTaskListProps> = ({tasks}) => {
   return (
     <div>
-      <h1>Learning Tasks</h1>
-      <ul>
-        {tasks.map(task => (
-          <li key={task.id}>{task.title}</li>
-        ))}
-      </ul>
+      {tasks.map(task => (
+        <div key={task.id}>
+          <h3>{task.title}</h3>
+          <p>{task.description}</p>
+        </div>
+      ))}
     </div>
   );
 };

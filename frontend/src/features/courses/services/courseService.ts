@@ -1,16 +1,19 @@
-import apiService from '@services/api/apiService';
-import { ICourse } from '../types/courseTypes';
-import { IPaginatedResponse } from '../../../types/common/paginatedResponse';
+import apiService from "@services/api/apiService";
+import {ICourse} from "../types/courseTypes";
+import {IPaginatedResponse} from "../../../types/common/paginatedResponse";
 
 class CourseService {
   private static BASE_URL = '/api/v1/courses/';
 
-  public static async fetchCourses(): Promise<IPaginatedResponse<ICourse>> {
-    const response = (await apiService.get<IPaginatedResponse<ICourse>>(
-      this.BASE_URL
-    )) as IPaginatedResponse<ICourse>;
+  public static async fetchCourses(filter?: string): Promise<IPaginatedResponse<ICourse>> {
+    let url = this.BASE_URL;
+    if (filter) {
+      url += `?filter=${filter}`; // Assuming the backend supports a 'filter' query parameter
+    }
+    const response = (await apiService.get<IPaginatedResponse<ICourse>>(url)) as IPaginatedResponse<ICourse>;
     return response;
   }
+
 
   public static async fetchCourseById(courseId: number): Promise<ICourse> {
     const response = (await apiService.get<ICourse>(`${this.BASE_URL}${courseId}/`)) as ICourse;
@@ -31,5 +34,6 @@ class CourseService {
     await apiService.delete(`${this.BASE_URL}${courseId}/`);
   }
 }
+
 
 export default CourseService;

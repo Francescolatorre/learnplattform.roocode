@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -28,15 +28,11 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import withAuth from '../auth/hoc/withAuth';
+import withAuth from '@features/auth/hoc/withAuth';
 import fetchCourseDetails from '@features/courses/services/courseService';
-import {
-  fetchLearningTasks,
-  createLearningTask,
-  updateLearningTask,
-  deleteLearningTask,
-} from '@features/learningTasks/services/learningTaskService';
-import { LearningTask } from '@/types/common/apiTypes';
+import fetchLearningTasks, deleteLearningTask, updateLearningTask from '@features/learningTasks/services/learningTaskService';
+import createLearningTask from '@features/learningTasks/services/learningTaskService';
+import {LearningTask} from '@/types/common/apiTypes';
 
 // Create or Edit Task dialog props
 interface TaskDialogProps {
@@ -48,7 +44,7 @@ interface TaskDialogProps {
 }
 
 // Task Dialog Component
-const TaskDialog: React.FC<TaskDialogProps> = ({ open, onClose, onSave, task, isEditing }) => {
+const TaskDialog: React.FC<TaskDialogProps> = ({open, onClose, onSave, task, isEditing}) => {
   const [formData, setFormData] = useState<Partial<LearningTask>>(task);
 
   useEffect(() => {
@@ -56,7 +52,7 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ open, onClose, onSave, task, is
   }, [task]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
+    const {name, value} = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value,
@@ -64,7 +60,7 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ open, onClose, onSave, task, is
   };
 
   const handleSelectChange = (e: any) => {
-    const { name, value } = e.target;
+    const {name, value} = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value === 'true', // Convert string to boolean
@@ -80,7 +76,7 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ open, onClose, onSave, task, is
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>{isEditing ? 'Edit Task' : 'Create New Learning Task'}</DialogTitle>
       <DialogContent>
-        <Box component="form" sx={{ mt: 2 }}>
+        <Box component="form" sx={{mt: 2}}>
           <TextField
             fullWidth
             required
@@ -141,7 +137,7 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ open, onClose, onSave, task, is
 
 // Main Component
 const CourseLearningTasksPage: React.FC = () => {
-  const { courseId } = useParams<{ courseId: string }>();
+  const {courseId} = useParams<{courseId: string}>();
   const navigate = useNavigate();
 
   const [courseName, setCourseName] = useState('');
@@ -245,7 +241,7 @@ const CourseLearningTasksPage: React.FC = () => {
         setSuccess('Task updated successfully');
       } else {
         // Create new task
-        const newTask = await createLearningTask({ ...taskData, course: parseInt(courseId!, 10) });
+        const newTask = await createLearningTask({...taskData, course: parseInt(courseId!, 10)});
         setTasks([...tasks, newTask]);
         setSuccess('Task created successfully');
       }
@@ -270,7 +266,7 @@ const CourseLearningTasksPage: React.FC = () => {
           <Button
             variant="outlined"
             onClick={() => navigate(`/courses/${courseId}`)}
-            sx={{ mb: 2 }}
+            sx={{mb: 2}}
           >
             Back to Course
           </Button>
@@ -302,7 +298,7 @@ const CourseLearningTasksPage: React.FC = () => {
               color="primary"
               startIcon={<AddIcon />}
               onClick={handleCreateTask}
-              sx={{ mt: 2 }}
+              sx={{mt: 2}}
             >
               Create Your First Task
             </Button>
@@ -312,7 +308,7 @@ const CourseLearningTasksPage: React.FC = () => {
             {tasks.map((task, index) => (
               <React.Fragment key={task.id}>
                 {index > 0 && <Divider />}
-                <ListItem sx={{ py: 2 }}>
+                <ListItem sx={{py: 2}}>
                   <ListItemText
                     primary={
                       <Box display="flex" alignItems="center">
@@ -321,7 +317,7 @@ const CourseLearningTasksPage: React.FC = () => {
                           <Typography
                             variant="caption"
                             color="warning.main"
-                            sx={{ ml: 1, p: 0.5, bgcolor: 'warning.light', borderRadius: 1 }}
+                            sx={{ml: 1, p: 0.5, bgcolor: 'warning.light', borderRadius: 1}}
                           >
                             Draft
                           </Typography>
@@ -330,7 +326,7 @@ const CourseLearningTasksPage: React.FC = () => {
                     }
                     secondary={
                       <React.Fragment>
-                        <Typography variant="body2" color="text.primary" sx={{ mb: 1, mt: 1 }}>
+                        <Typography variant="body2" color="text.primary" sx={{mb: 1, mt: 1}}>
                           {task.description}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
@@ -348,7 +344,7 @@ const CourseLearningTasksPage: React.FC = () => {
                         <IconButton
                           edge="end"
                           onClick={() => handleDeletePrompt(task.id)}
-                          sx={{ ml: 1 }}
+                          sx={{ml: 1}}
                         >
                           <DeleteIcon />
                         </IconButton>
@@ -392,7 +388,7 @@ const CourseLearningTasksPage: React.FC = () => {
         open={!!success}
         autoHideDuration={3000}
         onClose={() => setSuccess(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
       >
         <Alert onClose={() => setSuccess(null)} severity="success">
           {success}
@@ -404,7 +400,7 @@ const CourseLearningTasksPage: React.FC = () => {
         open={!!error}
         autoHideDuration={5000}
         onClose={() => setError(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
       >
         <Alert onClose={() => setError(null)} severity="error">
           {error}

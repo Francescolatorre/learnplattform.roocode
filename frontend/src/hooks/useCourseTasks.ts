@@ -1,6 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
+import {useQuery} from '@tanstack/react-query';
 import LearningTaskService from '@features/learningTasks/services/learningTaskService';
-import CourseService from '@features/courses/services/courseService';
 
 interface ITask {
   id: string;

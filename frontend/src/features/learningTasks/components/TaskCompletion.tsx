@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 
-import { useAuth } from '../features/auth/context/AuthContext';
+import { useAuth } from '@features/auth/context/AuthContext';
 
 const TaskView = ({ courseId, taskId }) => {
   const [task, setTask] = useState(null);

@@ -1,6 +1,10 @@
-import { User, Course, LearningTask, TaskProgress } from '@/types/common/entities';
-import { PaginatedResponse } from '@/types/common/paginatedResponse';
+import {User, Course} from '@/types/common/entities';
+import {IPaginatedResponse} from '@/types/common/paginatedResponse';
 
+export interface CourseProgressResponse {
+  progress: number;
+  tasks: Task[];
+}
 export interface CourseEnrollment {
   id: number;
   user: number;
@@ -22,17 +26,6 @@ export interface CourseVersion {
   notes?: string;
   created_by?: number | null;
   created_by_details?: User;
-}
-
-export interface LearningTask {
-  id: number;
-  course: number;
-  title: string;
-  description: string;
-  order?: number;
-  is_published: boolean;
-  created_at?: string;
-  updated_at?: string;
 }
 
 export interface QuizOption {
@@ -93,17 +86,6 @@ export interface QuizAttempt {
   responses?: QuizResponse[];
 }
 
-export interface TaskProgress {
-  id: number;
-  user: number;
-  task: number;
-  status: string;
-  time_spent?: string;
-  completion_date?: string | null;
-  user_details?: User;
-  task_details?: LearningTask;
-}
-
 export interface CustomTokenObtainPair {
   username: string;
   password: string;
@@ -133,5 +115,10 @@ export interface Task {
 export interface TaskCreationData {
   title: string;
   description: string;
-  status: string;
+  status?: string;
+}
+
+export interface CourseDetails {
+  title: string;
+  description: string;
 }

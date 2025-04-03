@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography, Container, Paper, Box } from '@mui/material';
 
 import { useAuth } from '../auth/context/AuthContext';
-import withAuth from '../auth/hoc/withAuth';
+import withAuth from '@features/auth/hoc/withAuth';
 
 const Profile: React.FC = () => {
   const { user } = useAuth();

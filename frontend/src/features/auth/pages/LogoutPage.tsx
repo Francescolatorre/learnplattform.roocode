@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
-import authService from '@services/authService';
-
 import { useAuth } from '@features/auth/context/AuthContext';
+import authService from '@services/auth/authService'; // Adjust the import path as necessary
 
 const LogoutPage: React.FC = () => {
   const { logout } = useAuth();

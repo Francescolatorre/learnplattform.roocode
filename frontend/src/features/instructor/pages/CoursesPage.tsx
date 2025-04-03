@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { fetchCourses } from '@services/courseService'; // Use fetchCourses for API requests
+import { fetchCourses } from '@features/courses/services/courseService'; // Use fetchCourses for API requests
 
-import { Course } from '../../types/apiTypes'; // Reuse the existing Course interface
+import { ICourse } from '@features/courses/types/courseTypes'; // Import Course type
 
 const CoursesPage: React.FC = () => {
-  const [courses, setCourses] = useState<Course[]>([]);
+  const [courses, setCourses] = useState<ICourse[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 

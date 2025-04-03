@@ -1,12 +1,12 @@
 import React from 'react';
-import { Typography, Container, Paper } from '@mui/material';
+import {Typography, Container, Paper} from '@mui/material';
 
-import withAuth from '../auth/hoc/withAuth';
+import withAuth from '@features/auth/hoc/withAuth';
 
 const InstructorViews: React.FC = () => {
   return (
     <Container maxWidth="lg">
-      <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
+      <Paper elevation={3} sx={{p: 3, mt: 3}}>
         <Typography variant="h4" gutterBottom>
           Instructor Dashboard
         </Typography>
@@ -19,4 +19,4 @@ const InstructorViews: React.FC = () => {
 };
 
 // Wrap InstructorViews with withAuth HOC, allowing only instructors and admins
-export default withAuth(InstructorViews, { allowedRoles: ['instructor', 'admin'] });
+export default withAuth(InstructorViews, {allowedRoles: ['instructor', 'admin']});

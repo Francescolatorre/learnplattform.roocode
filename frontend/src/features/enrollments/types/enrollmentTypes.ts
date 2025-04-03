@@ -1,17 +1,6 @@
 import { CourseDetails, User } from '@/types/common/entities';
 export { ICourse } from '../../courses/types/courseTypes';
 
-export interface ICourseDetails {
-  id: number;
-  title: string;
-  description: string;
-  learning_objectives?: string;
-  prerequisites?: string;
-  created_at?: string;
-  updated_at?: string;
-  creator?: number | null;
-}
-
 export interface IEnrollment {
   id: number;
   course: number;

@@ -1,6 +1,6 @@
 // src/routes/AppRoutes.tsx
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import {Routes, Route} from 'react-router-dom';
 
 import HomePage from '@features/home/pages/HomePage';
 import CoursesPage from '@features/courses/pages/CoursesPage';
@@ -8,12 +8,12 @@ import CourseDetailPage from '@features/courses/pages/CourseDetailsPage';
 import StudentTasksPage from '@features/learningTasks/pages/StudentTasksPage';
 import AdminCoursesPage from '@features/admin/pages/AdminCoursesPage';
 import TaskListPage from '@features/learningTasks/pages/TaskListPage';
-import RoleBasedRoute from '@components/common/RoleBasedRoute';
-import ProtectedRoute from '@components/common/ProtectedRoute';
+import RoleBasedRoute from '@features/auth/components/RoleBasedRoute';
+import ProtectedRoute from '@features/auth/components/ProtectedRoute';
 import InstructorEditCoursePage from '@features/courses/pages/InstructorEditCoursePage';
-import { LoginForm } from '@features/auth';
+import {LoginForm} from '@features/auth';
 import Profile from '@features/profile/Profile';
-import StudentDashboard from '@features/dashboard/StudentDashboard';
+import StudentDashboard from '@/features/dashboard/components/dashboards/StudentDashboard';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -32,7 +32,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/instructor/courses/:courseId/edit"
         element={
-          <RoleBasedRoute allowedRoles={['instructor']}>
+          <RoleBasedRoute requiredRole="instructor">
             <InstructorEditCoursePage />
           </RoleBasedRoute>
         }
@@ -43,7 +43,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/admin/courses/:courseId/edit"
         element={
-          <RoleBasedRoute allowedRoles={['admin']}>
+          <RoleBasedRoute requiredRole="admin">
             <InstructorEditCoursePage />
           </RoleBasedRoute>
         }
@@ -55,7 +55,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/courses/:courseId/details"
         element={
-          <ProtectedRoute allowedRoles={['student', 'instructor', 'admin']}>
+          <ProtectedRoute requiredRole={['student', 'instructor', 'admin']}>
             <CourseDetailPage />
           </ProtectedRoute>
         }
