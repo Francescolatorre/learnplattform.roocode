@@ -1,9 +1,9 @@
 import React from 'react';
-import { Box, Grid, Typography, CircularProgress } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
-import { fetchLearningTasks } from '@services/api/learningTaskService';
+import {Box, Grid, Typography, CircularProgress} from '@mui/material';
+import {useQuery} from '@tanstack/react-query';
+import {fetchLearningTasks} from '@services/api/learningTaskService';
 import LearningTaskCard from '../components/LearningTaskCard';
-import { LearningTask } from '@/types/common/entities';
+import {LearningTask} from '@types/common/entities';
 
 const StudentTasksPage: React.FC = () => {
   const {
@@ -14,7 +14,7 @@ const StudentTasksPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+      <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
         <CircularProgress />
       </Box>
     );
@@ -22,7 +22,7 @@ const StudentTasksPage: React.FC = () => {
 
   if (error) {
     return (
-      <Box sx={{ textAlign: 'center', mt: 4 }}>
+      <Box sx={{textAlign: 'center', mt: 4}}>
         <Typography variant="h6" color="error">
           Failed to load tasks. Please try again later.
         </Typography>
@@ -31,7 +31,7 @@ const StudentTasksPage: React.FC = () => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{p: 3}}>
       <Typography variant="h4" gutterBottom>
         Your Learning Tasks
       </Typography>

@@ -3,31 +3,8 @@ import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import { Page } from '@playwright/test'; // Import Page type from Playwright
 
-// Mock `localStorage`
-const localStorageMock = (() => {
-  let store: Record<string, string> = {};
-  return {
-    getItem: (key: string) => store[key] || null,
-    setItem: (key: string, value: string) => {
-      store[key] = value;
-    },
-    removeItem: (key: string) => {
-      delete store[key];
-    },
-    clear: () => {
-      store = {};
-    },
-  };
-})();
-
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock,
-  writable: true,
-});
-
 // Clear mocks and localStorage before each test
 beforeEach(() => {
-  localStorage.clear();
   vi.clearAllMocks();
 });
 
@@ -57,10 +34,6 @@ export { mockedUsedNavigate };
 const mockedApiService = {
   getCourses: vi.fn(async () => {
     console.log('Mocked getCourses called'); // Debug log
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-      throw new Error('Unauthorized');
-    }
     return [
       { id: 1, title: 'Course 1', description: 'Description 1' },
       { id: 2, title: 'Course 2', description: 'Description 2' },

@@ -1,11 +1,11 @@
 import React from 'react';
-import { TaskProgress } from '@/types/common/entities';
+import {TaskProgress} from '@types/common/entities';
 
 interface TaskProgressCardProps {
   progress: TaskProgress;
 }
 
-const TaskProgressCard: React.FC<TaskProgressCardProps> = ({ progress }) => {
+const TaskProgressCard: React.FC<TaskProgressCardProps> = ({progress}) => {
   return (
     <div className="task-progress-card">
       <h3>{progress.task_details?.title}</h3>

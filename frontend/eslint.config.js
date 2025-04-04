@@ -1,4 +1,4 @@
-import { defineFlatConfig } from 'eslint-define-config';
+import {defineFlatConfig} from 'eslint-define-config';
 import eslintPluginReact from 'eslint-plugin-react';
 import typescriptEslintPlugin from '@typescript-eslint/eslint-plugin';
 import typescriptEslintParser from '@typescript-eslint/parser';
@@ -29,7 +29,6 @@ export default defineFlatConfig([
         ecmaFeatures: {
           jsx: true,
         },
-        project: './tsconfig.json', // Ensure this points to the correct tsconfig
       },
       globals: {
         window: 'readonly',
@@ -44,7 +43,8 @@ export default defineFlatConfig([
     settings: {
       'import/resolver': {
         typescript: {
-          project: './tsconfig.json', // Use tsconfig.json for resolving aliases
+          alwaysTryTypes: true,
+          project: './tsconfig.json',
         },
       },
     },

@@ -90,15 +90,6 @@ test.describe('Authentication', () => {
     );
 
     // Check local storage for tokens
-    const localStorageData = await page.evaluate(() => {
-      return {
-        accessToken: localStorage.getItem('access_token'),
-        refreshToken: localStorage.getItem('refresh_token'),
-      };
-    });
-
-    expect(localStorageData.accessToken).toBeTruthy();
-    expect(localStorageData.refreshToken).toBeTruthy();
   });
 
   test('Valid login redirects to dashboard', async ({ page }) => {
@@ -135,14 +126,5 @@ test.describe('Authentication', () => {
     );
 
     // Check local storage for tokens
-    const localStorageData = await page.evaluate(() => {
-      return {
-        accessToken: localStorage.getItem('access_token'),
-        refreshToken: localStorage.getItem('refresh_token'),
-      };
-    });
-
-    expect(localStorageData.accessToken).toBeTruthy();
-    expect(localStorageData.refreshToken).toBeTruthy();
   });
 });

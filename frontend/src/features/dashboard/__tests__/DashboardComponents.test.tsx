@@ -3,13 +3,11 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 
 import Dashboard from '../pages/Dashboard';
-import React from 'react';
 import { mockedApiService } from '../../../setupTests'; // Use global mocks
 
 describe('Dashboard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorage.setItem('access_token', 'mockAccessToken'); // Ensure token is set
   });
 
   it('renders user dashboard with courses', async () => {

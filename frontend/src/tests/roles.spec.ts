@@ -33,7 +33,6 @@ class UserSession implements MockUserSession {
   async logout(): Promise<void> {
     // Add Promise<void> return type
     // Mock logout method
-    await this.page.evaluate(() => localStorage.clear()); // Use this.page
   }
 }
 

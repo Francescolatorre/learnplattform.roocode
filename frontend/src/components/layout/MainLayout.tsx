@@ -20,13 +20,17 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../features/auth/context/AuthContext';
 import { menuConfig } from '../../config/menuConfig';
 
-const MainLayout: React.FC = ({ children }) => {
+interface MainLayoutProps {
+  children: React.ReactNode;
+}
+
+const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
-  const { logout, user } = useAuth();
-  const userRole = user?.role || localStorage.getItem('user_role') || 'guest';
+  const { logout, user, getUserRole } = useAuth();
+  const userRole = getUserRole();
 
   useEffect(() => {
     console.log('MainLayout rendered');

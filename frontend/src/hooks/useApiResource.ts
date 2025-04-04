@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryResult, UseQueryOptions } from '@tanstack/react-query';
+import { useAuth } from '@features/auth/context/AuthContext';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'; // Ensure this matches Swagger
 
@@ -63,7 +64,8 @@ const handleError = (error: unknown): string => {
 };
 
 function getAuthHeaders(): Record<string, string> {
-  const token = localStorage.getItem('access_token');
+  const { getAccessToken } = useAuth();
+  const token = getAccessToken();
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
@@ -71,7 +73,7 @@ function getAuthHeaders(): Record<string, string> {
  * Creates hooks for standard API operations on a resource
  * @param endpoint API endpoint for the resource
  */
-export function createApiHook<T, ID = string | number>(endpoint: string) {
+export function createApiHook<T extends { id: any }, ID = string | number>(endpoint: string) {
   // Form the full URL for the resource
   const resourceUrl = `${API_BASE_URL}/api/v1/${endpoint}`; // Ensure correct API version and path
 
@@ -150,7 +152,7 @@ export function createApiHook<T, ID = string | number>(endpoint: string) {
             ? {
                 ...prevData,
                 results: prevData.results.map(item =>
-                  (item as any).id === id ? response.data : item
+                  (item as T).id === id ? response.data : item
                 ),
               }
             : null
@@ -172,7 +174,7 @@ export function createApiHook<T, ID = string | number>(endpoint: string) {
         // Remove the item from local state
         setData(prevData =>
           prevData
-            ? { ...prevData, results: prevData.results.filter(item => (item as any).id !== id) }
+            ? { ...prevData, results: prevData.results.filter(item => (item as T).id !== id) }
             : null
         );
 
@@ -195,7 +197,10 @@ export function createApiHook<T, ID = string | number>(endpoint: string) {
   };
 
   // Hook for fetching a single resource by ID
-  const useResource = (id: ID | null, config: AxiosRequestConfig = {}): ApiResponse<T> => {
+  const useResource = <T extends { id: any }>(
+    id: ID | null,
+    config: AxiosRequestConfig = {}
+  ): ApiResponse<T> => {
     const [data, setData] = useState<T | null>(null);
     const [loading, setLoading] = useState<boolean>(id !== null);
     const [error, setError] = useState<string | null>(null);
@@ -225,7 +230,7 @@ export function createApiHook<T, ID = string | number>(endpoint: string) {
       } finally {
         setLoading(false);
       }
-    }, [id]);
+    }, [id, resourceUrl, config]);
 
     useEffect(() => {
       fetchData();
@@ -301,21 +306,36 @@ export function createApiHook<T, ID = string | number>(endpoint: string) {
 }
 
 // Export some commonly used API hooks
-export const useCourses = createApiHook<any>('courses');
-export const useTasks = createApiHook<any>('tasks');
-export const useModules = createApiHook<any>('modules');
+export const useCourses = createApiHook<any, number>('courses');
+export const useTasks = createApiHook<any, number>('tasks');
+export const useModules = createApiHook<any, number>('modules');
 
 interface IApiResourceOptions {
   [key: string]: any;
 }
 
-export const useApiResource = (endpoint: string, options: IApiResourceOptions = {}) => {
-  const queryKey = [endpoint, options];
+export const useApiResource = <TData = any, TError = Error>(
+  endpoint: string,
+  options: IApiResourceOptions = {}
+): UseQueryResult<TData, TError> => {
+  const queryKey: [string, IApiResourceOptions] = [endpoint, options];
 
-  const queryFn = async () => {
-    const { data } = await axios.get(endpoint, { params: options });
+  const { getAccessToken } = useAuth();
+
+  const queryFn = async (): Promise<TData> => {
+    const { data } = await axios.get<TData>(endpoint, {
+      params: options,
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+    });
     return data;
   };
 
-  return useQuery(queryKey, queryFn);
+  const useQueryOptions: UseQueryOptions<TData, TError, TData, [string, IApiResourceOptions]> = {
+    queryKey,
+    queryFn,
+  };
+
+  return useQuery<TData, TError, TData, [string, IApiResourceOptions]>(useQueryOptions);
 };

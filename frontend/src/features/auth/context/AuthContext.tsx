@@ -1,4 +1,4 @@
-import React, {createContext, useState, useContext, ReactNode, useEffect} from 'react';
+import React, {createContext, useState, useContext, ReactNode, useEffect, memo} from 'react';
 import {useNavigate} from 'react-router-dom';
 import authService from '@services/auth/authService';
 
@@ -15,7 +15,10 @@ interface AuthContextProps {
   isAuthenticated: boolean;
   login: (usernameOrEmail: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  refreshToken: () => Promise<string>;
+  getAccessToken: () => string | null;
+  getRefreshToken: () => string | null;
+  getUserRole: () => string;
+  refreshToken: () => Promise<string | null>;
   setAuthTokens: (tokens: {access: string; refresh: string}) => void;
   redirectToDashboard: () => void;
   setError: (message: string) => void;
@@ -27,36 +30,39 @@ export const AuthContext = createContext<AuthContextProps>({
   isAuthenticated: false,
   login: async () => { },
   logout: async () => { },
-  refreshToken: async () => '',
+  getAccessToken: () => null,
+  getRefreshToken: () => null,
+  getUserRole: () => 'guest',
+  refreshToken: async () => null,
   setAuthTokens: () => { },
   redirectToDashboard: () => { },
   setError: () => { },
 });
 
-export const AuthProvider: React.FC<{children: ReactNode}> = ({children}) => {
+const getAccessToken = (): string | null => localStorage.getItem('authToken');
+const getRefreshToken = (): string | null => localStorage.getItem('refreshToken');
+
+const AuthProviderComponent: React.FC<{children: ReactNode}> = ({children}) => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(true);
-  const login = async (username: string, password: string) => {
-    console.log('Login started', username);
-    try {
-      console.log('Calling authService.login', username);
-      const response = await authService.login(username, password); // Use updated login method
-      console.log('authService.login response', response);
-      const {access, refresh} = response;
+  const [isRefreshingToken, setIsRefreshingToken] = useState(false);
 
+  const getUserRole = (): string => user?.role || localStorage.getItem('user_role') || 'guest';
+
+  const login = async (username: string, password: string) => {
+    try {
+      const {access, refresh} = await authService.login(username, password);
       localStorage.setItem('authToken', access);
       localStorage.setItem('refreshToken', refresh);
 
-      const userProfile = await authService.getUserProfile(access); // Fetch user profile
+      const userProfile = await authService.getUserProfile(access);
       setUser(userProfile);
       setIsAuthenticated(true);
-      console.log('Login successful', user);
     } catch (error) {
       console.error('Login failed:', error);
-      console.log('Login failed error', error);
       throw error;
     }
   };
@@ -67,22 +73,11 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({children}) => {
     setIsAuthenticated(true);
   };
 
-  const redirectToDashboard = () => {
-    console.log('AuthContext: redirectToDashboard: Redirecting to dashboard');
-    // Implement your redirection logic here
-
-    navigate('/dashboard');
-  };
-
-  const setError = (message: string) => {
-    setErrorMessage(message);
-  };
-
   const logout = async () => {
     try {
-      const refreshToken = localStorage.getItem('refreshToken');
-      if (refreshToken) {
-        await authService.logout(refreshToken);
+      const refreshTokenValue = getRefreshToken();
+      if (refreshTokenValue) {
+        await authService.logout(refreshTokenValue);
       }
     } catch (error) {
       console.error('Logout failed:', error);
@@ -94,28 +89,33 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({children}) => {
     }
   };
 
-  const refreshToken = async () => {
+  const refreshTokenFn = async () => {
+    if (isRefreshingToken) return getAccessToken();
+
     try {
-      const storedRefreshToken = localStorage.getItem('refreshToken');
-      if (!storedRefreshToken) {
-        throw new Error('No refresh token found');
-      }
-      const response = await authService.refreshToken(storedRefreshToken); // Pass the stored refresh token
-      const {access} = response;
+      setIsRefreshingToken(true);
+      const storedRefreshToken = getRefreshToken();
+      if (!storedRefreshToken) throw new Error('No refresh token found');
+
+      const {access} = await authService.refreshToken(storedRefreshToken);
       localStorage.setItem('authToken', access);
       return access;
     } catch (error) {
       console.error('Error refreshing token:', error);
-      await logout(); // Log out if token refresh fails
-      throw error;
+      await logout();
+      return null;
+    } finally {
+      setIsRefreshingToken(false);
     }
   };
 
   const initializeAuth = async () => {
     try {
-      const accessToken = await refreshToken(); // Ensure a valid access token
-      const userProfile = await authService.getUserProfile(accessToken); // Pass the token
-      setUser(userProfile); // Set the user profile in context
+      const accessToken = await refreshTokenFn();
+      if (accessToken) {
+        const userProfile = await authService.getUserProfile(accessToken);
+        setUser(userProfile);
+      }
       setIsAuthenticated(true);
     } catch (error) {
       console.error('Error initializing auth:', error);
@@ -129,20 +129,27 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({children}) => {
     initializeAuth();
   }, []);
 
+  useEffect(() => {
+    if (errorMessage) console.error('Error:', errorMessage);
+  }, [errorMessage]);
+
   return loading ? (
     <div>Loading...</div>
   ) : (
     <AuthContext.Provider
       value={{
-        userRole: user?.role || 'guest',
+        userRole: getUserRole(),
         user,
         isAuthenticated,
         login,
         logout,
-        refreshToken,
+        getAccessToken,
+        getRefreshToken,
+        getUserRole,
+        refreshToken: refreshTokenFn,
         setAuthTokens,
-        redirectToDashboard,
-        setError,
+        redirectToDashboard: () => navigate('/dashboard'),
+        setError: setErrorMessage,
       }}
     >
       {children}
@@ -150,6 +157,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({children}) => {
   );
 };
 
+export const AuthProvider = memo(AuthProviderComponent);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) throw new Error('useAuth must be used within an AuthProvider');

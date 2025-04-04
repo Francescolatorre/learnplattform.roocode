@@ -29,7 +29,6 @@ test.describe('Frontend Views', () => {
   });
 
   test('Unauthorized access redirects to login', async ({ page }) => {
-    await page.evaluate(() => localStorage.clear());
     const protectedRoutes = ['/dashboard', '/profile', '/courses'];
     for (const route of protectedRoutes) {
       await page.goto(route);

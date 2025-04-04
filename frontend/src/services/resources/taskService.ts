@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 import apiService from '../api/apiService';
-import { LearningTask } from '../../types/common/entities';
-import { TaskCreationData } from '../../types/common/apiTypes';
+import {LearningTask} from 'src/types/common/entities';
+import {TaskCreationData} from 'src/types/common/entities';
 
 export const fetchTasksByCourse = async (
   courseId: string,
@@ -13,7 +13,7 @@ export const fetchTasksByCourse = async (
   previous: string | null;
   results: LearningTask[];
 }> => {
-  return apiService.get(`tasks/course/${courseId}/`, { includeSubtasks });
+  return apiService.get(`tasks/course/${courseId}/`, {includeSubtasks});
 };
 
 export const createTask = async (
@@ -43,7 +43,7 @@ export const deleteTask = async (taskId: string): Promise<void> => {
 
 export const fetchTaskSubmissions = async (
   taskId: string
-): Promise<{ count: number; next: string | null; previous: string | null; results: any[] }> => {
+): Promise<{count: number; next: string | null; previous: string | null; results: any[]}> => {
   return apiService.get(`tasks/${taskId}/submissions/`);
 };
 
@@ -64,5 +64,5 @@ export const useTaskCreation = () => {
     });
   };
 
-  return { createTask: handleTaskCreation };
+  return {createTask: handleTaskCreation};
 };

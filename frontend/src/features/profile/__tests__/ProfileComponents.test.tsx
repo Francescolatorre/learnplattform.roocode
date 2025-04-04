@@ -3,13 +3,11 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 
 import Profile from '../Profile';
-import React from 'react';
 import { mockedApiService } from '../../../setupTests'; // Use global mocks
 
 describe('Profile', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorage.clear();
   });
 
   it('renders user profile', async () => {

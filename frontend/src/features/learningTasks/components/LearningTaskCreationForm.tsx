@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useFormik, FormikHelpers } from 'formik';
+import React, {useState} from 'react';
+import {useFormik, FormikHelpers} from 'formik';
 import * as Yup from 'yup';
 import {
   TextField,
@@ -15,9 +15,9 @@ import {
   Snackbar,
 } from '@mui/material';
 
-import { useCourses } from '../../../hooks/useCourses';
-import { createTask, TaskCreationData } from '../../../services/resources/taskService';
-import { Course } from '@/types/common/entities';
+import {useCourses} from '../../../hooks/useCourses';
+import {createTask, TaskCreationData} from '../../../services/resources/taskService';
+import {Course} from '@types/common/entities';
 
 interface TaskCreationFormValues {
   title: string;
@@ -29,7 +29,7 @@ interface TaskCreationFormValues {
 }
 
 const TaskCreationForm: React.FC = () => {
-  const { data: courses, isLoading: coursesLoading, error: courseError } = useCourses();
+  const {data: courses, isLoading: coursesLoading, error: courseError} = useCourses();
   const [attachment, setAttachment] = useState<File | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
@@ -50,7 +50,7 @@ const TaskCreationForm: React.FC = () => {
 
   const handleSubmit = async (
     values: TaskCreationFormValues,
-    { setSubmitting, resetForm }: FormikHelpers<TaskCreationFormValues>
+    {setSubmitting, resetForm}: FormikHelpers<TaskCreationFormValues>
   ) => {
     try {
       setSubmitError(null);
@@ -188,7 +188,7 @@ const TaskCreationForm: React.FC = () => {
 
         <input
           accept="*/*"
-          style={{ display: 'none' }}
+          style={{display: 'none'}}
           id="contained-button-file"
           type="file"
           onChange={handleFileUpload}
@@ -205,7 +205,7 @@ const TaskCreationForm: React.FC = () => {
           variant="contained"
           color="primary"
           fullWidth
-          sx={{ mt: 2 }}
+          sx={{mt: 2}}
           disabled={formik.isSubmitting}
         >
           {formik.isSubmitting ? 'Creating...' : 'Create Task'}

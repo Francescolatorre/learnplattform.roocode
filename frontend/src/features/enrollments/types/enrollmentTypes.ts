@@ -1,5 +1,5 @@
-import { CourseDetails, User } from '@/types/common/entities';
-export type { ICourse } from '../../courses/types/courseTypes';
+import {CourseDetails, User} from '@types/common/entities';
+export type {ICourse} from '../../courses/types/courseTypes';
 export enum CompletionStatus {
   ACTIVE = 'active',
   COMPLETED = 'completed',

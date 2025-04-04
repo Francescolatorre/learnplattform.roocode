@@ -1,7 +1,7 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import {Routes, Route, Navigate} from 'react-router-dom';
 
-import ProtectedRoute from '@features/auth/components/ProtectedRoute';
+import ProtectedRoute from '@features/auth/routes/ProtectedRoute';
 import LoginPage from '@features/auth/pages/LoginPage';
 import RegisterForm from '@features/auth/components/RegisterForm';
 import Dashboard from '@features/dashboard/pages/Dashboard';
@@ -21,7 +21,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/dashboard"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={["student"]}>
             <Dashboard />
           </ProtectedRoute>
         }
@@ -29,7 +29,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/profile"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={["student"]}>
             <Profile />
           </ProtectedRoute>
         }
@@ -37,7 +37,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/courses"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={["student"]}>
             <StudentCourseEnrollmentPage />
           </ProtectedRoute>
         }
@@ -45,7 +45,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/courses/:courseId/edit"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={["instructor", "admin"]}>
             <EditCourse />
           </ProtectedRoute>
         }
@@ -53,7 +53,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/courses/:courseId/tasks"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={["student"]}>
             <StudentTasksPage />
           </ProtectedRoute>
         }
@@ -61,7 +61,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/courses/:courseId/tasks/:taskId"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={["student"]}>
             <TaskViewPage />
           </ProtectedRoute>
         }

@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { CourseProgressResponse } from '@/types/common/apiTypes';
+import {useQuery} from '@tanstack/react-query';
+import {CourseProgressResponse} from 'src/types/common/entities';
 import apiService from '@services/api/apiService';
 
 export const useCourseProgress = (id: string) => {

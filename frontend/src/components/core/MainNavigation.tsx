@@ -6,8 +6,8 @@ import { useAuth } from '@features/auth/context/AuthContext';
 import { menuConfig } from '../../config/menuConfig';
 
 const MainNavigation: React.FC = () => {
-  const user = useAuth().user;
-  const userRole = user?.role || localStorage.getItem('user_role') || 'guest'; // Add fallback to 'guest'
+  const { user, getUserRole } = useAuth();
+  const userRole = getUserRole();
 
   console.log('MainNavigation rendered');
   console.log('menuConfig:', menuConfig);

@@ -1,122 +1,136 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useCallback, useContext} from 'react';
 import {
   Box,
   Button,
   Typography,
   Card,
   CardContent,
-  Grid,
   TextField,
   Chip,
   Alert,
-  CircularProgress,
   Paper,
   Divider,
   LinearProgress,
 } from '@mui/material';
 import axios from 'axios';
 
-import { useAuth } from '@features/auth/context/AuthContext';
+import {AuthContext} from '@features/auth/context/AuthContext';
 
-import { Task, TaskProgress } from '@types/common/entities';
-
+import {LearningTask, TaskProgress} from '../../../types/common/entities';
 interface TaskViewProps {
   courseId: string;
   taskId: string;
 }
 
-const TaskView: React.FC<TaskViewProps> = ({ courseId, taskId }) => {
-  const [task, setTask] = useState<Task | null>(null);
+const TaskView: React.FC<TaskViewProps> = ({courseId, taskId}) => {
+  interface TaskViewProps {
+    courseId: string;
+    taskId: string;
+  }
+  const [task, setTask] = useState<LearningTask | null>(null);
   const [taskProgress, setTaskProgress] = useState<TaskProgress | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [answer, setAnswer] = useState('');
-  const [timeSpent, setTimeSpent] = useState(0); // in seconds
-  const { user } = useAuth();
+  const [timeSpent, setTimeSpent] = useState<number>(0); // in seconds
+  const {user, getAccessToken} = useContext(AuthContext);
 
-  // Timer for tracking time spent on task
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (task && taskProgress?.status === 'in_progress') {
-      timer = setInterval(() => {
-        setTimeSpent(prev => prev + 1);
-      }, 1000);
+  const formatTime = useCallback((seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }, []);
+
+  const updateTimeSpent = useCallback(async () => {
+    try {
+      if (!taskProgress) return;
+
+      const accessToken = getAccessToken();
+
+      await axios.patch(
+        `/api/v1/task-progress/${taskProgress!.id}/`,
+        {time_spent: timeSpent},
+        {headers: {Authorization: `Bearer ${accessToken}`}}
+      );
+    } catch (err) {
+      console.error('Error updating time spent:', err);
     }
+  }, [getAccessToken, axios, taskProgress, timeSpent]);
 
-    return () => {
-      if (timer) clearInterval(timer as NodeJS.Timeout);
-      // When component unmounts, update time spent if task was in progress
-      if (task && taskProgress?.status === 'in_progress') {
-        updateTimeSpent();
-      }
-    };
-  }, [task, taskProgress]);
+  const fetchTaskDetails = useCallback(async () => {
+    try {
+      setLoading(true);
+      const accessToken = getAccessToken();
 
-  useEffect(() => {
-    // Fetch task details and progress
-    const fetchTaskDetails = async () => {
-      try {
-        setLoading(true);
-        const token = localStorage.getItem('access_token');
+      // Fetch task details
+      const taskResponse = await axios.get<LearningTask>(`/api/v1/learning-tasks/${taskId}/`, {
+        headers: {Authorization: `Bearer ${accessToken}`},
+      });
+      setTask(taskResponse.data);
 
-        // Fetch task details
-        const taskResponse = await axios.get(`/api/v1/learning-tasks/${taskId}/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setTask(taskResponse.data);
+      // Fetch task progress
+      const progressResponse = await axios.get<TaskProgress[]>(`/api/v1/task-progress/`, {
+        headers: {Authorization: `Bearer ${accessToken}`},
+        params: {task: taskId, user: user?.id},
+      });
 
-        // Fetch task progress
-        const progressResponse = await axios.get(`/api/v1/task-progress/`, {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { task: taskId, user: user?.id },
-        });
+      // If there's existing progress for this task
+      if (progressResponse.data.length > 0) {
+        setTaskProgress(progressResponse.data[0]);
 
-        // If there's existing progress for this task
-        if (progressResponse.data.length > 0) {
-          setTaskProgress(progressResponse.data[0]);
-
-          // If the task is in progress, set the existing time spent
-          if (progressResponse.data[0].status === 'in_progress') {
-            const existingTime = progressResponse.data[0].time_spent || 0;
-            // Time spent is returned as a string like "HH:MM:SS", convert to seconds
-            if (typeof existingTime === 'string') {
-              const [hours, minutes, seconds] = existingTime.split(':').map(Number);
-              setTimeSpent(hours * 3600 + minutes * 60 + seconds);
-            } else {
-              setTimeSpent(existingTime);
-            }
+        // If the task is in progress, set the existing time spent
+        if (progressResponse.data[0].status === 'in_progress') {
+          const existingTime = progressResponse.data[0].time_spent;
+          // Time spent is returned as a string like "HH:MM:SS", convert to seconds
+          if (typeof existingTime === 'string') {
+            const [hours, minutes, seconds] = existingTime.split(':').map(Number);
+            setTimeSpent(hours * 3600 + minutes * 60 + seconds);
+          } else {
+            setTimeSpent(existingTime !== null ? existingTime : 0);
           }
         }
-
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching task details:', err);
-        setError('Failed to load task details. Please try again later.' as string);
-      } finally {
-        setLoading(false);
       }
-    };
 
-    if (taskId) {
-      fetchTaskDetails();
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching task details:', err);
+      setError('Failed to load task details. Please try again later.' as string);
+    } finally {
+      setLoading(false);
     }
-  }, [taskId, user.id]);
+  }, [
+    axios,
+    getAccessToken,
+    taskId,
+    user?.id,
+    setLoading,
+    setTask,
+    setTaskProgress,
+    setError,
+    setTimeSpent,
+    formatTime,
+    updateTimeSpent,
+  ]);
+
+  useEffect(() => {
+    fetchTaskDetails();
+  }, [fetchTaskDetails, taskId]);
 
   // Start the task
   const handleStartTask = async () => {
     try {
       setSubmitting(true);
-      const token = localStorage.getItem('access_token');
+      const accessToken = getAccessToken();
 
       // Create or update task progress to "in_progress"
       if (taskProgress) {
         // Update existing progress
         await axios.patch(
-          `/api/v1/task-progress/${taskProgress.id}/`,
-          { status: 'in_progress' },
-          { headers: { Authorization: `Bearer ${token}` } }
+          `/api/v1/task-progress/${taskProgress!.id}/`,
+          {status: 'in_progress'},
+          {headers: {Authorization: `Bearer ${accessToken}`}}
         );
       } else {
         // Create new progress
@@ -127,7 +141,7 @@ const TaskView: React.FC<TaskViewProps> = ({ courseId, taskId }) => {
             status: 'in_progress',
             time_spent: 0,
           },
-          { headers: { Authorization: `Bearer ${token}` } }
+          {headers: {Authorization: `Bearer ${accessToken}`}}
         );
         setTaskProgress(response.data);
       }
@@ -146,24 +160,24 @@ const TaskView: React.FC<TaskViewProps> = ({ courseId, taskId }) => {
   const handleSubmitTask = async () => {
     try {
       setSubmitting(true);
-      const token = localStorage.getItem('access_token');
+      const accessToken = getAccessToken();
 
       // Update time spent first
       await updateTimeSpent();
 
       // Update task progress to "completed"
       await axios.patch(
-        `/api/v1/task-progress/${taskProgress.id}/`,
+        `/api/v1/task-progress/${taskProgress?.id}/`,
         {
           status: 'completed',
           // For quiz tasks, we might include answers or score here
         },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {headers: {Authorization: `Bearer ${accessToken}`}}
       );
 
       // Update local state
       setTaskProgress((prev: TaskProgress | null) =>
-        prev ? { ...prev, status: 'completed' } : null
+        prev ? {...prev, status: 'completed'} : null
       );
 
       setError(null);
@@ -176,57 +190,10 @@ const TaskView: React.FC<TaskViewProps> = ({ courseId, taskId }) => {
     }
   };
 
-  // Update time spent on the task
-  const updateTimeSpent = async () => {
-    try {
-      if (!taskProgress) return;
-
-      const token = localStorage.getItem('access_token');
-
-      // Convert seconds to a format the API expects (might be ISO duration or seconds)
-      await axios.patch(
-        `/api/v1/task-progress/${taskProgress.id}/`,
-        { time_spent: timeSpent },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      console.log('Time spent updated:', timeSpent);
-    } catch (err) {
-      console.error('Error updating time spent:', err);
-    }
-  };
-
-  // Format time for display (converts seconds to mm:ss format)
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="300px">
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Alert severity="error" sx={{ mb: 3 }}>
-        {error}
-      </Alert>
-    );
-  }
-
-  if (!task) {
-    return <Alert severity="info">Task information not available.</Alert>;
-  }
-
   return (
-    <Box sx={{ mb: 4 }}>
+    <Box sx={{mb: 4}}>
       {successMessage && (
-        <Alert severity="success" sx={{ mb: 3 }} onClose={() => setSuccessMessage(null)}>
+        <Alert severity="success" sx={{mb: 3}} onClose={() => setSuccessMessage(null)}>
           {successMessage}
         </Alert>
       )}
@@ -242,7 +209,7 @@ const TaskView: React.FC<TaskViewProps> = ({ courseId, taskId }) => {
             }}
           >
             <Typography variant="h5" gutterBottom>
-              {task.title}
+              {task ? task.title : ''}
             </Typography>
 
             {taskProgress?.status && (
@@ -260,26 +227,26 @@ const TaskView: React.FC<TaskViewProps> = ({ courseId, taskId }) => {
           </Box>
 
           {taskProgress?.status === 'in_progress' && (
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <Typography variant="body2" color="textSecondary" sx={{ mr: 1 }}>
+            <Box sx={{display: 'flex', alignItems: 'center', mb: 2}}>
+              <Typography variant="body2" color="textSecondary" sx={{mr: 1}}>
                 Time spent: {formatTime(timeSpent)}
               </Typography>
               <LinearProgress
                 variant="determinate"
                 value={(timeSpent / 600) * 100} // Assuming 10 minutes as 100%
-                sx={{ flexGrow: 1, height: 8, borderRadius: 4 }}
+                sx={{flexGrow: 1, height: 8, borderRadius: 4}}
               />
             </Box>
           )}
 
-          <Divider sx={{ my: 2 }} />
+          <Divider sx={{my: 2}} />
 
           <Typography variant="body1" paragraph>
-            {task.description}
+            {task ? task.description : ""}
           </Typography>
 
           {/* Task content would go here - could be quiz, assignment, etc. */}
-          <Paper elevation={1} sx={{ p: 3, my: 3, bgcolor: 'background.default' }}>
+          <Paper elevation={1} sx={{p: 3, my: 3, bgcolor: 'background.default'}}>
             <Typography variant="body1">
               Complete this task by following the instructions and submitting your work.
             </Typography>
@@ -298,7 +265,7 @@ const TaskView: React.FC<TaskViewProps> = ({ courseId, taskId }) => {
             />
           </Paper>
 
-          <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+          <Box sx={{mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2}}>
             {!taskProgress || taskProgress.status === 'not_started' ? (
               <Button
                 variant="contained"

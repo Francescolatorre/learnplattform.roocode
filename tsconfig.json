@@ -7,7 +7,7 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "baseUrl": "./src/",
+        "baseUrl": "./",
         "paths": {
             "@components/*": [
                 "src/components/*"
@@ -30,7 +30,7 @@
         }
     },
     "include": [
-        "src/**/*" // Ensure all files in the src directory are included
+        "src/**/*"
     ],
     "exclude": [
         "node_modules",

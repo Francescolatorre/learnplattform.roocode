@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {Navigate} from 'react-router-dom';
 
-import { useAuth } from '@features/auth/context/AuthContext';
+import {useAuth} from '@features/auth/context/AuthContext';
 
-const ProtectedRoute: React.FC<{ allowedRoles: string[]; children: React.ReactNode }> = ({
+const ProtectedRoute: React.FC<{allowedRoles: string[]; children: React.ReactNode}> = ({
   allowedRoles,
   children,
 }) => {
-  const { user, isAuthenticated } = useAuth();
+  const {user, isAuthenticated} = useAuth();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

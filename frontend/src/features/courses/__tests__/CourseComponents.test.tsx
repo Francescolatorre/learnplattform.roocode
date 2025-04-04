@@ -3,13 +3,12 @@ import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 
 import CourseList from '../components/CourseList';
-import React from 'react';
+
 import { mockedApiService, mockedUsedNavigate } from '../../../setupTests'; // Use global mocks
 
 describe('CourseList', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorage.setItem('access_token', 'mockAccessToken'); // Ensure token is set
   });
 
   it('renders course list', async () => {
@@ -24,7 +23,7 @@ describe('CourseList', () => {
       [
         {
           path: '/',
-          element: <CourseList />,
+          element: <CourseList courses={[]} />,
         },
       ],
       { initialEntries: ['/'] }
@@ -47,7 +46,7 @@ describe('CourseList', () => {
       [
         {
           path: '/',
-          element: <CourseList />,
+          element: <CourseList courses={[]} />,
         },
       ],
       { initialEntries: ['/'] }

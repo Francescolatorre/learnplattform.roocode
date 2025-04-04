@@ -12,20 +12,25 @@ import {
 } from '@mui/material';
 
 import CourseService from '@features/courses/services/courseService';
-import { getUserRole } from '@utils/authUtils';
-import authService from '@services/auth/authService';
+import { useAuth } from '@features/auth/context/AuthContext';
+import { ICourse, CourseStatus } from '../types/courseTypes';
+
+interface MainLayoutProps {
+  children: React.ReactNode;
+}
 
 const EditCourse: React.FC = () => {
   const navigate = useNavigate();
   const { courseId } = useParams<{ courseId: string }>();
+  const { getUserRole, refreshToken } = useAuth();
   const userRole = getUserRole(); // Use utility function
 
-  const [courseData, setCourseData] = useState({
-    title: '',
-    description: '',
-    status: '',
-    visibility: '',
-  });
+  const [courseData, setCourseData] = useState<Partial<ICourse>>({
+    title: 'test',
+    description: 'test description',
+    status: 'draft',
+    visibility: 'private',
+  } as any);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,7 +49,7 @@ const EditCourse: React.FC = () => {
       } catch (err: unknown) {
         if (err instanceof Error && err.message === 'Unauthorized') {
           try {
-            await authService.refreshToken(localStorage.getItem('refreshToken') || ''); // Refresh token if unauthorized
+            await refreshToken(); // Refresh token if unauthorized
             const data = await CourseService.fetchCourseById(Number(courseId!)); // Retry fetching course details
             setCourseData({
               title: data.title,
@@ -67,7 +72,7 @@ const EditCourse: React.FC = () => {
     };
 
     fetchCourse();
-  }, [courseId]);
+  }, [courseId, refreshToken]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -77,7 +82,7 @@ const EditCourse: React.FC = () => {
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      await CourseService.updateCourse(Number(courseId!), courseData);
+      await CourseService.updateCourse(Number(courseId!), courseData as ICourse);
       navigate(userRole === 'admin' ? '/admin/courses' : '/instructor/courses');
     } catch (err: unknown) {
       console.error('Failed to save course details:', err);
@@ -118,7 +123,7 @@ const EditCourse: React.FC = () => {
         <TextField
           label="Title"
           name="title"
-          value={courseData.title}
+          value={courseData.title || ''}
           onChange={handleInputChange}
           fullWidth
           margin="normal"
@@ -126,7 +131,7 @@ const EditCourse: React.FC = () => {
         <TextField
           label="Description"
           name="description"
-          value={courseData.description}
+          value={courseData.description || ''}
           onChange={handleInputChange}
           fullWidth
           margin="normal"
@@ -136,7 +141,7 @@ const EditCourse: React.FC = () => {
         <TextField
           label="Status"
           name="status"
-          value={courseData.status}
+          value={courseData.status || ''}
           onChange={handleInputChange}
           select
           fullWidth
@@ -148,7 +153,7 @@ const EditCourse: React.FC = () => {
         <TextField
           label="Visibility"
           name="visibility"
-          value={courseData.visibility}
+          value={courseData.visibility || ''}
           onChange={handleInputChange}
           select
           fullWidth

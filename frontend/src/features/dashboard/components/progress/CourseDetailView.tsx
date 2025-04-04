@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Box,
   Typography,
@@ -24,7 +24,7 @@ import {
   ModuleProgress,
   TaskProgress,
   QuizHistory,
-} from '@types/common/progressTypes';
+} from 'src/types/common/progressTypes';
 
 import ModuleProgressView from './ModuleProgressView';
 
@@ -33,7 +33,7 @@ interface CourseDetailViewProps {
   onQuizSelect?: (quiz: QuizHistory) => void;
 }
 
-const CourseDetailView: React.FC<CourseDetailViewProps> = ({ courseProgress, onQuizSelect }) => {
+const CourseDetailView: React.FC<CourseDetailViewProps> = ({courseProgress, onQuizSelect}) => {
   const [activeTab, setActiveTab] = useState(0);
   const [selectedModule, setSelectedModule] = useState<ModuleProgress | null>(null);
 
@@ -84,7 +84,7 @@ const CourseDetailView: React.FC<CourseDetailViewProps> = ({ courseProgress, onQ
 
   return (
     <Box>
-      <Tabs value={activeTab} onChange={handleTabChange} sx={{ mb: 3 }}>
+      <Tabs value={activeTab} onChange={handleTabChange} sx={{mb: 3}}>
         <Tab label="Modules" />
         <Tab label="Tasks" />
         <Tab label="Achievements" />
@@ -99,13 +99,13 @@ const CourseDetailView: React.FC<CourseDetailViewProps> = ({ courseProgress, onQ
                 sx={{
                   cursor: 'pointer',
                   transition: 'transform 0.2s',
-                  '&:hover': { transform: 'scale(1.02)' },
+                  '&:hover': {transform: 'scale(1.02)'},
                 }}
                 onClick={() => setSelectedModule(module)}
               >
                 <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                  <Box sx={{display: 'flex', alignItems: 'center', mb: 2}}>
+                    <Typography variant="h6" sx={{flexGrow: 1}}>
                       {module.moduleTitle}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
@@ -183,7 +183,7 @@ const CourseDetailView: React.FC<CourseDetailViewProps> = ({ courseProgress, onQ
                     <Typography
                       variant="caption"
                       color="textSecondary"
-                      sx={{ mt: 1, display: 'block' }}
+                      sx={{mt: 1, display: 'block'}}
                     >
                       Earned on: {new Date(achievement.timestamp).toLocaleString()}
                     </Typography>
@@ -195,12 +195,12 @@ const CourseDetailView: React.FC<CourseDetailViewProps> = ({ courseProgress, onQ
       )}
 
       {selectedModule && (
-        <Box sx={{ mt: 4 }}>
+        <Box sx={{mt: 4}}>
           <ModuleProgressView moduleProgress={selectedModule} />
           <Button
             variant="outlined"
             color="primary"
-            sx={{ mt: 2 }}
+            sx={{mt: 2}}
             onClick={() => setSelectedModule(null)}
           >
             Close Module Details

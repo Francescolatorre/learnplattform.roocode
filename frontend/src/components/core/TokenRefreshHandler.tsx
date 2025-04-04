@@ -1,18 +1,17 @@
-import React, { useEffect } from 'react';
-import authService from '@services/auth/authService'; // Adjust the import path as necessary
+import React, {useEffect} from 'react';
 
-import { useAuth } from '@features/auth/context/AuthContext';
+import {useAuth} from '@features/auth/context/AuthContext';
 
 const TokenRefreshHandler: React.FC = () => {
-  const { refreshToken } = useAuth();
+  const {refreshToken, getRefreshToken} = useAuth();
 
   useEffect(() => {
     const interval = setInterval(
       async () => {
         try {
-          const refreshToken = localStorage.getItem('refresh_token');
-          if (refreshToken) {
-            await authService.refreshToken(refreshToken); // Use authService for token refresh
+          const storedRefreshToken = getRefreshToken();
+          if (storedRefreshToken) {
+            await refreshToken();
           }
         } catch (err) {
           console.error('Token refresh failed:', err);

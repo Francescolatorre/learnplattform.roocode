@@ -5,7 +5,7 @@ import { fetchStudentProgressByCourse } from '@services/resources/progressServic
 import { useAuth } from '../../../auth/context/AuthContext';
 
 const ProgressDebugger: React.FC = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, getAccessToken, getUserRole } = useAuth();
   const [debugInfo, setDebugInfo] = useState<{
     isAuthenticated: boolean;
     userRole: string | null;
@@ -20,16 +20,17 @@ const ProgressDebugger: React.FC = () => {
 
   useEffect(() => {
     const runDiagnostics = async () => {
-      const accessToken = localStorage.getItem('access_token');
+      const accessToken = getAccessToken();
+      const userRole = getUserRole();
 
       setDebugInfo(prev => ({
         ...prev,
         isAuthenticated,
-        userRole: user?.role || localStorage.getItem('user_role'),
-        accessToken,
+        userRole: userRole,
+        accessToken: accessToken,
       }));
 
-      if (isAuthenticated && accessToken) {
+      if (isAuthenticated) {
         try {
           // Try fetching progress for a sample course
           await fetchStudentProgressByCourse('1', String(user?.id) || 'defaultStudentId');
@@ -37,18 +38,17 @@ const ProgressDebugger: React.FC = () => {
             ...prev,
             progressFetchResult: 'Success',
           }));
-        } catch (error: unknown) {
-          const err = error instanceof Error ? error : new Error(String(error));
+        } catch (error: any) {
           setDebugInfo(prev => ({
             ...prev,
-            progressFetchResult: `Failed with status ${(error as Error)?.response?.status || 'unknown'}: ${err.message || 'No error message provided'}`,
+            progressFetchResult: `Failed with status ${error?.response?.status || 'unknown'}: ${error.message || 'No error message provided'}`,
           }));
         }
       }
     };
 
     runDiagnostics();
-  }, [user, isAuthenticated]);
+  }, [user, isAuthenticated, getAccessToken, getUserRole]);
 
   return (
     <Paper sx={{ p: 2, mt: 2 }}>

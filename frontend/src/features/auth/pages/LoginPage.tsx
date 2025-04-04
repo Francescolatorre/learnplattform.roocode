@@ -1,7 +1,7 @@
 import React from 'react';
 import {Box, TextField, Button, Typography, CircularProgress} from '@mui/material';
 import {useForm, SubmitHandler} from 'react-hook-form';
-import {useAuth} from '@hooks/useAuth';
+import {useAuth} from '@features/auth/context/AuthContext';
 import authService from '@services/auth/authService';
 
 interface ILoginFormInputs {
@@ -10,7 +10,11 @@ interface ILoginFormInputs {
 }
 
 const LoginPage: React.FC = () => {
-  const {register, handleSubmit, formState: {errors, isSubmitting}} = useForm<ILoginFormInputs>();
+  const {
+    register,
+    handleSubmit,
+    formState: {errors, isSubmitting},
+  } = useForm<ILoginFormInputs>();
   const {setAuthTokens, redirectToDashboard, setError} = useAuth();
 
   const handleLogin = async (data: ILoginFormInputs) => {

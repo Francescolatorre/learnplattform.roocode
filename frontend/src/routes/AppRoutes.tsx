@@ -1,6 +1,6 @@
 // src/routes/AppRoutes.tsx
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import {Routes, Route} from 'react-router-dom';
 
 import HomePage from '@features/home/pages/HomePage';
 import CoursesPage from '@features/courses/pages/CoursesPage';
@@ -8,12 +8,12 @@ import CourseDetailPage from '@features/courses/pages/CourseDetailsPage';
 import StudentTasksPage from '@features/learningTasks/pages/StudentTasksPage';
 import AdminCoursesPage from '@features/admin/pages/AdminCoursesPage';
 import TaskListPage from '@features/learningTasks/pages/TaskListPage';
-import RoleBasedRoute from '@features/auth/components/RoleBasedRoute';
-import ProtectedRoute from '@features/auth/components/ProtectedRoute';
+import RoleBasedRoute from '@features/auth/routes/RoleBasedRoute';
+import ProtectedRoute from '@features/auth/routes/ProtectedRoute';
 import InstructorEditCoursePage from '@features/courses/pages/InstructorEditCoursePage';
-import { LoginForm } from '@features/auth';
+import {LoginForm} from '@features/auth';
 import Profile from '@features/profile/Profile';
-import StudentDashboard from '@/features/dashboard/components/dashboards/StudentDashboard';
+import StudentDashboard from '@features/dashboard/components/dashboards/StudentDashboard';
 
 const AppRoutes: React.FC = () => {
   return (

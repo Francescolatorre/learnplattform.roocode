@@ -1,30 +1,31 @@
-import React, { useEffect } from 'react';
-import { Box, Typography, Grid, CircularProgress } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
-import { fetchUserProgress } from '@services/resources/dashboardService';
+import React, {useEffect} from 'react';
+import {Box, Typography, Grid, CircularProgress} from '@mui/material';
+import {useQuery} from '@tanstack/react-query';
+import {fetchUserProgress} from '@services/resources/dashboardService';
 import ProgressIndicator from '../components/progress/ProgressIndicator';
-import { UserProgress } from '../../../types/common/entities';
-import { useAuth } from '../../../hooks/useAuth';
+import {UserProgress} from '../../../types/common/entities';
+import {useAuth} from '@features/auth/context/AuthContext';
 
 const Dashboard: React.FC = () => {
+  const {user} = useAuth(); // Move useAuth to the top level of the component
+
   useEffect(() => {
-    const { user } = useAuth();
     console.log('Dashboard component mounted');
     console.log('User:', user);
     return () => {
       console.log('Dashboard component unmounted');
     };
-  }, []);
+  }, [user]); // Add user as a dependency
 
   const {
     data: progressData,
     isLoading,
     error,
-  } = useQuery<UserProgress[]>({ queryKey: ['userProgress'], queryFn: fetchUserProgress });
+  } = useQuery<UserProgress[]>({queryKey: ['userProgress'], queryFn: fetchUserProgress});
 
   if (isLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+      <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
         <CircularProgress />
       </Box>
     );
@@ -32,7 +33,7 @@ const Dashboard: React.FC = () => {
 
   if (error) {
     return (
-      <Box sx={{ textAlign: 'center', mt: 4 }}>
+      <Box sx={{textAlign: 'center', mt: 4}}>
         <Typography variant="h6" color="error">
           Failed to load progress data. Please try again later.
         </Typography>
@@ -41,7 +42,7 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{p: 3}}>
       <Typography variant="h4" gutterBottom>
         Dashboard
       </Typography>

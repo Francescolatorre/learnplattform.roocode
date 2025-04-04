@@ -1,5 +1,5 @@
 import React from 'react';
-import { CourseDetails, User } from '@/types/common/entities';
+import {CourseDetails, User} from '@types/common/entities';
 
 interface Enrollment {
   id: number;
@@ -12,7 +12,7 @@ interface EnrollmentListProps {
   enrollments: Enrollment[];
 }
 
-const EnrollmentList: React.FC<EnrollmentListProps> = ({ enrollments }) => {
+const EnrollmentList: React.FC<EnrollmentListProps> = ({enrollments}) => {
   return (
     <div>
       {enrollments.map(enrollment => (
