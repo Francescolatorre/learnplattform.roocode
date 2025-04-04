@@ -3,7 +3,7 @@ import {Box, Grid, Typography, CircularProgress} from '@mui/material';
 import {useQuery} from '@tanstack/react-query';
 import {fetchLearningTasks} from '@services/api/learningTaskService';
 import LearningTaskCard from '../components/LearningTaskCard';
-import {LearningTask} from '@types/common/entities';
+import {LearningTask} from 'src/types/common/entities';
 
 const StudentTasksPage: React.FC = () => {
   const {

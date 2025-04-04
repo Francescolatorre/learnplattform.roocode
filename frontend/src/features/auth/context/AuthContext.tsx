@@ -22,6 +22,7 @@ interface AuthContextProps {
   setAuthTokens: (tokens: {access: string; refresh: string}) => void;
   redirectToDashboard: () => void;
   setError: (message: string) => void;
+  errorMessage: string;
 }
 
 export const AuthContext = createContext<AuthContextProps>({
@@ -37,6 +38,7 @@ export const AuthContext = createContext<AuthContextProps>({
   setAuthTokens: () => { },
   redirectToDashboard: () => { },
   setError: () => { },
+  errorMessage: '',
 });
 
 const getAccessToken = (): string | null => localStorage.getItem('authToken');
@@ -58,8 +60,13 @@ const AuthProviderComponent: React.FC<{children: ReactNode}> = ({children}) => {
       localStorage.setItem('authToken', access);
       localStorage.setItem('refreshToken', refresh);
 
-      const userProfile = await authService.getUserProfile(access);
-      setUser(userProfile);
+      try {
+        const userProfile = await authService.getUserProfile(access);
+        setUser(userProfile);
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+        setUser(null);
+      }
       setIsAuthenticated(true);
     } catch (error) {
       console.error('Login failed:', error);
@@ -110,17 +117,21 @@ const AuthProviderComponent: React.FC<{children: ReactNode}> = ({children}) => {
   };
 
   const initializeAuth = async () => {
-    try {
-      const accessToken = await refreshTokenFn();
-      if (accessToken) {
-        const userProfile = await authService.getUserProfile(accessToken);
-        setUser(userProfile);
+    if (isAuthenticated) {
+      try {
+        const accessToken = await refreshTokenFn();
+        if (accessToken) {
+          const userProfile = await authService.getUserProfile(accessToken);
+          setUser(userProfile);
+        }
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error('Error initializing auth:', error);
+        setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
       }
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error('Error initializing auth:', error);
-      setIsAuthenticated(false);
-    } finally {
+    } else {
       setLoading(false);
     }
   };
@@ -132,6 +143,10 @@ const AuthProviderComponent: React.FC<{children: ReactNode}> = ({children}) => {
   useEffect(() => {
     if (errorMessage) console.error('Error:', errorMessage);
   }, [errorMessage]);
+
+  const setError = (message: string) => {
+    setErrorMessage(message);
+  };
 
   return loading ? (
     <div>Loading...</div>
@@ -148,8 +163,9 @@ const AuthProviderComponent: React.FC<{children: ReactNode}> = ({children}) => {
         getUserRole,
         refreshToken: refreshTokenFn,
         setAuthTokens,
-        redirectToDashboard: () => navigate('/dashboard'),
-        setError: setErrorMessage,
+        redirectToDashboard: () => navigate('/profile'),
+        setError: setError,
+        errorMessage: errorMessage,
       }}
     >
       {children}

@@ -1,13 +1,18 @@
 import React, {useEffect} from 'react';
 import {Box, Typography, Grid, CircularProgress} from '@mui/material';
 import {useQuery} from '@tanstack/react-query';
-import {fetchUserProgress} from '@services/resources/dashboardService';
+import axios from 'axios';
 import ProgressIndicator from '../components/progress/ProgressIndicator';
-import {UserProgress} from '../../../types/common/entities';
 import {useAuth} from '@features/auth/context/AuthContext';
 
+interface UserProgress {
+  id: number;
+  percentage: number;
+  label: string;
+}
+
 const Dashboard: React.FC = () => {
-  const {user} = useAuth(); // Move useAuth to the top level of the component
+  const {user} = useAuth();
 
   useEffect(() => {
     console.log('Dashboard component mounted');
@@ -15,7 +20,20 @@ const Dashboard: React.FC = () => {
     return () => {
       console.log('Dashboard component unmounted');
     };
-  }, [user]); // Add user as a dependency
+  }, [user]);
+
+  const fetchUserProgress = async (): Promise<UserProgress[]> => {
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+    try {
+      const response = await axios.get(`/api/v1/students/${user.id}/progress/`);
+      return response.data;
+    } catch (error: any) {
+      console.error('Error fetching user progress:', error.message);
+      throw new Error('Failed to load progress data.');
+    }
+  };
 
   const {
     data: progressData,
@@ -35,7 +53,7 @@ const Dashboard: React.FC = () => {
     return (
       <Box sx={{textAlign: 'center', mt: 4}}>
         <Typography variant="h6" color="error">
-          Failed to load progress data. Please try again later.
+          {error.message}
         </Typography>
       </Box>
     );
@@ -46,11 +64,8 @@ const Dashboard: React.FC = () => {
       <Typography variant="h4" gutterBottom>
         Dashboard
       </Typography>
-      <Typography variant="subtitle1" gutterBottom>
-        Track your progress and performance.
-      </Typography>
       <Grid container spacing={2}>
-        {(progressData || []).map(progress => (
+        {(progressData || []).slice(0, 3).map(progress => (
           <Grid item xs={12} sm={6} md={4} key={progress.id}>
             <ProgressIndicator value={progress.percentage} label={progress.label} />
           </Grid>

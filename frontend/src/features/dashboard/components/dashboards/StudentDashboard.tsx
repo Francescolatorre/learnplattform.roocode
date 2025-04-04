@@ -1,15 +1,15 @@
 import React from 'react';
-import { Box, Typography, CircularProgress, Card, CardContent, Divider } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
+import {Box, Typography, CircularProgress, Card, CardContent, Divider} from '@mui/material';
+import {useQuery} from '@tanstack/react-query';
 
 import EnrollmentService from '@features/enrollments/services/enrollmentService';
 import LearningTaskService from '@features/learningTasks/services/learningTaskService';
 import CourseList from '@features/courses/components/CourseList'; // Reusable course list component
 import LearningTaskList from '@features/learningTasks/components/LearningTaskList';
-import { useAuth } from '@features/auth/context/AuthContext';
+import {useAuth} from '@features/auth/context/AuthContext';
 
 const StudentDashboard: React.FC = () => {
-  const { userRole } = useAuth();
+  const {userRole} = useAuth();
 
   if (userRole !== 'student') {
     return (
@@ -25,7 +25,7 @@ const StudentDashboard: React.FC = () => {
     error: enrollmentsError,
   } = useQuery({
     queryKey: ['enrollments'],
-    queryFn: EnrollmentService.fetchUserEnrollments,
+    queryFn: EnrollmentService.getAll,
   });
 
   const {
@@ -34,7 +34,7 @@ const StudentDashboard: React.FC = () => {
     error: tasksError,
   } = useQuery({
     queryKey: ['upcomingTasks'],
-    queryFn: LearningTaskService.fetchLearningTasks,
+    queryFn: LearningTaskService.getAll,
   });
 
   const isLoading = enrollmentsLoading || tasksLoading;
@@ -46,7 +46,7 @@ const StudentDashboard: React.FC = () => {
   if (isLoading) {
     return (
       <Box
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
+        sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}
       >
         <CircularProgress />
       </Box>
@@ -64,17 +64,17 @@ const StudentDashboard: React.FC = () => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{p: 3}}>
       <Typography variant="h4" gutterBottom>
         Student Dashboard
       </Typography>
 
-      <Card sx={{ mb: 3 }}>
+      <Card sx={{mb: 3}}>
         <CardContent>
           <Typography variant="h6" gutterBottom>
             Enrolled Courses
           </Typography>
-          <Divider sx={{ mb: 2 }} />
+          <Divider sx={{mb: 2}} />
           {enrollments.length === 0 ? (
             <Typography>No enrolled courses yet.</Typography>
           ) : (
@@ -88,7 +88,7 @@ const StudentDashboard: React.FC = () => {
           <Typography variant="h6" gutterBottom>
             Upcoming Tasks (Next 5)
           </Typography>
-          <Divider sx={{ mb: 2 }} />
+          <Divider sx={{mb: 2}} />
           {upcomingTasks.length === 0 ? (
             <Typography>No upcoming tasks. Stay tuned for new assignments!</Typography>
           ) : (

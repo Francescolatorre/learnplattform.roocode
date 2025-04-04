@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 import apiService from '../api/apiService';
 import {LearningTask} from 'src/types/common/entities';
 import {TaskCreationData} from 'src/types/common/entities';
