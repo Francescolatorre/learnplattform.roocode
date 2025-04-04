@@ -1,6 +1,6 @@
 // src/routes/AppRoutes.tsx
 import React from 'react';
-import {Routes, Route} from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 
 import HomePage from '@features/home/pages/HomePage';
 import CoursesPage from '@features/courses/pages/CoursesPage';
@@ -11,7 +11,7 @@ import TaskListPage from '@features/learningTasks/pages/TaskListPage';
 import RoleBasedRoute from '@features/auth/components/RoleBasedRoute';
 import ProtectedRoute from '@features/auth/components/ProtectedRoute';
 import InstructorEditCoursePage from '@features/courses/pages/InstructorEditCoursePage';
-import {LoginForm} from '@features/auth';
+import { LoginForm } from '@features/auth';
 import Profile from '@features/profile/Profile';
 import StudentDashboard from '@/features/dashboard/components/dashboards/StudentDashboard';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import {LearningTask} from '@/types/common/entities';
+import {LearningTask} from '../../../types/common/entities';
 
 interface LearningTaskListProps {
   tasks: LearningTask[];

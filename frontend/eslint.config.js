@@ -1,4 +1,4 @@
-import { defineFlatConfig } from 'eslint-define-config';
+import {defineFlatConfig} from 'eslint-define-config';
 import eslintPluginReact from 'eslint-plugin-react';
 import typescriptEslintPlugin from '@typescript-eslint/eslint-plugin';
 import typescriptEslintParser from '@typescript-eslint/parser';
@@ -6,6 +6,14 @@ import eslintPluginImport from 'eslint-plugin-import';
 // No need to import the resolver, it's referenced by name in settings
 
 export default defineFlatConfig([
+  {
+    files: ['vite.config.ts', 'vitest.config.ts', 'playwright.config.ts', 'playwright-api.config.ts'],
+    languageOptions: {
+      parserOptions: {
+        project: './tsconfig.node.json', // Use tsconfig.node.json for these files
+      },
+    },
+  },
   {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
@@ -16,7 +24,7 @@ export default defineFlatConfig([
         ecmaFeatures: {
           jsx: true,
         },
-        project: './tsconfig.json', // Points to your tsconfig for resolving paths
+        project: './tsconfig.json', // Ensure this points to the correct tsconfig
       },
       globals: {
         window: 'readonly',
@@ -30,7 +38,9 @@ export default defineFlatConfig([
     },
     settings: {
       'import/resolver': {
-        typescript: {}, // The resolver will automatically find your tsconfig.json
+        typescript: {
+          project: './tsconfig.json', // Use tsconfig.json for resolving aliases
+        },
       },
     },
     rules: {

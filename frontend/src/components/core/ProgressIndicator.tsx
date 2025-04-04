@@ -23,7 +23,7 @@ interface BaseProgressProps {
   thickness?: number; // For circular progress
 }
 
-interface ProgressIndicatorProps extends BaseProgressProps, Omit<BoxProps, 'children'> { }
+interface ProgressIndicatorProps extends BaseProgressProps, Omit<BoxProps, 'children'> {}
 
 /**
  * A reusable progress indicator component
@@ -33,7 +33,7 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   label,
   showPercentage = true,
   progressHeight = 8, // Updated parameter name
-  thresholds = {low: 33, medium: 66, high: 100},
+  thresholds = { low: 33, medium: 66, high: 100 },
   variant = 'linear',
   size = 40,
   thickness = 4,
@@ -65,9 +65,9 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
         </Typography>
       )}
 
-      <Box sx={{display: 'flex', alignItems: 'center'}}>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
         {variant === 'linear' ? (
-          <Box sx={{width: '100%', mr: showPercentage ? 1 : 0}}>
+          <Box sx={{ width: '100%', mr: showPercentage ? 1 : 0 }}>
             <LinearProgress
               variant="determinate"
               value={normalizedValue}
@@ -83,13 +83,13 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
             />
           </Box>
         ) : (
-          <Box sx={{position: 'relative', display: 'inline-flex', mr: showPercentage ? 1 : 0}}>
+          <Box sx={{ position: 'relative', display: 'inline-flex', mr: showPercentage ? 1 : 0 }}>
             <CircularProgress
               variant="determinate"
               value={normalizedValue}
               size={size}
               thickness={thickness}
-              sx={{color: progressColor}}
+              sx={{ color: progressColor }}
             />
             {!showPercentage && (
               <Box

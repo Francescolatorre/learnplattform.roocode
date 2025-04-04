@@ -20,8 +20,8 @@
     "jsx": "react-jsx",
     "baseUrl": "./src",
     "paths": {
-      "@/*": [
-        "*"
+      "@types/*": [
+        "types/*"
       ],
       "@features/*": [
         "features/*"
@@ -29,29 +29,11 @@
       "@components/*": [
         "components/*"
       ],
-      "@hooks/*": [
-        "hooks/*"
-      ],
       "@services/*": [
         "services/*"
       ],
-      "@assets/*": [
-        "assets/*"
-      ],
       "@utils/*": [
         "utils/*"
-      ],
-      "@types/*": [
-        "types/*"
-      ],
-      "@styles/*": [
-        "styles/*"
-      ],
-      "@pages/*": [
-        "pages/*"
-      ],
-      "@store/*": [
-        "store/*"
       ]
     },
     "sourceMap": true,

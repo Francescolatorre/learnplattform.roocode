@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
 import CourseService from '@features/courses/services/courseService';
 
@@ -9,12 +9,11 @@ interface ICourse {
   // ...other properties...
 }
 
-
 export interface CourseListProps {
   courses: ICourse[];
 }
 
-const CourseList: React.FC<CourseListProps> = ({courses}) => {
+const CourseList: React.FC<CourseListProps> = ({ courses }) => {
   return (
     <div>
       <h1>Courses</h1>

@@ -2,18 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useCourseTasks } from '@hooks/useCourseTasks';
 import DataTable, { Column } from '@components/core/DataTable'; // Corrected import // Corrected import
-import { LearningTask } from 'types/common/entities';
+import { LearningTask } from '@/types/common/entities';
 
 const AdminTasksPage = () => {
   const { courseId } = useParams();
-  const { tasks, isLoading, error } = useCourseTasks(courseId!);
-  const [learningTasks, setLearningTasks] = useState<LearningTask[]>([]);
-
-  useEffect(() => {
-    if (tasks) {
-      setLearningTasks(tasks);
-    }
-  }, [tasks]);
+  const { data, isLoading, error } = useCourseTasks(courseId!);
 
   const columns: Column<LearningTask>[] = [
     { id: 'id', label: 'ID', minWidth: 70 },
@@ -30,10 +23,9 @@ const AdminTasksPage = () => {
       <h1>Admin Tasks Page</h1>
       {isLoading && <p>Loading tasks...</p>}
       {error && <p>Error: {error.message}</p>}
-      {learningTasks && (
+      {data && (
         <div style={{ height: 400, width: '100%' }}>
-          <DataTable columns={columns} data={learningTasks} keyExtractor={keyExtractor} /> // Pass
-          props // Pass props
+          <DataTable columns={columns} data={data} keyExtractor={keyExtractor} />
         </div>
       )}
     </div>

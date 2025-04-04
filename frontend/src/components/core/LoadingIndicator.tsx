@@ -1,5 +1,5 @@
 import React from 'react';
-import {Box, CircularProgress} from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 
 const LoadingIndicator: React.FC = () => {
   return (

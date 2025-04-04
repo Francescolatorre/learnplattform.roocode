@@ -31,10 +31,11 @@ import {parseISO, isAfter, isBefore, addDays} from 'date-fns';
 import {
   fetchCourseStructure,
   fetchStudentProgressByCourse,
-} from '../../../../services/resources/progressService';
-import {CourseProgress, ModuleProgress} from '../../../../types/common/progressTypes';
+} from '@services/resources/progressService';
+import {CourseProgress, ModuleProgress} from '@types/common/progressTypes';
+import {CourseStructure} from '@components/core/ProgressTrackingUI';
 import InstructorProgressDashboard from '../../../instructor/components/InstructorProgressDashboard';
-import UpcomingTasksList from '../../features/dashboard/UpcomingTasksList';
+import UpcomingTasksList from '../UpcomingTasksList';
 import ProgressSummaryCard from './ProgressSummaryCard';
 
 import ModuleProgressView from './ModuleProgressView';
@@ -50,6 +51,14 @@ interface ProgressTrackingUIProps {
   studentId?: string; // Optional: If viewing as instructor
   isInstructor?: boolean; // Optional: To show instructor view
 }
+
+// Example fix for a common issue: Ensure the argument is valid
+const renderProgress = (progress: number) => {
+  if (progress < 0 || progress > 100) {
+    throw new Error('Progress must be between 0 and 100');
+  }
+  return <div>{progress}%</div>;
+};
 
 const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
   courseId,
@@ -84,7 +93,7 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
   );
 
   // Fetch course structure
-  const {data: courseStructure, isLoading: structureLoading} = useQuery(
+  const {data: courseStructure, isLoading: structureLoading} = useQuery<CourseStructure>(
     ['courseStructure', courseId],
     () => fetchCourseStructure(courseId),
     {
@@ -101,8 +110,8 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
   const prepareModuleCompletionData = () => {
     if (!progressData || !courseStructure) return null;
 
-    const labels = courseStructure.modules.map(module => module.title);
-    const completionData = courseStructure.modules.map(module => {
+    const labels = courseStructure?.modules.map(module => module.title) ?? [];
+    const completionData = courseStructure?.modules.map(module => {
       const moduleProgress = progressData?.moduleProgress.find(
         (mp: ModuleProgress) => mp.moduleId === module.id
       );
@@ -334,16 +343,7 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
                       {moduleCompletionData && (
                         <Box sx={{height: 300}}>
                           <Bar
-                            data={moduleCompletionData as {
-                              labels: string[];
-                              datasets: {
-                                label: string;
-                                data: number[];
-                                backgroundColor: string;
-                                borderColor: string;
-                                borderWidth: number;
-                              }[];
-                            }}
+                            data={moduleCompletionData}
                             options={{
                               responsive: true,
                               maintainAspectRatio: false,
@@ -373,16 +373,7 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
                       {taskTypePerformanceData && (
                         <Box sx={{height: 300, display: 'flex', justifyContent: 'center'}}>
                           <Doughnut
-                            data={taskTypePerformanceData as {
-                              labels: string[];
-                              datasets: {
-                                label: string;
-                                data: number[];
-                                backgroundColor: string[];
-                                borderColor: string;
-                                borderWidth: number;
-                              }[];
-                            }}
+                            data={taskTypePerformanceData}
                             options={{
                               responsive: true,
                               maintainAspectRatio: false,

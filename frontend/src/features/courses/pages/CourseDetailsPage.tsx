@@ -1,14 +1,14 @@
 import React from 'react';
-import {useQuery} from '@tanstack/react-query';
-import {useParams, useNavigate} from 'react-router-dom';
-import {CircularProgress, Typography, List, ListItem, ListItemText, Button} from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
+import { useParams, useNavigate } from 'react-router-dom';
+import { CircularProgress, Typography, List, ListItem, ListItemText, Button } from '@mui/material';
 
-import {fetchCourseDetails} from '@services/resources/progressService';
-import {CourseDetails} from '@/types/common/apiTypes';
-import {fetchTasksByCourse} from '@services/resources/taskService';
+import { fetchCourseDetails } from '@services/resources/progressService';
+import { CourseDetails } from '@/types/common/apiTypes';
+import { fetchTasksByCourse } from '@services/resources/taskService';
 
 const CourseDetailsPage: React.FC = () => {
-  const {courseId} = useParams<{courseId: string}>(); // Extract courseId from route params
+  const { courseId } = useParams<{ courseId: string }>(); // Extract courseId from route params
   console.log('Course ID:', courseId); // Debug log for courseId
   const navigate = useNavigate();
 
@@ -66,7 +66,7 @@ const CourseDetailsPage: React.FC = () => {
       </Typography>
       {learningTasks && learningTasks.results && learningTasks.results.length > 0 ? (
         <List>
-          {learningTasks.results.map((task: {id: string, title: string}) => (
+          {learningTasks.results.map((task: { id: string; title: string }) => (
             <ListItem key={task.id} divider>
               <ListItemText primary={task.title} />
               <Button

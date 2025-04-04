@@ -1,5 +1,5 @@
 import React from 'react';
-import {Alert, AlertProps, AlertTitle} from '@mui/material';
+import { Alert, AlertProps, AlertTitle } from '@mui/material';
 
 interface ErrorMessageProps extends Omit<AlertProps, 'variant'> {
   message: string;

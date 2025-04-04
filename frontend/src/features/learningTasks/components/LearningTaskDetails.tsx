@@ -2,7 +2,8 @@ import React from 'react';
 import {useQuery} from '@tanstack/react-query';
 import {CircularProgress, Typography, Button} from '@mui/material';
 
-import LearningTaskService from '@features/learningTasks/services/learningTaskService';
+// Update to the generalized service name
+import LearningTaskService from '../../../features/learningTasks/services/learningTaskService'; // This import is not used in this file, but it might be needed elsewhere
 
 interface TaskDetailsProps {
   taskId: string | undefined;
@@ -14,9 +15,9 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({taskId}) => {
     queryFn: async () => {
       if (taskId) {
         try {
-          return await LearningTaskService.getById(taskId);
+          return await LearningTaskService.getById(taskId); // Updated service method
         } catch (error) {
-          console.error("Failed to fetch task details:", error);
+          console.error('Failed to fetch task details:', error);
           return null;
         }
       }

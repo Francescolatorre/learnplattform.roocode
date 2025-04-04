@@ -1,77 +1,33 @@
 import axios from 'axios';
-import { z } from 'zod';
 
 import apiService from '../api/apiService';
-import { Task, TaskCreationData } from '../../types/common/apiTypes';
+import {LearningTask} from '../../types/common/entities';
+import {TaskCreationData} from '../../types/common/apiTypes';
 
-// Enhanced Type Definitions with Validation
-const TaskSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  description: z.string(),
-  course: z.number(),
-  is_published: z.boolean(),
-  max_submissions: z.number().optional(),
-  deadline: z.string().optional(),
-  created_at: z.string().optional(),
-  updated_at: z.string().optional(),
-});
-
-const TaskCreationSchema = TaskSchema.omit({
-  id: true,
-  created_at: true,
-  updated_at: true,
-}).extend({
-  attachment: z.instanceof(File).optional(),
-});
-
-export type Task = z.infer<typeof TaskSchema>;
-export type TaskCreationData = z.infer<typeof TaskCreationSchema>;
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-const API_URL = `${API_BASE_URL}/api/v1`; // Ensure correct API version
-
-function handleError(error: unknown, context: string) {
-  if (axios.isAxiosError(error)) {
-    if (error.response?.status === 401) {
-      console.error(`${context}: Unauthorized access. Please log in again.`);
-      window.dispatchEvent(new Event('unauthorized'));
-    } else if (error.response?.status === 403) {
-      console.error(`${context}: Forbidden. You do not have permission to perform this action.`);
-    } else if (error.response?.status === 404) {
-      console.error(`${context}: Resource not found.`);
-    } else if (error.response?.status === 500) {
-      console.error(`${context}: Internal server error. Please try again later.`);
-    } else {
-      console.error(`${context}:`, error.response?.data || error.message);
-    }
-  } else {
-    console.error(`${context}:`, error);
-  }
-}
 
 export const fetchTasksByCourse = async (
   courseId: string,
   includeSubtasks = false
-): Promise<{ count: number; next: string | null; previous: string | null; results: Task[] }> => {
-  return apiService.get(`tasks/course/${courseId}/`, { includeSubtasks });
+): Promise<{count: number; next: string | null; previous: string | null; results: LearningTask[]}> => {
+  return apiService.get(`tasks/course/${courseId}/`, {includeSubtasks});
 };
 
 export const createTask = async (
   taskData: TaskCreationData,
   notifyUsers = false
-): Promise<Task> => {
+): Promise<LearningTask> => {
   const formData = new FormData();
   Object.entries(taskData).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
       formData.append(key, value instanceof File ? value : String(value));
     }
   });
-  return apiService.post<Task>('tasks/', formData, { notifyUsers });
+  formData.append('notifyUsers', String(notifyUsers));
+  return apiService.post<LearningTask>('tasks/', formData);
 };
 
-export const updateTask = async (taskId: string, updatedData: Partial<Task>): Promise<Task> => {
-  return apiService.patch<Task>(`tasks/${taskId}/`, updatedData);
+export const updateTask = async (taskId: string, updatedData: Partial<LearningTask>): Promise<LearningTask> => {
+  return apiService.patch<LearningTask>(`tasks/${taskId}/`, updatedData);
 };
 
 export const deleteTask = async (taskId: string): Promise<void> => {
@@ -80,7 +36,7 @@ export const deleteTask = async (taskId: string): Promise<void> => {
 
 export const fetchTaskSubmissions = async (
   taskId: string
-): Promise<{ count: number; next: string | null; previous: string | null; results: any[] }> => {
+): Promise<{count: number; next: string | null; previous: string | null; results: any[]}> => {
   return apiService.get(`tasks/${taskId}/submissions/`);
 };
 
@@ -101,5 +57,5 @@ export const useTaskCreation = () => {
     });
   };
 
-  return { createTask: handleTaskCreation };
+  return {createTask: handleTaskCreation};
 };

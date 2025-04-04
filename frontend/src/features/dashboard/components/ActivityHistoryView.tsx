@@ -17,15 +17,15 @@ import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import GradeIcon from '@mui/icons-material/Grade';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
-import {format, parseISO} from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
-import {ActivityEntry} from '../../../types/common/progressTypes';
+import { ActivityEntry } from '../../../types/common/progressTypes';
 
 interface ActivityHistoryViewProps {
   recentActivity: ActivityEntry[];
 }
 
-const ActivityHistoryView: React.FC<ActivityHistoryViewProps> = ({recentActivity}) => {
+const ActivityHistoryView: React.FC<ActivityHistoryViewProps> = ({ recentActivity }) => {
   const theme = useTheme();
 
   // Sort activities by timestamp (newest first)
@@ -102,14 +102,14 @@ const ActivityHistoryView: React.FC<ActivityHistoryViewProps> = ({recentActivity
       </Typography>
 
       {Object.keys(groupedActivities).length === 0 ? (
-        <Paper sx={{p: 3, textAlign: 'center'}}>
+        <Paper sx={{ p: 3, textAlign: 'center' }}>
           <Typography>No activity data available.</Typography>
         </Paper>
       ) : (
         <Box>
           {Object.entries(groupedActivities).map(([date, activities]) => (
-            <Box key={date} sx={{mb: 4}}>
-              <Paper sx={{p: 2, mb: 2, bgcolor: 'primary.light', color: 'primary.contrastText'}}>
+            <Box key={date} sx={{ mb: 4 }}>
+              <Paper sx={{ p: 2, mb: 2, bgcolor: 'primary.light', color: 'primary.contrastText' }}>
                 <Typography variant="h6">{format(parseISO(date), 'MMMM d, yyyy')}</Typography>
                 <Typography variant="body2">
                   {activities.length} {activities.length === 1 ? 'activity' : 'activities'}
@@ -121,7 +121,7 @@ const ActivityHistoryView: React.FC<ActivityHistoryViewProps> = ({recentActivity
                   <React.Fragment key={activity.id}>
                     <ListItem alignItems="flex-start">
                       <ListItemAvatar>
-                        <Avatar sx={{bgcolor: getActivityColor(activity.activityType)}}>
+                        <Avatar sx={{ bgcolor: getActivityColor(activity.activityType) }}>
                           {getActivityIcon(activity.activityType)}
                         </Avatar>
                       </ListItemAvatar>
@@ -164,7 +164,7 @@ const ActivityHistoryView: React.FC<ActivityHistoryViewProps> = ({recentActivity
                                         : 'error'
                                   }
                                   size="small"
-                                  sx={{mt: 1}}
+                                  sx={{ mt: 1 }}
                                 />
                               )}
                           </>

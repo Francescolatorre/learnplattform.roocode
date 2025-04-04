@@ -1,14 +1,20 @@
 import { CourseDetails, User } from '@/types/common/entities';
-export { ICourse } from '../../courses/types/courseTypes';
+export type { ICourse } from '../../courses/types/courseTypes';
+export enum CompletionStatus {
+  ACTIVE = 'active',
+  COMPLETED = 'completed',
+  DROPPED = 'dropped',
+}
+
+export type CompletionStatusType = keyof typeof CompletionStatus;
 
 export interface IEnrollment {
-  id: number;
+  readonly id: number;
   course: number;
   course_details: CourseDetails;
   user: number;
-  enrollment_date?: string;
-  status: 'active' | 'completed' | 'dropped';
-  progress_percentage?: string;
-  settings?: Record<string, any> | null;
-  user_details?: User;
+  readonly enrollment_date: string;
+  status: CompletionStatus;
+  readonly progress_percentage: string;
+  user_details: User;
 }

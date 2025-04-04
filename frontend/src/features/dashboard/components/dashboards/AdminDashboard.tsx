@@ -1,5 +1,5 @@
 import React from 'react';
-import {Grid, Card, CardContent, Typography} from '@mui/material';
+import { Grid, Card, CardContent, Typography } from '@mui/material';
 
 import DashboardLayout from './DashboardLayout';
 
@@ -9,7 +9,7 @@ interface AdminDashboardData {
   averageScore: number;
 }
 
-const AdminDashboard: React.FC<{data: AdminDashboardData}> = ({data}) => {
+const AdminDashboard: React.FC<{ data: AdminDashboardData }> = ({ data }) => {
   if (!data) {
     return <div>Loading...</div>; // Add a loading state
   }

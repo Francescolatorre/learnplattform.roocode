@@ -8,7 +8,7 @@ import { DataTable } from '@components/core/DataTable';
 const InstructorTasksPage: React.FC = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
-  const { tasks, isLoading, error } = useCourseTasks(courseId!);
+  const { data, isLoading, error } = useCourseTasks(courseId!);
 
   if (!courseId) {
     return (
@@ -44,24 +44,25 @@ const InstructorTasksPage: React.FC = () => {
         <Typography>Error loading tasks: {error.message}</Typography>
       ) : (
         <DataTable
-          rows={tasks}
+          data={data || []}
           columns={[
-            { field: 'title', headerName: 'Task Title' },
+            { id: 'title', label: 'Title' },
+            { id: 'description', label: 'Description' },
+            { id: 'order', label: 'Order' },
             {
-              field: 'actions',
-              headerName: 'Actions',
-              renderCell: params => (
+              id: 'actions',
+              label: 'Actions',
+              format: (value: any, row: any) => (
                 <Button
                   variant="outlined"
-                  onClick={() =>
-                    navigate(`/instructor/courses/${courseId}/tasks/${params.row.id}/edit`)
-                  }
+                  onClick={() => navigate(`/instructor/courses/${courseId}/tasks/${row.id}/edit`)}
                 >
                   Edit
                 </Button>
               ),
             },
           ]}
+          keyExtractor={item => item.id.toString()}
         />
       )}
     </Container>

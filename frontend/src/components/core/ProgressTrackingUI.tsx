@@ -2,8 +2,15 @@ import React, { useEffect, useState } from 'react';
 
 import { fetchCourseStructure } from '@services/resources/progressService';
 
+interface CourseStructure {
+  modules: {
+    id: string;
+    title: string;
+  }[];
+}
+
 interface ProgressTrackingUIProps {
-  courseStructure: any;
+  courseStructure: CourseStructure | null;
   loading: boolean;
   error: string | null;
 }

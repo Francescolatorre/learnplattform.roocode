@@ -1,7 +1,36 @@
 import { Course, CourseDetails } from '../../../types/common/entities';
 
-export type ICourse = Course;
-export type ICourseDetails = CourseDetails;
+export enum CourseStatus {
+  Active = 'active',
+  Completed = 'completed',
+  Dropped = 'dropped',
+}
+
+export type ICourse = Omit<
+  Course,
+  | 'title'
+  | 'description'
+  | 'version'
+  | 'learning_objectives'
+  | 'prerequisites'
+  | 'status'
+  | 'visibility'
+  | 'created_at'
+  | 'updated_at'
+> & {
+  readonly id: number;
+  title: string & { length: 3 };
+  description: string & { length: 10 };
+  version: string;
+  learning_objectives: string[];
+  prerequisites: string[];
+  status: CourseStatus;
+  visibility: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ICourseDetails = Omit<CourseDetails, 'version'>;
 
 export interface IEnrollment {
   id: number;

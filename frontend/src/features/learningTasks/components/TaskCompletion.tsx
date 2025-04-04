@@ -18,20 +18,27 @@ import axios from 'axios';
 
 import { useAuth } from '@features/auth/context/AuthContext';
 
-const TaskView = ({ courseId, taskId }) => {
-  const [task, setTask] = useState(null);
-  const [taskProgress, setTaskProgress] = useState(null);
+import { Task, TaskProgress } from '@types/common/entities';
+
+interface TaskViewProps {
+  courseId: string;
+  taskId: string;
+}
+
+const TaskView: React.FC<TaskViewProps> = ({ courseId, taskId }) => {
+  const [task, setTask] = useState<Task | null>(null);
+  const [taskProgress, setTaskProgress] = useState<TaskProgress | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [answer, setAnswer] = useState('');
   const [timeSpent, setTimeSpent] = useState(0); // in seconds
   const { user } = useAuth();
 
   // Timer for tracking time spent on task
   useEffect(() => {
-    let timer;
+    let timer: NodeJS.Timeout;
     if (task && taskProgress?.status === 'in_progress') {
       timer = setInterval(() => {
         setTimeSpent(prev => prev + 1);
@@ -39,7 +46,7 @@ const TaskView = ({ courseId, taskId }) => {
     }
 
     return () => {
-      if (timer) clearInterval(timer);
+      if (timer) clearInterval(timer as NodeJS.Timeout);
       // When component unmounts, update time spent if task was in progress
       if (task && taskProgress?.status === 'in_progress') {
         updateTimeSpent();
@@ -63,7 +70,7 @@ const TaskView = ({ courseId, taskId }) => {
         // Fetch task progress
         const progressResponse = await axios.get(`/api/v1/task-progress/`, {
           headers: { Authorization: `Bearer ${token}` },
-          params: { task: taskId, user: user.id },
+          params: { task: taskId, user: user?.id },
         });
 
         // If there's existing progress for this task
@@ -86,7 +93,7 @@ const TaskView = ({ courseId, taskId }) => {
         setError(null);
       } catch (err) {
         console.error('Error fetching task details:', err);
-        setError('Failed to load task details. Please try again later.');
+        setError('Failed to load task details. Please try again later.' as string);
       } finally {
         setLoading(false);
       }
@@ -126,10 +133,10 @@ const TaskView = ({ courseId, taskId }) => {
       }
 
       setError(null);
-      setSuccessMessage('Task started!');
+      setSuccessMessage('Task started!' as string);
     } catch (err) {
       console.error('Error starting task:', err);
-      setError('Failed to start the task. Please try again.');
+      setError('Failed to start the task. Please try again.' as string);
     } finally {
       setSubmitting(false);
     }
@@ -155,16 +162,15 @@ const TaskView = ({ courseId, taskId }) => {
       );
 
       // Update local state
-      setTaskProgress(prev => ({
-        ...prev,
-        status: 'completed',
-      }));
+      setTaskProgress((prev: TaskProgress | null) =>
+        prev ? { ...prev, status: 'completed' } : null
+      );
 
       setError(null);
-      setSuccessMessage('Task completed successfully!');
+      setSuccessMessage('Task completed successfully!' as string);
     } catch (err) {
       console.error('Error completing task:', err);
-      setError('Failed to submit the task. Please try again.');
+      setError('Failed to submit the task. Please try again.' as string);
     } finally {
       setSubmitting(false);
     }
@@ -191,7 +197,7 @@ const TaskView = ({ courseId, taskId }) => {
   };
 
   // Format time for display (converts seconds to mm:ss format)
-  const formatTime = seconds => {
+  const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;

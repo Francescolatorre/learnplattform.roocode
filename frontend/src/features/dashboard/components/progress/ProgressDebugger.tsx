@@ -1,11 +1,11 @@
-import React, {useState, useEffect} from 'react';
-import {Typography, Paper, Grid} from '@mui/material';
-import {fetchStudentProgressByCourse} from '@services/resources/progressService';
+import React, { useState, useEffect } from 'react';
+import { Typography, Paper, Grid } from '@mui/material';
+import { fetchStudentProgressByCourse } from '@services/resources/progressService';
 
-import {useAuth} from '../../../auth/context/AuthContext';
+import { useAuth } from '../../../auth/context/AuthContext';
 
 const ProgressDebugger: React.FC = () => {
-  const {user, isAuthenticated} = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [debugInfo, setDebugInfo] = useState<{
     isAuthenticated: boolean;
     userRole: string | null;
@@ -51,7 +51,7 @@ const ProgressDebugger: React.FC = () => {
   }, [user, isAuthenticated]);
 
   return (
-    <Paper sx={{p: 2, mt: 2}}>
+    <Paper sx={{ p: 2, mt: 2 }}>
       <Typography variant="h6" gutterBottom>
         Progress Fetch Diagnostics
       </Typography>

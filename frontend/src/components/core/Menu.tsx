@@ -1,5 +1,5 @@
 import React from 'react';
-import {Menu as MuiMenu, MenuItem} from '@mui/material';
+import { Menu as MuiMenu, MenuItem } from '@mui/material';
 
 interface MenuProps {
   anchorEl: HTMLElement | null;
@@ -9,7 +9,7 @@ interface MenuProps {
   onSelect: (option: string) => void;
 }
 
-const Menu: React.FC<MenuProps> = ({anchorEl, open, onClose, options, onSelect}) => {
+const Menu: React.FC<MenuProps> = ({ anchorEl, open, onClose, options, onSelect }) => {
   return (
     <MuiMenu anchorEl={anchorEl} open={open} onClose={onClose}>
       {options.map((option, index) => (

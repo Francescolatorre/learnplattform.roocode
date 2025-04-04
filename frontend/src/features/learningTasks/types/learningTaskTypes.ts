@@ -1,4 +1,3 @@
-import { LearningTask } from '@/types/common/entities';
-import { IPaginatedResponse } from '@/types/common/paginatedResponse';
+import {LearningTask} from '../../../types/common/entities';
 
 export type ILearningTask = LearningTask;

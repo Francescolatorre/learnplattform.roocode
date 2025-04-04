@@ -1,16 +1,16 @@
-import {User, Course} from '@/types/common/entities';
-import {IPaginatedResponse} from '@/types/common/paginatedResponse';
+import {User, Course, LearningTask} from './entities';
+import {CompletionStatus} from '@features/enrollments/types/enrollmentTypes';
 
 export interface CourseProgressResponse {
   progress: number;
-  tasks: Task[];
+  tasks: LearningTask[];
 }
 export interface CourseEnrollment {
-  id: number;
+  readonly id: number;
   user: number;
   course: number;
   enrollment_date?: string;
-  status: string;
+  status: CompletionStatus;
   settings?: Record<string, any> | null;
   user_details?: User;
   course_details?: Course;
@@ -18,7 +18,7 @@ export interface CourseEnrollment {
 }
 
 export interface CourseVersion {
-  id: number;
+  readonly id: number;
   course: number;
   version_number: number;
   created_at?: string;
@@ -29,7 +29,7 @@ export interface CourseVersion {
 }
 
 export interface QuizOption {
-  id: number;
+  readonly id: number;
   question: number;
   text: string;
   is_correct?: boolean;
@@ -37,53 +37,53 @@ export interface QuizOption {
 }
 
 export interface QuizQuestion {
-  id: number;
+  readonly id: number;
   quiz: string;
-  text: string;
-  explanation?: string;
-  points?: number;
-  order?: number;
-  options?: QuizOption[];
+  text: string & {minLength: 1};
+  explanation: string;
+  points: number;
+  order: number;
+  readonly options: QuizOption[];
 }
 
 export interface QuizTask {
-  id: number;
+  readonly id: number;
   course: number;
-  title: string;
-  description: string;
-  order?: number;
+  title: string & {minLength: 1; maxLength: 255};
+  description: string & {maxLength: 1000};
+  order: number;
   is_published: boolean;
-  created_at?: string;
-  updated_at?: string;
-  time_limit_minutes?: number;
-  pass_threshold?: number;
-  max_attempts?: number;
-  randomize_questions?: boolean;
-  questions?: QuizQuestion[];
+  readonly created_at: string;
+  readonly updated_at: string;
+  time_limit_minutes: number;
+  pass_threshold: number;
+  max_attempts: number;
+  randomize_questions: boolean;
+  readonly questions: QuizQuestion[];
 }
 
 export interface QuizResponse {
-  id: number;
+  readonly id: number;
   attempt: number;
   question: number;
   selected_option: number;
   is_correct: boolean;
   time_spent: string;
-  question_details?: QuizQuestion;
-  selected_option_details?: QuizOption;
+  question_details: QuizQuestion;
+  selected_option_details: QuizOption;
 }
 
 export interface QuizAttempt {
-  id: number;
+  readonly id: number;
   user: number;
   quiz: string;
   score: number;
   time_taken: string;
-  completion_status: string;
-  attempt_date?: string;
-  user_details?: User;
-  quiz_details?: QuizTask;
-  responses?: QuizResponse[];
+  completion_status: "passed" | "failed" | "in_progress";
+  attempt_date: string;
+  user_details: User;
+  quiz_details: QuizTask;
+  readonly responses: QuizResponse[];
 }
 
 export interface CustomTokenObtainPair {
@@ -105,17 +105,16 @@ export interface TokenRefresh {
   access?: string;
 }
 
-export interface Task {
-  id: string;
-  title: string;
-  description: string;
-  status: string;
-}
 
 export interface TaskCreationData {
-  title: string;
-  description: string;
-  status?: string;
+  readonly id: number;
+  title: string & {minLength: 1; maxLength: 255};
+  description: string & {maxLength: 1000};
+  course?: number;
+  order?: number;
+  is_published?: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface CourseDetails {

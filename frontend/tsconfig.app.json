@@ -1,5 +1,5 @@
 {
-  "extends": "../tsconfig.json", // Corrected path to the base tsconfig.json
+  "extends": "./tsconfig.json", // Corrected path to the base tsconfig.json
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "jsx": "react-jsx",
@@ -9,18 +9,45 @@
     "allowImportingTsExtensions": true,
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./*"],
-      "@components/*": ["./components/*"],
-      "@features/*": ["./features/*"],
-      "@services/*": ["./services/*"],
-      "@store/*": ["./store/*"],
-      "@hooks/*": ["./hooks/*"],
-      "@utils/*": ["./utils/*"],
-      "@styles/*": ["./styles/*"],
-      "@assets/*": ["./assets/*"],
-      "@context/*": ["./context/*"],
-      "@pages/*": ["./pages/*"]
+      "@/*": [
+        "./*"
+      ],
+      "@components/*": [
+        "./components/*"
+      ],
+      "@features/*": [
+        "./features/*"
+      ],
+      "@services/*": [
+        "./services/*"
+      ],
+      "@store/*": [
+        "./store/*"
+      ],
+      "@hooks/*": [
+        "./hooks/*"
+      ],
+      "@utils/*": [
+        "./utils/*"
+      ],
+      "@styles/*": [
+        "./styles/*"
+      ],
+      "@assets/*": [
+        "./assets/*"
+      ],
+      "@context/*": [
+        "./context/*"
+      ],
+      "@pages/*": [
+        "./pages/*"
+      ],
+      "@types/*": [
+        "./types/*"
+      ],
     }
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

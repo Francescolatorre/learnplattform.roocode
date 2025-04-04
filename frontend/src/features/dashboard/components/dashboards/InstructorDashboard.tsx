@@ -1,5 +1,5 @@
 import React from 'react';
-import {Grid, Card, CardContent, Typography} from '@mui/material';
+import { Grid, Card, CardContent, Typography } from '@mui/material';
 
 import DashboardLayout from '../DashboardLayout';
 
@@ -15,7 +15,7 @@ interface InstructorDashboardData {
   recent_activity: Activity[];
 }
 
-const InstructorDashboard: React.FC<{data: InstructorDashboardData}> = ({data}) => {
+const InstructorDashboard: React.FC<{ data: InstructorDashboardData }> = ({ data }) => {
   return (
     <DashboardLayout title="Instructor Dashboard">
       <Grid container spacing={3}>

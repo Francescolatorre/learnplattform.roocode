@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {Box, Typography, Alert} from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, Typography, Alert } from '@mui/material';
 import CourseService from '@features/courses/services/courseService';
 import CourseList from '@features/courses/components/CourseList';
 import LoadingIndicator from '@components/core/LoadingIndicator';
-import {ICourse} from "@features/courses/types/courseTypes";
+import { ICourse } from '@features/courses/types/courseTypes';
 
 interface CoursePageProps {
   // You can keep this if you want to allow courses to be passed in as props
@@ -11,7 +11,7 @@ interface CoursePageProps {
   initialCourses?: ICourse[];
 }
 
-const CoursesPage: React.FC<CoursePageProps> = ({initialCourses = []}) => {
+const CoursesPage: React.FC<CoursePageProps> = ({ initialCourses = [] }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [courses, setCourses] = useState<ICourse[]>(initialCourses);
@@ -40,7 +40,7 @@ const CoursesPage: React.FC<CoursePageProps> = ({initialCourses = []}) => {
 
   if (error) {
     return (
-      <Alert severity="error" sx={{mb: 3}}>
+      <Alert severity="error" sx={{ mb: 3 }}>
         {error}
       </Alert>
     );
@@ -48,7 +48,7 @@ const CoursesPage: React.FC<CoursePageProps> = ({initialCourses = []}) => {
 
   if (courses.length === 0) {
     return (
-      <Alert severity="info" sx={{mb: 3}}>
+      <Alert severity="info" sx={{ mb: 3 }}>
         No courses available.
       </Alert>
     );

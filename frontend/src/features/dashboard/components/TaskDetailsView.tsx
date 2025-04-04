@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -25,15 +25,15 @@ import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import {format, parseISO} from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
-import {TaskProgress} from '../../../types/common/progressTypes';
+import { TaskProgress } from '../../../types/common/progressTypes';
 
 interface TaskDetailsViewProps {
   taskProgress: TaskProgress[];
 }
 
-const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({taskProgress}) => {
+const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({ taskProgress }) => {
   const theme = useTheme();
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [filterType, setFilterType] = useState<string>('all');
@@ -77,7 +77,8 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({taskProgress}) => {
         return parseISO(a.dueDate).getTime() - parseISO(b.dueDate).getTime();
       case 1: // Status
         return a.status.localeCompare(b.status);
-      case 2: { // Score
+      case 2: {
+        // Score
         const aScore = a.score !== null ? a.score : -1;
         const bScore = b.score !== null ? b.score : -1;
         return bScore - aScore;
@@ -145,7 +146,7 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({taskProgress}) => {
         View detailed information about your tasks, including status, scores, and due dates.
       </Typography>
 
-      <Paper sx={{p: 2, mb: 3}}>
+      <Paper sx={{ p: 2, mb: 3 }}>
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} md={6}>
             <TextField
@@ -155,13 +156,13 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({taskProgress}) => {
               value={searchTerm}
               onChange={handleSearchChange}
               InputProps={{
-                startAdornment: <SearchIcon sx={{mr: 1, color: 'text.secondary'}} />,
+                startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />,
               }}
               size="small"
             />
           </Grid>
           <Grid item xs={12} md={6}>
-            <Box sx={{display: 'flex', gap: 1}}>
+            <Box sx={{ display: 'flex', gap: 1 }}>
               <Button
                 variant={filterType === 'all' ? 'contained' : 'outlined'}
                 onClick={() => handleFilterChange('all')}
@@ -199,14 +200,14 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({taskProgress}) => {
         </Grid>
       </Paper>
 
-      <Tabs value={activeTab} onChange={handleTabChange} sx={{mb: 2}}>
+      <Tabs value={activeTab} onChange={handleTabChange} sx={{ mb: 2 }}>
         <Tab label="Sort by Due Date" />
         <Tab label="Sort by Status" />
         <Tab label="Sort by Score" />
       </Tabs>
 
       {sortedTasks.length === 0 ? (
-        <Paper sx={{p: 3, textAlign: 'center'}}>
+        <Paper sx={{ p: 3, textAlign: 'center' }}>
           <Typography>No tasks match your search criteria.</Typography>
         </Paper>
       ) : (
@@ -228,7 +229,7 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({taskProgress}) => {
                   <TableRow
                     hover
                     sx={{
-                      '&:hover': {bgcolor: 'rgba(0, 0, 0, 0.04)'},
+                      '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.04)' },
                       borderLeft: `4px solid ${getStatusColor(task.status)}`,
                     }}
                   >
@@ -261,9 +262,9 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({taskProgress}) => {
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={6}>
+                    <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                       <Collapse in={expandedTaskId === task.taskId} timeout="auto" unmountOnExit>
-                        <Box sx={{margin: 2}}>
+                        <Box sx={{ margin: 2 }}>
                           <Typography variant="h6" gutterBottom component="div">
                             Task Details
                           </Typography>
@@ -319,7 +320,7 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({taskProgress}) => {
                               </Card>
                             </Grid>
                           </Grid>
-                          <Box sx={{mt: 2, display: 'flex', justifyContent: 'flex-end'}}>
+                          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
                             <Button
                               variant="contained"
                               color="primary"

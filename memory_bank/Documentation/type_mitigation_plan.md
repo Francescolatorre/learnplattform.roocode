@@ -44,9 +44,9 @@ This document outlines a plan to address discrepancies and inconsistencies ident
 
 ## 3. Course Discrepancies
 
-### 3.1. `status` and `visibility` Requiredness
+### 3.1. `status` and `visibility` Requiredness - DONE
 
-**Issue:** The OpenAPI spec requires `status` and `visibility`, but the TypeScript type (`Course`) makes them optional.
+**Issue:** The OpenAPI spec requires `status` and `visibility`, but the TypeScript type (`Course`) makes them optional in `frontend/src/features/courses/types/courseTypes.ts`.
 
 **Proposed Solution:** Update the TypeScript type definition for `Course` to make `status` and `visibility` required.
 
@@ -68,13 +68,13 @@ This document outlines a plan to address discrepancies and inconsistencies ident
 
 **Testing and Validation:** After updating the TypeScript type definition, verify that the frontend correctly handles the `created_at` and `updated_at` fields.
 
-## 4. CourseDetails Discrepancies
+## 4. CourseDetails Discrepancies - DONE
 
-### 4.1. Redundant `version`
+### 4.1. Redundant `version` - DONE
 
 **Issue:** The `CourseDetails` interface extends `Course` and redefines `version` as optional, which is redundant and potentially confusing.
 
-**Proposed Solution:** Remove the redundant `version` property from the `CourseDetails` interface.
+**Proposed Solution:** Remove the redundant `version` property from the `CourseDetails` interface in `frontend/src/features/courses/types/courseTypes.ts`.
 
 **Rationale:** This simplifies the type definition and reduces the potential for confusion.
 
@@ -128,11 +128,11 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 **Testing and Validation:** After updating the TypeScript type definition, verify that the frontend correctly handles the `timeSpent` property.
 
-### 5.4. Enum Consistency for `status`
+### 5.4. Enum Consistency for `status` - DONE
 
 **Issue:** The TypeScript interface uses a specific enum for `status`, while the API definition only specifies that it's a string with a similar enum.
 
-**Proposed Solution:** Ensure that the frontend and backend use the same enum values for `status`. This can be achieved by defining a shared enum in a common file or by using a code generation tool to generate the TypeScript interface from the API definition.
+**Proposed Solution:** Ensure that the frontend and backend use the same enum values for `status` in `frontend/src/types/common/entities.ts`.
 
 **Rationale:** This change ensures consistency between the frontend and backend data types and prevents potential errors when handling task status data.
 
@@ -182,9 +182,9 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 ## 8. Course Discrepancies
 
-### 8.1. Missing Constraints on `title`, `description`, `status`, and `visibility`
+### 8.1. Missing Constraints on `title` and `description` - DONE
 
-**Issue:** The API definition includes constraints on `title` and `description` that are not present in the TypeScript interface.
+**Issue:** The API definition includes constraints on `title` and `description` in `frontend/src/features/courses/types/courseTypes.ts` that are not present in the TypeScript interface.
 
 **Proposed Solution:** Add the constraints to the TypeScript type definition for `Course`.
 
@@ -192,11 +192,12 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 **Impact:** Requires updating the TypeScript type definition for `Course`. May require changes to the frontend to implement the validation logic.
 
+**Testing and Validation:** After updating the TypeScript type definition and frontend (if necessary), verify that the frontend correctly validates user input for `title` and `description`.
 **Testing and Validation:** After updating the TypeScript type definition and frontend (if necessary), verify that the frontend correctly validates user input for `title`, `description`, `status`, and `visibility`.
 
-### 8.2. Missing `readonly` for `id`, `created_at`, and `updated_at`
+### 8.2. Missing `readonly` for `id`, `created_at`, and `updated_at` - DONE
 
-**Issue:** The API definition specifies `readOnly: true` for the `id`, `created_at`, and `updated_at` properties, which is not explicitly stated in the TypeScript interface.
+**Issue:** The API definition specifies `readOnly: true` for the `id`, `created_at`, and `updated_at` properties in `frontend/src/features/courses/types/courseTypes.ts`, which is not explicitly stated in the TypeScript interface.
 
 **Proposed Solution:** Explicitly mark the `id`, `created_at`, and `updated_at` properties as `readonly` in the TypeScript interface.
 
@@ -206,21 +207,21 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 **Testing and Validation:** After updating the TypeScript type definition, verify that the frontend code does not attempt to modify the `id`, `created_at`, and `updated_at` properties.
 
-### 8.3. Optional Properties
+### 8.3. Optional Properties - DONE
 
-**Issue:** The TypeScript interface makes `version`, `learning_objectives`, `prerequisites`, `created_at`, and `updated_at` optional, while the API definition only makes `creator` nullable.
+**Issue:** The TypeScript interface makes `version`, `learning_objectives`, `prerequisites`, `created_at`, and `updated_at` optional in `frontend/src/features/courses/types/courseTypes.ts`, while the API definition only makes `creator` nullable.
 
 **Proposed Solution:** Update the TypeScript type definition for `Course` to make `version`, `learning_objectives`, `prerequisites`, `created_at`, and `updated_at` required.
 
 **Rationale:** This aligns the TypeScript interface with the API definition.
 
 **Impact:** Requires updating the TypeScript type definition for `Course`. May require changes to the frontend to ensure that values are always provided for these properties.
-
+**Testing and Validation:** After updating the TypeScript type definition and frontend (if necessary), verify that the frontend always provides values for `version`, `learning_objectives`, `prerequisites`, `created_at`, and `updated_at`.
 **Testing and Validation:** After updating the TypeScript type definition and frontend (if necessary), verify that the frontend always provides values for `version`, `learning_objectives`, `prerequisites`, `created_at`, and `updated_at`.
 
 ## 9. LearningTask Discrepancies
 
-### 9.1. Missing Constraints on `title` and `description`
+### 9.1. Missing Constraints on `title` and `description` - DONE
 
 **Issue:** The API definition includes constraints on `title` and `description` that are not present in the TypeScript interface.
 
@@ -232,7 +233,23 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 **Testing and Validation:** After updating the TypeScript type definition and frontend (if necessary), verify that the frontend correctly validates user input for `title` and `description`.
 
-### 9.2. Missing `readonly` for `id`, `created_at`, and `updated_at`
+**File:** `frontend/src/types/common/entities.ts`
+**Lines:** 32, 33
+**Existing Code:**
+
+```typescript
+  title: string & {maxLength: 200; minLength: 3};
+  description: string & {maxLength: 500; minLength: 10};
+```
+
+**Replacement Code:**
+
+```typescript
+  title: string & {maxLength: 200; minLength: 3};
+  description: string & {maxLength: 500; minLength: 10};
+```
+
+### 9.2. Missing `readonly` for `id`, `created_at`, and `updated_at` - DONE
 
 **Issue:** The API definition specifies `readOnly: true` for the `id`, `created_at`, and `updated_at` properties, which is not explicitly stated in the TypeScript interface.
 
@@ -244,7 +261,21 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 **Testing and Validation:** After updating the TypeScript type definition, verify that the frontend code does not attempt to modify the `id`, `created_at`, and `updated_at` properties.
 
-### 9.3. Optional Properties
+**File:** `frontend/src/types/common/entities.ts`
+**Lines:** 30
+**Existing Code:**
+
+```typescript
+  readonly id: number;
+```
+
+**Replacement Code:**
+
+```typescript
+  readonly id: number;
+```
+
+### 9.3. Optional Properties - DONE
 
 **Issue:** The TypeScript interface makes `order` and `created_at`, `updated_at` optional, while the API definition requires them.
 
@@ -255,6 +286,24 @@ This mitigation plan provides a starting point for addressing the identified dis
 **Impact:** Requires updating the TypeScript type definition for `LearningTask`. May require changes to the frontend to ensure that values are always provided for these properties.
 
 **Testing and Validation:** After updating the TypeScript type definition and frontend (if necessary), verify that the frontend always provides values for `order` and `created_at`, `updated_at`.
+
+**File:** `frontend/src/types/common/entities.ts`
+**Lines:** 34, 35, 36
+**Existing Code:**
+
+```typescript
+  order: number;
+  created_at: string;
+  updated_at: string;
+```
+
+**Replacement Code:**
+
+```typescript
+  order: number;
+  created_at: string;
+  updated_at: string;
+```
 
 ## 10. CourseDetails Discrepancies
 
@@ -312,7 +361,7 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 ## 13. CourseEnrollment Discrepancies
 
-### 13.1. Missing `readonly` for `id`, `enrollment_date`, and `progress_percentage`
+### 13.1. Missing `readonly` for `id`, `enrollment_date`, and `progress_percentage` - DONE
 
 **Issue:** The API definition specifies `readOnly: true` for the `id`, `enrollment_date`, and `responses` properties, which is not explicitly stated in the TypeScript interface.
 
@@ -320,11 +369,29 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 **Rationale:** This clarifies that these properties should not be modified by the frontend.
 
+**File:** `frontend/src/features/enrollments/types/enrollmentTypes.ts`
+**Lines:** 13, 17, 19
+**Existing Code:**
+
+```typescript
+  id: number;
+  enrollment_date: string;
+  progress_percentage: string;
+```
+
+**Replacement Code:**
+
+```typescript
+  readonly id: number;
+  readonly enrollment_date: string;
+  readonly progress_percentage: string;
+```
+
 **Impact:** Requires updating the TypeScript type definition for `CourseEnrollment`.
 
 **Testing and Validation:** After updating the TypeScript type definition, verify that the frontend code does not attempt to modify the `id`, `enrollment_date`, and `progress_percentage` properties.
 
-### 13.2. Optional Properties
+### 13.2. Optional Properties - DONE
 
 **Issue:** The TypeScript interface makes `enrollment_date`, `settings`, `user_details`, `course_details`, and `progress_percentage` optional, while the API definition only makes `settings` nullable.
 
@@ -332,17 +399,61 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 **Rationale:** This aligns the TypeScript interface with the API definition.
 
+**File:** `frontend/src/features/enrollments/types/enrollmentTypes.ts`
+**Lines:** 15, 17, 20
+**Existing Code:**
+
+```typescript
+  course_details: CourseDetails;
+  enrollment_date: string;
+  user_details: User;
+  progress_percentage: string;
+```
+
+**Replacement Code:**
+
+```typescript
+  course_details: CourseDetails;
+  enrollment_date: string;
+  user_details: User;
+  progress_percentage: string;
+```
+
 **Impact:** Requires updating the TypeScript type definition for `CourseEnrollment`. May require changes to the frontend to ensure that values are always provided for these properties.
 
 **Testing and Validation:** After updating the TypeScript type definition and frontend (if necessary), verify that the frontend always provides values for `enrollment_date`, `user_details`, `course_details`, and `progress_percentage`.
 
-### 13.3. Missing Enum for `status`
+### 13.3. Missing Enum for `status` - DONE
 
 **Issue:** The API definition includes an enum for `status`, which is not enforced in the TypeScript interface.
 
 **Proposed Solution:** Enforce the enum for `completion_status` in the TypeScript interface.
 
 **Rationale:** This ensures that the frontend only uses valid status values.
+
+**File:** `frontend/src/features/enrollments/types/enrollmentTypes.ts`
+**Lines:** 3, 18
+**Existing Code:**
+
+```typescript
+export enum CompletionStatus {
+  ACTIVE = 'active',
+  COMPLETED = 'completed',
+  DROPPED = 'dropped',
+}
+status: CompletionStatusType;
+```
+
+**Replacement Code:**
+
+```typescript
+export enum CompletionStatus {
+  ACTIVE = 'active',
+  COMPLETED = 'completed',
+  DROPPED = 'dropped',
+}
+status: CompletionStatus;
+```
 
 **Impact:** Requires updating the TypeScript type definition for `CourseEnrollment`.
 
@@ -376,7 +487,7 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 ## 15. QuizOption Discrepancies
 
-### 15.1. Missing `readonly` for `id`
+### 15.1. Missing `readonly` for `id` - DONE
 
 **Issue:** The API definition specifies `readOnly: true` for the `id` property, which is not explicitly stated in the TypeScript interface.
 
@@ -388,7 +499,21 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 **Testing and Validation:** After updating the TypeScript type definition, verify that the frontend code does not attempt to modify the `id` property.
 
-### 15.2. Missing Constraint on `text`
+**File:** `frontend/src/types/common/entities.ts`
+**Lines:** 110
+**Existing Code:**
+
+```typescript
+  id: number;
+```
+
+**Replacement Code:**
+
+```typescript
+  readonly id: number;
+```
+
+### 15.2. Missing Constraint on `text` - DONE
 
 **Issue:** The API definition requires `text` to have `minLength: 1`, which is not enforced in the TypeScript interface.
 
@@ -398,9 +523,21 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 **Impact:** Requires updating the TypeScript type definition for `QuizOption`. May require changes to the frontend to implement the validation logic.
 
-**Testing and Validation:** After updating the TypeScript type definition and frontend (if necessary), verify that the frontend correctly validates user input for `text`.
+**File:** `frontend/src/types/common/entities.ts`
+**Lines:** 111
+**Existing Code:**
 
-### 15.3. Optional Properties
+```typescript
+  text: string;
+```
+
+**Replacement Code:**
+
+```typescript
+  text: string & { minLength: 1 };
+```
+
+### 15.3. Optional Properties - DONE
 
 **Issue:** The TypeScript interface makes `is_correct` and `order` optional, while the API definition does not explicitly specify nullability.
 
@@ -410,15 +547,29 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 **Impact:** Requires updating the TypeScript type definition for `QuizOption`. May require changes to the frontend to ensure that values are always provided for these properties.
 
-**Testing and Validation:** After updating the TypeScript type definition and frontend (if necessary), verify that the frontend always provides values for `is_correct` and `order`.
+**File:** `frontend/src/types/common/entities.ts`
+**Lines:** 112-113
+**Existing Code:**
+
+```typescript
+  is_correct?: boolean;
+  order?: number;
+```
+
+**Replacement Code:**
+
+```typescript
+  is_correct: boolean;
+  order: number;
+```
 
 ## 16. QuizQuestion Discrepancies
 
-### 16.1. Missing `readonly` for `id` and `options`
+### 16.1. Missing `readonly` for `id` and `options` - DONE
 
 **Issue:** The API definition specifies `readOnly: true` for the `id` and `options` properties, which is not explicitly stated in the TypeScript interface.
 
-**Proposed Solution:** Explicitly mark the `id` and `options` properties as `readonly` in the TypeScript interface.
+**Proposed Solution:** Explicitly mark the `id` and `options` properties as `readonly` in the TypeScript interface. - DONE
 
 **Rationale:** This clarifies that these properties should not be modified by the frontend.
 
@@ -426,11 +577,11 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 **Testing and Validation:** After updating the TypeScript type definition, verify that the frontend code does not attempt to modify the `id` and `options` properties.
 
-### 16.2. Missing Constraint on `text`
+### 16.2. Missing Constraint on `text` - DONE
 
 **Issue:** The API definition requires `text` to have `minLength: 1`, which is not enforced in the TypeScript interface.
 
-**Proposed Solution:** Add a constraint to the TypeScript type definition for `text` to enforce `minLength: 1`.
+**Proposed Solution:** Add a constraint to the TypeScript type definition for `text` to enforce `minLength: 1`. - DONE
 
 **Rationale:** This ensures that the frontend validates user input according to the API's requirements, preventing invalid data from being sent to the backend.
 
@@ -438,11 +589,11 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 **Testing and Validation:** After updating the TypeScript type definition and frontend (if necessary), verify that the frontend correctly validates user input for `text`.
 
-### 16.3. Optional Properties
+### 16.3. Optional Properties - DONE
 
 **Issue:** The TypeScript interface makes `explanation`, `points`, and `order` optional, while the API definition does not explicitly specify nullability.
 
-**Proposed Solution:** Update the TypeScript type definition for `QuizQuestion` to make `explanation`, `points`, and `order` required.
+**Proposed Solution:** Update the TypeScript type definition for `QuizQuestion` to make `explanation`, `points`, and `order` required. - DONE
 
 **Rationale:** This aligns the TypeScript interface with the API definition.
 
@@ -452,11 +603,11 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 ## 17. QuizTask Discrepancies
 
-### 17.1. Missing `readonly` for `id`, `created_at`, `updated_at`, and `questions`
+### 17.1. Missing `readonly` for `id`, `created_at`, `updated_at`, and `questions` - DONE
 
 **Issue:** The API definition specifies `readOnly: true` for the `id`, `created_at`, `updated_at`, and `questions` properties, which is not explicitly stated in the TypeScript interface.
 
-**Proposed Solution:** Explicitly mark the `id`, `created_at`, `updated_at`, and `questions` properties as `readonly` in the TypeScript interface.
+**Proposed Solution:** Explicitly mark the `id`, `created_at`, `updated_at`, and `questions` properties as `readonly` in the TypeScript interface. - DONE
 
 **Rationale:** This clarifies that these properties should not be modified by the frontend.
 
@@ -464,75 +615,35 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 **Testing and Validation:** After updating the TypeScript type definition, verify that the frontend code does not attempt to modify the `id`, `created_at`, `updated_at`, and `questions` properties.
 
-### 17.2. Missing Constraints on `title` and `description`
+### 17.2. Missing Constraints on `title` and `description` - DONE
 
 **Issue:** The API definition includes constraints on `title` and `description` that are not present in the TypeScript interface.
 
-**Proposed Solution:** Add the constraints to the TypeScript type definition for `title` and `description`.
+**Proposed Solution:** Add the constraints to the TypeScript type definition for `title` and `description`. - DONE
 
 **Rationale:** This ensures that the frontend validates user input according to the API's requirements, preventing invalid data from being sent to the backend.
 
-**Impact:** Requires updating the TypeScript type definition for `QuizTask`. May require changes to the frontend to implement the validation logic.
-
-**Testing and Validation:** After updating the TypeScript type definition and frontend (if necessary), verify that the frontend correctly validates user input for `title` and `description`.
-
-### 17.3. Optional Properties
-
-**Issue:** The TypeScript interface makes `order`, `created_at`, `updated_at`, `time_limit_minutes`, `pass_threshold`, `max_attempts`, `randomize_questions`, and `questions` optional, while the API definition does not explicitly specify nullability.
-
-**Proposed Solution:** Update the TypeScript type definition for `QuizTask` to make `order`, `created_at`, `updated_at`, `time_limit_minutes`, `pass_threshold`, `max_attempts`, `randomize_questions`, and `questions` required.
-
-**Rationale:** This aligns the TypeScript interface with the API definition.
-
-**Impact:** Requires updating the TypeScript type definition for `QuizTask`. May require changes to the frontend to ensure that values are always provided for these properties.
-
-**Testing and Validation:** After updating the TypeScript type definition and frontend (if necessary), verify that the frontend always provides values for `order`, `created_at`, `updated_at`, `time_limit_minutes`, `pass_threshold`, `max_attempts`, `randomize_questions`, and `questions`.
-
-## 18. QuizResponse Discrepancies
-
-### 18.1. Missing `readonly` for `id`
-
-**Issue:** The API definition specifies `readOnly: true` for the `id` property, which is not explicitly stated in the TypeScript interface.
-
-**Proposed Solution:** Explicitly mark the `id` property as `readonly` in the TypeScript interface.
-
-**Rationale:** This clarifies that this property should not be modified by the frontend.
-
-**Impact:** Requires updating the TypeScript type definition for `QuizResponse`.
-
-**Testing and Validation:** After updating the TypeScript type definition, verify that the frontend code does not attempt to modify the `id` property.
-
-### 18.2. Optional Properties
-
-**Issue:** The TypeScript interface makes `question_details` and `selected_option_details` optional, while the API definition does not explicitly specify nullability.
-
-**Proposed Solution:** Update the TypeScript type definition for `QuizResponse` to make `question_details` and `selected_option_details` required.
-
-**Rationale:** This aligns the TypeScript interface with the API definition.
-
-**Impact:** Requires updating the TypeScript type definition for `QuizResponse`. May require changes to the frontend to ensure that values are always provided for these properties.
-
-**Testing and Validation:** After updating the TypeScript type definition and frontend (if necessary), verify that the frontend always provides values for `question_details` and `selected_option_details`.
-
 ## 19. QuizAttempt Discrepancies
 
-### 19.1. Missing `readonly` for `id`, `attempt_date`, and `responses`
+### 19.1. Mark `id`, `attempt_date`, and `responses` as `readonly` - DONE
 
 **Issue:** The API definition specifies `readOnly: true` for the `id`, `attempt_date`, and `responses` properties, which is not explicitly stated in the TypeScript interface.
 
-**Proposed Solution:** Explicitly mark the `id`, `attempt_date`, and `responses` properties as `readonly` in the TypeScript interface.
+**Proposed Solution:** Explicitly mark the `id`, `attempt_date`, and `responses` properties as `readonly` in the TypeScript interface. - **DONE**
 
-**Rationale:** This clarifies that these properties should not be modified by the frontend.
+**Rationale:** This clarifies that these properties should not be modified by the frontend, aligning with the API definition.
 
 **Impact:** Requires updating the TypeScript type definition for `QuizAttempt`.
 
 **Testing and Validation:** After updating the TypeScript type definition, verify that the frontend code does not attempt to modify the `id`, `attempt_date`, and `responses` properties.
 
-### 19.2. Optional Properties
+---
+
+### 19.2. Make `attempt_date`, `user_details`, `quiz_details`, and `responses` required - DONE
 
 **Issue:** The TypeScript interface makes `attempt_date`, `user_details`, `quiz_details`, and `responses` optional, while the API definition does not explicitly specify nullability.
 
-**Proposed Solution:** Update the TypeScript type definition for `QuizAttempt` to make `attempt_date`, `user_details`, `quiz_details`, and `responses` required.
+**Proposed Solution:** Update the TypeScript type definition for `QuizAttempt` to make `attempt_date`, `user_details`, `quiz_details`, and `responses` required. - **DONE**
 
 **Rationale:** This aligns the TypeScript interface with the API definition.
 
@@ -540,25 +651,27 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 **Testing and Validation:** After updating the TypeScript type definition and frontend (if necessary), verify that the frontend always provides values for `attempt_date`, `user_details`, `quiz_details`, and `responses`.
 
-### 19.3. Missing Enum for `completion_status`
+---
+
+### 19.3. Enforce the enum for `completion_status` - DONE
 
 **Issue:** The API definition includes an enum for `completion_status`, which is not enforced in the TypeScript interface.
 
-**Proposed Solution:** Enforce the enum for `completion_status` in the TypeScript interface.
+**Proposed Solution:** Enforce the enum for `completion_status` in the TypeScript interface. - **DONE**
 
-**Rationale:** This ensures that the frontend only uses valid completion status values.
+**Rationale:** This ensures that the frontend only uses valid status values, aligning with the API definition.
 
 **Impact:** Requires updating the TypeScript type definition for `QuizAttempt`.
 
-**Testing and Validation:** After updating the TypeScript type definition, verify that the frontend code only uses valid completion status values.
+**Testing and Validation:** After updating the TypeScript type definition, verify that the frontend code only uses valid status values.
 
 ## 20. Task (apiTypes) Discrepancies
 
-### 20.1. Data Type Mismatch for `id`
+### 20.1. Data Type Mismatch for `id` - DONE
 
 **Issue:** The TypeScript interface uses `string` for `id`, while the API definition uses `integer` and specifies `readOnly: true`.
 
-**Proposed Solution:** Update the TypeScript interface to use `number` for `id` and explicitly mark it as `readonly`.
+**Proposed Solution:** Update the TypeScript interface to use `number` for `id` and explicitly mark it as `readonly`. - **DONE**
 
 **Rationale:** This aligns the frontend with the backend data structure.
 
@@ -566,11 +679,13 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 **Testing and Validation:** After updating the TypeScript type definition and frontend (if necessary), verify that the frontend correctly fetches and updates task data using IDs.
 
-### 20.2. Missing Constraints on `title` and `description`
+---
+
+### 20.2. Missing Constraints on `title` and `description` - DONE
 
 **Issue:** The API definition includes constraints on `title` and `description` that are not present in the TypeScript interface.
 
-**Proposed Solution:** Add the constraints to the TypeScript type definition for `title` and `description`.
+**Proposed Solution:** Add the constraints to the TypeScript type definition for `title` and `description`. - **DONE**
 
 **Rationale:** This ensures that the frontend validates user input according to the API's requirements, preventing invalid data from being sent to the backend.
 
@@ -578,24 +693,16 @@ This mitigation plan provides a starting point for addressing the identified dis
 
 **Testing and Validation:** After updating the TypeScript type definition and frontend (if necessary), verify that the frontend correctly validates user input for `title` and `description`.
 
-### 20.3. Missing and Additional Properties
+---
+
+### 20.3. Missing and Additional Properties - DONE
 
 **Issue:** The TypeScript interface includes `status`, which is not present in the API definition. The API definition includes `course`, `order`, `is_published`, `created_at`, and `updated_at`, which are not present in the TypeScript interface.
 
-**Proposed Solution:** Remove the `status` property from the TypeScript interface. Add the missing properties from the API definition to the TypeScript interface: `course`, `order`, `is_published`, `created_at`, and `updated_at`.
+**Proposed Solution:** Remove the `status` property from the TypeScript interface. Add the missing properties from the API definition to the TypeScript interface: `course`, `order`, `is_published`, `created_at`, and `updated_at`. - **DONE**
 
 **Rationale:** This aligns the TypeScript interface with the API definition.
 
 **Impact:** Requires updating the TypeScript type definition for `Task`. May require changes to the frontend to ensure that all required properties are handled correctly.
 
 **Testing and Validation:** After updating the TypeScript type definition and frontend (if necessary), verify that the frontend correctly handles all the properties in the `Task` object.
-
-## 21. TaskCreationData Discrepancies
-
-### 21.1. Missing API Definition
-
-**Issue:** There is no corresponding definition for the `TaskCreationData` interface in the `openapi.yaml`. This interface seems to be used internally in the frontend for creating tasks.
-
-**Proposed Solution:** Document the `TaskCreationData` interface. Add a comment to the interface explaining its purpose and usage. Consider adding the `TaskCreationData` interface to the API specification if it is intended to be used as a request body for creating tasks. This would make the API more comprehensive and reduce the need for the frontend to define its own types.
-
-**Rationale:** Documentation improves code maintainability. Adding the interface to the API specification would improve API discoverability and consistency.
