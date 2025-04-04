@@ -9,45 +9,19 @@
     "allowImportingTsExtensions": true,
     "baseUrl": "./src",
     "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "@components/*": [
-        "./components/*"
-      ],
-      "@features/*": [
-        "./features/*"
-      ],
-      "@services/*": [
-        "./services/*"
-      ],
-      "@store/*": [
-        "./store/*"
-      ],
-      "@hooks/*": [
-        "./hooks/*"
-      ],
-      "@utils/*": [
-        "./utils/*"
-      ],
-      "@styles/*": [
-        "./styles/*"
-      ],
-      "@assets/*": [
-        "./assets/*"
-      ],
-      "@context/*": [
-        "./context/*"
-      ],
-      "@pages/*": [
-        "./pages/*"
-      ],
-      "@types/*": [
-        "./types/*"
-      ],
+      "@/*": ["./*"],
+      "@components/*": ["./components/*"],
+      "@features/*": ["./features/*"],
+      "@services/*": ["./services/*"],
+      "@store/*": ["./store/*"],
+      "@hooks/*": ["./hooks/*"],
+      "@utils/*": ["./utils/*"],
+      "@styles/*": ["./styles/*"],
+      "@assets/*": ["./assets/*"],
+      "@context/*": ["./context/*"],
+      "@pages/*": ["./pages/*"],
+      "@types/*": ["./types/*"]
     }
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

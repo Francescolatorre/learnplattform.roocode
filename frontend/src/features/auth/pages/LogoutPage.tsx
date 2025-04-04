@@ -8,11 +8,11 @@ const LogoutPage: React.FC = () => {
   useEffect(() => {
     const handleLogout = async () => {
       try {
-        const refreshToken = localStorage.getItem('refresh_token');
+        const refreshToken = localStorage.getItem('refreshToken');
         if (refreshToken) {
-          await authService.logout(refreshToken); // Use authService for logout
+          await authService.logout(refreshToken);
         }
-        await logout(); // Clear context state
+        await logout();
       } catch (err) {
         console.error('Logout failed:', err);
       }

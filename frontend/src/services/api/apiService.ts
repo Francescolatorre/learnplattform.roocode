@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {API_CONFIG} from './apiConfig';
+import { API_CONFIG } from './apiConfig';
 
 const axiosInstance = axios.create({
   baseURL: API_CONFIG.BASE_URL,
@@ -34,7 +34,7 @@ class ApiService {
   private instance = axiosInstance;
 
   public get<T>(endpoint: string, params = {}): Promise<T> {
-    return this.instance.get(endpoint, {params}).then(response => response.data);
+    return this.instance.get(endpoint, { params }).then(response => response.data);
   }
 
   public patch<T>(endpoint: string, data = {}): Promise<T> {
@@ -64,22 +64,6 @@ class ApiService {
       update: (id: string | number, data = {}) => this.put<T>(`${resourcePath}${id}/`, data),
       delete: (id: string | number) => this.delete<void>(`${resourcePath}${id}/`),
     };
-  }
-
-  public login<T>(usernameOrEmail: string, password: string): Promise<T> {
-    return this.instance
-      .post('/api/login', {username: usernameOrEmail, password})
-      .then(response => response.data as T);
-  }
-
-  public logout<T>(): Promise<T> {
-    return this.instance.post('/api/logout').then(response => response.data as T);
-  }
-
-  public refreshAccessToken<T>(refreshToken: string): Promise<T> {
-    return this.instance
-      .post('/api/token/refresh', {refresh: refreshToken})
-      .then(response => response.data as T);
   }
 }
 

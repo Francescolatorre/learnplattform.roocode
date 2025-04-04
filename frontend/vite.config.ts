@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { resolve } from 'path';
+
 const customPaths = {
   '@components': resolve(__dirname, './src/components'),
   '@utils': resolve(__dirname, './src/utils'),
@@ -12,7 +13,7 @@ const customPaths = {
   '@styles': resolve(__dirname, './src/styles'),
   '@context': resolve(__dirname, './src/context'),
   '@constants': resolve(__dirname, './src/constants'),
-  '@services': resolve(__dirname, './src/services'),
+  '@services': resolve(__dirname, './src/services'), // Ensure this path is correct
   '@types': resolve(__dirname, './src/types'),
   '@store': resolve(__dirname, './src/store'),
 };
@@ -36,5 +37,10 @@ export default defineConfig({
         secure: process.env.NODE_ENV === 'production',
       },
     },
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/setupTests.ts',
   },
 });

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useAuth } from '@hooks/useAuth';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Box,
@@ -286,7 +287,7 @@ const CourseLearningTasksPage: React.FC = () => {
           startIcon={<AddIcon />}
           onClick={() => navigate(`/courses/${courseId}/edit`)}
           sx={{
-            display: ['admin', 'instructor'].includes(localStorage.getItem('user_role') || '')
+            display: ['admin', 'instructor'].includes(useAuth().user?.role ?? '')
               ? 'block'
               : 'none',
           }}
@@ -344,7 +345,7 @@ const CourseLearningTasksPage: React.FC = () => {
                     }
                   />
                   <ListItemSecondaryAction>
-                    {['admin', 'instructor'].includes(localStorage.getItem('user_role') || '') && (
+                    {['admin', 'instructor'].includes(useAuth().user?.role ?? '') && (
                       <React.Fragment>
                         <IconButton edge="end" onClick={() => handleEditTask(task)}>
                           <EditIcon />

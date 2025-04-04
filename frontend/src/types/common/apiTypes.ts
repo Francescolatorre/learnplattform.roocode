@@ -1,5 +1,5 @@
-import {User, Course, LearningTask} from './entities';
-import {CompletionStatus} from '@features/enrollments/types/enrollmentTypes';
+import { User, Course, LearningTask } from './entities';
+import { CompletionStatus } from '@features/enrollments/types/enrollmentTypes';
 
 export interface CourseProgressResponse {
   progress: number;
@@ -39,7 +39,7 @@ export interface QuizOption {
 export interface QuizQuestion {
   readonly id: number;
   quiz: string;
-  text: string & {minLength: 1};
+  text: string & { minLength: 1 };
   explanation: string;
   points: number;
   order: number;
@@ -49,8 +49,8 @@ export interface QuizQuestion {
 export interface QuizTask {
   readonly id: number;
   course: number;
-  title: string & {minLength: 1; maxLength: 255};
-  description: string & {maxLength: 1000};
+  title: string & { minLength: 1; maxLength: 255 };
+  description: string & { maxLength: 1000 };
   order: number;
   is_published: boolean;
   readonly created_at: string;
@@ -79,7 +79,7 @@ export interface QuizAttempt {
   quiz: string;
   score: number;
   time_taken: string;
-  completion_status: "passed" | "failed" | "in_progress";
+  completion_status: 'passed' | 'failed' | 'in_progress';
   attempt_date: string;
   user_details: User;
   quiz_details: QuizTask;
@@ -105,11 +105,10 @@ export interface TokenRefresh {
   access?: string;
 }
 
-
 export interface TaskCreationData {
   readonly id: number;
-  title: string & {minLength: 1; maxLength: 255};
-  description: string & {maxLength: 1000};
+  title: string & { minLength: 1; maxLength: 255 };
+  description: string & { maxLength: 1000 };
   course?: number;
   order?: number;
   is_published?: boolean;

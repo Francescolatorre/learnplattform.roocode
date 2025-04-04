@@ -26,7 +26,7 @@ export interface CourseProgress {
  * Represents a student's progress in a module
  */
 export interface ModuleProgress {
-  moduleId: string;
+  readonly moduleId: string;
   moduleTitle: string;
   completionPercentage: number;
   completedTasks: number;

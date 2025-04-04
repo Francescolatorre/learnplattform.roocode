@@ -1,4 +1,4 @@
-import {defineFlatConfig} from 'eslint-define-config';
+import { defineFlatConfig } from 'eslint-define-config';
 import eslintPluginReact from 'eslint-plugin-react';
 import typescriptEslintPlugin from '@typescript-eslint/eslint-plugin';
 import typescriptEslintParser from '@typescript-eslint/parser';
@@ -7,7 +7,12 @@ import eslintPluginImport from 'eslint-plugin-import';
 
 export default defineFlatConfig([
   {
-    files: ['vite.config.ts', 'vitest.config.ts', 'playwright.config.ts', 'playwright-api.config.ts'],
+    files: [
+      'vite.config.ts',
+      'vitest.config.ts',
+      'playwright.config.ts',
+      'playwright-api.config.ts',
+    ],
     languageOptions: {
       parserOptions: {
         project: './tsconfig.node.json', // Use tsconfig.node.json for these files

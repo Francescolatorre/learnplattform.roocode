@@ -1,15 +1,15 @@
 export interface User {
   readonly id: number;
-  username: string & { minLength: 3; maxLength: 150; pattern: '^[a-zA-Z0-9_]+$' };
-  email: string & { maxLength: 254; format: 'email' };
+  username: string & {minLength: 3; maxLength: 150; pattern: '^[a-zA-Z0-9_]+$'};
+  email: string & {maxLength: 254; format: 'email'};
   display_name?: string;
   role: string;
 }
 
 export interface Course {
   readonly id: number;
-  title: string & { maxLength: 200; minLength: 3 };
-  description: string & { maxLength: 500; minLength: 10 };
+  title: string & {maxLength: 200; minLength: 3};
+  description: string & {maxLength: 500; minLength: 10};
   version: number;
   status: string;
   visibility: string;
@@ -29,8 +29,8 @@ export interface CourseDetails extends Course {
 export interface LearningTask {
   readonly id: number;
   course: number;
-  title: string & { maxLength: 200; minLength: 3 };
-  description: string & { maxLength: 500; minLength: 10 };
+  title: string & {maxLength: 200; minLength: 3};
+  description: string & {maxLength: 500; minLength: 10};
   order: number;
   created_at: string;
   updated_at: string;
@@ -55,7 +55,7 @@ export interface UserProgress {
 }
 export interface QuizOption {
   readonly id: number;
-  text: string & { minLength: 1 };
+  text: string & {minLength: 1};
   is_correct: boolean;
   order: number;
 }

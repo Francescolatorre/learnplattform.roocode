@@ -30,7 +30,7 @@
         }
     },
     "include": [
-        "src"
+        "src/**/*" // Ensure all files in the src directory are included
     ],
     "exclude": [
         "node_modules",

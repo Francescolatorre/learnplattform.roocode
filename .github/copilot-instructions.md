@@ -146,7 +146,7 @@ The project follows a well-defined folder structure to ensure maintainability an
   - Use Material UI's `sx` prop or styled components for custom styles
   - Maintain a consistent theme using Material UI's `ThemeProvider`
 - **Testing**:
-  - Write unit tests for components with React Testing Library
+  - Write unit tests for components with Vitest
   - Use Playwright for testing critical user flows
   - Mock API calls in tests to ensure isolation and reliability
 - **Error Handling**:
@@ -315,8 +315,8 @@ The project follows a well-defined folder structure to ensure maintainability an
 
 ## Testing Overview
 
-- Backend: Use pytest and pytest-django for unit and integration tests
-- Frontend: Use React Testing Library for component tests and Playwright for end-to-end testing
+- **Backend**: Use `pytest` and `pytest-django` for unit and integration tests.
+- **Frontend**: Use `Vitest` for unit tests and `Playwright` for end-to-end testing.
 
 ### Testing Architecture Rules Overview
 
@@ -333,13 +333,16 @@ The project follows a well-defined folder structure to ensure maintainability an
   - Mock `localStorage` globally in `setupTests.ts` to isolate tests from browser-specific behavior.
   - Clear `localStorage` before each test to ensure a clean state.
 
-- **Playwright Integration**:
-  - Use Playwright's `Page` type for reusable helpers like `login`.
-  - Ensure Playwright helpers include explicit return types and handle navigation properly.
-
-- **Mock Reset**:
-  - Use `vi.clearAllMocks()` in `beforeEach` to reset mocks between tests.
+- **Vitest Integration**:
+  - Use `vi.fn()` for mocking functions and `vi.mock()` for mocking modules.
+  - Use `beforeEach` and `afterEach` hooks to reset mocks and clean up test states.
   - Ensure all mocks are properly reset to avoid test contamination.
+
+- **Playwright Integration**:
+  - Use Playwright for end-to-end testing of critical user flows.
+  - Ensure Playwright tests are compatible with Vite's development server.
+  - Use Playwright's `Page` type for reusable helpers like `login`.
+  - Include explicit return types and handle navigation properly in Playwright helpers.
 
 - **Test Isolation**:
   - Avoid direct API calls in tests; use mocked services or helpers instead.
@@ -358,7 +361,7 @@ The project follows a well-defined folder structure to ensure maintainability an
   - Include comments explaining the purpose of each mock and helper.
 
 - **Testing Tools**:
-  - Use React Testing Library for unit tests and Playwright for end-to-end tests.
+  - Use `Vitest` for unit tests and `Playwright` for end-to-end tests.
   - Ensure tests are written to cover both success and failure scenarios.
 
 ### Django Testing Specifics Overview

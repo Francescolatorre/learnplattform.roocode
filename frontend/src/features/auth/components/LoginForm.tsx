@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Box } from '@mui/material';
-import apiService from '@services/api/apiService';
+import authService from '@services/auth/authService';
 
 export const redirectToDashboard = () => {
   window.location.href = '/dashboard'; // Extracted for easier mocking in tests
@@ -10,16 +10,22 @@ const LoginForm: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false); // Add loading state
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null); // Clear previous errors
+    setError(null);
+    setIsLoading(true); // Set loading state to true
     try {
-      await apiService.login(username, password); // Pass username and password to login function
-      redirectToDashboard(); // Redirect on successful login
-    } catch (err: any) {
+      await authService.login(username, password); // Ensure this is called
+      redirectToDashboard();
+    } catch (err) {
       const errorMessage = err.response?.data?.detail || 'Login failed. Please try again.';
-      setError(errorMessage); // Display detailed error message
+      setError(errorMessage);
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500); // 500ms delay
     }
   };
 
@@ -40,6 +46,8 @@ const LoginForm: React.FC = () => {
         fullWidth
         margin="normal"
         required
+        inputProps={{ 'data-testid': 'login-username-input' }}
+        disabled={isLoading} // Disable input while loading
       />
       <TextField
         label="Password"
@@ -49,9 +57,19 @@ const LoginForm: React.FC = () => {
         fullWidth
         margin="normal"
         required
+        inputProps={{ 'data-testid': 'login-password-input' }}
+        disabled={isLoading} // Disable input while loading
       />
-      <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
-        Login
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        fullWidth
+        sx={{ mt: 2 }}
+        data-testid="login-submit-button"
+        disabled={isLoading} // Disable button while loading
+      >
+        {isLoading ? 'Logging in...' : 'Login'}
       </Button>
     </Box>
   );

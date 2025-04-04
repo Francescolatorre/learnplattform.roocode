@@ -1,11 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Typography, Grid, CircularProgress } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { fetchUserProgress } from '@services/resources/dashboardService';
 import ProgressIndicator from '../components/progress/ProgressIndicator';
-import { UserProgress } from 'types/common/entities';
+import { UserProgress } from '../../../types/common/entities';
+import { useAuth } from '../../../hooks/useAuth';
 
 const Dashboard: React.FC = () => {
+  useEffect(() => {
+    const { user } = useAuth();
+    console.log('Dashboard component mounted');
+    console.log('User:', user);
+    return () => {
+      console.log('Dashboard component unmounted');
+    };
+  }, []);
+
   const {
     data: progressData,
     isLoading,

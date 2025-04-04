@@ -95,6 +95,7 @@ const RegisterForm: React.FC = () => {
             onChange={e => setUsername(e.target.value)}
             error={!!error}
             disabled={isLoading}
+            inputProps={{ 'data-test-id': 'register-username-input' }}
           />
           <TextField
             variant="outlined"
@@ -107,6 +108,7 @@ const RegisterForm: React.FC = () => {
             onChange={e => setEmail(e.target.value)}
             error={!!error}
             disabled={isLoading}
+            inputProps={{ 'data-test-id': 'register-email-input' }}
           />
           <TextField
             variant="outlined"
@@ -119,6 +121,7 @@ const RegisterForm: React.FC = () => {
             onChange={e => setPassword(e.target.value)}
             error={!!error}
             disabled={isLoading}
+            inputProps={{ 'data-test-id': 'register-password-input' }}
           />
           {password && (
             <PasswordStrengthIndicator
@@ -137,12 +140,23 @@ const RegisterForm: React.FC = () => {
             onChange={e => setConfirmPassword(e.target.value)}
             error={!!error}
             disabled={isLoading}
+            inputProps={{ 'data-test-id': 'register-confirm-password-input' }}
           />
-          <FormControl fullWidth margin="normal">
+          <FormControl fullWidth margin="normal" data-test-id="register-role-select">
             <InputLabel>Role</InputLabel>
-            <Select value={role} label="Role" onChange={handleRoleChange} disabled={isLoading}>
-              <MenuItem value="user">User</MenuItem>
-              <MenuItem value="admin">Admin</MenuItem>
+            <Select
+              value={role}
+              label="Role"
+              onChange={handleRoleChange}
+              disabled={isLoading}
+              inputProps={{ 'data-test-id': 'register-role-select-input' }}
+            >
+              <MenuItem value="user" data-test-id="register-role-user-option">
+                User
+              </MenuItem>
+              <MenuItem value="admin" data-test-id="register-role-admin-option">
+                Admin
+              </MenuItem>
             </Select>
           </FormControl>
           {error && (
@@ -157,6 +171,7 @@ const RegisterForm: React.FC = () => {
             color="primary"
             sx={{ marginTop: 2 }}
             disabled={isLoading || !passwordStrength.isValid}
+            data-test-id="register-submit-button"
           >
             {isLoading ? 'Registering...' : 'Register'}
           </Button>

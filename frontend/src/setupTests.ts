@@ -2,55 +2,43 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import { Page } from '@playwright/test'; // Import Page type from Playwright
-import { access } from 'fs';
 
 // Mock `localStorage`
-if (typeof window !== 'undefined') {
-  const localStorageMock = (() => {
-    let store: Record<string, string> = {};
-    return {
-      getItem: (key: string) => store[key] || null,
-      setItem: (key: string, value: string) => {
-        store[key] = value;
-      },
-      removeItem: (key: string) => {
-        delete store[key];
-      },
-      clear: () => {
-        store = {};
-      },
-    };
-  })();
+const localStorageMock = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: (key: string) => store[key] || null,
+    setItem: (key: string, value: string) => {
+      store[key] = value;
+    },
+    removeItem: (key: string) => {
+      delete store[key];
+    },
+    clear: () => {
+      store = {};
+    },
+  };
+})();
 
-  Object.defineProperty(window, 'localStorage', {
-    value: localStorageMock,
-    writable: true,
-  });
-}
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
+  writable: true,
+});
 
-// Ensure `localStorage` contains a mock token before each test
+// Clear mocks and localStorage before each test
 beforeEach(() => {
-  localStorage.setItem('access_token', 'mockAccessToken');
   localStorage.clear();
   vi.clearAllMocks();
 });
 
-// Mock `@services/api/authService` globally
-const mockedLogin = vi.fn().mockResolvedValue({
-  access: 'mockAccessToken',
-  refresh: 'mockRefreshToken',
-});
-
-const mockedLogout = vi.fn().mockResolvedValue({});
-const mockedRefreshAccessToken = vi.fn().mockResolvedValue({
-  access: 'newMockAccessToken',
-});
-
-// Mock `authService` globally
-vi.mock('@services/api/authService', () => ({
-  login: mockedLogin,
-  logout: mockedLogout, // Mock logout with an empty response
-  refreshAccessToken: mockedRefreshAccessToken, // Mock refreshAccessToken
+// Mock `@services/auth/authService` globally
+console.log('Resolved path:', require.resolve('@services/auth/authService'));
+vi.mock('@/services/auth/authService', () => ({
+  login: vi.fn().mockResolvedValue({
+    access: 'mockAccessToken',
+    refresh: 'mockRefreshToken',
+  }),
+  // ...other mocks...
 }));
 
 // Mock `react-router-dom` globally
@@ -63,7 +51,7 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-export { mockedLogin, mockedLogout, mockedRefreshAccessToken };
+export { mockedUsedNavigate };
 
 // Mock `apiService` globally
 const mockedApiService = {
@@ -84,14 +72,14 @@ const mockedApiService = {
   getQuiz: vi.fn(),
   submitQuiz: vi.fn(),
 };
-vi.mock('@services/api/apiService', () => {
+vi.mock('@/services/api/apiService', () => {
   return {
     default: mockedApiService,
   };
 });
 
-// Export the mocked `useNavigate` and `mockedApiService` for use in tests
-export { mockedUsedNavigate, mockedApiService };
+// Export the mocked `mockedApiService` for use in tests
+export { mockedApiService };
 
 // Export reusable login helper
 export const login = async (page: Page, username: string, password: string): Promise<any> => {

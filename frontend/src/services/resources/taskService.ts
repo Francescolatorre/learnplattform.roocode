@@ -1,15 +1,19 @@
 import axios from 'axios';
 
 import apiService from '../api/apiService';
-import {LearningTask} from '../../types/common/entities';
-import {TaskCreationData} from '../../types/common/apiTypes';
-
+import { LearningTask } from '../../types/common/entities';
+import { TaskCreationData } from '../../types/common/apiTypes';
 
 export const fetchTasksByCourse = async (
   courseId: string,
   includeSubtasks = false
-): Promise<{count: number; next: string | null; previous: string | null; results: LearningTask[]}> => {
-  return apiService.get(`tasks/course/${courseId}/`, {includeSubtasks});
+): Promise<{
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: LearningTask[];
+}> => {
+  return apiService.get(`tasks/course/${courseId}/`, { includeSubtasks });
 };
 
 export const createTask = async (
@@ -26,7 +30,10 @@ export const createTask = async (
   return apiService.post<LearningTask>('tasks/', formData);
 };
 
-export const updateTask = async (taskId: string, updatedData: Partial<LearningTask>): Promise<LearningTask> => {
+export const updateTask = async (
+  taskId: string,
+  updatedData: Partial<LearningTask>
+): Promise<LearningTask> => {
   return apiService.patch<LearningTask>(`tasks/${taskId}/`, updatedData);
 };
 
@@ -36,7 +43,7 @@ export const deleteTask = async (taskId: string): Promise<void> => {
 
 export const fetchTaskSubmissions = async (
   taskId: string
-): Promise<{count: number; next: string | null; previous: string | null; results: any[]}> => {
+): Promise<{ count: number; next: string | null; previous: string | null; results: any[] }> => {
   return apiService.get(`tasks/${taskId}/submissions/`);
 };
 
@@ -57,5 +64,5 @@ export const useTaskCreation = () => {
     });
   };
 
-  return {createTask: handleTaskCreation};
+  return { createTask: handleTaskCreation };
 };

@@ -1,11 +1,11 @@
 import React from 'react';
-import {LearningTask} from '../../../types/common/entities';
+import { LearningTask } from '../../../types/common/entities';
 
 interface LearningTaskListProps {
   tasks: LearningTask[];
 }
 
-const LearningTaskList: React.FC<LearningTaskListProps> = ({tasks}) => {
+const LearningTaskList: React.FC<LearningTaskListProps> = ({ tasks }) => {
   return (
     <div>
       {tasks.map(task => (
