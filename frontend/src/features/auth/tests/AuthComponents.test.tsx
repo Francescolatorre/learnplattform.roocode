@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import {vi} from 'vitest';
 
 // Mock `authService` before importing any dependent modules
 vi.mock('@services/auth/authService', () => {
@@ -9,11 +9,11 @@ vi.mock('@services/auth/authService', () => {
   };
 });
 
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+
+import {render, screen, fireEvent, waitFor} from '@testing-library/react';
+import {MemoryRouter} from 'react-router-dom';
 import LoginForm from '../components/LoginForm';
-import { AuthProvider } from '../context/AuthContext'; // Use AuthProvider
+import {AuthProvider} from '../context/AuthContext'; // Use AuthProvider
 
 const renderWithProviders = () => {
   render(
@@ -45,9 +45,9 @@ describe('LoginForm', () => {
     mockLogin.mockRejectedValueOnce(new Error('Invalid credentials'));
     renderWithProviders();
 
-    fireEvent.change(screen.getByTestId('login-username-input'), { target: { value: 'testuser' } });
+    fireEvent.change(screen.getByTestId('login-username-input'), {target: {value: 'testuser'}});
     fireEvent.change(screen.getByTestId('login-password-input'), {
-      target: { value: 'wrongpassword' },
+      target: {value: 'wrongpassword'},
     });
     fireEvent.click(screen.getByTestId('login-submit-button'));
 
@@ -65,9 +65,9 @@ describe('LoginForm', () => {
     mockLogin.mockResolvedValueOnce({});
     renderWithProviders();
 
-    fireEvent.change(screen.getByTestId('login-username-input'), { target: { value: 'testuser' } });
+    fireEvent.change(screen.getByTestId('login-username-input'), {target: {value: 'testuser'}});
     fireEvent.change(screen.getByTestId('login-password-input'), {
-      target: { value: 'correctpassword' },
+      target: {value: 'correctpassword'},
     });
     fireEvent.click(screen.getByTestId('login-submit-button'));
 
@@ -77,9 +77,9 @@ describe('LoginForm', () => {
   it('disables the submit button while logging in', async () => {
     renderWithProviders();
 
-    fireEvent.change(screen.getByTestId('login-username-input'), { target: { value: 'testuser' } });
+    fireEvent.change(screen.getByTestId('login-username-input'), {target: {value: 'testuser'}});
     fireEvent.change(screen.getByTestId('login-password-input'), {
-      target: { value: 'correctpassword' },
+      target: {value: 'correctpassword'},
     });
     fireEvent.click(screen.getByTestId('login-submit-button'));
 
@@ -92,9 +92,9 @@ describe('LoginForm', () => {
     mockLogin.mockResolvedValueOnce({});
     renderWithProviders();
 
-    fireEvent.change(screen.getByTestId('login-username-input'), { target: { value: 'testuser' } });
+    fireEvent.change(screen.getByTestId('login-username-input'), {target: {value: 'testuser'}});
     fireEvent.change(screen.getByTestId('login-password-input'), {
-      target: { value: 'correctpassword' },
+      target: {value: 'correctpassword'},
     });
     fireEvent.click(screen.getByTestId('login-submit-button'));
 

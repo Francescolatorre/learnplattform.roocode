@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { API_CONFIG } from './apiConfig';
+import {API_CONFIG} from './apiConfig';
 
 const axiosInstance = axios.create({
   baseURL: API_CONFIG.BASE_URL,
@@ -9,19 +9,36 @@ const axiosInstance = axios.create({
   },
 });
 
-import { useAuth } from '@features/auth/context/AuthContext';
+import {useAuth} from '@features/auth/context/AuthContext';
+import {useRef, useEffect} from 'react';
+
+const authInterceptor = () => {
+  const {getAccessToken} = useAuth();
+  const accessTokenRef = useRef(getAccessToken);
+
+  useEffect(() => {
+    accessTokenRef.current = getAccessToken;
+  }, [getAccessToken]);
+
+  return accessTokenRef;
+};
 
 axiosInstance.interceptors.request.use(
   config => {
-    const { getAccessToken } = useAuth();
-    const token = getAccessToken();
+    console.log('authInterceptor called');
+    const accessTokenRef = authInterceptor();
+    const token = accessTokenRef.current();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  error => Promise.reject(error)
+  error => Promise.reject(error),
 );
+const ApiServiceSetup = () => {
+  authInterceptor();
+  return null;
+};
 
 axiosInstance.interceptors.response.use(
   response => response,
@@ -37,7 +54,7 @@ class ApiService {
   private instance = axiosInstance;
 
   public get<T>(endpoint: string, params = {}): Promise<T> {
-    return this.instance.get(endpoint, { params }).then(response => response.data);
+    return this.instance.get(endpoint, {params}).then(response => response.data);
   }
 
   public patch<T>(endpoint: string, data = {}): Promise<T> {
@@ -71,4 +88,6 @@ class ApiService {
 }
 
 const apiService = new ApiService();
+const apiServiceSetupComponent = () => ApiServiceSetup();
+
 export default apiService;

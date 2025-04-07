@@ -1,57 +1,64 @@
-// src/routes/AppRoutes.tsx
 import React from 'react';
-import {Routes, Route} from 'react-router-dom';
+import {Routes, Route, Navigate} from 'react-router-dom';
 
-import HomePage from '@features/home/pages/HomePage';
-import CoursesPage from '@features/courses/pages/CoursesPage';
-import CourseDetailPage from '@features/courses/pages/CourseDetailsPage';
-import StudentTasksPage from '@features/learningTasks/pages/StudentTasksPage';
-import AdminCoursesPage from '@features/admin/pages/AdminCoursesPage';
-import TaskListPage from '@features/learningTasks/pages/TaskListPage';
-import RoleBasedRoute from '@features/auth/routes/RoleBasedRoute';
 import ProtectedRoute from '@features/auth/routes/ProtectedRoute';
-import InstructorEditCoursePage from '@features/courses/pages/InstructorEditCoursePage';
-import {LoginForm} from '@features/auth';
+import LoginPage from '@features/auth/pages/LoginPage';
+import RegisterForm from '@features/auth/components/RegisterForm';
+import Dashboard from '@features/dashboard/pages/Dashboard';
 import Profile from '@features/profile/Profile';
-import StudentDashboard from '@features/dashboard/components/dashboards/StudentDashboard';
+import HomePage from '@features/home/pages/HomePage';
+import StudentCourseEnrollmentPage from '@features/courses/pages/StudentCourseEnrollmentPage';
+import EditCourse from '@features/courses/components/EditCourse';
+import StudentTasksPage from '@features/learningTasks/pages/StudentTasksPage';
+import TaskViewPage from '@features/learningTasks/pages/TaskViewPage';
+import CourseDetailPage from '@features/courses/pages/CourseDetailsPage';
 
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/login" element={<LoginForm />} />
-      {/* Public routes */}
-      <Route path="/courses" element={<CoursesPage />} />
-      <Route path="/courses/:courseId" element={<CourseDetailPage />} />
-
-      {/* Student routes */}
-      <Route path="/courses/:courseId/tasks" element={<StudentTasksPage />} />
-      <Route path="/dashboard" element={<StudentDashboard />} />
-
-      {/* Instructor routes */}
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterForm />} />
       <Route
-        path="/instructor/courses/:courseId/edit"
+        path="/dashboard"
         element={
-          <RoleBasedRoute allowedRoles={["instructor"]}>
-            <InstructorEditCoursePage />
-          </RoleBasedRoute>
+          <ProtectedRoute allowedRoles={['student', 'instructor', 'admin']}>
+            <Dashboard />
+          </ProtectedRoute>
         }
       />
-
-      {/* Admin routes */}
-      <Route path="/admin/courses" element={<AdminCoursesPage />} />
       <Route
-        path="/admin/courses/:courseId/edit"
+        path="/profile"
         element={
-          <RoleBasedRoute allowedRoles={["admin"]}>
-            <InstructorEditCoursePage />
-          </RoleBasedRoute>
+          <ProtectedRoute allowedRoles={["student", "instructor", "admin"]}>
+            <Profile />
+          </ProtectedRoute>
         }
       />
-
-      {/* Shared routes */}
-      <Route path="/tasks" element={<TaskListPage />} />
-      <Route path="/profile" element={<Profile />} />
+      <Route
+        path="/courses"
+        element={
+          <ProtectedRoute allowedRoles={["student", "instructor", "admin"]}>
+            <StudentCourseEnrollmentPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/courses/:courseId/edit"
+        element={
+          <ProtectedRoute allowedRoles={["instructor", "admin"]}>
+            <EditCourse />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/courses/:courseId/tasks"
+        element={
+          <ProtectedRoute allowedRoles={['student', 'instructor', 'admin']}>
+            <StudentTasksPage />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/courses/:courseId/details"
         element={
@@ -60,6 +67,7 @@ const AppRoutes: React.FC = () => {
           </ProtectedRoute>
         }
       />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };

@@ -1,33 +1,32 @@
 import apiService from '@services/api/apiService';
-import { ICourse } from '../types/courseTypes';
-import { IPaginatedResponse } from '../../../types/common/paginatedResponse';
+import {Course, IPaginatedResponse} from '@typedefs/common';
 
 class CourseService {
   private static BASE_URL = '/api/v1/courses/';
 
-  public static async fetchCourses(filter?: string): Promise<IPaginatedResponse<ICourse>> {
+  public static async fetchCourses(filter?: string): Promise<IPaginatedResponse<Course>> {
     let url = this.BASE_URL;
     if (filter) {
       url += `?filter=${filter}`; // Assuming the backend supports a 'filter' query parameter
     }
-    const response = (await apiService.get<IPaginatedResponse<ICourse>>(
+    const response = (await apiService.get<IPaginatedResponse<Course>>(
       url
-    )) as IPaginatedResponse<ICourse>;
+    )) as IPaginatedResponse<Course>;
     return response;
   }
 
-  public static async fetchCourseById(courseId: number): Promise<ICourse> {
-    const response = (await apiService.get<ICourse>(`${this.BASE_URL}${courseId}/`)) as ICourse;
+  public static async fetchCourseById(courseId: number): Promise<Course> {
+    const response = (await apiService.get<Course>(`${this.BASE_URL}${courseId}/`)) as Course;
     return response;
   }
 
-  public static async createCourse(course: Partial<ICourse>): Promise<ICourse> {
-    const response = await apiService.post<ICourse>(this.BASE_URL, course);
+  public static async createCourse(course: Partial<Course>): Promise<Course> {
+    const response = await apiService.post<Course>(this.BASE_URL, course);
     return response;
   }
 
-  public static async updateCourse(courseId: number, course: Partial<ICourse>): Promise<ICourse> {
-    const response = await apiService.put<ICourse>(`${this.BASE_URL}${courseId}/`, course);
+  public static async updateCourse(courseId: number, course: Partial<Course>): Promise<Course> {
+    const response = await apiService.put<Course>(`${this.BASE_URL}${courseId}/`, course);
     return response;
   }
 

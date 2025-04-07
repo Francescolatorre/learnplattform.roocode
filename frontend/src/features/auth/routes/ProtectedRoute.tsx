@@ -15,6 +15,7 @@ const ProtectedRoute: React.FC<{allowedRoles: string[]; children: React.ReactNod
     console.log('ProtectedRoute: isAuthenticated:', isAuthenticated);
     console.log('ProtectedRoute: user:', user);
     console.log('ProtectedRoute: allowedRoles:', allowedRoles);
+    console.log('ProtectedRoute: Current route:', window.location.pathname);
 
     if (isAuthenticated !== null) {
       setLoading(false);

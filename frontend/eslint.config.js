@@ -15,7 +15,7 @@ export default defineFlatConfig([
     ],
     languageOptions: {
       parserOptions: {
-        project: './tsconfig.node.json', // Use tsconfig.node.json for these files
+        project: './tsconfig.json', // Use tsconfig.node.json for these files
       },
     },
   },

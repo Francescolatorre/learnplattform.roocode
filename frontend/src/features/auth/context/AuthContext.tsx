@@ -30,7 +30,17 @@ export const AuthContext = createContext<AuthContextProps>({
   user: null,
   isAuthenticated: false,
   login: async () => { },
-  logout: async () => { },
+  logout: async () => {
+    try {
+      const refreshTokenValue = getRefreshToken();
+      const accessTokenValue = getAccessToken();
+      if (refreshTokenValue && accessTokenValue) {
+        await authService.logout(refreshTokenValue, accessTokenValue);
+      }
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  },
   getAccessToken: () => null,
   getRefreshToken: () => null,
   getUserRole: () => 'guest',
@@ -83,8 +93,9 @@ const AuthProviderComponent: React.FC<{children: ReactNode}> = ({children}) => {
   const logout = async () => {
     try {
       const refreshTokenValue = getRefreshToken();
-      if (refreshTokenValue) {
-        await authService.logout(refreshTokenValue);
+      const accessTokenValue = getAccessToken();
+      if (refreshTokenValue && accessTokenValue) {
+        await authService.logout(refreshTokenValue, accessTokenValue);
       }
     } catch (error) {
       console.error('Logout failed:', error);
@@ -109,7 +120,7 @@ const AuthProviderComponent: React.FC<{children: ReactNode}> = ({children}) => {
       return access;
     } catch (error) {
       console.error('Error refreshing token:', error);
-      await logout();
+      logout();
       return null;
     } finally {
       setIsRefreshingToken(false);
