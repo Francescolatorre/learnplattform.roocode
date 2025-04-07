@@ -1,67 +1,56 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Typography, Alert } from '@mui/material';
-import CourseService from '@features/courses/services/courseService';
-import CourseList from '@features/courses/components/CourseList';
-import LoadingIndicator from '@components/core/LoadingIndicator';
-import { ICourse } from '@features/courses/types/courseTypes';
+import React from 'react';
+import {Box} from '@mui/material';
+import FilterableCourseList from '@features/courses/components/FilterableCourseList';
 
-interface CoursePageProps {
-  // You can keep this if you want to allow courses to be passed in as props
-  // otherwise remove if you're always fetching them
-  initialCourses?: ICourse[];
-}
-
-const CoursesPage: React.FC<CoursePageProps> = ({ initialCourses = [] }) => {
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [courses, setCourses] = useState<ICourse[]>(initialCourses);
-
-  useEffect(() => {
-    const loadCourses = async () => {
-      try {
-        setLoading(true);
-        const response = await CourseService.fetchCourses();
-        setCourses(response.results);
-        setError(null);
-      } catch (err: unknown) {
-        console.error('Error fetching courses:', err);
-        setError((err as Error).message || 'Failed to load courses.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadCourses();
-  }, []);
-
-  if (loading) {
-    return <LoadingIndicator />;
-  }
-
-  if (error) {
+const StudentCoursesPage: React.FC = () => {
     return (
-      <Alert severity="error" sx={{ mb: 3 }}>
-        {error}
-      </Alert>
-    );
-  }
+        <Box sx={{p: 3}}>
+            {/* Beispiel 1: Server-seitige Filterung (Standard) */}
+            <FilterableCourseList
+                title="Available Courses"
+                showStatusFilter={true}
+                onCoursesLoaded={(courses) => console.log('Loaded courses:', courses.length)}
+            />
 
-  if (courses.length === 0) {
-    return (
-      <Alert severity="info" sx={{ mb: 3 }}>
-        No courses available.
-      </Alert>
+            {/* Alternative: Client-seitige Filterung mit initialCourses */}
+            {/*
+      <FilterableCourseList
+        initialCourses={preloadedCourses}
+        title="My Courses"
+        clientSideFiltering={true}
+        filterPredicate={(course, term) =>
+          course.title.toLowerCase().includes(term.toLowerCase()) ||
+          course.description.toLowerCase().includes(term.toLowerCase())
+        }
+      />
+      */}
+        </Box>
     );
-  }
-
-  return (
-    <Box>
-      <Typography variant="h4" gutterBottom>
-        Available Courses
-      </Typography>
-      <CourseList courses={courses} />
-    </Box>
-  );
 };
 
-export default CoursesPage;
+const InstructorCoursesPage: React.FC = () => {
+    return (
+        <Box sx={{p: 3}}>
+            <FilterableCourseList
+                title="My Teaching Courses"
+                showStatusFilter={true}
+            // Zusätzliche Parameter für Dozenten-spezifische Ansicht
+            />
+        </Box>
+    );
+};
+
+const AdminCoursesPage: React.FC = () => {
+    return (
+        <Box sx={{p: 3}}>
+            <FilterableCourseList
+                title="All Courses (Admin View)"
+                showStatusFilter={true}
+                showCreatorFilter={true}
+                emptyMessage="No courses have been created in the system yet."
+            />
+        </Box>
+    );
+};
+
+export {StudentCoursesPage, InstructorCoursesPage, AdminCoursesPage};

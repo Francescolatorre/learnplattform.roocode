@@ -10,7 +10,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import CourseService from '@features/courses/services/courseService';
-import {Course} from '@types/common/entities';
+import {Course} from '../../../types/common/entities';
 import EnrollmentService from '@features/enrollments/services/enrollmentService';
 import type {Enrollment} from '@features/enrollments/services/enrollmentService';
 import {useAuth} from '@features/auth/context/AuthContext';

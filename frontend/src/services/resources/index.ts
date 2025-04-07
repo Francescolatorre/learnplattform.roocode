@@ -1,3 +1,3 @@
 export * from './taskService';
-export * from './enrollmentService';
+export * from '../../features/enrollments/services/enrollmentService';
 export * from './progressService';

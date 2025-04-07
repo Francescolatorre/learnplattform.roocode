@@ -1,7 +1,6 @@
 {
     "version": "0.2.0",
     "configurations": [
-    
         {
             "name": "UAT: Backend Server",
             "type": "debugpy",
@@ -17,7 +16,7 @@
             "env": {
                 "DJANGO_SETTINGS_MODULE": "learningplatform_backend.settings"
             },
-            "python": "${workspaceFolder}/backend/venv/Scripts/python.exe"
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe"
         },
         {
             "name": "UAT: Frontend Dev Server",
@@ -48,7 +47,7 @@
             "env": {
                 "DJANGO_SETTINGS_MODULE": "learningplatform_backend.settings"
             },
-            "python": "${workspaceFolder}/backend/venv/Scripts/python.exe"
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe"
         },
         {
             "name": "Debug: Specific Test",
@@ -64,7 +63,7 @@
             "env": {
                 "DJANGO_SETTINGS_MODULE": "learningplatform_backend.settings"
             },
-            "python": "${workspaceFolder}/backend/venv/Scripts/python.exe"
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe"
         },
         {
             "name": "Debug: Authentication API Test",
@@ -80,7 +79,7 @@
             "env": {
                 "DJANGO_SETTINGS_MODULE": "learningplatform_backend.settings"
             },
-            "python": "${workspaceFolder}/backend/venv/Scripts/python.exe"
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe"
         },
         {
             "name": "Django: Management Command",
@@ -96,7 +95,7 @@
             "env": {
                 "DJANGO_SETTINGS_MODULE": "learningplatform_backend.settings"
             },
-            "python": "${workspaceFolder}/backend/venv/Scripts/python.exe"
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe"
         }
         // Note: To run multiple configurations, open multiple VSCode windows
         // and start each configuration separately

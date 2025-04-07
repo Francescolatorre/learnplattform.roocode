@@ -9,36 +9,6 @@ const axiosInstance = axios.create({
   },
 });
 
-import {useAuth} from '@features/auth/context/AuthContext';
-import {useRef, useEffect} from 'react';
-
-const authInterceptor = () => {
-  const {getAccessToken} = useAuth();
-  const accessTokenRef = useRef(getAccessToken);
-
-  useEffect(() => {
-    accessTokenRef.current = getAccessToken;
-  }, [getAccessToken]);
-
-  return accessTokenRef;
-};
-
-axiosInstance.interceptors.request.use(
-  config => {
-    console.log('authInterceptor called');
-    const accessTokenRef = authInterceptor();
-    const token = accessTokenRef.current();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  error => Promise.reject(error),
-);
-const ApiServiceSetup = () => {
-  authInterceptor();
-  return null;
-};
 
 axiosInstance.interceptors.response.use(
   response => response,
@@ -46,6 +16,19 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401) {
       window.location.href = '/login';
     }
+    return Promise.reject(error);
+  }
+);
+
+axiosInstance.interceptors.request.use(
+  config => {
+    const accessToken = localStorage.getItem('authToken');
+    if (accessToken) {
+      config.headers['Authorization'] = `Bearer ${accessToken}`;
+    }
+    return config;
+  },
+  error => {
     return Promise.reject(error);
   }
 );
@@ -88,6 +71,4 @@ class ApiService {
 }
 
 const apiService = new ApiService();
-const apiServiceSetupComponent = () => ApiServiceSetup();
-
 export default apiService;

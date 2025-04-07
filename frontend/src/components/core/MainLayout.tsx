@@ -1,68 +1,145 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
-  CssBaseline,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
   AppBar,
   Toolbar,
   Typography,
+  Drawer,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  IconButton,
+  useTheme,
+  useMediaQuery,
+  Chip,
 } from '@mui/material';
+import { Menu as MenuIcon, Logout as LogoutIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
-import { useAuth } from '@features/auth/context/AuthContext';
+import { useAuth } from '../../features/auth/context/AuthContext';
+import { menuConfig } from '../../config/menuConfig';
 
-const drawerWidth = 240;
+interface MainLayoutProps {
+  children: React.ReactNode;
+}
 
-const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { logout, user, getUserRole } = useAuth();
+  const userRole = getUserRole();
 
-  const menuConfig = [
-    { label: 'Dashboard', path: '/dashboard', roles: ['student', 'instructor', 'admin'] },
-    { label: 'Courses', path: '/courses', roles: ['student', 'instructor', 'admin'] },
-    { label: 'Enrollment', path: '/enrollment', roles: ['student'] }, // Add this line
-  ];
+  useEffect(() => {
+    console.log('MainLayout rendered');
+    console.log('menuConfig:', menuConfig);
+    console.log('userRole:', userRole);
+    console.log(
+      'Filtered menu:',
+      menuConfig.filter(menu => menu.roles.includes(userRole))
+    );
+  }, [userRole]); // Log only when userRole changes
 
-  const filteredMenu = menuConfig.filter(item => item.roles.includes(user?.role ?? ''));
+  const handleNavigation = (path: string) => {
+    console.log(`Navigating to: ${path}`);
+    if (isMobile) setDrawerOpen(false);
+    navigate(path);
+  };
+
+  const drawerContent = (
+    <Box sx={{ width: 250 }}>
+      <List>
+        {menuConfig
+          .filter(menu => menu.roles.includes(userRole))
+          .map(menu => (
+            <ListItemButton
+              key={menu.text}
+              onClick={() => handleNavigation(menu.path)}
+              sx={{ padding: '10px 16px', '&:hover': { backgroundColor: '#f0f0f0' } }}
+            >
+              <ListItemIcon>{/* Add icons if needed */}</ListItemIcon>
+              <ListItemText primary={menu.text} sx={{ fontSize: '1rem', color: '#333' }} />
+            </ListItemButton>
+          ))}
+        <ListItemButton onClick={logout}>
+          <ListItemIcon>
+            <LogoutIcon />
+          </ListItemIcon>
+          <ListItemText primary="Logout" />
+        </ListItemButton>
+      </List>
+    </Box>
+  );
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar position="fixed" sx={{ zIndex: theme => theme.zIndex.drawer + 1 }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      <AppBar position="fixed">
         <Toolbar>
-          <Typography variant="h6" noWrap component="div">
+          {isMobile && (
+            <IconButton
+              color="inherit"
+              edge="start"
+              onClick={() => setDrawerOpen(!drawerOpen)}
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
+          <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
             Learning Platform
           </Typography>
+          {userRole && (
+            <Chip
+              label={`Role: ${userRole}`}
+              color="secondary"
+              sx={{ ml: 2, display: { xs: 'none', sm: 'flex' } }}
+            />
+          )}
         </Toolbar>
       </AppBar>
+
+      {/* Mobile Drawer */}
       <Drawer
-        variant="permanent"
+        variant="temporary"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        ModalProps={{ keepMounted: true }}
         sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+          display: { xs: 'block', sm: 'none' },
+          '& .MuiDrawer-paper': { width: 250 },
         }}
       >
-        <Toolbar />
-        <Box sx={{ overflow: 'auto' }}>
-          <List>
-            {filteredMenu.map((item, index) => (
-              <ListItem button key={index} onClick={() => navigate(item.path)}>
-                <ListItemText primary={item.label} />
-              </ListItem>
-            ))}
-          </List>
-        </Box>
+        {drawerContent}
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}>
-        <Toolbar />
+
+      {/* Desktop Drawer */}
+      <Drawer
+        variant="permanent"
+        open
+        sx={{
+          display: { xs: 'none', sm: 'block' },
+          '& .MuiDrawer-paper': { width: 250, boxSizing: 'border-box' },
+        }}
+      >
+        {drawerContent}
+      </Drawer>
+
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          ml: { sm: 30 },
+          mt: { xs: 8, sm: 8 }, // Add top margin to account for AppBar height
+        }}
+      >
         {children}
       </Box>
     </Box>
   );
 };
 
+export { MainLayout };
 export default MainLayout;

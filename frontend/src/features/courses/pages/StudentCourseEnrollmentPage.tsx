@@ -1,25 +1,19 @@
 import React from 'react';
-import {IEnrollment} from '@features/courses/types/courseTypes';
-import {IEnrollmentWithDetails} from '@features/enrollments/services/enrollmentService';
-import {Box, Grid, Typography, CircularProgress} from '@mui/material';
+import {Box, CircularProgress, Typography} from '@mui/material';
 import {useQuery} from '@tanstack/react-query';
-import CourseService from '@features/courses/services/courseService';
-import EnrollmentService from '@features/enrollments/services/enrollmentService';
-import CourseCard from '@features/courses/components/CourseCard';
+import courseService from '@features/courses/services/courseService';
+import FilterableCourseList from '@features/courses/components/FilterableCourseList';
+import {Course} from '../../../types/common/entities';
+import {IPaginatedResponse} from '../../../types/common';
 
 const StudentCourseEnrollmentPage: React.FC = () => {
-
-  //state für filter
-
-  const [filter, setFilter] = React.useState<string | null>(null);
-
   const {
     data: enrollmentsResponse,
     isLoading,
     error,
-  } = useQuery<IEnrollmentWithDetails[], Error>({
-    queryKey: ['enrollments'],
-    queryFn: () => EnrollmentService.fetchAllEnrollments(),
+  } = useQuery<IPaginatedResponse<Course>, Error>({
+    queryKey: ['courses'],
+    queryFn: () => courseService.fetchCourses(),
   });
 
   if (isLoading) {
@@ -40,25 +34,19 @@ const StudentCourseEnrollmentPage: React.FC = () => {
     );
   }
 
-  const enrollments = enrollmentsResponse || [];
+  const courses = enrollmentsResponse?.results || [];
 
   return (
     <Box sx={{p: 3}}>
-      <Typography variant="h4" gutterBottom>
-        Available Courses
-      </Typography>
-      <Grid container spacing={2}>
-        {enrollments.map((enrollment: IEnrollmentWithDetails) => (
-          <Grid item xs={12} sm={6} md={4} key={enrollment.id}>
-            <CourseCard
-              title={enrollment.course_details.title}
-              description={enrollment.course_details.description}
-              onViewDetails={() => console.log(`View details for course ${enrollment.course}`)}
-              onEnroll={() => console.log(`Enroll in course ${enrollment.course}`)}
-            />
-          </Grid>
-        ))}
-      </Grid>
+      <FilterableCourseList
+        courses={courses}
+        title="Available Courses"
+        // Optional: Benutzerdefinierte Filter-Funktion
+        filterPredicate={(course, searchTerm) =>
+          course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          course.description.toLowerCase().includes(searchTerm.toLowerCase())
+        }
+      />
     </Box>
   );
 };

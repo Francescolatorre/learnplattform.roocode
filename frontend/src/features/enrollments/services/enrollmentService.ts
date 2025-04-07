@@ -17,6 +17,11 @@ export interface EnrollmentServiceType {
     delete: (id: string | number) => Promise<void>;
     enrollments?: Enrollment[];
     fetchAllEnrollments: () => Promise<IEnrollmentWithDetails[]>;
+    fetchUserEnrollments: () => Promise<any>;
+    fetchCourseEnrollments: () => Promise<any>;
+    enrollInCourse: (courseId: string) => Promise<void>;
+    unenrollFromCourse: (enrollmentId: string) => Promise<void>;
+    fetchEnrolledStudents: (courseId: string) => Promise<any>;
 }
 
 export interface IEnrollmentWithDetails {
@@ -47,6 +52,64 @@ EnrollmentService.fetchAllEnrollments = async () => {
         console.error('Error fetching all enrollments:', error);
         throw error;
     }
+};
+
+EnrollmentService.fetchUserEnrollments = async () => {
+    try {
+        const response = await apiService.get<any>('/api/v1/course-enrollments/');
+        const mappedResults = response.results.map((enrollment: any) => ({
+            ...enrollment,
+            courseDetails: {
+                ...enrollment.course_details, // Extract course details
+            },
+        }));
+        return {...response, results: mappedResults};
+    } catch (error) {
+        console.error('Failed to fetch user enrollments:', error);
+        throw error;
+    }
+};
+
+EnrollmentService.fetchCourseEnrollments = async () => {
+    const response = await apiService.get<any>('/api/v1/course-enrollments/');
+    return response;
+};
+
+EnrollmentService.enrollInCourse = async (courseId: string) => {
+    try {
+        await apiService.post('/api/v1/course-enrollments/', {course: courseId});
+    } catch (error: any) {
+        console.error('API Error:', error);
+        console.error('Response status:', error.response?.status);
+        console.error('Response data:', error.response?.data);
+
+        if (
+            error.response?.status === 400 &&
+            error.response?.data?.detail === 'You are already enrolled in this course.'
+        ) {
+            throw new Error('You are already enrolled in this course.');
+        }
+
+        throw error;
+    }
+};
+
+EnrollmentService.unenrollFromCourse = async (enrollmentId: string) => {
+    try {
+        await apiService.delete(`/api/v1/course-enrollments/${enrollmentId}/`);
+    } catch (error) {
+        console.error('Failed to unenroll from course:', error);
+        throw error;
+    }
+};
+
+EnrollmentService.fetchEnrolledStudents = async (
+    courseId: string
+) => {
+    const response = await apiService.get<any>('/api/v1/course-enrollments/', {
+        params: {course: courseId},
+    });
+    return response.data;
 };
 
 export default EnrollmentService;

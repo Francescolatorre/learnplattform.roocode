@@ -6,7 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import {theme} from './theme/theme';
 import ErrorBoundary from './components/core/ErrorBoundary';
 import AppRoutes from './routes/AppRoutes.tsx';
-import NavigationBar from '@components/layout/NavigationBar';
+import NavigationBar from './components/core/NavigationBar';
 
 const queryClient = new QueryClient();
 

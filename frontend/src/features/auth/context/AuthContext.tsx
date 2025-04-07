@@ -1,4 +1,5 @@
 import React, {createContext, useState, useContext, ReactNode, useEffect, memo} from 'react';
+import AuthInterceptor from '@components/AuthInterceptor';
 import {useNavigate} from 'react-router-dom';
 import authService from '@services/auth/authService';
 
@@ -69,6 +70,7 @@ const AuthProviderComponent: React.FC<{children: ReactNode}> = ({children}) => {
       const {access, refresh} = await authService.login(username, password);
       localStorage.setItem('authToken', access);
       localStorage.setItem('refreshToken', refresh);
+      console.log('Login successful', {access, refresh});
 
       try {
         const userProfile = await authService.getUserProfile(access);
@@ -91,6 +93,7 @@ const AuthProviderComponent: React.FC<{children: ReactNode}> = ({children}) => {
   };
 
   const logout = async () => {
+    console.log('Logout initiated');
     try {
       const refreshTokenValue = getRefreshToken();
       const accessTokenValue = getAccessToken();
@@ -108,6 +111,7 @@ const AuthProviderComponent: React.FC<{children: ReactNode}> = ({children}) => {
   };
 
   const refreshTokenFn = async () => {
+    console.log('refreshTokenFn called');
     if (isRefreshingToken) return getAccessToken();
 
     try {
@@ -128,10 +132,13 @@ const AuthProviderComponent: React.FC<{children: ReactNode}> = ({children}) => {
   };
 
   const initializeAuth = async () => {
+    console.log('initializeAuth called');
     if (isAuthenticated) {
+      console.log('initializeAuth: User is already authenticated');
       try {
         const accessToken = await refreshTokenFn();
         if (accessToken) {
+          console.log('initializeAuth: Access token refreshed', accessToken);
           const userProfile = await authService.getUserProfile(accessToken);
           setUser(userProfile);
         }
@@ -139,6 +146,7 @@ const AuthProviderComponent: React.FC<{children: ReactNode}> = ({children}) => {
       } catch (error) {
         console.error('Error initializing auth:', error);
         setIsAuthenticated(false);
+        console.log('initializeAuth: Authentication failed, setting isAuthenticated to false');
       } finally {
         setLoading(false);
       }
@@ -157,6 +165,7 @@ const AuthProviderComponent: React.FC<{children: ReactNode}> = ({children}) => {
 
   const setError = (message: string) => {
     setErrorMessage(message);
+    <AuthInterceptor />
   };
 
   return loading ? (
@@ -179,6 +188,7 @@ const AuthProviderComponent: React.FC<{children: ReactNode}> = ({children}) => {
         errorMessage: errorMessage,
       }}
     >
+      <AuthInterceptor />
       {children}
     </AuthContext.Provider>
   );

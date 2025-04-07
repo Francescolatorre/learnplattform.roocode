@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite';
+import {defineConfig} from 'vite';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
-import { resolve } from 'path';
+import {resolve} from 'path';
 
 const customPaths = {
   '@components': resolve(__dirname, './src/components'),

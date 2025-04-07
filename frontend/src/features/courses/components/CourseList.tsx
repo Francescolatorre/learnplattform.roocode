@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 
 import CourseService from '@features/courses/services/courseService';
 
@@ -13,16 +13,27 @@ export interface CourseListProps {
   courses: ICourse[];
 }
 
-const CourseList: React.FC<CourseListProps> = ({ courses }) => {
+import {Grid, Card, CardContent, Typography} from '@mui/material';
+
+const CourseList: React.FC<CourseListProps> = ({courses}) => {
   return (
-    <div>
-      <h1>Courses</h1>
-      <ul>
-        {courses.map(course => (
-          <li key={course.id}>{course.title}</li>
-        ))}
-      </ul>
-    </div>
+    <Grid container spacing={2}>
+      {courses.map(course => (
+        <Grid item xs={12} sm={6} md={4} key={course.id}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" component="div">
+                {course.title}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {/* Add course description here */}
+                Course description goes here.
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      ))}
+    </Grid>
   );
 };
 
