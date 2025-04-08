@@ -1,8 +1,15 @@
 import apiService from '../api/apiService';
-import {CourseProgress, QuizHistory, ContentEffectivenessData} from 'src/types/common/entities';
+import {API_CONFIG} from '../api/apiConfig';
+import {CourseProgress, QuizHistory, ContentEffectivenessData, Course} from '@types/common/entities';
 
 export const fetchStudentProgressByUser = async (studentId: string): Promise<CourseProgress[]> => {
-  return apiService.get<CourseProgress[]>(`students/${studentId}/progress/`);
+  const response = await apiService.get<CourseProgress[]>(
+    API_CONFIG.endpoints.progress.student(studentId)
+  );
+  if (!response.data) {
+    throw new Error('No progress data found');
+  }
+  return response.data;
 };
 
 export const fetchStudentProgressByCourse = async (
@@ -10,9 +17,11 @@ export const fetchStudentProgressByCourse = async (
   studentId: string,
   includeDetails = false
 ): Promise<CourseProgress | null> => {
-  return apiService.get<CourseProgress>(`courses/${courseId}/student-progress/${studentId}/`, {
-    includeDetails,
-  });
+  const response = await apiService.get<CourseProgress>(
+    API_CONFIG.endpoints.progress.courseStudent(courseId, studentId),
+    {params: {includeDetails}}
+  );
+  return response.data;
 };
 
 export const fetchAllStudentsProgress = async (
@@ -23,7 +32,7 @@ export const fetchAllStudentsProgress = async (
   previous: string | null;
   results: CourseProgress[];
 }> => {
-  return apiService.get(`courses/${courseId}/student-progress/`);
+  return apiService.get(API_CONFIG.endpoints.progress.allStudents(courseId));
 };
 
 export const getQuizHistory = async (
@@ -31,15 +40,15 @@ export const getQuizHistory = async (
   studentId?: string
 ): Promise<QuizHistory[]> => {
   const endpoint = studentId
-    ? `students/${studentId}/quiz-performance/`
-    : `courses/${courseId}/quiz-performance/`;
+    ? API_CONFIG.endpoints.quiz.studentPerformance(studentId)
+    : API_CONFIG.endpoints.quiz.coursePerformance(courseId);
   return apiService.get<QuizHistory[]>(endpoint);
 };
 
 export const getContentEffectivenessData = async (
   courseId: string
 ): Promise<ContentEffectivenessData> => {
-  return apiService.get(`courses/${courseId}/content-effectiveness/`);
+  return apiService.get(API_CONFIG.endpoints.contentEffectiveness(courseId));
 };
 
 export const updateTaskProgress = async (
@@ -47,7 +56,7 @@ export const updateTaskProgress = async (
   taskId: string,
   progressData: any
 ): Promise<any> => {
-  return apiService.patch(`courses/${courseId}/tasks/${taskId}/progress`, progressData);
+  return apiService.patch(API_CONFIG.endpoints.tasks.progress(courseId, taskId), progressData);
 };
 
 export const submitTask = async (
@@ -55,7 +64,7 @@ export const submitTask = async (
   taskId: string,
   submissionData: any
 ): Promise<any> => {
-  return apiService.post(`courses/${courseId}/tasks/${taskId}/submit`, submissionData);
+  return apiService.post(API_CONFIG.endpoints.tasks.submit(courseId, taskId), submissionData);
 };
 
 export const gradeSubmission = async (
@@ -65,27 +74,31 @@ export const gradeSubmission = async (
   gradingData: any
 ): Promise<any> => {
   return apiService.post(
-    `courses/${courseId}/tasks/${taskId}/students/${studentId}/grade`,
+    API_CONFIG.endpoints.tasks.grade(courseId, taskId, studentId),
     gradingData
   );
 };
 
-export const fetchCourseDetails = async (courseId: string): Promise<any> => {
-  return apiService.get(`courses/${courseId}/details/`);
+export const fetchCourseDetails = async (courseId: string): Promise<Course> => {
+  const response = await apiService.get(API_CONFIG.endpoints.course.details(courseId));
+  if (!response.data) {
+    throw new Error('Course not found');
+  }
+  return response.data;
 };
 
 export const fetchProgressAnalytics = async (courseId: string): Promise<any> => {
-  return apiService.get(`courses/${courseId}/progress-analytics/`);
+  return apiService.get(API_CONFIG.endpoints.progress.analytics(courseId));
 };
 
 export const fetchStudentProgressSummary = async (studentId: string): Promise<any> => {
-  return apiService.get(`students/${studentId}/progress-summary/`);
+  return apiService.get(API_CONFIG.endpoints.progress.summary(studentId));
 };
 
 export const fetchInstructorDashboardData = async (): Promise<any> => {
-  return apiService.get('instructor/dashboard/');
+  return apiService.get(API_CONFIG.endpoints.instructor.dashboard);
 };
 
 export const fetchCourseStructure = async (courseId: string): Promise<any> => {
-  return apiService.get(`courses/${courseId}/analytics/`);
+  return apiService.get(API_CONFIG.endpoints.course.analytics(courseId));
 };

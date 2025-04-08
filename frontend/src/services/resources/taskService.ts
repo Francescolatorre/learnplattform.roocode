@@ -1,17 +1,16 @@
 import apiService from '../api/apiService';
-import {LearningTask} from 'src/types/common/entities';
-import {TaskCreationData} from 'src/types/common/entities';
+import {API_CONFIG} from '../api/apiConfig';
+import {LearningTask} from '@types/common/entities';
+import {TaskCreationData} from '@types/common/entities';
 
-export const fetchTasksByCourse = async (
-  courseId: string,
-  includeSubtasks = false
-): Promise<{
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: LearningTask[];
-}> => {
-  return apiService.get(`tasks/course/${courseId}/`, {includeSubtasks});
+export const fetchCourseTasks = async (courseId: string) => {
+  const response = await apiService.get<{results: LearningTask[]}>(
+    API_CONFIG.endpoints.courses.tasks(courseId)
+  );
+  if (!response.data) {
+    return {results: []};
+  }
+  return response.data;
 };
 
 export const createTask = async (

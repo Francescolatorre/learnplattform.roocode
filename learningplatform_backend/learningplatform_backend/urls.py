@@ -99,6 +99,11 @@ analytics_urls = [
         name="student_progress",
     ),
     path(
+        "students/progress/",
+        StudentProgressAPI.as_view(),
+        name="student_personal progress",
+    ),
+    path(
         "students/<int:pk>/quiz-performance/",
         StudentQuizPerformanceAPI.as_view(),
         name="student_quiz_performance",

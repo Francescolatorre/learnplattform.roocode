@@ -1,6 +1,7 @@
 # Project Status Overview
 
 ## TODO
+
 - TASK-PERSONALIZED-LEARNING: Personalized Learning Path Task
   - **Dependencies**: TASK-MODEL-CONSOLIDATION-002
   - **Validation Criteria**: Module must generate personalized learning paths based on student goals and skill levels.
@@ -16,8 +17,12 @@
 - TASK-PERFORMANCE_SECURITY_ENHANCEMENTS: Performance and Security Enhancements
   - **Dependencies**: None
   - **Validation Criteria**: Code-splitting and secure JWT handling must be implemented.
+- TASK-SKILL-PROGRESSION-TRACKING: Skill Progression Tracking
+  - **Dependencies**: None
+  - **Validation Criteria**: Skill progression must be tracked.
 
 ## IN_PROGRESS
+
 - TASK-MODEL-CONSOLIDATION-002: Model Consolidation Task
   - **Dependencies**: TASK-MODEL-UPDATE-PLAN-001
   - **Progress**: Consolidating and standardizing data models across the platform.
@@ -32,6 +37,7 @@
   - **Progress**: Development of course creation feature is in progress.
 
 ## DONE
+
 - TASK-002: Implement Progress Tracking Frontend Components
   - **Completion Date**: 2025-03-21
   - **Summary**: Implemented frontend components for progress tracking, including ModuleProgressView, PerformanceAnalysisView, ActivityHistoryView, TaskDetailsView, and InstructorProgressDashboard. Added TypeScript interfaces and service functions for data fetching and visualization.
@@ -100,13 +106,16 @@
   - **Summary**: Mode definitions implemented.
 
 ## Comprehensive Task List
-### Tasks in Progress:
+
+### Tasks in Progress
+
 - TASK-API-IMPLEMENTATION-COMPLETION
 - TASK-CREATION-001
 - TASK-UI-005
 - TASK-MODEL-CONSOLIDATION-002
 
-### Tasks To Do:
+### Tasks To Do
+
 - TASK-PERSONALIZED-LEARNING
 - TASK-ADAPTIVE-ASSESSMENT
 - TASK-AI-POWERED-SUBMISSION
@@ -127,7 +136,8 @@
 - TESTING_STRATEGY_IMPLEMENTATION
 - UI_COMPONENTS_DEVELOPMENT
 
-### Completed Tasks:
+### Completed Tasks
+
 - TASK-002
 - TASK-003
 - TASK-001

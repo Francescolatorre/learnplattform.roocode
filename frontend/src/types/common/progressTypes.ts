@@ -175,3 +175,76 @@ export interface TaskCreationData {
   created_at?: string;
   updated_at?: string;
 }
+
+export interface ActivityEntry {
+  id: string;
+  activityType: 'submission' | 'grade_received' | 'task_started' | 'achievement_earned';
+  timestamp: string;
+  taskId?: string;
+  taskTitle?: string;
+  score?: number;
+  achievementTitle?: string;
+  achievementDescription?: string;
+}
+
+export interface CourseProgress {
+  studentId: string;
+  taskProgress: TaskProgress[];
+  completedTasks: number;
+  totalTasks: number;
+  averageScore: number;
+  recentActivity: ActivityEntry[];
+  upcomingTasks?: {
+    title: string;
+    dueDate: string;
+  }[];
+}
+
+export interface QuizHistory {
+  quizId: string;
+  quizTitle: string;
+  score: number;
+  maxScore: number;
+  attempts: number;
+  maxAttempts: number;
+  date: string;
+  timeSpent: number;
+  answers: Array<{
+    questionId: string;
+    correct: boolean;
+    timeSpent: number;
+  }>;
+}
+
+export interface DashboardUserInfo {
+  id: number;
+  username: string;
+  email: string;
+  full_name: string;
+}
+
+export interface DashboardOverallStats {
+  total_courses: number;
+  completed_courses: number;
+  active_courses: number;
+  dropped_courses: number;
+  overall_completion: number;
+  average_score?: number;
+}
+
+export interface DashboardCourseInfo {
+  id: number;
+  title: string;
+  completion_percentage: number;
+  recent_activity?: ActivityEntry[];
+  upcoming_tasks?: {
+    title: string;
+    dueDate: string;
+  }[];
+}
+
+export interface DashboardResponse {
+  user_info: DashboardUserInfo;
+  overall_stats: DashboardOverallStats;
+  courses: DashboardCourseInfo[];
+}

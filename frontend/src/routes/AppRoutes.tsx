@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {lazy} from 'react';
 import {Routes, Route, Navigate} from 'react-router-dom';
 
 import ProtectedRoute from '@features/auth/routes/ProtectedRoute';
@@ -8,10 +8,13 @@ import Dashboard from '@features/dashboard/pages/Dashboard';
 import Profile from '@features/profile/Profile';
 import HomePage from '@features/home/pages/HomePage';
 import StudentCourseEnrollmentPage from '@features/courses/pages/StudentCourseEnrollmentPage';
+import {StudentCoursesPage} from 'src/features/courses/pages/CoursesPage';
 import EditCourse from '@features/courses/components/EditCourse';
 import StudentTasksPage from '@features/learningTasks/pages/StudentTasksPage';
 import TaskViewPage from '@features/learningTasks/pages/TaskViewPage';
 import CourseDetailPage from '@features/courses/pages/CourseDetailsPage';
+
+const CourseDetailsPage = lazy(() => import('@features/courses/pages/CourseDetailsPage'));
 
 const AppRoutes: React.FC = () => {
   return (
@@ -39,7 +42,7 @@ const AppRoutes: React.FC = () => {
         path="/courses"
         element={
           <ProtectedRoute allowedRoles={["student", "instructor", "admin"]}>
-            <StudentCourseEnrollmentPage />
+            <StudentCoursesPage />
           </ProtectedRoute>
         }
       />
@@ -64,6 +67,14 @@ const AppRoutes: React.FC = () => {
         element={
           <ProtectedRoute allowedRoles={['student', 'instructor', 'admin']}>
             <CourseDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/courses/:courseId"
+        element={
+          <ProtectedRoute>
+            <CourseDetailsPage />
           </ProtectedRoute>
         }
       />

@@ -1,46 +1,35 @@
-import React, {useEffect, useState} from 'react';
-import {Navigate} from 'react-router-dom';
+import React from 'react';
+import {Navigate, useLocation} from 'react-router-dom';
+import {useAuth} from '../context/AuthContext';
 
-import {useAuth} from '@features/auth/context/AuthContext';
+interface IProtectedRouteProps {
+  children: React.ReactNode;
+  allowedRoles?: string[];
+}
 
-const ProtectedRoute: React.FC<{allowedRoles: string[]; children: React.ReactNode}> = ({
-  allowedRoles,
-  children,
-}) => {
+const ProtectedRoute: React.FC<IProtectedRouteProps> = ({children, allowedRoles = []}) => {
   const {user, isAuthenticated} = useAuth();
-  const [loading, setLoading] = useState(true);
+  const location = useLocation();
 
-  useEffect(() => {
-    console.log('ProtectedRoute: Rendered.');
-    console.log('ProtectedRoute: isAuthenticated:', isAuthenticated);
-    console.log('ProtectedRoute: user:', user);
-    console.log('ProtectedRoute: allowedRoles:', allowedRoles);
-    console.log('ProtectedRoute: Current route:', window.location.pathname);
-
-    if (isAuthenticated !== null) {
-      setLoading(false);
-    }
-  }, [user, isAuthenticated, allowedRoles]);
-
-  if (loading) {
-    console.log('ProtectedRoute: Waiting for authentication state...');
-    return <div>Loading...</div>;
-  }
+  console.debug('ProtectedRoute:', {
+    isAuthenticated,
+    userRole: user?.role,
+    allowedRoles,
+    path: location.pathname
+  });
 
   if (!isAuthenticated) {
-    console.log('ProtectedRoute: User not authenticated. Redirecting to /login.');
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" state={{from: location.pathname}} replace />;
   }
 
-  if (!user || !allowedRoles.includes(user.role)) {
-    console.log(
-      `ProtectedRoute: User role "${user?.role}" not allowed. Redirecting to /unauthorized.`
-    );
-    console.log('Allowed roles:', allowedRoles);
-    return <Navigate to="/unauthorized" />;
+  // Allow access if no roles specified or if user role matches
+  const hasRequiredRole = allowedRoles.length === 0 || (user?.role && allowedRoles.includes(user.role));
+
+  if (!hasRequiredRole) {
+    console.debug('Access denied: Role not allowed');
+    return <Navigate to="/unauthorized" replace />;
   }
 
-  console.log('ProtectedRoute: User authenticated and authorized.');
   return <>{children}</>;
 };
 

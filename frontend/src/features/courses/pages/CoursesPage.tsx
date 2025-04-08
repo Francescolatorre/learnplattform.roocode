@@ -7,7 +7,7 @@ const StudentCoursesPage: React.FC = () => {
         <Box sx={{p: 3}}>
             {/* Beispiel 1: Server-seitige Filterung (Standard) */}
             <FilterableCourseList
-                title="Available Courses"
+                title="Available Courses (students)"
                 showStatusFilter={true}
                 onCoursesLoaded={(courses) => console.log('Loaded courses:', courses.length)}
             />

@@ -52,7 +52,7 @@ export const AuthContext = createContext<AuthContextProps>({
   errorMessage: '',
 });
 
-const getAccessToken = (): string | null => localStorage.getItem('authToken');
+const getAccessToken = (): string | null => localStorage.getItem('accessToken');
 const getRefreshToken = (): string | null => localStorage.getItem('refreshToken');
 
 const AuthProviderComponent: React.FC<{children: ReactNode}> = ({children}) => {
@@ -68,7 +68,7 @@ const AuthProviderComponent: React.FC<{children: ReactNode}> = ({children}) => {
   const login = async (username: string, password: string) => {
     try {
       const {access, refresh} = await authService.login(username, password);
-      localStorage.setItem('authToken', access);
+      localStorage.setItem('accessToken', access); // Ensure consistent key usage
       localStorage.setItem('refreshToken', refresh);
       console.log('Login successful', {access, refresh});
 
@@ -87,7 +87,7 @@ const AuthProviderComponent: React.FC<{children: ReactNode}> = ({children}) => {
   };
 
   const setAuthTokens = (tokens: {access: string; refresh: string}) => {
-    localStorage.setItem('authToken', tokens.access);
+    localStorage.setItem('accessToken', tokens.access);
     localStorage.setItem('refreshToken', tokens.refresh);
     setIsAuthenticated(true);
   };
@@ -103,7 +103,7 @@ const AuthProviderComponent: React.FC<{children: ReactNode}> = ({children}) => {
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {
-      localStorage.removeItem('authToken');
+      localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
       setUser(null);
       setIsAuthenticated(false);
@@ -120,7 +120,7 @@ const AuthProviderComponent: React.FC<{children: ReactNode}> = ({children}) => {
       if (!storedRefreshToken) throw new Error('No refresh token found');
 
       const {access} = await authService.refreshToken(storedRefreshToken);
-      localStorage.setItem('authToken', access);
+      localStorage.setItem('accessToken', access);
       return access;
     } catch (error) {
       console.error('Error refreshing token:', error);

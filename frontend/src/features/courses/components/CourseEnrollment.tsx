@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {
   Box,
   Button,
@@ -9,157 +9,202 @@ import {
   Alert,
   CircularProgress,
 } from '@mui/material';
-import CourseService from '@features/courses/services/courseService';
-import {Course} from '../../../types/common/entities';
-import EnrollmentService from '@features/enrollments/services/enrollmentService';
-import type {Enrollment} from '@features/enrollments/services/enrollmentService';
+import {useParams, useNavigate} from 'react-router-dom';
+import {useQuery, useMutation, useQueryClient, UseQueryResult} from '@tanstack/react-query';
+import {CourseService} from '@services/resources/courseService';
+import {EnrollmentService} from '@services/resources/enrollmentService';
 import {useAuth} from '@features/auth/context/AuthContext';
+import {Course, CompletionStatus} from 'src/types/common/entities';
+import {StatusChip} from '@components/common/StatusChip';
+import {LoadingOverlay} from '@components/common/LoadingOverlay';
+import {ErrorAlert} from '@components/common/ErrorAlert';
 
-const CourseEnrollment = ({courseId}: {courseId: string}) => {
-  const [course, setCourse] = useState<Course | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [enrolling, setEnrolling] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [enrollmentStatus, setEnrollmentStatus] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+interface ICourseEnrollmentProps {
+  courseId: string;
+}
+
+interface EnrollmentResponse {
+  status: CompletionStatus;
+}
+
+const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const {user} = useAuth();
 
-  useEffect(() => {
-    const fetchCourseData = async () => {
-      try {
-        setLoading(true);
-        const courseData = await CourseService.fetchCourseById(Number(courseId));
-        setCourse(courseData);
+  // Fetch course data
+  const {
+    data: course,
+    isLoading: courseLoading,
+    error: courseError
+  } = useQuery({
+    queryKey: ['course', courseId],
+    queryFn: () => CourseService.getCourseDetails(courseId),
+    enabled: Boolean(courseId),
+  });
 
-        // Fetch enrollments for course
-        const userEnrollment = EnrollmentService.enrollments?.find(
-          (enrollment: Enrollment) =>
-            enrollment.user === user?.id && enrollment.course.toString() === courseId.toString()
-        );
-
-        if (userEnrollment) {
-          setEnrollmentStatus(userEnrollment.status);
-        }
-
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching course details:', err);
-        setError('Failed to load course details. Please try again later.');
-      } finally {
-        setLoading(false);
+  // Fetch enrollment status
+  const {
+    data: enrollment,
+    isLoading: enrollmentLoading
+  } = useQuery({
+    queryKey: ['enrollment', courseId, user?.id],
+    queryFn: async (): Promise<EnrollmentResponse | null> => {
+      if (!user?.id) {
+        throw new Error('User ID is required');
       }
-    };
+      return EnrollmentService.getUserEnrollment(courseId, user.id);
+    },
+    enabled: Boolean(courseId) && Boolean(user?.id),
+  });
 
-    if (courseId) {
-      fetchCourseData();
+  // Handle enrollment mutation
+  const enrollMutation = useMutation({
+    mutationFn: () => EnrollmentService.create({
+      course: Number(courseId),
+      user: user?.id,
+      status: 'active'
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['enrollment', courseId]});
+    },
+    onError: (error) => {
+      console.error('Enrollment failed:', error);
+      // Todo: Add error handling logic here
     }
-  }, [courseId, user?.id]);
+  });
 
-  const handleEnroll = async () => {
-    try {
-      setEnrolling(true);
-      setError(null);
-      await EnrollmentService.create({
-        course: Number(courseId),
-        user: user?.id,
-        status: 'active',
-      });
-      setEnrollmentStatus('active');
-      setSuccessMessage('You have successfully enrolled in this course!');
-    } catch (err) {
-      console.error('Error enrolling in course:', err);
-      setError('Failed to enroll in the course. Please try again later.');
-    } finally {
-      setEnrolling(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="300px">
-        <CircularProgress />
-      </Box>
-    );
+  if (courseLoading || enrollmentLoading) {
+    return <LoadingOverlay />;
   }
 
-  if (error) {
-    return (
-      <Alert severity="error" sx={{mb: 3}}>
-        {error}
-      </Alert>
-    );
+  if (courseError) {
+    return <ErrorAlert error={courseError} />;
   }
 
   if (!course) {
     return <Alert severity="info">Course information not available.</Alert>;
   }
 
+  const handleEnroll = () => {
+    enrollMutation.mutate();
+  };
+
+  const handleViewTasks = () => {
+    navigate(`/courses/${courseId}/tasks`);
+  };
+
   return (
     <Box sx={{mb: 4}}>
-      {successMessage && (
+      {enrollMutation.isSuccess && (
         <Alert severity="success" sx={{mb: 3}}>
-          {successMessage}
+          You have successfully enrolled in this course!
         </Alert>
       )}
 
       <Card>
         <CardContent>
-          <Typography variant="h5" gutterBottom>
-            {course.title}
-          </Typography>
+          <CourseHeader course={course} />
+          <CourseDescription description={course.description} />
+          <CourseStatusTags course={course} />
 
-          <Typography variant="body1" color="textSecondary" paragraph>
-            {course.description}
-          </Typography>
-
-          <Box sx={{display: 'flex', gap: 1, mb: 2}}>
-            <Chip
-              label={course.status}
-              color={course.status === 'published' ? 'success' : 'default'}
-              size="small"
-            />
-            <Chip label={course.visibility} color="primary" size="small" variant="outlined" />
-          </Box>
-
-          {enrollmentStatus ? (
-            <Box sx={{mt: 2}}>
-              <Alert severity="info">
-                You are already enrolled in this course.
-                {enrollmentStatus === 'active' && ' Your enrollment is active.'}
-                {enrollmentStatus === 'completed' && ' You have completed this course.'}
-                {enrollmentStatus === 'dropped' && ' You have dropped this course.'}
-              </Alert>
-
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{mt: 2}}
-                href={`/courses/${courseId}/tasks`}
-              >
-                View Course Tasks
-              </Button>
-            </Box>
-          ) : (
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={enrolling || course.status !== 'published'}
-              onClick={handleEnroll}
-              sx={{mt: 2}}
-            >
-              {enrolling ? 'Enrolling...' : 'Enroll in Course'}
-            </Button>
-          )}
-
-          {course.status !== 'published' && (
-            <Alert severity="warning" sx={{mt: 2}}>
-              This course is not currently published for enrollment.
-            </Alert>
-          )}
+          <EnrollmentActions
+            enrollmentStatus={enrollment?.status}
+            isPublished={course.status === 'published'}
+            onEnroll={handleEnroll}
+            onViewTasks={handleViewTasks}
+            isEnrolling={enrollMutation.isLoading}
+          />
         </CardContent>
       </Card>
     </Box>
   );
 };
+
+// Sub-components for better organization
+const CourseHeader: React.FC<{course: Course}> = ({course}) => (
+  <Typography variant="h5" gutterBottom>
+    {course.title}
+  </Typography>
+);
+
+const CourseDescription: React.FC<{description: string}> = ({description}) => (
+  <Typography variant="body1" color="textSecondary" paragraph>
+    {description}
+  </Typography>
+);
+
+const CourseStatusTags: React.FC<{course: Course}> = ({course}) => (
+  <Box sx={{display: 'flex', gap: 1, mb: 2}}>
+    <StatusChip status={course.status} />
+    <Chip
+      label={course.visibility}
+      color="primary"
+      size="small"
+      variant="outlined"
+    />
+  </Box>
+);
+
+interface IEnrollmentActionsProps {
+  enrollmentStatus: EnrollmentStatus | undefined;
+  isPublished: boolean;
+  onEnroll: () => void;
+  onViewTasks: () => void;
+  isEnrolling: boolean;
+}
+
+const EnrollmentActions: React.FC<IEnrollmentActionsProps> = ({
+  enrollmentStatus,
+  isPublished,
+  onEnroll,
+  onViewTasks,
+  isEnrolling
+}) => {
+  if (enrollmentStatus) {
+    return (
+      <Box sx={{mt: 2}}>
+        <EnrollmentStatusAlert status={enrollmentStatus} />
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{mt: 2}}
+          onClick={onViewTasks}
+        >
+          View Course Tasks
+        </Button>
+      </Box>
+    );
+  }
+
+  return (
+    <>
+      <Button
+        variant="contained"
+        color="primary"
+        disabled={isEnrolling || !isPublished}
+        onClick={onEnroll}
+        sx={{mt: 2}}
+      >
+        {isEnrolling ? 'Enrolling...' : 'Enroll in Course'}
+      </Button>
+
+      {!isPublished && (
+        <Alert severity="warning" sx={{mt: 2}}>
+          This course is not currently published for enrollment.
+        </Alert>
+      )}
+    </>
+  );
+};
+
+const EnrollmentStatusAlert: React.FC<{status: CompletionStatus}> = ({status}) => (
+  <Alert severity="info">
+    You are already enrolled in this course.
+    {status === 'active' && ' Your enrollment is active.'}
+    {status === 'completed' && ' You have completed this course.'}
+    {status === 'dropped' && ' You have dropped this course.'}
+  </Alert>
+);
 
 export default CourseEnrollment;

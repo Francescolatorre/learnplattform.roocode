@@ -1,5 +1,4 @@
-# React with TypeScript Best Practices
-
+# memory_bank/languages/react_typescript_rules.yaml
 react_version: "Specify version if relevant"
 typescript_version: "Specify version if relevant"
 

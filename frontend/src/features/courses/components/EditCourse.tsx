@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
 import {
   Button,
   Container,
@@ -11,9 +11,10 @@ import {
   Alert,
 } from '@mui/material';
 
-import CourseService from '@features/courses/services/courseService';
-import { useAuth } from '@features/auth/context/AuthContext';
-import { ICourse, CourseStatus } from '../types/courseTypes';
+import {useQuery} from '@tanstack/react-query';
+import {courseService} from '@services/resources/courseService';
+import {useAuth} from '@features/auth/context/AuthContext';
+import {Course, CourseStatus} from 'src/types/common/entities';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -21,11 +22,11 @@ interface MainLayoutProps {
 
 const EditCourse: React.FC = () => {
   const navigate = useNavigate();
-  const { courseId } = useParams<{ courseId: string }>();
-  const { getUserRole, refreshToken } = useAuth();
+  const {courseId} = useParams<{courseId: string}>();
+  const {getUserRole, refreshToken} = useAuth();
   const userRole = getUserRole(); // Use utility function
 
-  const [courseData, setCourseData] = useState<Partial<ICourse>>({
+  const [courseData, setCourseData] = useState<Partial<Course>>({
     title: 'test',
     description: 'test description',
     status: 'draft',
@@ -38,7 +39,7 @@ const EditCourse: React.FC = () => {
     const fetchCourse = async () => {
       setIsLoading(true);
       try {
-        const data = await CourseService.fetchCourseById(Number(courseId!));
+        const data = await courseService.getCourseDetails(Number(courseId!));
         setCourseData({
           title: data.title,
           description: data.description,
@@ -75,8 +76,8 @@ const EditCourse: React.FC = () => {
   }, [courseId, refreshToken]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setCourseData(prev => ({ ...prev, [name]: value }));
+    const {name, value} = e.target;
+    setCourseData(prev => ({...prev, [name]: value}));
   };
 
   const handleSave = async () => {
@@ -99,7 +100,7 @@ const EditCourse: React.FC = () => {
   if (isLoading) {
     return (
       <Box
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
+        sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}
       >
         <CircularProgress />
       </Box>
@@ -108,7 +109,7 @@ const EditCourse: React.FC = () => {
 
   if (error) {
     return (
-      <Box sx={{ p: 3 }}>
+      <Box sx={{p: 3}}>
         <Alert severity="error">{error}</Alert>
       </Box>
     );
@@ -119,7 +120,7 @@ const EditCourse: React.FC = () => {
       <Typography variant="h4" gutterBottom>
         {userRole === 'admin' ? 'Edit Course (Admin)' : 'Edit Course (Instructor)'}
       </Typography>
-      <Box component="form" sx={{ mt: 3 }}>
+      <Box component="form" sx={{mt: 3}}>
         <TextField
           label="Title"
           name="title"
@@ -162,8 +163,8 @@ const EditCourse: React.FC = () => {
           <MenuItem value="private">Private</MenuItem>
           <MenuItem value="public">Public</MenuItem>
         </TextField>
-        <Box sx={{ mt: 3 }}>
-          <Button variant="contained" color="primary" sx={{ mr: 2 }} onClick={handleSave}>
+        <Box sx={{mt: 3}}>
+          <Button variant="contained" color="primary" sx={{mr: 2}} onClick={handleSave}>
             Save
           </Button>
           <Button variant="outlined" color="secondary" onClick={handleCancel}>

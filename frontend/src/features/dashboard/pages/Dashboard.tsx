@@ -27,7 +27,13 @@ const Dashboard: React.FC = () => {
       throw new Error('User not authenticated');
     }
     try {
-      const response = await axios.get(`/api/v1/students/${user.id}/progress/`);
+      console.log('Fetching user progress for user ID:', user.id);
+      const response = await axios.get(`/api/v1/students/progress/`); //will get progress for current user
+      console.log('User progress response:', response);
+      if (!Array.isArray(response.data)) {
+        console.error('Error: User progress data is not an array', response.data);
+        return [];
+      }
       return response.data;
     } catch (error: any) {
       console.error('Error fetching user progress:', error.message);

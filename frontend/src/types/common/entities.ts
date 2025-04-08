@@ -4,6 +4,15 @@
 export type CompletionStatus = 'active' | 'completed' | 'dropped';
 export type TaskStatus = 'not_started' | 'in_progress' | 'completed' | 'graded' | 'pending';
 export type QuizCompletionStatus = 'passed' | 'failed' | 'in_progress';
+export type CourseStatus = 'published' | 'draft' | 'private';
+
+export interface IUserDetails {
+  id: number;
+  username: string;
+  email: string;
+  display_name: string;
+  role: string;
+}
 
 export interface User {
   readonly id: number;
@@ -14,19 +23,18 @@ export interface User {
 }
 
 export interface Course {
-  readonly id: number;
+  id: number;
   title: string;
   description: string;
   version: number;
-  status: string;
-  visibility: string;
+  status: CourseStatus;
+  visibility: 'public' | 'private';
   learning_objectives: string;
   prerequisites: string;
-  readonly created_at: string;
-  readonly updated_at: string;
-  order: number;
-  creator?: number | null;
-  creator_details?: User;
+  created_at: string;
+  updated_at: string;
+  creator: number;
+  creator_details: IUserDetails;
 }
 
 export interface CourseDetails extends Course {

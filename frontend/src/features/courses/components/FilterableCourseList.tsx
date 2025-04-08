@@ -1,9 +1,13 @@
 import React, {useState, useMemo, useEffect} from 'react';
-import {Box, Typography, TextField, CircularProgress, MenuItem, Select, FormControl, InputLabel, Grid, SelectChangeEvent} from '@mui/material';
+import {Box, Typography, TextField, CircularProgress, MenuItem, Select, FormControl, InputLabel, Grid, SelectChangeEvent, Pagination} from '@mui/material';
 import CourseList from '@features/courses/components/CourseList';
-import {Course} from '../../../types/common/entities';
-import CourseService, {CourseFilterOptions} from '@features/courses/services/courseService';
-import {useDebounce} from '../../../hooks/useDebounce';
+import {Course} from 'src/types/common/entities';
+import {IPaginatedResponse} from 'src/types/common';
+import {courseService, CourseFilterOptions} from '@services/resources/courseService';
+
+
+import {useDebounce} from '@hooks/useDebounce';
+
 
 interface FilterableCourseListProps {
     initialCourses?: Course[];
@@ -15,6 +19,8 @@ interface FilterableCourseListProps {
     showStatusFilter?: boolean;
     showCreatorFilter?: boolean;
     onCoursesLoaded?: (courses: Course[]) => void;
+    pageSize?: number;
+    onPageChange?: (page: number) => void;
 }
 
 const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
@@ -28,43 +34,38 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
     showStatusFilter = false,
     showCreatorFilter = false,
     onCoursesLoaded,
+    pageSize = 20,
+    onPageChange,
 }) => {
-    // State für Kurse und Filterung
     const [courses, setCourses] = useState<Course[]>(initialCourses || []);
     const [loading, setLoading] = useState<boolean>(!initialCourses);
-    const [error, setError] = useState<string | null>(null);
-
-    // Filter-State
+    const [error, setError] = useState<{message: string; details?: string} | null>(null);
+    const [totalCount, setTotalCount] = useState<number>(0);
     const [searchTerm, setSearchTerm] = useState('');
     const [status, setStatus] = useState<string>('');
     const [creator, setCreator] = useState<number | null>(null);
     const [page, setPage] = useState(1);
 
-    // Debounce für die Suche, um API-Anfragen zu reduzieren
     const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
-    // Laden der Kurse von der API, wenn keine initialCourses übergeben wurden
     useEffect(() => {
         if (!clientSideFiltering && (!initialCourses || initialCourses.length === 0)) {
             loadCourses();
         }
     }, [clientSideFiltering, initialCourses, debouncedSearchTerm, status, creator, page]);
 
-    // Wenn initialCourses bereitgestellt werden, aktualisieren wir den lokalen State
     useEffect(() => {
         if (initialCourses) {
             setCourses(initialCourses);
         }
     }, [initialCourses]);
 
-    // Callback für geladene Kurse
     useEffect(() => {
         if (onCoursesLoaded && courses.length > 0) {
             onCoursesLoaded(courses);
         }
     }, [courses, onCoursesLoaded]);
 
-    // Funktion zum Laden der Kurse mit den aktuellen Filteroptionen
     const loadCourses = async () => {
         try {
             setLoading(true);
@@ -72,49 +73,145 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
 
             const filterOptions: CourseFilterOptions = {
                 page,
-                page_size: 20,
+                page_size: pageSize,
             };
 
             if (debouncedSearchTerm) filterOptions.search = debouncedSearchTerm;
             if (status) filterOptions.status = status;
             if (creator) filterOptions.creator = creator;
 
-            const response = await CourseService.fetchCourses(filterOptions);
-            setCourses(response.results);
+            console.log('Fetching courses with options:', filterOptions);
+
+            const response = await courseService.fetchCourses(filterOptions);
+
+            // Log the complete response structure
+            console.log('API Response structure:', {
+                fullResponse: response,
+                hasData: Boolean(response),
+                dataKeys: response ? Object.keys(response) : []
+            });
+
+            // Extract the paginated data from response.data
+            const paginatedData = response;
+
+            // Log the raw response first
+            console.log('Paginated data:', paginatedData);
+
+            // Validate the paginated response structure
+            if (!paginatedData || typeof paginatedData.count !== 'number' || !Array.isArray(paginatedData.results)) {
+                throw new Error('Invalid paginated response format');
+            }
+
+            const {count, results} = paginatedData;
+
+            // Log the extracted data for debugging
+            console.log('Extracted course data:', {
+                count,
+                resultsLength: results.length,
+                firstResult: results[0],
+                paginatedStructure: {
+                    hasCount: 'count' in paginatedData,
+                    hasResults: 'results' in paginatedData,
+                    resultsIsArray: Array.isArray(results)
+                }
+            });
+
+            setCourses(results);
+            setTotalCount(count || 0);
+
+            // Log state updates
+            console.log('State updated with:', {
+                courseCount: results.length,
+                totalCount: count
+            });
+
         } catch (err) {
-            setError('Failed to load courses.');
+            console.error('Error loading courses:', err);
+            setError({
+                message: 'Failed to load courses',
+                details: err instanceof Error ? err.message : 'Unknown error occurred'
+            });
             setCourses([]);
+            setTotalCount(0);
         } finally {
             setLoading(false);
         }
     };
 
-    // Suchfeld-Handler
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
-        setPage(1); // Bei neuer Suche zurück zur ersten Seite
+        setPage(1);
     };
 
-    // Status-Filter-Handler
     const handleStatusChange = (event: SelectChangeEvent<string>) => {
         setStatus(event.target.value);
         setPage(1);
     };
 
-    // Client-seitig gefilterte Kurse
+    const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
+        setPage(value);
+        onPageChange?.(value);
+    };
+
+    const statusOptions = [
+        {value: '', label: 'All'},
+        {value: 'published', label: 'Published'},
+        {value: 'draft', label: 'Draft'},
+        {value: 'private', label: 'Private'}
+    ];
+
     const filteredCourses = useMemo(() => {
+        console.log('Filtering courses:', {
+            clientSideFiltering,
+            coursesLength: courses.length,
+            searchTerm
+        });
+
         if (!clientSideFiltering) return courses;
         return courses.filter(course => filterPredicate(course, searchTerm));
     }, [clientSideFiltering, courses, searchTerm, filterPredicate]);
 
-    // Render der Komponente
+    const renderCourseList = () => {
+        if (filteredCourses.length === 0) {
+            return (
+                <Typography color="textSecondary">
+                    {courses.length === 0 ? emptyMessage : noResultsMessage}
+                </Typography>
+            );
+        }
+
+        return (
+            <>
+                <CourseList
+                    courses={filteredCourses}
+                    onError={(error) => {
+                        console.error('CourseList error:', error);
+                        setError({
+                            message: 'Error displaying courses',
+                            details: error.message
+                        });
+                    }}
+                />
+                {totalCount > pageSize && (
+                    <Box sx={{mt: 2, display: 'flex', justifyContent: 'center'}}>
+                        <Pagination
+                            count={Math.ceil(totalCount / pageSize)}
+                            page={page}
+                            onChange={handlePageChange}
+                            color="primary"
+                        />
+                    </Box>
+                )}
+            </>
+        );
+    };
+
     return (
         <Box>
             <Typography variant="h4" gutterBottom>
                 {title}
             </Typography>
 
-            {/* Filteroptionen */}
             <Grid container spacing={2} sx={{mb: 3}}>
                 <Grid item xs={12} md={showStatusFilter || showCreatorFilter ? 6 : 12}>
                     <TextField
@@ -136,31 +233,30 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
                                 onChange={handleStatusChange}
                                 label="Status"
                             >
-                                <MenuItem value="">All</MenuItem>
-                                <MenuItem value="active">Active</MenuItem>
-                                <MenuItem value="draft">Draft</MenuItem>
-                                <MenuItem value="archived">Archived</MenuItem>
+                                {statusOptions.map(option => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
                             </Select>
                         </FormControl>
                     </Grid>
                 )}
-
-                {/* Zusätzliche Filter könnten hier hinzugefügt werden */}
             </Grid>
 
-            {/* Anzeige des Loading-Zustands */}
             {loading ? (
                 <Box sx={{display: 'flex', justifyContent: 'center', my: 4}}>
                     <CircularProgress />
                 </Box>
             ) : error ? (
-                <Typography color="error">{error}</Typography>
-            ) : filteredCourses.length === 0 ? (
-                <Typography>
-                    {courses.length === 0 ? emptyMessage : noResultsMessage}
-                </Typography>
+                <Box sx={{color: 'error.main', my: 2}}>
+                    <Typography variant="h6">{error.message}</Typography>
+                    {error.details && (
+                        <Typography variant="body2">{error.details}</Typography>
+                    )}
+                </Box>
             ) : (
-                <CourseList courses={filteredCourses} />
+                renderCourseList()
             )}
         </Box>
     );

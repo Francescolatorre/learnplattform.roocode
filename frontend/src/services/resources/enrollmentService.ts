@@ -55,8 +55,11 @@ EnrollmentService.fetchAllEnrollments = async () => {
 };
 
 EnrollmentService.fetchUserEnrollments = async () => {
+    console.log('fetchUserEnrollments function called');
     try {
+        console.log('Fetching user enrollments...');
         const response = await apiService.get<any>('/api/v1/course-enrollments/');
+        console.log('User enrollments response:', response);
         const mappedResults = response.results.map((enrollment: any) => ({
             ...enrollment,
             courseDetails: {
