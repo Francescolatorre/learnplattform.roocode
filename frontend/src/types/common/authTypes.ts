@@ -1,4 +1,4 @@
-import {User} from '@types/common/entities';
+import { User } from '@types/common/entities';
 
 export interface LoginResponse {
   access: string;

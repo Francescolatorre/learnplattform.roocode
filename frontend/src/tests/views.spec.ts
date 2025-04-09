@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { login } from '../setupTests'; // Import the login helper function
+
+import { login } from './setupTests'; // Import the login helper function
 
 // Mock login credentials
 const TEST_EMAIL = 'lead_instructor';

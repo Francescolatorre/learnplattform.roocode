@@ -1,27 +1,23 @@
+const API_BASE_URL = 'YOUR_API_BASE_URL';
+
 export const API_CONFIG = {
-  baseURL: 'http://localhost:8000',
-  version: 'api/v1',
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
   endpoints: {
     courses: {
-      list: '/courses/',
-      details: (id: string) => `/courses/${id}/`,
-      enroll: (id: string) => `/courses/${id}/enroll/`,
-      tasks: (id: string) => `/tasks/course/${id}/`,  // Update to match backend URL pattern
-      instructorCourses: '/instructor/courses/',
-      create: '/courses/',
-      update: (id: string) => `/courses/${id}/`,
-      updateStatus: (id: string) => `/api/courses/${id}/status/`, // Added this line
-      unenroll: (id: string) => `/courses/${id}/unenroll/`,
-      delete: (id: string) => `/courses/${id}/`,
+      list: '/courses',
+      create: '/courses',
+      details: (courseId: string) => `/courses/${courseId}`,
+      update: (courseId: string) => `/courses/${courseId}`,
+      delete: (courseId: string) => `/courses/${courseId}`,
+      enroll: (courseId: string) => `/courses/${courseId}/enroll`,
+      unenroll: (courseId: string) => `/courses/${courseId}/unenroll`,
+      instructorCourses: '/instructor/courses',
+      updateStatus: (courseId: string) => `/courses/${courseId}/status`,
+      progress: (courseId: string) => `/courses/${courseId}/progress`,
+      tasks: (courseId: string) => `/courses/${courseId}/tasks`,
     },
-    tasks: {
-      list: '/learning-tasks/',
-      details: (id: string) => `/learning-tasks/${id}/`
-    },
-    progress: {
-      student: (id: string) => `/students/${id}/progress/`,
-      course: (courseId: string, studentId: string) =>
-        `/courses/${courseId}/student-progress/${studentId}/`
-    }
-  }
+  },
 };

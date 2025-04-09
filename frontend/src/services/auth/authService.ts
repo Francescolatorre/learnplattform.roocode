@@ -36,18 +36,22 @@ interface UserProfile {
 }
 
 const authService = {
-  async login(username: string, password: string): Promise<{access: string; refresh: string}> {
-    const response = await apiClient.post('/auth/login/', {username, password});
+  async login(username: string, password: string): Promise<{ access: string; refresh: string }> {
+    const response = await apiClient.post('/auth/login/', { username, password });
     return response.data; // Ensure the response matches the OpenAPI schema
   },
 
   async logout(refreshToken: string, accessToken: string): Promise<void> {
     try {
-      const response = await apiClient.post<void>('/auth/logout/', {refresh: refreshToken}, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response = await apiClient.post<void>(
+        '/auth/logout/',
+        { refresh: refreshToken },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
       return response.data; // Ensure consistency in returning response data
     } catch (error: any) {
       console.error('Failed to log out:', error);
@@ -55,9 +59,9 @@ const authService = {
     }
   },
 
-  async refreshToken(refreshToken: string): Promise<{access: string}> {
+  async refreshToken(refreshToken: string): Promise<{ access: string }> {
     try {
-      const response = await apiClient.post<{access: string}>('/auth/token/refresh/', {
+      const response = await apiClient.post<{ access: string }>('/auth/token/refresh/', {
         refresh: refreshToken,
       });
       return response.data; // Extract the data property from the Axios response

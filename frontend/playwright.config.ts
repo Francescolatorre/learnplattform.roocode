@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+
 import type { Config } from '@playwright/test';
 
 // Declare process to avoid TypeScript errors

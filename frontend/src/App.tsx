@@ -1,12 +1,12 @@
-import React from 'react';
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {ThemeProvider} from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import {ThemeProvider} from '@mui/material/styles';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import React from 'react';
 
-import {theme} from './theme/theme';
-import ErrorBoundary from './components/core/ErrorBoundary';
+import ErrorBoundary from './components/ErrorBoundary';
+import NavigationBar from './components/NavigationBar';
 import AppRoutes from './routes/AppRoutes.tsx';
-import NavigationBar from './components/core/NavigationBar';
+import {theme} from './styles/theme.ts';
 
 const queryClient = new QueryClient();
 

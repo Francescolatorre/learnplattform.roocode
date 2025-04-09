@@ -19,45 +19,7 @@
     "resolveJsonModule": true,
     "jsx": "react-jsx",
     "baseUrl": "./",
-    "paths": {
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@utils/*": [
-        "src/utils/*"
-      ],
-      "@features/*": [
-        "src/features/*"
-      ],
-      "@routes/*": [
-        "src/routes/*"
-      ],
-      "@assets/*": [
-        "src/assets/*"
-      ],
-      "@hooks/*": [
-        "src/hooks/*"
-      ],
-      "@styles/*": [
-        "src/styles/*"
-      ],
-      "@context/*": [
-        "src/context/*"
-      ],
-      "@constants/*": [
-        "src/constants/*"
-      ],
-      "@services/*": [
-        "src/services/*"
-      ],
-      "@types/*": [
-        "./types/*"
-      ],
-      "@store/*": [
-        "src/store/*"
-      ]
-    },
-    "sourceMap": true,
+    "paths": {},
     "isolatedModules": true,
     "noUnusedLocals": true,
     "outDir": "dist",

@@ -37,9 +37,7 @@ export interface Course {
   creator_details: IUserDetails;
 }
 
-export interface CourseDetails extends Course {
-  // Additional fields for detailed course view
-}
+export type CourseDetails = Course
 
 export interface LearningTask {
   readonly id: number;

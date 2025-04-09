@@ -1,7 +1,8 @@
-import apiService from '../api/apiService';
+import {LearningTask} from 'src/types/common/entities';
+import {TaskCreationData} from 'src/types/common/entities';
+
 import {API_CONFIG} from '../api/apiConfig';
-import {LearningTask} from '@types/common/entities';
-import {TaskCreationData} from '@types/common/entities';
+import {apiService} from 'src/services/api/apiService';
 
 export const fetchCourseTasks = async (courseId: string) => {
   const response = await apiService.get<{results: LearningTask[]}>(

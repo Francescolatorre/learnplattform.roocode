@@ -1,48 +1,53 @@
-import axios, {InternalAxiosRequestConfig} from 'axios';
-import {API_CONFIG} from './apiConfig';
+import axios from 'axios';
 
-const apiService = axios.create({
-  baseURL: `${API_CONFIG.baseURL}/${API_CONFIG.version}`,
-  headers: {
-    'Content-Type': 'application/json',
-  }
-});
+import { API_CONFIG } from './apiConfig';
 
-// Add request interceptor for auth
-apiService.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = localStorage.getItem('accessToken'); // Changed from 'token' to 'accessToken'
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-    console.debug('Using token:', token.slice(0, 10) + '...'); // Debug token usage
-  } else {
-    console.debug('No token found in localStorage');
-  }
-  return config;
-}, (error) => {
-  console.error('Request interceptor error:', error);
-  return Promise.reject(error);
-});
+const api = axios.create(API_CONFIG);
 
-// Add response interceptor for error handling
-apiService.interceptors.response.use(
-  response => {
-    console.debug('API Response:', {
-      url: response.config.url,
-      method: response.config.method,
-      status: response.status,
-      data: response.data
-    });
-    return response;
+export const apiService = {
+  get: async (url: string) => {
+    try {
+      const response = await api.get(url);
+      return response.data;
+    } catch (error) {
+      console.error('GET request failed:', error);
+      throw error;
+    }
   },
-  error => {
-    console.error('API Error:', {
-      url: error.config?.url,
-      method: error.config?.method,
-      status: error.response?.status,
-      data: error.response?.data
-    });
-    return Promise.reject(error);
-  }
-);
-
-export default apiService;
+  post: async (url: string, data: any) => {
+    try {
+      const response = await api.post(url, data);
+      return response.data;
+    } catch (error) {
+      console.error('POST request failed:', error);
+      throw error;
+    }
+  },
+  put: async (url: string, data: any) => {
+    try {
+      const response = await api.put(url, data);
+      return response.data;
+    } catch (error) {
+      console.error('PUT request failed:', error);
+      throw error;
+    }
+  },
+  delete: async (url: string) => {
+    try {
+      const response = await api.delete(url);
+      return response.data;
+    } catch (error) {
+      console.error('DELETE request failed:', error);
+      throw error;
+    }
+  },
+  patch: async (url: string, data: any) => {
+    try {
+      const response = await api.patch(url, data);
+      return response.data;
+    } catch (error) {
+      console.error('PATCH request failed:', error);
+      throw error;
+    }
+  },
+};

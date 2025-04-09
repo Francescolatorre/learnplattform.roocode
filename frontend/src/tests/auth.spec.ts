@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { login } from '../setupTests'; // Import the login helper function from the global utility file
+
+import { login } from './setupTests'; // Import the login helper function from the global utility file
 
 // Centralized test configuration
 const TEST_USERS = {
