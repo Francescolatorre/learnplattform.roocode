@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 
-import { fetchCourseStructure } from '@services/resources/progressService';
+import {fetchCourseStructure} from 'src/services/resources/progressService';
 
 interface CourseStructure {
   modules: {

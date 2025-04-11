@@ -4,19 +4,19 @@ import react from '@vitejs/plugin-react';
 import {defineConfig} from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-
 const customPaths = {
-  '@components': resolve(__dirname, './src/components'),
-  '@utils': resolve(__dirname, './src/utils'),
-  '@routes': resolve(__dirname, './src/routes'),
   '@assets': resolve(__dirname, './src/assets'),
-  '@hooks': resolve(__dirname, './src/hooks'),
-  '@styles': resolve(__dirname, './src/styles'),
-  '@context': resolve(__dirname, './src/context'),
+  '@components': resolve(__dirname, './src/components'),
+  '@config': resolve(__dirname, './src/config'),
   '@constants': resolve(__dirname, './src/constants'),
-  '@services': resolve(__dirname, './src/services'), // Ensure this path is correct
-  '@types': resolve(__dirname, './src/types'),
+  '@context': resolve(__dirname, './src/context'),
+  '@hooks': resolve(__dirname, './src/hooks'),
+  '@routes': resolve(__dirname, './src/routes'),
+  '@services': resolve(__dirname, './src/services'),
   '@store': resolve(__dirname, './src/store'),
+  '@styles': resolve(__dirname, './src/styles'),
+  '@types': resolve(__dirname, './src/types'),
+  '@utils': resolve(__dirname, './src/utils'),
 };
 
 export default defineConfig({

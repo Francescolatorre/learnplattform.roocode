@@ -1,8 +1,8 @@
-import { List, ListItem, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import {List, ListItem, Typography} from '@mui/material';
+import React, {useEffect, useState} from 'react';
+import {Link, useParams} from 'react-router-dom';
 
-import { fetchTasksByCourse } from '@services/resources/taskService';
+import {fetchCourseTasks} from 'src/services/resources/learningTaskService';
 
 interface ILearningTask {
   id: string;
@@ -10,11 +10,13 @@ interface ILearningTask {
 }
 
 const TaskListPage: React.FC = () => {
+  const {courseId} = useParams<{courseId: string}>();
+
   const [learningTasks, setLearningTasks] = useState<ILearningTask[]>([]);
 
   useEffect(() => {
     const loadTasks = async () => {
-      const tasks = await fetchTasksByCourse();
+      const tasks = await fetchCourseTasks(courseId!);
       setLearningTasks(tasks);
     };
     loadTasks();

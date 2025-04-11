@@ -1,12 +1,12 @@
-import { describe, it, expect } from 'vitest';
+import {describe, it, expect} from 'vitest';
 
 /**
  * Test user credentials
  */
 const TEST_USERS = {
-  admin: {
-    username: 'admin',
-    password: 'adminpassword',
+  student: {
+    username: 'student',
+    password: 'student123',
   },
 };
 
@@ -20,7 +20,7 @@ describe('Backend API Tests (no frontend)', () => {
     const response = await fetch(`${API_URL}/health/`);
     expect(response.status).toBe(200);
     const data = await response.json();
-    expect(data).toHaveProperty('status', 'ok');
+    expect(data).toHaveProperty('status', 'healthy');
   });
 
   it('Login endpoint works', async () => {
@@ -30,8 +30,8 @@ describe('Backend API Tests (no frontend)', () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        username: TEST_USERS.admin.username,
-        password: TEST_USERS.admin.password,
+        username: TEST_USERS.student.username,
+        password: TEST_USERS.student.password,
       }),
     });
 
@@ -44,6 +44,7 @@ describe('Backend API Tests (no frontend)', () => {
 
   it('Courses API requires authentication', async () => {
     const response = await fetch(`${API_URL}/api/v1/courses/`);
+    // The backend should return 401 Unauthorized for unauthenticated requests
     expect(response.status).toBe(401);
   });
 
@@ -54,8 +55,8 @@ describe('Backend API Tests (no frontend)', () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        username: TEST_USERS.admin.username,
-        password: TEST_USERS.admin.password,
+        username: TEST_USERS.student.username,
+        password: TEST_USERS.student.password,
       }),
     });
 

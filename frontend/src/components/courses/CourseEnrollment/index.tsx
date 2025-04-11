@@ -1,7 +1,7 @@
-import {ErrorAlert} from '@components/common/ErrorAlert';
-import {LoadingOverlay} from '@components/common/LoadingOverlay';
-import {StatusChip} from '@components/common/StatusChip';
-import {useAuth} from '@features/auth/context/AuthContext';
+import React from 'react';
+import {useParams, useNavigate} from 'react-router-dom';
+import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
+
 import {
   Box,
   Button,
@@ -10,15 +10,16 @@ import {
   CardContent,
   Chip,
   Alert,
-  CircularProgress,
 } from '@mui/material';
-import {useQuery, useMutation, useQueryClient, UseQueryResult} from '@tanstack/react-query';
-import React from 'react';
-import {useParams, useNavigate} from 'react-router-dom';
+
+import {ErrorAlert} from '@components/common/ErrorAlert';
+import {LoadingOverlay} from '@components/common/LoadingOverlay';
+import {StatusChip} from '@components/common/StatusChip';
+import {useAuth} from '@context/auth/AuthContext';
 
 import {courseService} from '@services/resources/courseService';
-import {EnrollmentService} from '@services/resources/enrollmentService';
-import {Course, CompletionStatus} from 'src/types/common/entities';
+import enrollmentService from '@services/resources/enrollmentService';
+import {Course, CompletionStatus, EnrollmentStatus} from '@types/entities';
 
 
 interface ICourseEnrollmentProps {
@@ -52,7 +53,9 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
       if (!user?.id) {
         throw new Error('User ID is required');
       }
-      return EnrollmentService.getUserEnrollment(courseId, user.id);
+      const enrollments = await enrollmentService.fetchUserEnrollments();
+      const enrollment = enrollments.find(e => e.course === Number(courseId));
+      return enrollment ? {status: enrollment.status} : null;
     },
     enabled: Boolean(courseId) && Boolean(user?.id),
   });
@@ -60,7 +63,7 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
   // Handle enrollment mutation
   const enrollMutation = useMutation({
     mutationFn: () =>
-      EnrollmentService.create({
+      enrollmentService.create({
         course: Number(courseId),
         user: user?.id,
         status: 'active',

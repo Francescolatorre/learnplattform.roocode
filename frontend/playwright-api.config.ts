@@ -1,6 +1,5 @@
-import { defineConfig, devices } from '@playwright/test';
-
-import type { Config } from '@playwright/test';
+import type {Config} from '@playwright/test';
+import {defineConfig, devices} from '@playwright/test';
 
 // API-only config that doesn't start a web server
 const config: Config = defineConfig({

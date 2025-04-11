@@ -1,16 +1,16 @@
 
-import EnrollmentService from '@features/enrollments/services/enrollmentService';
-import { IEnrollment } from '@features/enrollments/types/enrollmentTypes';
-import React, { useEffect, useState } from 'react';
+import EnrollmentService from '@services/resources/enrollmentService';
+import {Enrollment} from 'src/types/common/entities';
+import React, {useEffect, useState} from 'react';
 
 const EnrollmentList: React.FC = () => {
-  const [enrollments, setEnrollments] = useState<IEnrollment[]>([]);
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
 
   useEffect(() => {
     const fetchEnrollments = async () => {
       try {
         const response = await EnrollmentService.getAll();
-        setEnrollments(response as IEnrollment[]);
+        setEnrollments(response as Enrollment[]);
       } catch (error) {
         console.error('Failed to fetch enrollments:', error);
       }
@@ -23,7 +23,7 @@ const EnrollmentList: React.FC = () => {
     <div>
       <h1>Enrollments</h1>
       <ul>
-        {enrollments.map((enrollment: IEnrollment) => (
+        {enrollments.map((enrollment: Enrollment) => (
           <li key={enrollment.id}>{enrollment.course_details.title}</li>
         ))}
       </ul>

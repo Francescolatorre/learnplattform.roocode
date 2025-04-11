@@ -1,15 +1,15 @@
 import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import {Navigate, useLocation} from 'react-router-dom';
 
-import { useAuth } from 'src/context/auth/AuthContext';
+import {useAuth} from '@context/auth/AuthContext';
 
 interface IProtectedRouteProps {
   children: React.ReactNode;
   allowedRoles?: string[];
 }
 
-const ProtectedRoute: React.FC<IProtectedRouteProps> = ({ children, allowedRoles = [] }) => {
-  const { user, isAuthenticated } = useAuth();
+const ProtectedRoute: React.FC<IProtectedRouteProps> = ({children, allowedRoles = []}) => {
+  const {user, isAuthenticated, isRestoring} = useAuth();
   const location = useLocation();
 
   console.debug('ProtectedRoute:', {
@@ -18,9 +18,13 @@ const ProtectedRoute: React.FC<IProtectedRouteProps> = ({ children, allowedRoles
     allowedRoles,
     path: location.pathname,
   });
+  if (isRestoring) {
+    // Show a loading spinner or placeholder while auth state is restoring
+    return <div>Loading...</div>;
+  }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location.pathname }} replace />;
+    return <Navigate to="/login" state={{from: location.pathname}} replace />;
   }
 
   // Allow access if no roles specified or if user role matches

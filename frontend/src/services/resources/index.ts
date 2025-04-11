@@ -1,3 +1,4 @@
-export * from './taskService';
-export * from '../../features/enrollments/services/enrollmentService';
+export * from './learningTaskService';
+export * from './enrollmentService';
 export * from './progressService';
+export * from './courseService';

@@ -1,28 +1,40 @@
-import { useAuth } from '@features/auth/context/AuthContext';
-import axios from 'axios';
-import { useEffect } from 'react';
+import React, {useEffect} from 'react';
+import {AuthEventType, AuthInterceptorProps} from './types';
+import {authEventService} from './AuthEventService';
 
-const AuthInterceptor = () => {
-  const { getAccessToken } = useAuth();
+// Keine Abhängigkeit mehr zu AuthContext!
+export const AuthInterceptor: React.FC<AuthInterceptorProps> = ({
+    onAuthFailure,
+    onRefreshToken
+}) => {
+    useEffect(() => {
+        // Setup API-Interceptors (z.B. mit axios)
+        const setupInterceptors = () => {
+            // Beispiel mit axios:
+            // axios.interceptors.response.use(
+            //   (response) => response,
+            //   async (error) => {
+            //     if (error.response?.status === 401) {
+            //       try {
+            //         const newToken = await onRefreshToken();
+            //         if (newToken) {
+            //           // Token zur ursprünglichen Anfrage hinzufügen und wiederholen
+            //           error.config.headers.Authorization = `Bearer ${newToken}`;
+            //           return axios(error.config);
+            //         }
+            //       } catch (refreshError) {
+            //         authEventService.publish({ type: AuthEventType.AUTH_ERROR });
+            //         onAuthFailure();
+            //       }
+            //     }
+            //     return Promise.reject(error);
+            //   }
+            // );
+        };
 
-  useEffect(() => {
-    const requestInterceptor = axios.interceptors.request.use(
-      (config: any) => {
-        const token = getAccessToken();
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      },
-      (error: any) => Promise.reject(error)
-    );
+        setupInterceptors();
+    }, [onAuthFailure, onRefreshToken]);
 
-    return () => {
-      axios.interceptors.request.eject(requestInterceptor);
-    };
-  }, [getAccessToken]);
-
-  return null; // This component doesn't render anything
+    // Der Interceptor rendert nichts, er fügt nur Logik hinzu
+    return null;
 };
-
-export default AuthInterceptor;

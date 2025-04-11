@@ -1,5 +1,5 @@
-import { useAuth } from '@features/auth/context/AuthContext';
+import {useAuth} from '@context/auth/AuthContext';
 export const getUserRole = (): string => {
-  const { getUserRole } = useAuth();
+  const {getUserRole} = useAuth();
   return getUserRole();
 };

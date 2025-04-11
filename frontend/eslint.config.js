@@ -1,5 +1,5 @@
-import typescriptEslintPlugin from '@typescript-eslint/eslint-plugin';
 import typescriptEslintParser from '@typescript-eslint/parser';
+import typescriptEslintPlugin from '@typescript-eslint/eslint-plugin';
 import {defineFlatConfig} from 'eslint-define-config';
 import eslintPluginImport from 'eslint-plugin-import';
 import eslintPluginReact from 'eslint-plugin-react';

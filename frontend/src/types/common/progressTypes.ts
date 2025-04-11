@@ -5,32 +5,6 @@ export type CompletionStatus = 'active' | 'completed' | 'dropped';
 export type TaskStatus = 'not_started' | 'in_progress' | 'completed' | 'graded' | 'pending';
 export type QuizCompletionStatus = 'passed' | 'failed' | 'in_progress';
 
-export interface User {
-  readonly id: number;
-  username: string;
-  email: string;
-  display_name?: string;
-  role: string;
-}
-
-export interface Course {
-  readonly id: number;
-  title: string;
-  description: string;
-  version: number;
-  status: string;
-  visibility: string;
-  learning_objectives: string;
-  prerequisites: string;
-  readonly created_at: string;
-  readonly updated_at: string;
-  order: number;
-  creator?: number | null;
-  creator_details?: User;
-}
-
-export type CourseDetails = Course
-
 export interface LearningTask {
   readonly id: number;
   course: number;

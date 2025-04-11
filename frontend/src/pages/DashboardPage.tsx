@@ -1,10 +1,10 @@
-import { Box, Typography, Grid, CircularProgress } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
+import {Box, Typography, Grid, CircularProgress} from '@mui/material';
+import {useQuery} from '@tanstack/react-query';
 import axios from 'axios';
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 
 import ProgressIndicator from 'src/components/ProgressIndicator';
-import { useAuth } from 'src/context/auth/AuthContext';
+import {useAuth} from '@context/auth/AuthContext';
 
 interface UserProgress {
   id: number;
@@ -13,13 +13,13 @@ interface UserProgress {
 }
 
 const Dashboard: React.FC = () => {
-  const { user } = useAuth();
+  const {user} = useAuth();
 
   useEffect(() => {
-    console.log('Dashboard component mounted');
-    console.log('User:', user);
+    console.info('Dashboard component mounted');
+    console.info('User:', user);
     return () => {
-      console.log('Dashboard component unmounted');
+      console.info('Dashboard component unmounted');
     };
   }, [user]);
 
@@ -28,9 +28,12 @@ const Dashboard: React.FC = () => {
       throw new Error('User not authenticated');
     }
     try {
-      console.log('Fetching user progress for user ID:', user.id);
-      const response = await axios.get(`/api/v1/students/progress/`); //will get progress for current user
-      console.log('User progress response:', response);
+      console.info('Fetching user progress for user ID:', user.id);
+      const accessToken = localStorage.getItem('accessToken');
+      const response = await axios.get(`/api/v1/students/progress/`, {
+        headers: {Authorization: `Bearer ${accessToken}`}
+      }); //will get progress for current user
+      console.info('User progress response:', response);
       if (!Array.isArray(response.data)) {
         console.error('Error: User progress data is not an array', response.data);
         return [];
@@ -46,11 +49,11 @@ const Dashboard: React.FC = () => {
     data: progressData,
     isLoading,
     error,
-  } = useQuery<UserProgress[]>({ queryKey: ['userProgress'], queryFn: fetchUserProgress });
+  } = useQuery<UserProgress[]>({queryKey: ['userProgress'], queryFn: fetchUserProgress});
 
   if (isLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+      <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
         <CircularProgress />
       </Box>
     );
@@ -58,7 +61,7 @@ const Dashboard: React.FC = () => {
 
   if (error) {
     return (
-      <Box sx={{ textAlign: 'center', mt: 4 }}>
+      <Box sx={{textAlign: 'center', mt: 4}}>
         <Typography variant="h6" color="error">
           {error.message}
         </Typography>
@@ -67,7 +70,7 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{p: 3}}>
       <Typography variant="h4" gutterBottom>
         Dashboard
       </Typography>

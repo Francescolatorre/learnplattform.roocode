@@ -2,7 +2,7 @@ import {CircularProgress, Typography, Button} from '@mui/material';
 import React from 'react';
 import {useParams} from 'react-router-dom';
 
-import {useTaskData} from '@services/useTaskData';
+import {useTaskData} from 'src/services/useTaskData';
 
 const TaskViewPage: React.FC = () => {
   const {id} = useParams<{id: string}>();
@@ -10,7 +10,7 @@ const TaskViewPage: React.FC = () => {
 
   const handleTaskCompletion = () => {
     // Logic to mark task as completed
-    console.log('Task completed');
+    console.info('Task completed');
   };
 
   if (isLoading) return <CircularProgress />;

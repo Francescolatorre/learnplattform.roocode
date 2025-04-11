@@ -1,0 +1,530 @@
+{
+  "menuConfig": [
+    "src\\config\\menuConfig.ts"
+  ],
+  "useCourseProgress": [
+    "src\\services\\useCourseProgress.ts"
+  ],
+  "useCourses": [
+    "src\\services\\useCourses.ts",
+    "src\\utils\\useApiResource.ts"
+  ],
+  "useCourse": [
+    "src\\services\\useCourses.ts"
+  ],
+  "useCourseTasks": [
+    "src\\services\\useCourseTasks.ts"
+  ],
+  "useTaskData": [
+    "src\\services\\useTaskData.ts"
+  ],
+  "apiService": [
+    "src\\services\\api\\api.ts",
+    "src\\services\\api\\apiService.ts"
+  ],
+  "axiosInstance": [
+    "src\\services\\api\\apiClient.ts",
+    "src\\services\\api\\axiosConfig.ts"
+  ],
+  "API_CONFIG": [
+    "src\\services\\api\\apiConfig.ts"
+  ],
+  "apiServiceBase": [
+    "src\\services\\api\\apiService.ts"
+  ],
+  "authService": [
+    "src\\services\\auth\\authService.ts"
+  ],
+  "tasks": [
+    "src\\services\\data\\tasks.ts"
+  ],
+  "users": [
+    "src\\services\\data\\users.ts"
+  ],
+  "CourseFilterOptions": [
+    "src\\services\\resources\\courseService.ts"
+  ],
+  "courseService": [
+    "src\\services\\resources\\courseService.ts",
+    "src\\services\\resources\\courseService.ts"
+  ],
+  "IEnrollmentWithDetails": [
+    "src\\services\\resources\\enrollmentService.ts",
+    "src\\types\\entities.ts"
+  ],
+  "findByFilter": [
+    "src\\services\\resources\\enrollmentService.ts"
+  ],
+  "EnrollmentService": [
+    "src\\services\\resources\\enrollmentService.ts"
+  ],
+  "fetchCourseTasks": [
+    "src\\services\\resources\\learningTaskService.ts"
+  ],
+  "createTask": [
+    "src\\services\\resources\\learningTaskService.ts"
+  ],
+  "updateTask": [
+    "src\\services\\resources\\learningTaskService.ts"
+  ],
+  "deleteTask": [
+    "src\\services\\resources\\learningTaskService.ts"
+  ],
+  "useTaskCreation": [
+    "src\\services\\resources\\learningTaskService.ts"
+  ],
+  "learningTaskService": [
+    "src\\services\\resources\\learningTaskService.ts",
+    "src\\services\\resources\\learningTaskService.ts"
+  ],
+  "fetchStudentProgressByUser": [
+    "src\\services\\resources\\progressService.ts"
+  ],
+  "fetchStudentProgressByCourse": [
+    "src\\services\\resources\\progressService.ts"
+  ],
+  "fetchAllStudentsProgress": [
+    "src\\services\\resources\\progressService.ts"
+  ],
+  "getQuizHistory": [
+    "src\\services\\resources\\progressService.ts"
+  ],
+  "getContentEffectivenessData": [
+    "src\\services\\resources\\progressService.ts"
+  ],
+  "updateTaskProgress": [
+    "src\\services\\resources\\progressService.ts"
+  ],
+  "submitTask": [
+    "src\\services\\resources\\progressService.ts"
+  ],
+  "gradeSubmission": [
+    "src\\services\\resources\\progressService.ts"
+  ],
+  "fetchCourseDetails": [
+    "src\\services\\resources\\progressService.ts"
+  ],
+  "fetchProgressAnalytics": [
+    "src\\services\\resources\\progressService.ts"
+  ],
+  "fetchStudentProgressSummary": [
+    "src\\services\\resources\\progressService.ts"
+  ],
+  "fetchInstructorDashboardData": [
+    "src\\services\\resources\\progressService.ts"
+  ],
+  "fetchCourseStructure": [
+    "src\\services\\resources\\progressService.ts"
+  ],
+  "useAppStore": [
+    "src\\store\\appStore.ts"
+  ],
+  "useCourseStore": [
+    "src\\store\\courseStore.ts"
+  ],
+  "useQuizStore": [
+    "src\\store\\quizStore.ts"
+  ],
+  "useTaskStore": [
+    "src\\store\\taskStore.ts"
+  ],
+  "markdownStyles": [
+    "src\\styles\\CourseDetailsPage.styles.ts",
+    "src\\styles\\markdownStyles.ts"
+  ],
+  "MarkdownStyles": [
+    "src\\styles\\markdownStyles.ts"
+  ],
+  "theme": [
+    "src\\styles\\theme.ts"
+  ],
+  "login": [
+    "src\\tests\\setupTests.ts"
+  ],
+  "UserSession": [
+    "src\\tests\\setupTests.ts"
+  ],
+  "Enrollment": [
+    "src\\types\\entities.ts"
+  ],
+  "UserEnrollmentsResponse": [
+    "src\\types\\entities.ts"
+  ],
+  "EnrollmentServiceType": [
+    "src\\types\\entities.ts"
+  ],
+  "Task": [
+    "src\\types\\Task.ts"
+  ],
+  "User": [
+    "src\\types\\User.ts",
+    "src\\types\\common\\entities.ts"
+  ],
+  "LoginResponse": [
+    "src\\types\\common\\authTypes.ts"
+  ],
+  "TokenRefreshResponse": [
+    "src\\types\\common\\authTypes.ts"
+  ],
+  "CompletionStatus": [
+    "src\\types\\common\\entities.ts",
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "TaskStatus": [
+    "src\\types\\common\\entities.ts",
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "QuizCompletionStatus": [
+    "src\\types\\common\\entities.ts",
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "CourseStatus": [
+    "src\\types\\common\\entities.ts"
+  ],
+  "IUserDetails": [
+    "src\\types\\common\\entities.ts"
+  ],
+  "Course": [
+    "src\\types\\common\\entities.ts"
+  ],
+  "CourseDetails": [
+    "src\\types\\common\\entities.ts"
+  ],
+  "LearningTask": [
+    "src\\types\\common\\entities.ts",
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "TaskProgress": [
+    "src\\types\\common\\entities.ts",
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "UserProgress": [
+    "src\\types\\common\\entities.ts",
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "QuizOption": [
+    "src\\types\\common\\entities.ts",
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "CourseProgressResponse": [
+    "src\\types\\common\\entities.ts",
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "CourseEnrollment": [
+    "src\\types\\common\\entities.ts",
+    "src\\types\\common\\progressTypes.ts",
+    "src\\components\\courses\\CourseEnrollment\\index.tsx"
+  ],
+  "CourseVersion": [
+    "src\\types\\common\\entities.ts",
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "QuizQuestion": [
+    "src\\types\\common\\entities.ts",
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "QuizTask": [
+    "src\\types\\common\\entities.ts",
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "QuizResponse": [
+    "src\\types\\common\\entities.ts",
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "QuizAttempt": [
+    "src\\types\\common\\entities.ts",
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "CustomTokenObtainPair": [
+    "src\\types\\common\\entities.ts",
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "Register": [
+    "src\\types\\common\\entities.ts",
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "TokenRefresh": [
+    "src\\types\\common\\entities.ts",
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "TaskCreationData": [
+    "src\\types\\common\\entities.ts",
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "IPaginatedResponse": [
+    "src\\types\\common\\paginatedResponse.ts"
+  ],
+  "ActivityEntry": [
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "CourseProgress": [
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "QuizHistory": [
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "DashboardUserInfo": [
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "DashboardOverallStats": [
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "DashboardCourseInfo": [
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "DashboardResponse": [
+    "src\\types\\common\\progressTypes.ts"
+  ],
+  "getUserRole": [
+    "src\\utils\\authUtils.ts"
+  ],
+  "PasswordStrength": [
+    "src\\utils\\passwordValidation.ts"
+  ],
+  "validatePassword": [
+    "src\\utils\\passwordValidation.ts"
+  ],
+  "getPasswordStrengthColor": [
+    "src\\utils\\passwordValidation.ts"
+  ],
+  "getPasswordStrengthLabel": [
+    "src\\utils\\passwordValidation.ts"
+  ],
+  "createApiHook": [
+    "src\\utils\\useApiResource.ts"
+  ],
+  "useTasks": [
+    "src\\utils\\useApiResource.ts"
+  ],
+  "useModules": [
+    "src\\utils\\useApiResource.ts"
+  ],
+  "useApiResource": [
+    "src\\utils\\useApiResource.ts"
+  ],
+  "useDebounce": [
+    "src\\utils\\useDebounce.ts"
+  ],
+  "App": [
+    "src\\App.tsx"
+  ],
+  "FilterableCourseList": [
+    "src\\components\\FilterableCourseList.tsx",
+    "src\\components\\FilterableCourseList\\index.tsx"
+  ],
+  "ActivityHistoryView": [
+    "src\\components\\ActivityHistoryView\\index.tsx"
+  ],
+  "withAuth": [
+    "src\\components\\auth\\withAuth.tsx",
+    "src\\pages\\Profile.tsx",
+    "src\\pages\\learningTasks\\CourseLearningTasksPage.tsx"
+  ],
+  "CourseCard": [
+    "src\\components\\courses\\CourseCard\\index.tsx"
+  ],
+  "CourseDetail": [
+    "src\\components\\courses\\CourseDetail\\index.tsx"
+  ],
+  "ICourseListProps": [
+    "src\\components\\courses\\CourseList\\index.tsx"
+  ],
+  "CourseList": [
+    "src\\components\\courses\\CourseList\\index.tsx"
+  ],
+  "CourseVersionList": [
+    "src\\components\\courses\\CourseVersionList\\index.tsx"
+  ],
+  "EditCourse": [
+    "src\\components\\courses\\EditCourse\\index.tsx"
+  ],
+  "Dashboard": [
+    "src\\components\\Dashboard\\Dashboard.tsx",
+    "src\\pages\\DashboardPage.tsx"
+  ],
+  "AdminDashboard": [
+    "src\\components\\dashboards\\AdminDashboard.tsx"
+  ],
+  "DashboardLayout": [
+    "src\\components\\dashboards\\DashboardLayout.tsx"
+  ],
+  "InstructorDashboard": [
+    "src\\components\\dashboards\\InstructorDashboard.tsx"
+  ],
+  "InstructorProgressDashboard": [
+    "src\\components\\dashboards\\InstructorProgressDashboard.tsx"
+  ],
+  "StudentDashboard": [
+    "src\\components\\dashboards\\StudentDashboard.tsx"
+  ],
+  "Column": [
+    "src\\components\\DataTable\\DataTable.tsx"
+  ],
+  "DataTable": [
+    "src\\components\\DataTable\\DataTable.tsx",
+    "src\\components\\DataTable\\DataTable.tsx"
+  ],
+  "EnrollmentList": [
+    "src\\components\\enrollments\\EnrollmentList.tsx"
+  ],
+  "ErrorBoundary": [
+    "src\\components\\ErrorBoundary\\index.tsx"
+  ],
+  "ErrorMessage": [
+    "src\\components\\ErrorMessage\\index.tsx",
+    "src\\components\\ErrorMessage\\index.tsx"
+  ],
+  "ForgotPasswordForm": [
+    "src\\components\\ForgotPasswordForm\\index.tsx"
+  ],
+  "LoadingIndicator": [
+    "src\\components\\LoadingIndicator\\LoadingIndicator.tsx"
+  ],
+  "redirectToDashboard": [
+    "src\\components\\LoginForm\\LoginForm.tsx"
+  ],
+  "LoginForm": [
+    "src\\components\\LoginForm\\LoginForm.tsx"
+  ],
+  "MainLayout": [
+    "src\\components\\MainLayout\\MainLayout.tsx"
+  ],
+  "Menu": [
+    "src\\components\\Menu\\Menu.tsx"
+  ],
+  "NavigationBar": [
+    "src\\components\\NavigationBar\\index.tsx"
+  ],
+  "PasswordStrengthIndicator": [
+    "src\\components\\PasswordStrengthIndicator\\PasswordStrengthIndicator.tsx"
+  ],
+  "ProgressIndicator": [
+    "src\\components\\ProgressIndicator\\index.tsx",
+    "src\\dashboardFeature\\components\\progress\\ProgressIndicator.tsx"
+  ],
+  "ProgressTrackingUI": [
+    "src\\components\\ProgressTrackingUI\\ProgressTrackingUI.tsx",
+    "src\\dashboardFeature\\components\\progress\\ProgressTrackingUI.tsx"
+  ],
+  "QuizHistoryDetail": [
+    "src\\components\\QuizHistoryDetail\\QuizHistoryDetail.tsx"
+  ],
+  "RegisterForm": [
+    "src\\components\\RegisterForm\\RegisterForm.tsx"
+  ],
+  "ResetPasswordForm": [
+    "src\\components\\ResetPasswordForm\\ResetPasswordForm.tsx"
+  ],
+  "StatusChipProps": [
+    "src\\components\\StatusChip\\index.tsx"
+  ],
+  "StatusChip": [
+    "src\\components\\StatusChip\\index.tsx"
+  ],
+  "TaskDetailsView": [
+    "src\\components\\TaskDetailsView\\index.tsx"
+  ],
+  "TokenRefreshHandler": [
+    "src\\components\\TokenRefreshHandler\\index.tsx"
+  ],
+  "UpcomingTasksList": [
+    "src\\components\\UpcomingTasksList\\index.tsx"
+  ],
+  "UserProfile": [
+    "src\\components\\users\\UserProfile.tsx"
+  ],
+  "AuthContext": [
+    "src\\context\\auth\\AuthContext.tsx"
+  ],
+  "AuthProvider": [
+    "src\\context\\auth\\AuthContext.tsx"
+  ],
+  "useAuth": [
+    "src\\context\\auth\\AuthContext.tsx"
+  ],
+  "AuthInterceptor": [
+    "src\\context\\auth\\AuthInterceptor.tsx"
+  ],
+  "PerformanceAnalysisView": [
+    "src\\dashboardFeature\\components\\progress\\PerformanceAnalysisView.tsx"
+  ],
+  "ProgressDebugger": [
+    "src\\dashboardFeature\\components\\progress\\ProgressDebugger.tsx"
+  ],
+  "ProgressSummaryCard": [
+    "src\\dashboardFeature\\components\\progress\\ProgressSummaryCard.tsx"
+  ],
+  "CourseDetailView": [
+    "src\\dashboardFeature\\components\\progress\\CourseDetailView\\index.tsx"
+  ],
+  "HomePage": [
+    "src\\pages\\HomePage.tsx"
+  ],
+  "LoginPage": [
+    "src\\pages\\auth\\LoginPage.tsx"
+  ],
+  "LogoutPage": [
+    "src\\pages\\auth\\LogoutPage.tsx"
+  ],
+  "AdminCoursesPage": [
+    "src\\pages\\courses\\AdminCoursesPage.tsx"
+  ],
+  "AdminTasksPage": [
+    "src\\pages\\courses\\AdminTasksPage.tsx"
+  ],
+  "CourseDetailsPage": [
+    "src\\pages\\courses\\CourseDetailsPage.tsx"
+  ],
+  "CourseProgressPage": [
+    "src\\pages\\courses\\CourseProgressPage.tsx"
+  ],
+  "InstructorCourseDetailPage": [
+    "src\\pages\\courses\\InstructorCourseDetailPage.tsx"
+  ],
+  "InstructorEditCoursePage": [
+    "src\\pages\\courses\\InstructorEditCoursePage.tsx"
+  ],
+  "StudentCourseEnrollmentPage": [
+    "src\\pages\\courses\\StudentCourseEnrollmentPage.tsx"
+  ],
+  "DashboardPageComp": [
+    "src\\pages\\DashboardPage\\index.tsx"
+  ],
+  "DetailedTaskViewPage": [
+    "src\\pages\\learningTasks\\DetailedTaskViewPage.tsx"
+  ],
+  "InstructorTasksPage": [
+    "src\\pages\\learningTasks\\InstructorTasksPage.tsx"
+  ],
+  "LearningTaskCard": [
+    "src\\pages\\learningTasks\\LearningTaskCard.tsx"
+  ],
+  "TaskViewPage": [
+    "src\\pages\\learningTasks\\LearningTaskViewPage.tsx",
+    "src\\pages\\learningTasks\\TaskViewPage.tsx"
+  ],
+  "StudentLearningTasksPage": [
+    "src\\pages\\learningTasks\\StudentLearningTasksPage.tsx"
+  ],
+  "StudentTasksPage": [
+    "src\\pages\\learningTasks\\StudentTasksPage.tsx"
+  ],
+  "TaskListPage": [
+    "src\\pages\\learningTasks\\TaskListPage.tsx"
+  ],
+  "AppRoutes": [
+    "src\\routes\\AppRoutes.tsx"
+  ],
+  "AuthRoutes": [
+    "src\\routes\\AuthRoutes.tsx"
+  ],
+  "ProtectedRoute": [
+    "src\\routes\\ProtectedRoute.tsx"
+  ],
+  "withRoleBasedAccess": [
+    "src\\routes\\RoleBasedRoute.tsx"
+  ],
+  "RoleBasedRoute": [
+    "src\\routes\\RoleBasedRoute.tsx"
+  ]
+}

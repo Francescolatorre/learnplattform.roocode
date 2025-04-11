@@ -19,7 +19,44 @@
     "resolveJsonModule": true,
     "jsx": "react-jsx",
     "baseUrl": "./",
-    "paths": {},
+    "paths": {
+      "@assets/*": [
+        "src/assets/*"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@config/*": [
+        "src/config/*"
+      ],
+      "@constants/*": [
+        "src/constants/*"
+      ],
+      "@context/*": [
+        "src/context/*"
+      ],
+      "@hooks/*": [
+        "src/hooks/*"
+      ],
+      "@routes/*": [
+        "src/routes/*"
+      ],
+      "@services/*": [
+        "src/services/*"
+      ],
+      "@store/*": [
+        "src/store/*"
+      ],
+      "@styles/*": [
+        "src/styles/*"
+      ],
+      "@types/*": [
+        "src/types/*"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ]
+    },
     "isolatedModules": true,
     "noUnusedLocals": true,
     "outDir": "dist",
@@ -31,7 +68,8 @@
     "vite.config.ts",
     "vitest.config.ts",
     "playwright.config.ts",
-    "playwright-api.config.ts"
+    "playwright-api.config.ts",
+    "e2e/setupTests.ts"
   ],
   "exclude": [
     "node_modules"

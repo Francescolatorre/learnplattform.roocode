@@ -1,29 +1,8 @@
-import {courseService} from '@services/resource/courseService';
+import {courseService} from 'src/services/resources/courseService';
 
-import {apiService} from '@services/api/apiService';
-import {Course} from 'src/types/common/entities';
-
-export interface Enrollment {
-  id: number;
-  course: number;
-  user: number;
-  status: string;
-}
-
-export interface EnrollmentServiceType {
-  getAll: (params?: {}) => Promise<Enrollment[]>;
-  getById: (id: string | number, params?: {}) => Promise<Enrollment>;
-  create: (data?: {}) => Promise<Enrollment>;
-  update: (id: string | number, data?: {}) => Promise<Enrollment>;
-  delete: (id: string | number) => Promise<void>;
-  enrollments?: Enrollment[];
-  fetchAllEnrollments: () => Promise<IEnrollmentWithDetails[]>;
-  fetchUserEnrollments: () => Promise<any>;
-  fetchCourseEnrollments: () => Promise<any>;
-  enrollInCourse: (courseId: string) => Promise<void>;
-  unenrollFromCourse: (enrollmentId: string) => Promise<void>;
-  fetchEnrolledStudents: (courseId: string) => Promise<any>;
-}
+import {apiService} from 'src/services/api/apiService';
+import {Course, CourseEnrollment as Enrollment, User} from 'src/types/common/entities';
+import {EnrollmentServiceType} from 'src/types/common/entities';
 
 export interface IEnrollmentWithDetails {
   id: number;
@@ -31,9 +10,67 @@ export interface IEnrollmentWithDetails {
   course_details: Course;
 }
 
-const EnrollmentService = apiService.createResourceService<Enrollment>(
-  '/api/v1/enrollments'
-) as EnrollmentServiceType;
+interface UserEnrollment {
+  id: number;
+  user: number;
+  course: number;
+  status: string;
+  course_details: Course;
+}
+
+interface UserEnrollmentsResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: UserEnrollment[];
+}
+
+const EnrollmentService = {
+  getAll: async (params?: {}) => {
+    try {
+      const response = await (apiService<any>() as any).get(`/api/v1/enrollments`);
+      return response.data;
+    } catch (error: any) {
+      console.error('Error fetching enrollments:', error);
+      throw error;
+    }
+  },
+  getById: async (id: string | number, params?: {}) => {
+    try {
+      const response = await (apiService<any>() as any).get(`/api/v1/enrollments/${id}`);
+      return response.data;
+    } catch (error: any) {
+      console.error('Error fetching enrollment by ID:', error);
+      throw error;
+    }
+  },
+  create: async (data?: {}) => {
+    try {
+      const response = await (apiService<any>() as any).post('/api/v1/enrollments', data);
+      return response.data;
+    } catch (error: any) {
+      console.error('Error creating enrollment:', error);
+      throw error;
+    }
+  },
+  update: async (id: string | number, data?: {}) => {
+    try {
+      const response = await (apiService<any>() as any).put(`/api/v1/enrollments/${id}`, data);
+      return response.data;
+    } catch (error: any) {
+      console.error('Error updating enrollment:', error);
+      throw error;
+    }
+  },
+  delete: async (id: string | number) => {
+    try {
+      await (apiService<any>() as any).delete(`/api/v1/enrollments/${id}`);
+    } catch (error: any) {
+      console.error('Error deleting enrollment:', error);
+      throw error;
+    }
+  },
+} as EnrollmentServiceType;
 
 EnrollmentService.fetchAllEnrollments = async () => {
   try {
@@ -42,7 +79,7 @@ EnrollmentService.fetchAllEnrollments = async () => {
     // Fetch course details for each enrollment
     const enrollmentsWithDetails = await Promise.all(
       response.map(async enrollment => {
-        const courseDetails = await courseService.fetchCourseById(enrollment.course);
+        const courseDetails = await courseService.getCourseDetails(enrollment.course.toString());
         return {
           id: enrollment.id,
           course: enrollment.course,
@@ -58,18 +95,18 @@ EnrollmentService.fetchAllEnrollments = async () => {
 };
 
 EnrollmentService.fetchUserEnrollments = async () => {
-  console.log('fetchUserEnrollments function called');
+  console.info('fetchUserEnrollments function called');
   try {
-    console.log('Fetching user enrollments...');
-    const response = await apiService.get<any>('/api/v1/course-enrollments/');
-    console.log('User enrollments response:', response);
-    const mappedResults = response.results.map((enrollment: any) => ({
+    console.info('Fetching user enrollments...');
+    const response = await (apiService<any>() as any).get('/api/v1/course-enrollments/');
+    console.info('User enrollments response:', response);
+    const mappedResults = response.results.map((enrollment: UserEnrollment) => ({
       ...enrollment,
       courseDetails: {
         ...enrollment.course_details, // Extract course details
       },
     }));
-    return {...response, results: mappedResults};
+    return {...response, results: mappedResults as any};
   } catch (error) {
     console.error('Failed to fetch user enrollments:', error);
     throw error;
@@ -77,13 +114,13 @@ EnrollmentService.fetchUserEnrollments = async () => {
 };
 
 EnrollmentService.fetchCourseEnrollments = async () => {
-  const response = await apiService.get<any>('/api/v1/course-enrollments/');
+  const response = await (apiService<any>() as any).get('/api/v1/course-enrollments/');
   return response;
 };
 
 EnrollmentService.enrollInCourse = async (courseId: string) => {
   try {
-    await apiService.post('/api/v1/course-enrollments/', {course: courseId});
+    await (apiService<any>() as any).post('/api/v1/course-enrollments/', {course: courseId});
   } catch (error: any) {
     console.error('API Error:', error);
     console.error('Response status:', error.response?.status);
@@ -102,7 +139,7 @@ EnrollmentService.enrollInCourse = async (courseId: string) => {
 
 EnrollmentService.unenrollFromCourse = async (enrollmentId: string) => {
   try {
-    await apiService.delete(`/api/v1/course-enrollments/${enrollmentId}/`);
+    await (apiService<any>() as any).delete(`/api/v1/course-enrollments/${enrollmentId}/`);
   } catch (error) {
     console.error('Failed to unenroll from course:', error);
     throw error;
@@ -110,11 +147,9 @@ EnrollmentService.unenrollFromCourse = async (enrollmentId: string) => {
 };
 
 EnrollmentService.fetchEnrolledStudents = async (courseId: string) => {
-  const response = await apiService.get<any>('/api/v1/course-enrollments/', {
-    params: {course: courseId},
-  });
+  const response = await (apiService<any>() as any).get(`/api/v1/course-enrollments/?course=${courseId}`);
   return response.data;
-};
+} as EnrollmentServiceType;
 
 export default EnrollmentService;
 interface EnrollmentFilter {

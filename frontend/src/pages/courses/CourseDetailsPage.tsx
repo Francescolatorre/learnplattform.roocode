@@ -1,4 +1,4 @@
-import { useAuth } from '@features/auth/context/AuthContext';
+import {useAuth} from '@context/auth/AuthContext';
 import {
   CircularProgress,
   Typography,
@@ -10,24 +10,24 @@ import {
   Alert,
   Snackbar,
 } from '@mui/material';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import {useParams, useNavigate} from 'react-router-dom';
 
-import { courseService } from '@services/resources/courseService';
-import { Course } from 'src/types/common/entities';
+import {courseService} from '@services/resources/courseService';
+import {Course} from 'src/types/common/entities';
 
 const CourseDetailsPage: React.FC = () => {
-  const { courseId } = useParams<{ courseId: string }>();
+  const {courseId} = useParams<{courseId: string}>();
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
+  const {user, isAuthenticated} = useAuth();
   const queryClient = useQueryClient();
   const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
 
   React.useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login', {
-        state: { from: `/courses/${courseId}` },
+        state: {from: `/courses/${courseId}`},
         replace: true,
       });
     }
@@ -68,7 +68,7 @@ const CourseDetailsPage: React.FC = () => {
   const handleEnrollClick = () => {
     if (!isAuthenticated) {
       navigate('/login', {
-        state: { from: `/courses/${courseId}` },
+        state: {from: `/courses/${courseId}`},
         replace: true,
       });
       return;
@@ -102,7 +102,7 @@ const CourseDetailsPage: React.FC = () => {
       </Typography>
 
       {!canViewTasks && (
-        <Box sx={{ mt: 2, mb: 2 }}>
+        <Box sx={{mt: 2, mb: 2}}>
           <Button
             variant="contained"
             color="primary"
@@ -112,7 +112,7 @@ const CourseDetailsPage: React.FC = () => {
             {enrollMutation.isPending ? 'Enrolling...' : 'Enroll in Course'}
           </Button>
           {enrollMutation.isError && (
-            <Typography color="error" sx={{ mt: 1 }}>
+            <Typography color="error" sx={{mt: 1}}>
               Failed to enroll. Please try again later.
             </Typography>
           )}
@@ -132,7 +132,7 @@ const CourseDetailsPage: React.FC = () => {
             </Typography>
           ) : learningTasks?.results?.length > 0 ? (
             <List>
-              {learningTasks.results.map((task: { id: string; title: string }) => (
+              {learningTasks.results.map((task: {id: string; title: string}) => (
                 <ListItem key={task.id} divider>
                   <ListItemText primary={task.title} />
                   <Button

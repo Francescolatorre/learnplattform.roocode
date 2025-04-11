@@ -1,7 +1,7 @@
-import { useAuth } from '@features/auth/context/AuthContext';
-import { useQuery, UseQueryResult, UseQueryOptions } from '@tanstack/react-query';
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
-import { useState, useEffect, useCallback } from 'react';
+import {useAuth} from '@context/auth/AuthContext';
+import {useQuery, UseQueryResult, UseQueryOptions} from '@tanstack/react-query';
+import axios, {AxiosError, AxiosRequestConfig} from 'axios';
+import {useState, useEffect, useCallback} from 'react';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'; // Ensure this matches Swagger
 
@@ -64,23 +64,23 @@ const handleError = (error: unknown): string => {
 };
 
 function getAuthHeaders(): Record<string, string> {
-  const { getAccessToken } = useAuth();
+  const {getAccessToken} = useAuth();
   const token = getAccessToken();
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  return token ? {Authorization: `Bearer ${token}`} : {};
 }
 
 /**
  * Creates hooks for standard API operations on a resource
  * @param endpoint API endpoint for the resource
  */
-export function createApiHook<T extends { id: any }, ID = string | number>(endpoint: string) {
+export function createApiHook<T extends {id: any}, ID = string | number>(endpoint: string) {
   // Form the full URL for the resource
   const resourceUrl = `${API_BASE_URL}/api/v1/${endpoint}`; // Ensure correct API version and path
 
   // Hook for fetching a collection of resources
   const useCollection = (
     config: AxiosRequestConfig = {}
-  ): ApiResponse<{ count: number; next: string | null; previous: string | null; results: T[] }> => {
+  ): ApiResponse<{count: number; next: string | null; previous: string | null; results: T[]}> => {
     const [data, setData] = useState<{
       count: number;
       next: string | null;
@@ -129,8 +129,8 @@ export function createApiHook<T extends { id: any }, ID = string | number>(endpo
         // Update the local data state if successful
         setData(prevData =>
           prevData
-            ? { ...prevData, results: [...prevData.results, response.data] }
-            : { count: 1, next: null, previous: null, results: [response.data] }
+            ? {...prevData, results: [...prevData.results, response.data]}
+            : {count: 1, next: null, previous: null, results: [response.data]}
         );
 
         return response.data;
@@ -150,11 +150,11 @@ export function createApiHook<T extends { id: any }, ID = string | number>(endpo
         setData(prevData =>
           prevData
             ? {
-                ...prevData,
-                results: prevData.results.map(item =>
-                  (item).id === id ? response.data : item
-                ),
-              }
+              ...prevData,
+              results: prevData.results.map(item =>
+                (item).id === id ? response.data : item
+              ),
+            }
             : null
         );
 
@@ -174,7 +174,7 @@ export function createApiHook<T extends { id: any }, ID = string | number>(endpo
         // Remove the item from local state
         setData(prevData =>
           prevData
-            ? { ...prevData, results: prevData.results.filter(item => (item).id !== id) }
+            ? {...prevData, results: prevData.results.filter(item => (item).id !== id)}
             : null
         );
 
@@ -197,7 +197,7 @@ export function createApiHook<T extends { id: any }, ID = string | number>(endpo
   };
 
   // Hook for fetching a single resource by ID
-  const useResource = <T extends { id: any }>(
+  const useResource = <T extends {id: any}>(
     id: ID | null,
     config: AxiosRequestConfig = {}
   ): ApiResponse<T> => {
@@ -320,10 +320,10 @@ export const useApiResource = <TData = any, TError = Error>(
 ): UseQueryResult<TData, TError> => {
   const queryKey: [string, IApiResourceOptions] = [endpoint, options];
 
-  const { getAccessToken } = useAuth();
+  const {getAccessToken} = useAuth();
 
   const queryFn = async (): Promise<TData> => {
-    const { data } = await axios.get<TData>(endpoint, {
+    const {data} = await axios.get<TData>(endpoint, {
       params: options,
       headers: {
         Authorization: `Bearer ${getAccessToken()}`,

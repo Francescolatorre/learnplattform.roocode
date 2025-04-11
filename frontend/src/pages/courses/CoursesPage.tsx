@@ -1,16 +1,16 @@
-import { Box } from '@mui/material';
+import {Box} from '@mui/material';
 import React from 'react';
 
-import FilterableCourseList from 'src/components/courses/FilterableCourseList';
+import FilterableCourseList from 'src/components/FilterableCourseList';
 
 const StudentCoursesPage: React.FC = () => {
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{p: 3}}>
       {/* Beispiel 1: Server-seitige Filterung (Standard) */}
       <FilterableCourseList
         title="Available Courses (students)"
         showStatusFilter={true}
-        onCoursesLoaded={courses => console.log('Loaded courses:', courses.length)}
+        onCoursesLoaded={courses => console.info('Loaded courses:', courses.length)}
       />
 
       {/* Alternative: Client-seitige Filterung mit initialCourses */}
@@ -31,11 +31,11 @@ const StudentCoursesPage: React.FC = () => {
 
 const InstructorCoursesPage: React.FC = () => {
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{p: 3}}>
       <FilterableCourseList
         title="My Teaching Courses"
         showStatusFilter={true}
-        // Zusätzliche Parameter für Dozenten-spezifische Ansicht
+      // Zusätzliche Parameter für Dozenten-spezifische Ansicht
       />
     </Box>
   );
@@ -43,7 +43,7 @@ const InstructorCoursesPage: React.FC = () => {
 
 const AdminCoursesPage: React.FC = () => {
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{p: 3}}>
       <FilterableCourseList
         title="All Courses (Admin View)"
         showStatusFilter={true}
@@ -54,4 +54,4 @@ const AdminCoursesPage: React.FC = () => {
   );
 };
 
-export { StudentCoursesPage, InstructorCoursesPage, AdminCoursesPage };
+export {StudentCoursesPage, InstructorCoursesPage, AdminCoursesPage};

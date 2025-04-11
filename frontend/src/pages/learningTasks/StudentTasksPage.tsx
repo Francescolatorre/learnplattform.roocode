@@ -1,18 +1,43 @@
 import {Box, Grid, Typography, CircularProgress} from '@mui/material';
 import {useQuery} from '@tanstack/react-query';
-import React from 'react';
+import React, {useEffect} from 'react';
 
-import {fetchLearningTasks} from '@services/api/learningTaskService';
+import {learningTaskService} from '@services/resources/learningTaskService';
 import {LearningTask} from 'src/types/common/entities';
+import {useAuth} from 'src/context/auth'; // Annahme: Auth-Kontext für Benutzer-ID
 
-import LearningTaskCard from '@components/learningTasks/LearningTaskCard';
+import LearningTaskCard from 'src/pages/learningTasks/LearningTaskCard';
+import {useErrorNotifier} from 'src/components/ErrorNotifier/useErrorNotifier';
 
 const StudentTasksPage: React.FC = () => {
+  const {currentUser} = useAuth();
+  const studentId = currentUser?.id;
+  const notifyError = useErrorNotifier();
+
   const {
     data: tasks,
     isLoading,
     error,
-  } = useQuery<LearningTask[]>('learningTasks', fetchLearningTasks);
+  } = useQuery<LearningTask[]>({
+    queryKey: ['learningTasks', studentId],
+    queryFn: () => {
+      if (!studentId) {
+        throw new Error('Student ID is required');
+      }
+      return learningTaskService.getByStudentId(studentId);
+    },
+    enabled: !!studentId,
+  });
+
+  useEffect(() => {
+    if (error) {
+      notifyError({
+        message: `Failed to load tasks: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        severity: 'error',
+        title: 'Task Load Error',
+      });
+    }
+  }, [error, notifyError]);
 
   if (isLoading) {
     return (
@@ -23,13 +48,8 @@ const StudentTasksPage: React.FC = () => {
   }
 
   if (error) {
-    return (
-      <Box sx={{textAlign: 'center', mt: 4}}>
-        <Typography variant="h6" color="error">
-          Failed to load tasks. Please try again later.
-        </Typography>
-      </Box>
-    );
+    // Error toast is shown, so just return null or a fallback UI
+    return null;
   }
 
   return (
@@ -37,19 +57,27 @@ const StudentTasksPage: React.FC = () => {
       <Typography variant="h4" gutterBottom>
         Your Learning Tasks
       </Typography>
-      <Grid container spacing={2}>
-        {tasks &&
-          tasks.map(task => (
+
+      {(!tasks || tasks.length === 0) ? (
+        <Box sx={{mt: 4, textAlign: 'center'}}>
+          <Typography variant="body1" color="textSecondary">
+            You don't have any learning tasks assigned yet.
+          </Typography>
+        </Box>
+      ) : (
+        <Grid container spacing={2}>
+          {tasks.map(task => (
             <Grid item xs={12} sm={6} md={4} key={task.id}>
               <LearningTaskCard
                 title={task.title ?? ''}
                 description={task.description ?? ''}
                 dueDate={task.dueDate ?? ''}
-                onViewTask={() => console.log(`View task ${task.id}`)}
+                onViewTask={() => console.info(`View task ${task.id}`)}
               />
             </Grid>
           ))}
-      </Grid>
+        </Grid>
+      )}
     </Box>
   );
 };

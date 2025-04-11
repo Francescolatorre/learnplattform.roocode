@@ -1,96 +1,125 @@
 # Learning Platform Technology Context
 
 ## Backend Technologies
+
 ### Core Framework
+
 - Django 4.2.x
 - Django REST Framework
 - Python 3.10+
 
 ### Authentication
+
 - Simple JWT
 - Token-based Authentication
 - Role-based Access Control
 
 ### Database
+
 - PostgreSQL 15+
 - psycopg2 (PostgreSQL Adapter)
-- SQLAlchemy (Future ORM Consideration)
 
 ### API Documentation
+
 - DRF Spectacular
 - OpenAPI/Swagger Specification
 
+### Additional Tools
+
+- python-dotenv (environment variable management)
+- django-cors-headers (CORS support)
+- Pillow (image processing)
+- Black (code formatter)
+- Mypy (type checking with django-stubs)
+- Pylint (static analysis)
+
 ## Frontend Technologies
+
 ### Core Framework
+
 - React 18
 - TypeScript
 - Vite Build Tool
 
 ### State Management
+
+- Zustand
+- React Context API
 - React Hooks
-- Context API
-- (Potential Future: Redux/MobX)
 
 ### UI Components
+
 - Material UI
+- @mui/x-data-grid
 - Responsive Design Principles
 - Accessibility Considerations
 
+### Data Fetching & Forms
+
+- React Query (@tanstack/react-query)
+- Axios
+- Formik
+- React Hook Form
+- Yup, Zod (validation)
+
+### Visualization & Rich Content
+
+- Chart.js, react-chartjs-2
+- Quill (rich text editor)
+- react-markdown, react-syntax-highlighter
+
+### Error Notification System
+
+- Centralized error notification system using React Context API and Material UI.
+- See [ADR-012: Centralized Frontend Error Notification System](ADRs/ADR-012-frontend-error-notification-system.md).
+
 ## Testing Frameworks
+
 ### Backend
+
 - Pytest
+- pytest-django
 - Django Test Client
-- Coverage.py
-- Hypothesis (Property-based Testing)
+- pytest-cov
+- factory-boy
 
 ### Frontend
-- Jest
+
+- Vitest
 - React Testing Library
-- Cypress (E2E Testing)
+- Playwright (E2E Testing)
+- @testing-library/jest-dom
 
 ## DevOps & Infrastructure
+
 ### Development Environment
+
 - Visual Studio Code
 - Git Version Control
-- Docker (Containerization)
-- GitHub Actions (CI/CD)
 
 ### Deployment Considerations
-- Heroku
-- AWS Elastic Beanstalk
-- Containerized Deployment
-- Serverless Potential
 
-## External Services
-### AI Integration
-- OpenAI GPT
-- Potential Future: Anthropic Claude, Google Vertex AI
+- No containerization or cloud deployment currently implemented.
 
-### Monitoring
-- Sentry
-- Prometheus
-- Grafana
+## Security
 
-## Security Tools
-- OWASP Dependency Check
-- Bandit (Python Security Linter)
-- Django Security Middleware
-- JWT Token Encryption
+- Django security best practices (middleware, settings)
+- Simple JWT for API authentication
 
 ## Performance Optimization
-- Django Caching
-- Redis Cache Backend
-- Celery for Async Tasks
-- Database Query Optimization
+
+- Standard Django and PostgreSQL optimizations
+- No Redis, Celery, or explicit caching in use
 
 ## Development Workflow
+
 - Trunk-based Development
 - Feature Branch Strategy
 - Conventional Commits
 - Semantic Versioning
+- Prettier and ESLint for code quality
+- Dependency-cruiser for dependency analysis
 
 ## Future Technology Exploration
-- GraphQL Integration
-- WebSocket Real-time Features
-- Microservices Architecture
-- Machine Learning Model Serving
+
+- No active use of GraphQL, WebSockets, microservices, or ML model serving as of this revision.

@@ -8,10 +8,10 @@ import {
   Box,
   Alert,
 } from '@mui/material';
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 
-import { Course } from 'src/types/common/entities';
+import {Course} from 'src/types/common/entities';
 
 export interface ICourseListProps {
   courses: Course[] | null | undefined;
@@ -31,18 +31,18 @@ const getStatusColor = (status: string) => {
   }
 };
 
-const CourseList: React.FC<ICourseListProps> = ({ courses, onError }) => {
+const CourseList: React.FC<ICourseListProps> = ({courses, onError}) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('CourseList mounted');
+    console.info('CourseList mounted');
     return () => {
-      console.log('CourseList unmounted');
+      console.info('CourseList unmounted');
     };
   }, []);
 
   // Add more detailed logging
-  console.log('CourseList render - courses prop:', courses);
+  console.info('CourseList render - courses prop:', courses);
 
   if (!courses) {
     return <Alert severity="info">No courses available.</Alert>;
@@ -76,7 +76,7 @@ const CourseList: React.FC<ICourseListProps> = ({ courses, onError }) => {
                 aria-label={`View course: ${course.title}`}
               >
                 <CardContent>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                  <Box sx={{display: 'flex', justifyContent: 'space-between', mb: 1}}>
                     <Typography variant="h6" component="div">
                       {course.title}
                     </Typography>
@@ -89,7 +89,7 @@ const CourseList: React.FC<ICourseListProps> = ({ courses, onError }) => {
                   <Typography variant="body2" color="text.secondary">
                     {course.description}
                   </Typography>
-                  <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
+                  <Typography variant="caption" sx={{mt: 1, display: 'block'}}>
                     Created by {creatorName}
                   </Typography>
                 </CardContent>

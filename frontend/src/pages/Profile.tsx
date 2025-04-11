@@ -1,19 +1,23 @@
-import withAuth from '@components/auth/withAuth';
-import { Typography, Container, Paper, Box } from '@mui/material';
+import {Navigate} from 'react-router-dom';
+import {Typography, Container, Paper, Box} from '@mui/material';
 import React from 'react';
 
-import { useAuth } from 'src/context/auth/AuthContext';
+import {useAuth} from '@context/auth/AuthContext';
 
 
 const Profile: React.FC = () => {
-  const { user } = useAuth();
+  const {user, isAuthenticated} = useAuth();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <Container maxWidth="md">
       <Typography variant="h4" gutterBottom>
         User Profile
       </Typography>
-      <Paper elevation={3} sx={{ p: 3 }}>
+      <Paper elevation={3} sx={{p: 3}}>
         <Typography variant="h6">Profile Details</Typography>
         {user ? (
           <Box>
@@ -29,4 +33,4 @@ const Profile: React.FC = () => {
   );
 };
 
-export default withAuth(Profile);
+export default Profile;

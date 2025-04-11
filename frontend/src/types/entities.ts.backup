@@ -1,0 +1,49 @@
+export interface Enrollment {
+    id: number;
+    course: number;
+    user: number;
+    status: string;
+}
+
+export interface IEnrollmentWithDetails {
+    id: number;
+    course: number;
+    course_details: CourseDetails;
+}
+interface CourseDetails {
+    id: number;
+    name: string;
+    description: string;
+    instructor: number;
+    credits: number;
+}
+
+interface UserEnrollment {
+    id: number;
+    course: number;
+    user: number;
+    status: string;
+    course_details: CourseDetails;
+}
+
+export interface UserEnrollmentsResponse {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: UserEnrollment[];
+}
+
+export interface EnrollmentServiceType {
+    getAll: (params?: any) => Promise<Enrollment[]>;
+    getById: (id: string | number, params?: any) => Promise<Enrollment>;
+    create: (data?: any) => Promise<Enrollment>;
+    update: (id: string | number, data?: any) => Promise<Enrollment>;
+    delete: (id: string | number) => Promise<void>;
+    enrollments?: Enrollment[];
+    fetchAllEnrollments: () => Promise<IEnrollmentWithDetails[]>;
+    fetchUserEnrollments: () => Promise<UserEnrollmentsResponse>;
+    fetchCourseEnrollments: () => Promise<any>;
+    enrollInCourse: (courseId: string) => Promise<void>;
+    unenrollFromCourse: (enrollmentId: string) => Promise<void>;
+    fetchEnrolledStudents: (courseId: string) => Promise<any>;
+}

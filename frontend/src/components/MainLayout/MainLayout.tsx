@@ -1,4 +1,4 @@
-import { Menu as MenuIcon, Logout as LogoutIcon } from '@mui/icons-material';
+import {Menu as MenuIcon, Logout as LogoutIcon} from '@mui/icons-material';
 import {
   Box,
   AppBar,
@@ -14,42 +14,42 @@ import {
   useMediaQuery,
   Chip,
 } from '@mui/material';
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 
-import { menuConfig } from '../../config/menuConfig';
-import { useAuth } from '../../features/auth/context/AuthContext';
+import {menuConfig} from '@config/menuConfig';
+import {useAuth} from '@context/auth/AuthContext';
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+const MainLayout: React.FC<MainLayoutProps> = ({children}) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
-  const { logout, user, getUserRole } = useAuth();
+  const {logout, getUserRole} = useAuth();
   const userRole = getUserRole();
 
   useEffect(() => {
-    console.log('MainLayout rendered');
-    console.log('menuConfig:', menuConfig);
-    console.log('userRole:', userRole);
-    console.log(
+    console.info('MainLayout rendered');
+    console.info('menuConfig:', menuConfig);
+    console.info('userRole:', userRole);
+    console.info(
       'Filtered menu:',
       menuConfig.filter(menu => menu.roles.includes(userRole))
     );
   }, [userRole]); // Log only when userRole changes
 
   const handleNavigation = (path: string) => {
-    console.log(`Navigating to: ${path}`);
+    console.info(`Navigating to: ${path}`);
     if (isMobile) setDrawerOpen(false);
     navigate(path);
   };
 
   const drawerContent = (
-    <Box sx={{ width: 250 }}>
+    <Box sx={{width: 250}}>
       <List>
         {menuConfig
           .filter(menu => menu.roles.includes(userRole))
@@ -57,10 +57,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             <ListItemButton
               key={menu.text}
               onClick={() => handleNavigation(menu.path)}
-              sx={{ padding: '10px 16px', '&:hover': { backgroundColor: '#f0f0f0' } }}
+              sx={{padding: '10px 16px', '&:hover': {backgroundColor: '#f0f0f0'}}}
             >
               <ListItemIcon>{/* Add icons if needed */}</ListItemIcon>
-              <ListItemText primary={menu.text} sx={{ fontSize: '1rem', color: '#333' }} />
+              <ListItemText primary={menu.text} sx={{fontSize: '1rem', color: '#333'}} />
             </ListItemButton>
           ))}
         <ListItemButton onClick={logout}>
@@ -74,7 +74,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   );
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+    <Box sx={{display: 'flex', minHeight: '100vh'}}>
       <AppBar position="fixed">
         <Toolbar>
           {isMobile && (
@@ -82,19 +82,19 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
               color="inherit"
               edge="start"
               onClick={() => setDrawerOpen(!drawerOpen)}
-              sx={{ mr: 2 }}
+              sx={{mr: 2}}
             >
               <MenuIcon />
             </IconButton>
           )}
-          <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" noWrap sx={{flexGrow: 1}}>
             Learning Platform
           </Typography>
           {userRole && (
             <Chip
               label={`Role: ${userRole}`}
               color="secondary"
-              sx={{ ml: 2, display: { xs: 'none', sm: 'flex' } }}
+              sx={{ml: 2, display: {xs: 'none', sm: 'flex'}}}
             />
           )}
         </Toolbar>
@@ -105,10 +105,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         variant="temporary"
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        ModalProps={{ keepMounted: true }}
+        ModalProps={{keepMounted: true}}
         sx={{
-          display: { xs: 'block', sm: 'none' },
-          '& .MuiDrawer-paper': { width: 250 },
+          display: {xs: 'block', sm: 'none'},
+          '& .MuiDrawer-paper': {width: 250},
         }}
       >
         {drawerContent}
@@ -119,8 +119,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         variant="permanent"
         open
         sx={{
-          display: { xs: 'none', sm: 'block' },
-          '& .MuiDrawer-paper': { width: 250, boxSizing: 'border-box' },
+          display: {xs: 'none', sm: 'block'},
+          '& .MuiDrawer-paper': {width: 250, boxSizing: 'border-box'},
         }}
       >
         {drawerContent}
@@ -131,8 +131,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         sx={{
           flexGrow: 1,
           p: 3,
-          ml: { sm: 30 },
-          mt: { xs: 8, sm: 8 }, // Add top margin to account for AppBar height
+          ml: {sm: 30},
+          mt: {xs: 8, sm: 8}, // Add top margin to account for AppBar height
         }}
       >
         {children}
@@ -141,5 +141,5 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   );
 };
 
-export { MainLayout };
+export {MainLayout};
 export default MainLayout;

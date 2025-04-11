@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import {useQuery} from '@tanstack/react-query';
 
-import courseService from '../features/courses/services/courseService';
+import {courseService} from 'src/services/resources/courseService';
 
 export const useCourses = () => {
   return useQuery({
@@ -12,7 +12,7 @@ export const useCourses = () => {
 export const useCourse = (id: string) => {
   return useQuery({
     queryKey: ['course', id],
-    queryFn: () => courseService.fetchCourseById(Number(id)),
+    queryFn: () => courseService.getCourseDetails(id),
     enabled: !!id,
     refetchOnWindowFocus: false,
   });

@@ -1,18 +1,15 @@
-import CourseList from '@components/courses/CourseList';
-import { useAuth } from '@features/auth/context/AuthContext';
-import { Box, Grid, Typography, CircularProgress } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
-import { DashboardResponse } from '@types/common/progressTypes';
+import CourseList from 'src/components/courses/CourseList';
+import {useAuth} from '@context/auth/AuthContext';
+import {Box, Grid, Typography, CircularProgress} from '@mui/material';
+import {useQuery} from '@tanstack/react-query';
+import {DashboardResponse} from 'src/types/common/progressTypes';
 import React from 'react';
-
-import { ProgressService } from '@services/resources/progressService';
-
-
-import ProgressOverview from '../progress/ProgressOverview';
+import {getStudentDashboard} from 'src/services/resources/progressService';
+import ProgressOverview from '@components/ProgressOverview';
 
 
 const StudentDashboard: React.FC = () => {
-  const { user } = useAuth();
+  const {user} = useAuth();
 
   const {
     data: dashboardData,
@@ -20,13 +17,13 @@ const StudentDashboard: React.FC = () => {
     error,
   } = useQuery<DashboardResponse>({
     queryKey: ['studentDashboard'],
-    queryFn: () => ProgressService.getStudentDashboard(user?.id),
+    queryFn: () => getStudentDashboard(user?.id),
     enabled: !!user?.id,
   });
 
   if (isLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+      <Box sx={{display: 'flex', justifyContent: 'center', p: 4}}>
         <CircularProgress />
       </Box>
     );
@@ -34,7 +31,7 @@ const StudentDashboard: React.FC = () => {
 
   if (error) {
     return (
-      <Box sx={{ p: 2 }}>
+      <Box sx={{p: 2}}>
         <Typography color="error">
           Error loading dashboard data: {(error).message}
         </Typography>
@@ -46,10 +43,10 @@ const StudentDashboard: React.FC = () => {
     return null;
   }
 
-  const { overall_stats, courses } = dashboardData;
+  const {overall_stats, courses} = dashboardData;
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{p: 3}}>
       <Typography variant="h4" gutterBottom>
         Welcome Back, {dashboardData.user_info.full_name || dashboardData.user_info.username}
       </Typography>
@@ -67,7 +64,7 @@ const StudentDashboard: React.FC = () => {
 
         {/* Active Courses */}
         <Grid item xs={12}>
-          <CourseList courses={courses} />
+          <CourseList courses={courses as any} />
         </Grid>
       </Grid>
     </Box>

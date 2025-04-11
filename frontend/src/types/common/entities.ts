@@ -1,3 +1,7 @@
+import {IPaginatedResponse} from './paginatedResponse';
+
+
+
 // src/types/common/entities.ts
 
 // Enums und Typdefinitionen
@@ -90,6 +94,8 @@ export interface CourseEnrollment {
   course_details?: Course;
   progress_percentage?: string;
 }
+
+export type Enrollment = CourseEnrollment;
 
 export interface CourseVersion {
   readonly id: number;

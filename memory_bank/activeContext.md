@@ -2,10 +2,15 @@
 
 ## Current Work
 
+- Defining requirements, user stories, and acceptance criteria for a user-facing error toast/message mechanism in the React/TypeScript frontend (2025-04-11).
+
 - working on issue regarding user is sent to login when wanting to show course details as a student
 - Consolidating tasks and aligning project focus on priority student use cases.
 - Implementing core API functionality according to OpenAPI specification.
 - Continuing model consolidation and UI development for task progress tracking.
+- Analyzed Playwright API/authentication test failures and documented requirements and risks in productContext.md (2025-04-11).
+- Confirmed backend uses Django REST Framework + Simple JWT; tests require backend at <http://localhost:8000> and valid test users.
+- Next: Ensure backend is running, test users exist, and Playwright tests align with backend authentication flow.
 
 ## Recent Changes
 
@@ -32,6 +37,9 @@
 - **Skill Progression Tracking** (TASK-SKILL-PROGRESSION-TRACKING): TODO
 - **AI-Powered Submission Evaluation** (TASK-AI-POWERED-SUBMISSION): TODO
 - **Course Exploration and Enrollment** (TASK-COURSE-EXPLORATION): TODO
+
+- Document and validate error toast/message requirements in productContext.md
+- Ensure requirements align with Material UI, accessibility, and Context API usage
 
 ## Next Steps
 

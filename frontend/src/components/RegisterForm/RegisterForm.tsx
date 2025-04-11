@@ -12,16 +12,16 @@ import {
   SelectChangeEvent,
   Alert,
 } from '@mui/material';
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 
-import { validatePassword, type PasswordStrength } from '../../utils/passwordValidation';
-import { useAuth } from '../context/AuthContext';
+import {useAuth} from '@context/auth/AuthContext';
+import {validatePassword, type PasswordStrength} from '../../utils/passwordValidation';
 
-import PasswordStrengthIndicator from './PasswordStrengthIndicator';
+import PasswordStrengthIndicator from 'src/components/PasswordStrengthIndicator/PasswordStrengthIndicator';
 
 const RegisterForm: React.FC = () => {
-  const { login } = useAuth(); // Use login after successful registration
+  const {login} = useAuth(); // Use login after successful registration
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -40,7 +40,7 @@ const RegisterForm: React.FC = () => {
     if (password) {
       setPasswordStrength(validatePassword(password));
     } else {
-      setPasswordStrength({ isValid: false, score: 0, feedback: [] });
+      setPasswordStrength({isValid: false, score: 0, feedback: []});
     }
   }, [password]);
 
@@ -80,7 +80,7 @@ const RegisterForm: React.FC = () => {
 
   return (
     <Container maxWidth="xs">
-      <Paper elevation={3} sx={{ padding: 3, marginTop: 8 }}>
+      <Paper elevation={3} sx={{padding: 3, marginTop: 8}}>
         <Typography variant="h4" align="center" gutterBottom>
           Register
         </Typography>
@@ -95,7 +95,7 @@ const RegisterForm: React.FC = () => {
             onChange={e => setUsername(e.target.value)}
             error={!!error}
             disabled={isLoading}
-            inputProps={{ 'data-test-id': 'register-username-input' }}
+            inputProps={{'data-test-id': 'register-username-input'}}
           />
           <TextField
             variant="outlined"
@@ -108,7 +108,7 @@ const RegisterForm: React.FC = () => {
             onChange={e => setEmail(e.target.value)}
             error={!!error}
             disabled={isLoading}
-            inputProps={{ 'data-test-id': 'register-email-input' }}
+            inputProps={{'data-test-id': 'register-email-input'}}
           />
           <TextField
             variant="outlined"
@@ -121,7 +121,7 @@ const RegisterForm: React.FC = () => {
             onChange={e => setPassword(e.target.value)}
             error={!!error}
             disabled={isLoading}
-            inputProps={{ 'data-test-id': 'register-password-input' }}
+            inputProps={{'data-test-id': 'register-password-input'}}
           />
           {password && (
             <PasswordStrengthIndicator
@@ -140,7 +140,7 @@ const RegisterForm: React.FC = () => {
             onChange={e => setConfirmPassword(e.target.value)}
             error={!!error}
             disabled={isLoading}
-            inputProps={{ 'data-test-id': 'register-confirm-password-input' }}
+            inputProps={{'data-test-id': 'register-confirm-password-input'}}
           />
           <FormControl fullWidth margin="normal" data-test-id="register-role-select">
             <InputLabel>Role</InputLabel>
@@ -149,7 +149,7 @@ const RegisterForm: React.FC = () => {
               label="Role"
               onChange={handleRoleChange}
               disabled={isLoading}
-              inputProps={{ 'data-test-id': 'register-role-select-input' }}
+              inputProps={{'data-test-id': 'register-role-select-input'}}
             >
               <MenuItem value="user" data-test-id="register-role-user-option">
                 User
@@ -160,7 +160,7 @@ const RegisterForm: React.FC = () => {
             </Select>
           </FormControl>
           {error && (
-            <Alert severity="error" sx={{ mt: 2 }}>
+            <Alert severity="error" sx={{mt: 2}}>
               {error}
             </Alert>
           )}
@@ -169,7 +169,7 @@ const RegisterForm: React.FC = () => {
             fullWidth
             variant="contained"
             color="primary"
-            sx={{ marginTop: 2 }}
+            sx={{marginTop: 2}}
             disabled={isLoading || !passwordStrength.isValid}
             data-test-id="register-submit-button"
           >

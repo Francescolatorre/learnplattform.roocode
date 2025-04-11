@@ -1,6 +1,5 @@
-import { defineConfig, devices } from '@playwright/test';
-
-import type { Config } from '@playwright/test';
+import type {Config} from '@playwright/test';
+import {defineConfig, devices} from '@playwright/test';
 
 // Declare process to avoid TypeScript errors
 declare const process: {
@@ -11,7 +10,7 @@ declare const process: {
 };
 
 const config: Config = defineConfig({
-  testDir: './src/tests',
+  testDir: './e2e',
   timeout: 30 * 1000,
   expect: {
     timeout: 5000,
@@ -31,7 +30,7 @@ const config: Config = defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {...devices['Desktop Chrome']},
     },
   ],
 

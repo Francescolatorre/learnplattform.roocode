@@ -1,203 +1,144 @@
-import AuthInterceptor from '@context/auth/AuthInterceptor';
-import React, { createContext, useState, useContext, ReactNode, useEffect, memo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {createContext, useContext, useState, useEffect} from 'react';
+import {AuthContextProps, AuthEventType, AuthUser} from './types';
+import {authEventService} from './AuthEventService';
+import authService from '../../services/auth/authService';
 
-import authService from '@services/auth/authService';
-
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  role: string;
-}
-
-interface AuthContextProps {
-  userRole: string;
-  user: User | null;
-  isAuthenticated: boolean;
-  login: (usernameOrEmail: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-  getAccessToken: () => string | null;
-  getRefreshToken: () => string | null;
-  getUserRole: () => string;
-  refreshToken: () => Promise<string | null>;
-  setAuthTokens: (tokens: { access: string; refresh: string }) => void;
-  redirectToDashboard: () => void;
-  setError: (message: string) => void;
-  errorMessage: string;
-}
-
-export const AuthContext = createContext<AuthContextProps>({
-  userRole: 'guest',
-  user: null,
-  isAuthenticated: false,
-  login: async () => {},
-  logout: async () => {
-    try {
-      const refreshTokenValue = getRefreshToken();
-      const accessTokenValue = getAccessToken();
-      if (refreshTokenValue && accessTokenValue) {
-        await authService.logout(refreshTokenValue, accessTokenValue);
-      }
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  },
-  getAccessToken: () => null,
-  getRefreshToken: () => null,
-  getUserRole: () => 'guest',
-  refreshToken: async () => null,
-  setAuthTokens: () => {},
-  redirectToDashboard: () => {},
-  setError: () => {},
-  errorMessage: '',
+// Erstelle den Kontext mit einem Default-Wert
+const AuthContext = createContext<AuthContextProps>({
+    user: null,
+    isAuthenticated: false,
+    isRestoring: false,
+    login: async () => { },
+    logout: async () => { },
+    getUserRole: () => 'guest',
+    redirectToDashboard: () => { },
+    setError: () => { },
 });
 
-const getAccessToken = (): string | null => localStorage.getItem('accessToken');
-const getRefreshToken = (): string | null => localStorage.getItem('refreshToken');
+export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
+    const [user, setUser] = useState<AuthUser | null>(null);
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+    const [error, setErrorState] = useState<string | null>(null);
+    const [tokens, setTokens] = useState<{access: string; refresh: string} | null>(null);
+    const [isRestoring, setIsRestoring] = useState<boolean>(true);
 
-const AuthProviderComponent: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const navigate = useNavigate();
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [isRefreshingToken, setIsRefreshingToken] = useState(false);
+    // Initialize authentication state from localStorage on mount
+    useEffect(() => {
+        // Subscribe to Auth-Events
+        const unsubscribe = authEventService.subscribe((event) => {
+            switch (event.type) {
+                case AuthEventType.AUTH_ERROR:
+                    setUser(null);
+                    setIsAuthenticated(false);
+                    setTokens(null);
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('refreshToken');
+                    break;
+                // Handle more events if needed...
+            }
+        });
 
-  const getUserRole = (): string => user?.role || localStorage.getItem('user_role') || 'guest';
-
-  const login = async (username: string, password: string) => {
-    try {
-      const { access, refresh } = await authService.login(username, password);
-      localStorage.setItem('accessToken', access); // Ensure consistent key usage
-      localStorage.setItem('refreshToken', refresh);
-      console.log('Login successful', { access, refresh });
-
-      try {
-        const userProfile = await authService.getUserProfile(access);
-        setUser(userProfile);
-      } catch (error) {
-        console.error('Error fetching user profile:', error);
-        setUser(null);
-      }
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error('Login failed:', error);
-      throw error;
-    }
-  };
-
-  const setAuthTokens = (tokens: { access: string; refresh: string }) => {
-    localStorage.setItem('accessToken', tokens.access);
-    localStorage.setItem('refreshToken', tokens.refresh);
-    setIsAuthenticated(true);
-  };
-
-  const logout = async () => {
-    console.log('Logout initiated');
-    try {
-      const refreshTokenValue = getRefreshToken();
-      const accessTokenValue = getAccessToken();
-      if (refreshTokenValue && accessTokenValue) {
-        await authService.logout(refreshTokenValue, accessTokenValue);
-      }
-    } catch (error) {
-      console.error('Logout failed:', error);
-    } finally {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      setUser(null);
-      setIsAuthenticated(false);
-    }
-  };
-
-  const refreshTokenFn = async () => {
-    console.log('refreshTokenFn called');
-    if (isRefreshingToken) return getAccessToken();
-
-    try {
-      setIsRefreshingToken(true);
-      const storedRefreshToken = getRefreshToken();
-      if (!storedRefreshToken) throw new Error('No refresh token found');
-
-      const { access } = await authService.refreshToken(storedRefreshToken);
-      localStorage.setItem('accessToken', access);
-      return access;
-    } catch (error) {
-      console.error('Error refreshing token:', error);
-      logout();
-      return null;
-    } finally {
-      setIsRefreshingToken(false);
-    }
-  };
-
-  const initializeAuth = async () => {
-    console.log('initializeAuth called');
-    if (isAuthenticated) {
-      console.log('initializeAuth: User is already authenticated');
-      try {
-        const accessToken = await refreshTokenFn();
-        if (accessToken) {
-          console.log('initializeAuth: Access token refreshed', accessToken);
-          const userProfile = await authService.getUserProfile(accessToken);
-          setUser(userProfile);
+        // Restore tokens and user from localStorage
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (accessToken && refreshToken) {
+            setTokens({access: accessToken, refresh: refreshToken});
+            // Fetch user profile with access token
+            authService.getUserProfile(accessToken)
+                .then(profile => {
+                    // Map UserProfile to AuthUser (convert id to string)
+                    const mappedUser = {...profile, id: String(profile.id)};
+                    setUser(mappedUser);
+                    setIsAuthenticated(true);
+                })
+                .catch(() => {
+                    setUser(null);
+                    setIsAuthenticated(false);
+                    setTokens(null);
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('refreshToken');
+                })
+                .finally(() => {
+                    setIsRestoring(false);
+                });
+        } else {
+            setIsRestoring(false);
         }
-        setIsAuthenticated(true);
-      } catch (error) {
-        console.error('Error initializing auth:', error);
+
+        // Cleanup on unmount
+        return () => unsubscribe();
+    }, []);
+
+    // Refactored login to use authService and persist tokens/user
+    const login = async (username: string, password: string) => {
+        try {
+            // Authenticate with backend
+            const {access, refresh} = await authService.login(username, password);
+            // Store tokens in localStorage
+            localStorage.setItem('accessToken', access);
+            localStorage.setItem('refreshToken', refresh);
+            setTokens({access, refresh});
+
+            // Fetch user profile
+            const profile = await authService.getUserProfile(access);
+            // Map UserProfile to AuthUser (convert id to string)
+            const mappedUser = {...profile, id: String(profile.id)};
+            setUser(mappedUser);
+            setIsAuthenticated(true);
+
+            // Publish event
+            authEventService.publish({
+                type: AuthEventType.LOGIN,
+                payload: profile
+            });
+        } catch (error) {
+            setUser(null);
+            setIsAuthenticated(false);
+            setTokens(null);
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            setErrorState('Login failed');
+            console.error('Login failed:', error);
+            throw error;
+        }
+    };
+
+    const logout = async () => {
+        // Clear tokens and user state
+        setUser(null);
         setIsAuthenticated(false);
-        console.log('initializeAuth: Authentication failed, setting isAuthenticated to false');
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      setLoading(false);
-    }
-  };
+        setTokens(null);
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
 
-  useEffect(() => {
-    initializeAuth();
-  }, []);
+        // Publish event
+        authEventService.publish({type: AuthEventType.LOGOUT});
+    };
 
-  useEffect(() => {
-    if (errorMessage) console.error('Error:', errorMessage);
-  }, [errorMessage]);
+    const getUserRole = () => user && (user as any).role ? (user as any).role : 'guest';
 
-  const setError = (message: string) => {
-    setErrorMessage(message);
-    <AuthInterceptor />;
-  };
+    const redirectToDashboard = () => {
+        // Placeholder: Replace with navigation logic as needed
+        window.location.href = '/dashboard';
+    };
 
-  return loading ? (
-    <div>Loading...</div>
-  ) : (
-    <AuthContext.Provider
-      value={{
-        userRole: getUserRole(),
+    const setError = (errorMsg: string) => {
+        setErrorState(errorMsg);
+    };
+
+    const value: AuthContextProps = {
         user,
         isAuthenticated,
+        isRestoring,
         login,
         logout,
-        getAccessToken,
-        getRefreshToken,
         getUserRole,
-        refreshToken: refreshTokenFn,
-        setAuthTokens,
-        redirectToDashboard: () => navigate('/profile'),
-        setError: setError,
-        errorMessage: errorMessage,
-      }}
-    >
-      <AuthInterceptor />
-      {children}
-    </AuthContext.Provider>
-  );
+        redirectToDashboard,
+        setError,
+    };
+
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export const AuthProvider = memo(AuthProviderComponent);
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within an AuthProvider');
-  return context;
-};
+// Hook für den einfachen Zugriff auf den Auth-Kontext
+export const useAuth = () => useContext(AuthContext);
