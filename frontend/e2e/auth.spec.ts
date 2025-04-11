@@ -59,7 +59,7 @@ test.describe('Authentication', () => {
     // This checks for the error notification from the ErrorNotifier component
     const errorNotification = await page.waitForSelector('.MuiAlert-standardError, .MuiSnackbar-root', {timeout: 5000});
     expect(await errorNotification.isVisible()).toBeTruthy();
-    
+
     // Verify the error message content
     const errorMessage = await errorNotification.textContent();
     expect(errorMessage).toMatch(/login failed|invalid credentials|error/i);

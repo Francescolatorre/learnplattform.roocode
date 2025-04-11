@@ -27,14 +27,14 @@ export const login = async (page: Page, username: string, password: string): Pro
     await page.fill('input[data-testid="login-username-input"]', username);
     await page.fill('input[data-testid="login-password-input"]', password);
     await page.click('button[type="submit"]');
-    
+
     // Check for error notification first (in case of login failure)
     try {
         const errorNotification = await page.waitForSelector('.MuiAlert-standardError, .MuiSnackbar-root', {
             timeout: 3000,
             state: 'visible'
         });
-        
+
         if (await errorNotification.isVisible()) {
             const errorText = await errorNotification.textContent();
             throw new Error(`Login failed: ${errorText}`);
@@ -48,7 +48,7 @@ export const login = async (page: Page, username: string, password: string): Pro
             throw err;
         }
     }
-    
+
     // Wait for successful navigation to dashboard
     await page.waitForURL('/dashboard', {timeout: 10000});
     return {
@@ -106,3 +106,13 @@ export class UserSession {
         await this.page.goto('/login');
     }
 }
+
+// Utility to wait for global loading indicator (isRestoring/loading state) to disappear
+// Assumes global loading uses [role="progressbar"] not inside the login button
+
+export async function waitForGlobalLoadingToDisappear(page: Page) {
+    // Wait for any global progressbar (not inside login button) to disappear
+    // Adjust selector if your app uses a more specific data-testid or class for the global loading
+    await page.waitForSelector('[role="progressbar"]', {state: 'detached', timeout: 10000});
+}
+

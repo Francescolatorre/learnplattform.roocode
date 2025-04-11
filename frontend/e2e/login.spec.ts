@@ -1,5 +1,5 @@
 import {test, expect} from '@playwright/test';
-import {TEST_USERS} from './setupTests';
+import {TEST_USERS, waitForGlobalLoadingToDisappear} from './setupTests';
 
 test.describe('Login Functionality', () => {
   test('should log in successfully with valid credentials', async ({page}) => {
@@ -14,6 +14,7 @@ test.describe('Login Functionality', () => {
 
     // Wait for navigation or a success indicator
     await page.waitForURL('/dashboard');
+    await waitForGlobalLoadingToDisappear(page);
 
     // Assert that the user is logged in
     // Check for the dashboard page title
@@ -36,7 +37,7 @@ test.describe('Login Functionality', () => {
       timeout: 5000
     });
     expect(await errorNotification.isVisible()).toBeTruthy();
-    
+
     // Check the error message content
     const errorMessage = await errorNotification.textContent();
     expect(errorMessage).toMatch(/login failed|invalid credentials|error/i);
