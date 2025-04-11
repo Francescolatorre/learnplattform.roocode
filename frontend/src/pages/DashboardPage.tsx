@@ -34,11 +34,17 @@ const Dashboard: React.FC = () => {
         headers: {Authorization: `Bearer ${accessToken}`}
       }); //will get progress for current user
       console.info('User progress response:', response);
-      if (!Array.isArray(response.data)) {
-        console.error('Error: User progress data is not an array', response.data);
+
+      // Mitigation: adapt to backend object structure
+      if (response.data && Array.isArray(response.data.courses)) {
+        return response.data.courses;
+      } else if (Array.isArray(response.data)) {
+        // fallback for legacy array response
+        return response.data;
+      } else {
+        console.error('Error: Unexpected user progress data structure', response.data);
         return [];
       }
-      return response.data;
     } catch (error: any) {
       console.error('Error fetching user progress:', error.message);
       throw new Error('Failed to load progress data.');
@@ -75,8 +81,14 @@ const Dashboard: React.FC = () => {
         Dashboard
       </Typography>
       <Grid container spacing={2}>
-        {(progressData || []).slice(0, 3).map(progress => (
-          <Grid item xs={12} sm={6} md={4} key={progress.id}>
+        {(progressData || []).slice(0, 3).map((progress, idx) => (
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            key={progress.id !== undefined ? progress.id : `progress-${idx}`}
+          >
             <ProgressIndicator value={progress.percentage} label={progress.label} />
           </Grid>
         ))}
