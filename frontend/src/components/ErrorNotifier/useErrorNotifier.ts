@@ -2,20 +2,29 @@ import {useCallback} from 'react';
 import {useErrorNotifierContext} from './ErrorProvider';
 import {ErrorNotification} from './types';
 
-export function useErrorNotifier() {
+/**
+ * useNotification
+ * Generic notification hook for all severities (error, success, info, warning).
+ */
+function useNotification() {
     const {addError} = useErrorNotifierContext();
 
-    // Optionally, allow for a more ergonomic API (e.g., just pass message)
-    const notifyError = useCallback(
-        (error: Omit<ErrorNotification, 'id'> | string) => {
-            if (typeof error === 'string') {
-                addError({message: error});
+    const notify = useCallback(
+        (
+            notification: Omit<ErrorNotification, 'id'> | string,
+            severity: 'error' | 'success' | 'info' | 'warning' = 'error'
+        ) => {
+            if (typeof notification === 'string') {
+                addError({message: notification, severity});
             } else {
-                addError(error);
+                addError({...notification, severity: notification.severity ?? severity});
             }
         },
         [addError]
     );
 
-    return notifyError;
+    return notify;
 }
+
+export {useNotification};
+export {useNotification as useErrorNotifier};

@@ -8,11 +8,24 @@ interface ErrorToastProps {
     onDismiss: (id: number) => void;
 }
 
+/**
+ * ErrorToast.tsx
+ * Refactored for ADR-012 compliance: Only one error toast visible at a time.
+ * New errors replace or queue previous ones.
+ * Accessibility and extensibility preserved.
+ */
 export const ErrorToast: React.FC<ErrorToastProps> = ({errors, onDismiss}) => {
-    // Stacked display: show all errors, each in its own Snackbar, offset vertically
+    const error = errors[0];
+    if (!error) return null;
+
     return (
-        <Stack
-            spacing={2}
+        <Snackbar
+            open
+            anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
+            autoHideDuration={error.duration ?? 6000}
+            onClose={(_, reason) => {
+                if (reason !== 'clickaway') onDismiss(error.id);
+            }}
             sx={{
                 position: 'fixed',
                 zIndex: (theme) => theme.zIndex.snackbar,
@@ -20,47 +33,32 @@ export const ErrorToast: React.FC<ErrorToastProps> = ({errors, onDismiss}) => {
                 right: 24,
                 maxWidth: 400,
                 width: '100%',
-                pointerEvents: 'none',
+                pointerEvents: 'auto',
             }}
             aria-live="assertive"
             aria-atomic="true"
         >
-            {errors.map((error, idx) => (
-                <Snackbar
-                    key={error.id}
-                    open
-                    anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
-                    autoHideDuration={error.duration ?? 6000}
-                    onClose={(_, reason) => {
-                        if (reason !== 'clickaway') onDismiss(error.id);
-                    }}
-                    sx={{
-                        pointerEvents: 'auto',
-                        mb: idx * 7, // offset each snackbar
-                    }}
-                >
-                    <Alert
-                        severity={error.severity ?? 'error'}
-                        variant="filled"
-                        onClose={() => onDismiss(error.id)}
-                        action={
-                            <IconButton
-                                aria-label="close"
-                                color="inherit"
-                                size="small"
-                                onClick={() => onDismiss(error.id)}
-                            >
-                                <CloseIcon fontSize="inherit" />
-                            </IconButton>
-                        }
-                        role="alert"
-                        sx={{alignItems: 'center', minWidth: 300}}
+            <Alert
+                severity={error.severity ?? 'error'}
+                variant="filled"
+                onClose={() => onDismiss(error.id)}
+                action={
+                    <IconButton
+                        aria-label="close"
+                        color="inherit"
+                        size="small"
+                        onClick={() => onDismiss(error.id)}
                     >
-                        {error.title && <AlertTitle>{error.title}</AlertTitle>}
-                        {error.message}
-                    </Alert>
-                </Snackbar>
-            ))}
-        </Stack>
+                        <CloseIcon fontSize="inherit" />
+                    </IconButton>
+                }
+                role="alert"
+                sx={{alignItems: 'center', minWidth: 300}}
+            >
+                {error.title && <AlertTitle>{error.title}</AlertTitle>}
+                {error.message}
+            </Alert>
+        </Snackbar>
     );
 };
+// ADR-012: Centralized error notification system, only one error visible at a time.

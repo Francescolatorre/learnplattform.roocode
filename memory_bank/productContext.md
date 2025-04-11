@@ -56,6 +56,48 @@ Democratize personalized learning through AI-powered adaptive assessment and int
 5. User Progress Tracking
 6. Basic Recommendation Engine
 
+## Frontend Error Toast/Message Mechanism (DRAFT, 2025-04-11)
+
+### Overview
+
+A centralized, accessible error notification system is required for the React/TypeScript frontend. This mechanism must provide consistent, user-friendly error toasts/messages, leveraging Material UI and the React Context API, and must comply with accessibility standards (including ARIA and keyboard navigation). The solution is governed by ADR-012: Centralized Frontend Error Notification System.
+
+### Requirements
+
+- The error notification system must be implemented as a centralized provider using the React Context API.
+- Error toasts/messages must use Material UI components (e.g., Snackbar, Alert) for visual consistency and accessibility.
+- All error notifications must be accessible to users with disabilities, including:
+  - Proper ARIA roles and attributes (e.g., role="alert", aria-live="assertive").
+  - Keyboard navigation support (e.g., focus management, dismiss via keyboard).
+- The system must expose a simple API (custom hook) for triggering error notifications from any component.
+- Only one error toast/message should be visible at a time; new errors replace or queue previous ones.
+- Error messages must be clear, concise, and actionable for end users.
+- The system must be extensible for future notification types (success, warning, info) and custom actions.
+- The provider must be integrated at the application root to ensure global availability.
+- The implementation must be covered by unit and integration tests.
+- The solution must not introduce significant performance overhead (avoid excessive re-renders).
+- All requirements and implementation must align with ADR-012 and be referenced in technical documentation.
+
+### User Stories
+
+- **US-ERR-001:** As a user, I want to see a clear, accessible error message whenever an error occurs, so I understand what went wrong and what to do next.
+- **US-ERR-002:** As a user relying on assistive technology, I want error notifications to be announced and navigable via keyboard, so I am not excluded from critical feedback.
+- **US-ERR-003:** As a developer, I want a simple, reusable API to trigger error toasts from any component, so I can provide consistent error feedback without duplicating logic.
+- **US-ERR-004:** As a user, I want to be able to dismiss error messages using the keyboard or mouse, so I can control my experience.
+
+### Acceptance Criteria
+
+- [ ] Error toasts/messages are displayed using Material UI components and match the platform's visual style.
+- [ ] Error notifications are announced to screen readers (e.g., via role="alert" and aria-live attributes).
+- [ ] Users can dismiss error toasts/messages using both mouse and keyboard (e.g., Escape key, close button).
+- [ ] Only one error toast/message is visible at a time; new errors replace or queue previous ones.
+- [ ] The error notification system is accessible from any component via a custom hook (e.g., useErrorNotifier).
+- [ ] The provider is integrated at the application root and covers the entire app.
+- [ ] The system is covered by unit and integration tests, including accessibility tests.
+- [ ] The implementation is documented and references ADR-012.
+- [ ] No significant performance regressions are introduced (verified by profiling if needed).
+- [ ] The system is extensible for future notification types and custom actions.
+
 ## Success Metrics
 
 - User Engagement Rate

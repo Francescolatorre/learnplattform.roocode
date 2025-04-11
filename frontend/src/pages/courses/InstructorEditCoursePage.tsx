@@ -6,14 +6,14 @@ import {
   Paper,
   Box,
   CircularProgress,
-  Alert,
 } from '@mui/material';
-import { useCourses } from '@utils/useApiResource';
-import React, { useEffect, useState } from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { useParams, useNavigate } from 'react-router-dom';
+import {useCourses} from '@utils/useApiResource';
+import React, {useEffect, useState} from 'react';
+import {useNotification} from '../../components/ErrorNotifier/useErrorNotifier';
+import {useForm, SubmitHandler} from 'react-hook-form';
+import {useParams, useNavigate} from 'react-router-dom';
 
-import { useAuth } from 'src';
+import {useAuth} from 'src';
 
 import CourseService from '../services/courseService';
 
@@ -25,18 +25,17 @@ interface ICourseFormData {
 }
 
 const InstructorEditCoursePage: React.FC = () => {
-  const { courseId } = useParams<{ courseId: string }>();
+  const {courseId} = useParams<{courseId: string}>();
   const navigate = useNavigate();
-  const { data: course, loading: isLoading, error, refetch } = useCourses.useResource(courseId!);
+  const {data: course, loading: isLoading, error, refetch} = useCourses.useResource(courseId!);
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: {errors},
   } = useForm<ICourseFormData>();
-  const { user } = useAuth();
+  const {user} = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Reset form values when course data is loaded
   useEffect(() => {
@@ -64,7 +63,7 @@ const InstructorEditCoursePage: React.FC = () => {
       await CourseService.updateCourse(Number(courseId), data);
       navigate(`/courses/${courseId}`);
     } catch (err) {
-      setSubmitError((err as any)?.message || 'Failed to update course. Please try again.');
+      notify((err as any)?.message || 'Failed to update course. Please try again.', 'error');
       console.error('Failed to update course:', err);
     } finally {
       setIsSubmitting(false);
@@ -72,17 +71,24 @@ const InstructorEditCoursePage: React.FC = () => {
   };
 
   if (isLoading) return <CircularProgress />;
-  if (error) return <Alert severity="error">Error: {error}</Alert>;
+  const notify = useNotification();
+  useEffect(() => {
+    if (error) {
+      notify(typeof error === 'string' ? error : 'An error occurred while loading the course.', 'error');
+    }
+    // Only notify when error changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
 
   return (
     <Container maxWidth="sm">
-      <Paper sx={{ p: 3 }}>
+      <Paper sx={{p: 3}}>
         <Typography variant="h5" gutterBottom>
           Edit Course
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
           <TextField
-            {...register('title', { required: 'Title is required' })}
+            {...register('title', {required: 'Title is required'})}
             label="Title"
             fullWidth
             margin="normal"
@@ -91,7 +97,7 @@ const InstructorEditCoursePage: React.FC = () => {
           />
           <TextField
             {...register('description', {
-              maxLength: { value: 500, message: 'Description is too long' },
+              maxLength: {value: 500, message: 'Description is too long'},
             })}
             label="Description"
             fullWidth
@@ -101,7 +107,7 @@ const InstructorEditCoursePage: React.FC = () => {
             error={!!errors.description}
             helperText={errors.description?.message}
           />
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+          <Box sx={{display: 'flex', justifyContent: 'flex-end', mt: 2}}>
             <Button
               type="submit"
               variant="contained"

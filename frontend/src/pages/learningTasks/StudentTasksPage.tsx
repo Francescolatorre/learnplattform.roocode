@@ -7,12 +7,12 @@ import {LearningTask} from 'src/types/common/entities';
 import {useAuth} from 'src/context/auth'; // Annahme: Auth-Kontext für Benutzer-ID
 
 import LearningTaskCard from 'src/pages/learningTasks/LearningTaskCard';
-import {useErrorNotifier} from 'src/components/ErrorNotifier/useErrorNotifier';
+import {useNotification} from 'src/components/ErrorNotifier/useErrorNotifier';
 
 const StudentTasksPage: React.FC = () => {
   const {currentUser} = useAuth();
   const studentId = currentUser?.id;
-  const notifyError = useErrorNotifier();
+  const notify = useNotification();
 
   const {
     data: tasks,
@@ -31,13 +31,13 @@ const StudentTasksPage: React.FC = () => {
 
   useEffect(() => {
     if (error) {
-      notifyError({
+      notify({
         message: `Failed to load tasks: ${error instanceof Error ? error.message : 'Unknown error'}`,
         severity: 'error',
         title: 'Task Load Error',
       });
     }
-  }, [error, notifyError]);
+  }, [error, notify]);
 
   if (isLoading) {
     return (

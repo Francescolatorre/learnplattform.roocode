@@ -20,7 +20,7 @@ const ProtectedRoute: React.FC<IProtectedRouteProps> = ({children, allowedRoles 
   });
   if (isRestoring) {
     // Show a loading spinner or placeholder while auth state is restoring
-    return <div>Loading...</div>;
+    return <div data-testid="protected-route-loading">Loading...</div>;
   }
 
   if (!isAuthenticated) {

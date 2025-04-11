@@ -15,7 +15,6 @@
   - **Dependencies**: None
   - **Validation Criteria**: Interface must allow intuitive course exploration and enrollment.
 - TASK-PERFORMANCE_SECURITY_ENHANCEMENTS: Performance and Security Enhancements
-  - **Dependencies**: None
   - **Validation Criteria**: Code-splitting and secure JWT handling must be implemented.
 - TASK-SKILL-PROGRESSION-TRACKING: Skill Progression Tracking
   - **Dependencies**: None
@@ -104,6 +103,9 @@
 - TASK-GOVERNANCE-002: Implement Mode Definitions
   - **Completion Date**: 2025-02-23
   - **Summary**: Mode definitions implemented.
+- TASK-ERROR-TOAST-001: Error Toast/Message Mechanism
+  - **Completion Date**: 2025-04-11
+  - **Summary**: Centralized frontend error toast/message mechanism fully implemented and validated (2025-04-11). Queueing logic fixed and validated by passing all relevant tests, including "queues multiple errors but only shows one at a time (ADR-012)". All manual and automated regression issues resolved. Codebase is now fully compliant with ADR-012 and finalized requirements in memory_bank/productContext.md.
 
 ## Comprehensive Task List
 
@@ -160,3 +162,4 @@
 - TASK-FRONTEND-SETUP
 - TASK-GOVERNANCE-001
 - TASK-GOVERNANCE-002
+- TASK-ERROR-TOAST-001

@@ -2,7 +2,7 @@ import {useAuth} from '@context/auth/AuthContext';
 import {Box, TextField, Button, Typography, CircularProgress} from '@mui/material';
 import React from 'react';
 import {useForm, SubmitHandler} from 'react-hook-form';
-import {useErrorNotifier} from '@components/ErrorNotifier/useErrorNotifier';
+import {useNotification} from '@components/ErrorNotifier/useErrorNotifier';
 
 interface ILoginFormInputs {
   username: string;
@@ -16,7 +16,7 @@ const LoginPage: React.FC = () => {
     formState: {errors, isSubmitting},
   } = useForm<ILoginFormInputs>();
   const {login, redirectToDashboard} = useAuth();
-  const notifyError = useErrorNotifier();
+  const notify = useNotification();
 
   const handleLogin = async (data: ILoginFormInputs) => {
     try {
@@ -28,7 +28,7 @@ const LoginPage: React.FC = () => {
       console.error('LoginPage: handleLogin: Login error:', error.response?.data || error.message); // Log detailed error
 
       // Use centralized error notification system instead of setError
-      notifyError({
+      notify({
         title: 'Login Failed',
         message: error.response?.data?.detail || 'An error occurred during login',
         severity: 'error',

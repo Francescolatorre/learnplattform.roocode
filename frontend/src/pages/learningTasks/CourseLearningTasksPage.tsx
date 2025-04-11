@@ -33,9 +33,9 @@ import {
   Select,
   MenuItem,
   Snackbar,
-  Alert,
 } from '@mui/material';
 import React, {useEffect, useState} from 'react';
+import {useNotification} from '../../components/ErrorNotifier/useErrorNotifier';
 import {useNavigate, useParams} from 'react-router-dom';
 
 // Create or Edit Task dialog props
@@ -152,7 +152,7 @@ const CourseLearningTasksPage: React.FC = () => {
   const [courseName, setCourseName] = useState('');
   const [tasks, setTasks] = useState<LearningTask[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const notify = useNotification();
   const [success, setSuccess] = useState<string | null>(null);
 
   // Dialog state
@@ -180,7 +180,7 @@ const CourseLearningTasksPage: React.FC = () => {
           typeof courseResult.error === 'object' &&
           'message' in courseResult.error
         ) {
-          setError(`Failed to load course: ${courseResult.error.message}`);
+          notify(`Failed to load course: ${courseResult.error.message}`, 'error');
           return;
         }
 
@@ -191,7 +191,7 @@ const CourseLearningTasksPage: React.FC = () => {
         setTasks(tasksResponse.sort((a: LearningTask, b: LearningTask) => a.order - b.order));
       } catch (err: any) {
         console.error('Failed to load course tasks:', err);
-        setError(err.message || 'Failed to load course tasks');
+        notify(err.message || 'Failed to load course tasks', 'error');
       } finally {
         setLoading(false);
       }
@@ -232,10 +232,10 @@ const CourseLearningTasksPage: React.FC = () => {
     try {
       await delete (taskToDelete);
       setTasks(tasks.filter(task => task.id !== taskToDelete));
-      setSuccess('Task deleted successfully');
+      notify('Task deleted successfully', 'success');
     } catch (err: any) {
       console.error('Failed to delete task:', err);
-      setError(err.message || 'Failed to delete task');
+      notify(err.message || 'Failed to delete task', 'error');
     } finally {
       setDeleteDialogOpen(false);
       setTaskToDelete(null);
@@ -252,16 +252,16 @@ const CourseLearningTasksPage: React.FC = () => {
           course: parseInt(courseId!, 10),
         });
         setTasks(tasks.map(task => (task.id === taskData.id ? updatedTask : task)));
-        setSuccess('Task updated successfully');
+        notify('Task updated successfully', 'success');
       } else {
         // Create new task
         const newTask = await createLearningTask({...taskData, course: parseInt(courseId!, 10)});
         setTasks([...tasks, newTask]);
-        setSuccess('Task created successfully');
+        notify('Task created successfully', 'success');
       }
     } catch (err: any) {
       console.error('Failed to save task:', err);
-      setError(err.message || 'Failed to save task');
+      notify(err.message || 'Failed to save task', 'error');
     }
   };
 
@@ -397,29 +397,8 @@ const CourseLearningTasksPage: React.FC = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Success Snackbar */}
-      <Snackbar
-        open={!!success}
-        autoHideDuration={3000}
-        onClose={() => setSuccess(null)}
-        anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
-      >
-        <Alert onClose={() => setSuccess(null)} severity="success">
-          {success}
-        </Alert>
-      </Snackbar>
 
       {/* Error Snackbar */}
-      <Snackbar
-        open={!!error}
-        autoHideDuration={5000}
-        onClose={() => setError(null)}
-        anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
-      >
-        <Alert onClose={() => setError(null)} severity="error">
-          {error}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };
