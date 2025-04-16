@@ -2,8 +2,6 @@ import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
 
 import {API_CONFIG} from './apiConfig';
 
-const api: AxiosInstance = axios.create(API_CONFIG);
-
 /**
  *
  */

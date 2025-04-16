@@ -100,13 +100,7 @@ class CourseService {
     await this.apiVoid.post(API_CONFIG.endpoints.courses.enroll(courseId), {course_id: courseId});
   }
 
-  /**
-   * Unenrolls the current user from a course
-   * @param courseId
-   */
-  async unenrollFromCourse(courseId: string): Promise<void> {
-    await this.apiVoid.delete(API_CONFIG.endpoints.courses.unenroll(courseId));
-  }
+
 
   /**
    * Fetches courses where the current user is an instructor
@@ -121,9 +115,7 @@ class CourseService {
    * @param status
    */
   async updateCourseStatus(courseId: string, status: CourseStatus): Promise<Course> {
-    return this.apiCourse.patch(API_CONFIG.endpoints.courses.updateStatus(courseId), {
-      status,
-    });
+    return this.apiCourse.patch(`${API_CONFIG.endpoints.courses.updateStatus}/${courseId}`, {status});
   }
 
   /**
@@ -147,7 +139,7 @@ class CourseService {
    * @param courseId
    */
   async fetchCourseProgress(courseId: string): Promise<unknown> {
-    return this.apiAny.get(API_CONFIG.endpoints.courses.progress(courseId));
+    return this.apiAny.get(`${API_CONFIG.endpoints.courses.progress}/${courseId}`);
   }
 
   /**

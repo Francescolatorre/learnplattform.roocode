@@ -14,7 +14,8 @@
     "format": "prettier --write .",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "build": "npm run lint && vite build",
-    "test:coverage": "vitest run --coverage --mode=ci --passWithNoTests"
+    "test:coverage": "vitest run --coverage --mode=ci --passWithNoTests",
+    "test:ci": "vitest run --coverage --mode=ci --passWithNoTests"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",

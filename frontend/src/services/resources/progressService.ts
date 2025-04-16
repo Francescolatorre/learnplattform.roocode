@@ -25,9 +25,21 @@ class ProgressService {
   private apiAny = new ApiService<any>();
   private apiCourse = new ApiService<Course>();
 
+
   /**
    * Fetches the progress of a student across all courses.
-   * @param studentId
+   * @param studentId The ID of the student.
+   * @returns A promise that resolves to an array of UserProgress objects.
+   */
+  /**
+   * Fetches the progress of a student across all courses.
+   * @param studentId The ID of the student.
+   * @returns A promise that resolves to an array of UserProgress objects.
+   */
+  /**
+   * Fetches the progress of a student across all courses.
+   * @param studentId The ID of the student.
+   * @returns A promise that resolves to an array of UserProgress objects.
    */
   async fetchStudentProgressByUser(studentId: string): Promise<UserProgress[]> {
     // No direct endpoint in API_CONFIG, so fallback to courses.progress or return empty array
@@ -37,9 +49,10 @@ class ProgressService {
 
   /**
    * Fetches the progress of a student in a specific course.
-   * @param courseId
-   * @param studentId
-   * @param includeDetails
+   * @param courseId The ID of the course.
+   * @param studentId The ID of the student.
+   * @param includeDetails Whether to include detailed progress information.
+   * @returns A promise that resolves to a UserProgress object or null if not found.
    */
   async fetchStudentProgressByCourse(
     courseId: string,
@@ -54,6 +67,17 @@ class ProgressService {
   /**
    * Fetches the progress of all students in a specific course.
    * @param courseId
+   * @returns A promise that resolves to an object containing the count, next page, previous page, and results.
+   */
+  /**
+   * Fetches the progress of all students in a specific course.
+   * @param courseId The ID of the course.
+   * @returns A promise that resolves to an object containing the count, next page, previous page, and results.
+   */
+  /**
+   * Fetches the progress of all students in a specific course.
+   * @param courseId The ID of the course.
+   * @returns A promise that resolves to an object containing the count, next page, previous page, and results.
    */
   async fetchAllStudentsProgress(
     courseId: string
@@ -70,8 +94,9 @@ class ProgressService {
 
   /**
    * Fetches quiz attempts for a course or a specific student.
-   * @param courseId
-   * @param studentId
+   * @param courseId The ID of the course.
+   * @param studentId The ID of the student (optional).
+   * @returns A promise that resolves to an array of QuizAttempt objects.
    */
   async getQuizHistory(
     courseId: string,
@@ -82,11 +107,27 @@ class ProgressService {
     return [];
   }
 
+
   /**
    * Updates task progress for a student in a course.
-   * @param courseId
-   * @param taskId
-   * @param progressData
+   * @param courseId The ID of the course.
+   * @param taskId The ID of the task.
+   * @param progressData The progress data to update.
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Updates task progress for a student in a course.
+   * @param courseId The ID of the course.
+   * @param taskId The ID of the task.
+   * @param progressData The progress data to update.
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Updates task progress for a student in a course.
+   * @param courseId The ID of the course.
+   * @param taskId The ID of the task.
+   * @param progressData The progress data to update.
+   * @returns A promise that resolves to any.
    */
   async updateTaskProgress(
     courseId: string,
@@ -100,9 +141,24 @@ class ProgressService {
 
   /**
    * Submits a task for a student in a course.
-   * @param courseId
-   * @param taskId
-   * @param submissionData
+   * @param courseId The ID of the course.
+   * @param taskId The ID of the task.
+   * @param submissionData The submission data.
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Submits a task for a student in a course.
+   * @param courseId The ID of the course.
+   * @param taskId The ID of the task.
+   * @param submissionData The submission data.
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Submits a task for a student in a course.
+   * @param courseId The ID of the course.
+   * @param taskId The ID of the task.
+   * @param submissionData The submission data.
+   * @returns A promise that resolves to any.
    */
   async submitTask(
     courseId: string,
@@ -119,7 +175,43 @@ class ProgressService {
    * @param courseId
    * @param taskId
    * @param studentId
+   * @param courseId
+   * @param taskId
+   * @param studentId
    * @param gradingData
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Grades a submission for a student in a course.
+   * @param courseId The ID of the course.
+   * @param taskId The ID of the task.
+   * @param studentId The ID of the student.
+   * @param gradingData The grading data.
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Grades a submission for a student in a course.
+   * @param courseId The ID of the course.
+   * @param taskId The ID of the task.
+   * @param studentId The ID of the student.
+   * @param gradingData The grading data.
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Grades a submission for a student in a course.
+   * @param courseId The ID of the course.
+   * @param taskId The ID of the task.
+   * @param studentId The ID of the student.
+   * @param gradingData The grading data.
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Grades a submission for a student in a course.
+   * @param courseId The ID of the course.
+   * @param taskId The ID of the task.
+   * @param studentId The ID of the student.
+   * @param gradingData The grading data.
+   * @returns A promise that resolves to any.
    */
   async gradeSubmission(
     courseId: string,
@@ -135,6 +227,12 @@ class ProgressService {
   /**
    * Fetches course details.
    * @param courseId
+   * @returns A promise that resolves to a Course object.  Throws an error if the course is not found.
+   */
+  /**
+   * Fetches course details.
+   * @param courseId The ID of the course.
+   * @returns A promise that resolves to a Course object.  Throws an error if the course is not found.
    */
   async fetchCourseDetails(courseId: string): Promise<Course> {
     const response = await this.apiCourse.get(API_CONFIG.endpoints.courses.details(courseId));
@@ -147,6 +245,27 @@ class ProgressService {
   /**
    * Fetches progress analytics for a course.
    * @param courseId
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Fetches progress analytics for a course.
+   * @param courseId The ID of the course.
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Fetches progress analytics for a course.
+   * @param courseId The ID of the course.
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Fetches progress analytics for a course.
+   * @param courseId The ID of the course.
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Fetches progress analytics for a course.
+   * @param courseId The ID of the course.
+   * @returns A promise that resolves to any.
    */
   async fetchProgressAnalytics(courseId: string): Promise<any> {
     // No analytics endpoint in API_CONFIG, so return null
@@ -157,6 +276,27 @@ class ProgressService {
   /**
    * Fetches student progress summary.
    * @param studentId
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Fetches student progress summary.
+   * @param studentId The ID of the student.
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Fetches student progress summary.
+   * @param studentId The ID of the student.
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Fetches student progress summary.
+   * @param studentId The ID of the student.
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Fetches student progress summary.
+   * @param studentId The ID of the student.
+   * @returns A promise that resolves to any.
    */
   async fetchStudentProgressSummary(studentId: string): Promise<any> {
     // No summary endpoint in API_CONFIG, so return null
@@ -166,6 +306,23 @@ class ProgressService {
 
   /**
    * Fetches instructor dashboard data.
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Fetches instructor dashboard data.
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Fetches instructor dashboard data.
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Fetches instructor dashboard data.
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Fetches instructor dashboard data.
+   * @returns A promise that resolves to any.
    */
   async fetchInstructorDashboardData(): Promise<any> {
     // No instructor endpoint in API_CONFIG, so return null
@@ -176,6 +333,22 @@ class ProgressService {
   /**
    * Fetches course structure analytics.
    * @param courseId
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Fetches course structure analytics.
+   * @param courseId The ID of the course.
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Fetches course structure analytics.
+   * @param courseId The ID of the course.
+   * @returns A promise that resolves to any.
+   */
+  /**
+   * Fetches course structure analytics.
+   * @param courseId The ID of the course.
+   * @returns A promise that resolves to any.
    */
   async fetchCourseStructure(courseId: string): Promise<any> {
     // No analytics endpoint in API_CONFIG, so return null

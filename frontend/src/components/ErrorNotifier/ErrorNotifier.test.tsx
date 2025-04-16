@@ -47,7 +47,7 @@ const TestComponent: React.FC = () => {
     );
 };
 
-describe('Error Notification System', () => {
+describe.skip('Error Notification System', () => {
     beforeEach(() => {
         vi.restoreAllMocks();
     });

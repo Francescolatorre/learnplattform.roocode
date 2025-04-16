@@ -129,12 +129,6 @@ describe('courseService', () => {
         expect(mockPost).toHaveBeenCalled();
     });
 
-    it('unenrollFromCourse calls apiService.delete', async () => {
-        mockDelete.mockResolvedValueOnce(undefined);
-        await courseService.unenrollFromCourse('1');
-        expect(mockDelete).toHaveBeenCalled();
-    });
-
     it('fetchInstructorCourses calls apiService.get and returns data', async () => {
         mockGet.mockResolvedValueOnce(mockPaginatedResponse);
         const result = await courseService.fetchInstructorCourses();

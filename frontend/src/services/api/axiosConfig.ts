@@ -1,6 +1,7 @@
 import axios from 'axios';
-
 import {useAuth} from '@context/auth/AuthContext';
+
+const isTesting = import.meta.env.NODE_ENV === 'test';
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000',
@@ -12,15 +13,32 @@ const axiosInstance = axios.create({
 
 // Add a request interceptor to include the authentication token
 axiosInstance.interceptors.request.use(
-  (config: import('axios').AxiosRequestConfig): import('axios').AxiosRequestConfig => {
-    const {getAccessToken} = useAuth();
-    const token = getAccessToken();
+  (config) => {
+    if (!isTesting) {console.log('Request to', config.url);}
+
+    const token = localStorage.getItem('accessToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
-  async (error: unknown): Promise<never> => Promise.reject(error)
+  (error) => {
+    if (!isTesting) {console.error('Request error:', error);}
+    return Promise.reject(error);
+  }
+);
+
+// Add a response interceptor for logging and error handling
+axiosInstance.interceptors.response.use(
+  (response) => {
+    if (!isTesting) {console.log('Response from', response.config.url);}
+    return response;
+  },
+  (error) => {
+    if (!isTesting) {console.error('Response error:', error);}
+    return Promise.reject(error);
+  }
 );
 
 export default axiosInstance;

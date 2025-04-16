@@ -178,3 +178,18 @@
 
 - All subtasks related to TYPESCRIPT-SERVICES-STANDARDIZATION-001 are complete. Linting, testing, and refactoring have been addressed. The TypeScript service modules are standardized and compliant with ADR-013.
 - Next Steps: Update the status of TYPESCRIPT-SERVICES-STANDARDIZATION-001 in memory_bank/progress.md to reflect the completion of all subtasks.  This step is now complete.
+
+---
+**Orchestration Session Start:** 2025-04-16 16:26 CEST
+
+- **Orchestrator:** Boomerang Mode
+- **Intent:** Address file corruption in `frontend/src/services/resources/learningTaskService.ts` identified during task REACT-HOOK-COMPLIANCE-001. Delegate fix to Code mode.
+
+**Subtask Delegation:**
+
+- **Mode:** Code
+- **Task ID:** SUBTASK-FIX-LEARNINGTASKSERVICE-001 (New)
+- **Summary:** Fix corruption in `learningTaskService.ts` by removing duplicate comments, correcting the `setAuthToken` method, and removing deprecated exports. Run unit tests upon completion.
+- **Status at Delegation:** TODO
+
+---

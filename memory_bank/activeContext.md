@@ -2,10 +2,8 @@
 
 ## Current Work
 
-- **Active Task:** [TASK-INTEGRATION-TEST-WORKFLOW](tasks/TASK-INTEGRATION-TEST-WORKFLOW.md)
-  - Implement and document Vitest Multi-Project integration test workflow for robust, auditable, and cross-platform testing. See canonical guide for rationale, structure, and governance requirements.
-
-- Previous work items moved to Recent Changes for traceability.
+- **Active Task:**
+- [Task_REACT-HOOK-COMPLIANCE](tasks/Task_REACT-HOOK-COMPLIANCE-001.md)
 
 ## Recent Changes
 

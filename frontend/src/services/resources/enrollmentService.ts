@@ -16,7 +16,7 @@ class EnrollmentService {
    * @returns Promise resolving to an array of Enrollment objects.
    */
   async getAll(): Promise<Enrollment[]> {
-    return this.apiEnrollments.get(API_CONFIG.enrollments.list);
+    return this.apiEnrollments.get(API_CONFIG.endpoints.enrollments.list);
   }
 
   /**
@@ -25,7 +25,7 @@ class EnrollmentService {
    * @returns Promise resolving to the Enrollment object.
    */
   async getById(id: string | number): Promise<Enrollment> {
-    return this.apiEnrollment.get(API_CONFIG.enrollments.details(id));
+    return this.apiEnrollment.get(API_CONFIG.endpoints.enrollments.details(id));
   }
 
   /**
@@ -34,7 +34,7 @@ class EnrollmentService {
    * @returns Promise resolving to the created Enrollment object.
    */
   async create(data: Partial<Enrollment>): Promise<Enrollment> {
-    return this.apiEnrollment.post(API_CONFIG.enrollments.create, data);
+    return this.apiEnrollment.post(API_CONFIG.endpoints.enrollments.create, data);
   }
 
   /**
@@ -44,7 +44,7 @@ class EnrollmentService {
    * @returns Promise resolving to the updated Enrollment object.
    */
   async update(id: string | number, data: Partial<Enrollment>): Promise<Enrollment> {
-    return this.apiEnrollment.put(API_CONFIG.enrollments.update(id), data);
+    return this.apiEnrollment.put(API_CONFIG.endpoints.enrollments.update(id), data);
   }
 
   /**
@@ -53,7 +53,7 @@ class EnrollmentService {
    * @returns Promise resolving when the enrollment is deleted.
    */
   async delete(id: string | number): Promise<void> {
-    await this.apiVoid.delete(API_CONFIG.enrollments.delete(id));
+    await this.apiVoid.delete(API_CONFIG.endpoints.enrollments.delete(id));
   }
 
   /**
@@ -61,7 +61,7 @@ class EnrollmentService {
    * @returns Promise resolving to an array of Enrollment objects.
    */
   async fetchUserEnrollments(): Promise<Enrollment[]> {
-    return this.apiEnrollments.get(API_CONFIG.enrollments.userEnrollments);
+    return this.apiEnrollments.get(API_CONFIG.endpoints.enrollments.list);
   }
 
   /**
@@ -70,7 +70,7 @@ class EnrollmentService {
    * @returns Promise resolving to the created Enrollment object.
    */
   async enrollInCourse(courseId: string | number): Promise<Enrollment> {
-    return this.apiEnrollment.post(API_CONFIG.enrollments.enroll, {course: courseId});
+    return this.apiEnrollment.post(API_CONFIG.endpoints.enrollments.create, {course: courseId});
   }
 
   /**
@@ -79,7 +79,7 @@ class EnrollmentService {
    * @returns Promise resolving when the user is unenrolled.
    */
   async unenrollFromCourse(enrollmentId: string | number): Promise<void> {
-    await this.apiVoid.delete(API_CONFIG.enrollments.unenroll(enrollmentId));
+    await this.apiVoid.delete(API_CONFIG.endpoints.enrollments.delete(enrollmentId));
   }
 
   /**
@@ -88,8 +88,15 @@ class EnrollmentService {
    * @returns Promise resolving to an array of Enrollment objects.
    */
   async fetchEnrolledStudents(courseId: string | number): Promise<Enrollment[]> {
-    return this.apiEnrollments.get(API_CONFIG.enrollments.byCourse(courseId));
+    return this.apiEnrollments.get(API_CONFIG.endpoints.enrollments.byCourse(courseId));
   }
+
+  private apiEnrollmentsResults = new ApiService<{
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: Enrollment[];
+  }>();
 
   /**
    * Find enrollments by filter.
@@ -104,10 +111,14 @@ class EnrollmentService {
         return acc;
       }, {})
     ).toString();
+
     const url = params
-      ? `${API_CONFIG.enrollments.list}?${params}`
-      : API_CONFIG.enrollments.list;
-    return this.apiEnrollments.get(url);
+      ? `${API_CONFIG.endpoints.enrollments.list}?${params}`
+      : API_CONFIG.endpoints.enrollments.list;
+
+    // The API returns a paginated response
+    const response = await this.apiEnrollmentsResults.get(url);
+    return response.results;
   }
   /**
    * Set Authorization header for all ApiService instances (for integration tests).
