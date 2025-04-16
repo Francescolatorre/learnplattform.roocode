@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import {useAuth} from '@context/auth/AuthContext';
 
 const axiosInstance = axios.create({
@@ -11,7 +12,7 @@ const axiosInstance = axios.create({
 
 // Add a request interceptor to include the authentication token
 axiosInstance.interceptors.request.use(
-  config => {
+  (config: import('axios').AxiosRequestConfig): import('axios').AxiosRequestConfig => {
     const {getAccessToken} = useAuth();
     const token = getAccessToken();
     if (token) {
@@ -19,7 +20,7 @@ axiosInstance.interceptors.request.use(
     }
     return config;
   },
-  error => Promise.reject(error)
+  async (error: unknown): Promise<never> => Promise.reject(error)
 );
 
 export default axiosInstance;

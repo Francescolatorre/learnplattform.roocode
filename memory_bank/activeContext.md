@@ -2,15 +2,10 @@
 
 ## Current Work
 
-- Defining requirements, user stories, and acceptance criteria for a user-facing error toast/message mechanism in the React/TypeScript frontend (2025-04-11).
+- **Active Task:** [TASK-INTEGRATION-TEST-WORKFLOW](tasks/TASK-INTEGRATION-TEST-WORKFLOW.md)
+  - Implement and document Vitest Multi-Project integration test workflow for robust, auditable, and cross-platform testing. See canonical guide for rationale, structure, and governance requirements.
 
-- working on issue regarding user is sent to login when wanting to show course details as a student
-- Consolidating tasks and aligning project focus on priority student use cases.
-- Implementing core API functionality according to OpenAPI specification.
-- Continuing model consolidation and UI development for task progress tracking.
-- Analyzed Playwright API/authentication test failures and documented requirements and risks in productContext.md (2025-04-11).
-- Confirmed backend uses Django REST Framework + Simple JWT; tests require backend at <http://localhost:8000> and valid test users.
-- Next: Ensure backend is running, test users exist, and Playwright tests align with backend authentication flow.
+- Previous work items moved to Recent Changes for traceability.
 
 ## Recent Changes
 
@@ -23,10 +18,10 @@
 
 ## Active Tasks
 
-- **API Implementation Completion** (TASK-API-IMPLEMENTATION-COMPLETION): IN_PROGRESS
-- **Course Creation Feature** (TASK-CREATION-001): IN_PROGRESS
-- **Implement Task Progress Tracking UI** (TASK-UI-005): IN_PROGRESS
-- **Model Consolidation Task** (TASK-MODEL-CONSOLIDATION-002): IN_PROGRESS
+- **API Implementation Completion** (TASK-API-IMPLEMENTATION-COMPLETION): TODO
+- **Course Creation Feature** (TASK-CREATION-001): TODO
+- **Implement Task Progress Tracking UI** (TASK-UI-005): TODO
+- **Model Consolidation Task** (TASK-MODEL-CONSOLIDATION-002): TODO
 - **Progress Tracking Frontend Components** (TASK-002): DONE
 - **Progress Tracking API Endpoints** (TASK-003): DONE
 - **Error Toast/Message Mechanism** (TASK-ERROR-TOAST-001): DONE
@@ -50,6 +45,3 @@
 - Update project_status.md to align with the consolidated view
 
 ## Notes
-
-- TASK-001 has been completed and moved to the progress log.
-- Reorganized `frontend/src/features/dashboard` directory into subdirectories based on functionality or purpose.

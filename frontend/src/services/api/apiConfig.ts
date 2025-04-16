@@ -1,4 +1,4 @@
-const API_BASE_URL = 'YOUR_API_BASE_URL';
+const API_BASE_URL = 'http://localhost:8000';
 
 export const API_CONFIG = {
   baseURL: API_BASE_URL,
@@ -7,17 +7,28 @@ export const API_CONFIG = {
   },
   endpoints: {
     courses: {
-      list: '/courses',
-      create: '/courses',
-      details: (courseId: string) => `/courses/${courseId}`,
-      update: (courseId: string) => `/courses/${courseId}`,
-      delete: (courseId: string) => `/courses/${courseId}`,
-      enroll: (courseId: string) => `/courses/${courseId}/enroll`,
-      unenroll: (courseId: string) => `/courses/${courseId}/unenroll`,
-      instructorCourses: '/instructor/courses',
-      updateStatus: (courseId: string) => `/courses/${courseId}/status`,
-      progress: (courseId: string) => `/courses/${courseId}/progress`,
-      tasks: (courseId: string) => `/courses/${courseId}/tasks`,
+      list: '/api/v1/courses/',
+      create: '/api/v1/courses/',
+      details: (courseId: string): string => `/api/v1/courses/${courseId}/`,
+      update: (courseId: string): string => `/api/v1/courses/${courseId}/`,
+      delete: (courseId: string): string => `/api/v1/courses/${courseId}/`,
+      enroll: (courseId: string): string => `/api/v1/courses/${courseId}/enroll/`,
+      unenroll: (courseId: string): string => `/api/v1/courses/${courseId}/unenroll/`,
+      instructorCourses: '/api/v1/instructor/courses/',
+      updateStatus: (courseId: string): string => `/api/v1/courses/${courseId}/status/`,
+      progress: (courseId: string): string => `/api/v1/courses/${courseId}/progress/`,
+      tasks: (courseId: string): string => `/api/v1/courses/${courseId}/tasks/`,
     },
+  },
+  enrollments: {
+    list: '/api/v1/enrollments',
+    details: (enrollmentId: string | number): string => `/api/v1/enrollments/${enrollmentId}`,
+    create: '/api/v1/enrollments',
+    update: (enrollmentId: string | number): string => `/api/v1/enrollments/${enrollmentId}`,
+    delete: (enrollmentId: string | number): string => `/api/v1/enrollments/${enrollmentId}`,
+    userEnrollments: '/api/v1/course-enrollments/',
+    enroll: '/api/v1/course-enrollments/',
+    unenroll: (enrollmentId: string | number): string => `/api/v1/course-enrollments/${enrollmentId}/`,
+    byCourse: (courseId: string | number): string => `/api/v1/course-enrollments/?course=${courseId}`,
   },
 };

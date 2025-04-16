@@ -1,6 +1,6 @@
 import {useAuth} from '@context/auth/AuthContext';
 import {Button, Container, Typography, Box, TextField, MenuItem, CircularProgress, Alert} from '@mui/material';
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 
 
@@ -10,7 +10,7 @@ import {Course} from 'src/types/common/entities';
 const EditCourse: React.FC = () => {
   const navigate = useNavigate();
   const {courseId} = useParams<{courseId: string}>();
-  const {getUserRole, refreshToken} = useAuth();
+  const {getUserRole, setError} = useAuth();
   const userRole = getUserRole(); // Use utility function
 
   const [courseData, setCourseData] = useState<Partial<Course>>({
@@ -20,47 +20,8 @@ const EditCourse: React.FC = () => {
     visibility: 'private',
   } as any);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const error = null;
 
-  useEffect(() => {
-    const fetchCourse = async () => {
-      setIsLoading(true);
-      try {
-        const data = await courseService.getCourseDetails(courseId!);
-        setCourseData({
-          title: data.title,
-          description: data.description,
-          status: data.status,
-          visibility: data.visibility,
-        });
-        setError(null);
-      } catch (err: unknown) {
-        if (err instanceof Error && err.message === 'Unauthorized') {
-          try {
-            await refreshToken(); // Refresh token if unauthorized
-            const data = await courseService.getCourseDetails(courseId!); // Retry fetching course details
-            setCourseData({
-              title: data.title,
-              description: data.description,
-              status: data.status,
-              visibility: data.visibility,
-            });
-            setError(null);
-          } catch (refreshError: any) {
-            console.error('Failed to refresh token:', refreshError);
-            setError('Failed to load course details. Please log in again.');
-          }
-        } else {
-          console.error('Failed to fetch course details:', err);
-          setError('Failed to load course details.');
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCourse();
-  }, [courseId, refreshToken]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {name, value} = e.target;

@@ -1,8 +1,8 @@
-import { IPaginatedResponse } from 'src/types/common';
-import { Course, CourseStatus } from 'src/types/common/entities';
+import {ApiService} from '@/services/api/apiService';
+import {IPaginatedResponse} from 'src/types/common';
+import {Course, CourseStatus} from 'src/types/common/entities';
 
-import { API_CONFIG } from '../api/apiConfig';
-import { apiService } from '../api/apiService';
+import {API_CONFIG} from '../api/apiConfig';
 
 export interface CourseFilterOptions {
   page?: number;
@@ -12,9 +12,31 @@ export interface CourseFilterOptions {
   creator?: number;
 }
 
+/**
+ * Service for managing course-related operations, including CRUD, enrollment, status updates, and progress tracking.
+ *
+ * This service provides a standardized API for interacting with course resources via the backend API.
+ * All methods are asynchronous and return typed promises. Error handling is consistent and domain-focused.
+ *
+ * Dependencies:
+ * - apiService: Handles HTTP requests to the backend API.
+ * - API_CONFIG: Provides endpoint configuration for course-related API routes.
+ *
+ * Usage:
+ *   import { courseService } from './courseService';
+ *   const courses = await courseService.fetchCourses();
+ *
+ * All public methods are documented with TSDoc.
+ */
 class CourseService {
+  private apiCourse = new ApiService<Course>();
+  private apiCourses = new ApiService<IPaginatedResponse<Course>>();
+  private apiVoid = new ApiService<void>();
+  private apiAny = new ApiService<unknown>();
+
   /**
    * Fetches a paginated list of courses with optional filtering
+   * @param options
    */
   async fetchCourses(options: CourseFilterOptions = {}): Promise<IPaginatedResponse<Course>> {
     const queryParams = new URLSearchParams();
@@ -27,126 +49,86 @@ class CourseService {
 
     const url = `${API_CONFIG.endpoints.courses.list}?${queryParams.toString()}`;
 
-    try {
-      const response = await apiService.get(url);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching courses:', error);
-      throw error;
-    }
+    return this.apiCourses.get(url);
   }
 
   /**
    * Creates a new course
+   * @param courseData
    */
   async createCourse(courseData: Partial<Course>): Promise<Course> {
-    try {
-      const response = await apiService.post(API_CONFIG.endpoints.courses.create, courseData);
-      return response.data;
-    } catch (error) {
-      console.error('Error creating course:', error);
-      throw error;
-    }
+    return this.apiCourse.post(API_CONFIG.endpoints.courses.create, courseData);
   }
 
   /**
    * Retrieves detailed information for a specific course
+   * @param courseId
    */
   async getCourseDetails(courseId: string): Promise<Course> {
-    try {
-      const response = await apiService.get(API_CONFIG.endpoints.courses.details(courseId));
-      if (!response.data) {
-        throw new Error('Course not found');
-      }
-      return response.data;
-    } catch (error) {
-      console.error(`Error fetching course details for ID ${courseId}:`, error);
-      throw error;
+    const response = await this.apiCourse.get(API_CONFIG.endpoints.courses.details(courseId));
+    if (!response) {
+      throw new Error('Course not found');
     }
+    return response;
   }
 
   /**
    * Updates an existing course
+   * @param courseId
+   * @param courseData
    */
   async updateCourse(courseId: string, courseData: Partial<Course>): Promise<Course> {
-    try {
-      const response = await apiService.patch(
-        API_CONFIG.endpoints.courses.update(courseId),
-        courseData
-      );
-      return response.data;
-    } catch (error) {
-      console.error(`Error updating course ${courseId}:`, error);
-      throw error;
-    }
+    return this.apiCourse.patch(
+      API_CONFIG.endpoints.courses.update(courseId),
+      courseData
+    );
   }
 
   /**
    * Deletes a course
+   * @param courseId
    */
   async deleteCourse(courseId: string): Promise<void> {
-    try {
-      await apiService.delete(API_CONFIG.endpoints.courses.delete(courseId));
-    } catch (error) {
-      console.error(`Error deleting course ${courseId}:`, error);
-      throw error;
-    }
+    await this.apiVoid.delete(API_CONFIG.endpoints.courses.delete(courseId));
   }
 
   /**
    * Enrolls the current user in a course
+   * @param courseId
    */
   async enrollInCourse(courseId: string): Promise<void> {
-    try {
-      await apiService.post(API_CONFIG.endpoints.courses.enroll(courseId), { course_id: courseId });
-    } catch (error) {
-      console.error(`Error enrolling in course ${courseId}:`, error);
-      throw error;
-    }
+    await this.apiVoid.post(API_CONFIG.endpoints.courses.enroll(courseId), {course_id: courseId});
   }
 
   /**
    * Unenrolls the current user from a course
+   * @param courseId
    */
   async unenrollFromCourse(courseId: string): Promise<void> {
-    try {
-      await apiService.delete(API_CONFIG.endpoints.courses.unenroll(courseId));
-    } catch (error) {
-      console.error(`Error unenrolling from course ${courseId}:`, error);
-      throw error;
-    }
+    await this.apiVoid.delete(API_CONFIG.endpoints.courses.unenroll(courseId));
   }
 
   /**
    * Fetches courses where the current user is an instructor
    */
   async fetchInstructorCourses(): Promise<IPaginatedResponse<Course>> {
-    try {
-      const response = await apiService.get(API_CONFIG.endpoints.courses.instructorCourses);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching instructor courses:', error);
-      throw error;
-    }
+    return this.apiCourses.get(API_CONFIG.endpoints.courses.instructorCourses);
   }
 
   /**
    * Changes the status of a course
+   * @param courseId
+   * @param status
    */
   async updateCourseStatus(courseId: string, status: CourseStatus): Promise<Course> {
-    try {
-      const response = await apiService.patch(API_CONFIG.endpoints.courses.updateStatus(courseId), {
-        status,
-      });
-      return response.data;
-    } catch (error) {
-      console.error(`Error updating course ${courseId} status:`, error);
-      throw error;
-    }
+    return this.apiCourse.patch(API_CONFIG.endpoints.courses.updateStatus(courseId), {
+      status,
+    });
   }
 
   /**
    * Archives a course
+   * @param courseId
    */
   async archiveCourse(courseId: string): Promise<Course> {
     return this.updateCourseStatus(courseId, 'private');
@@ -154,6 +136,7 @@ class CourseService {
 
   /**
    * Publishes a course
+   * @param courseId
    */
   async publishCourse(courseId: string): Promise<Course> {
     return this.updateCourseStatus(courseId, 'published');
@@ -161,28 +144,18 @@ class CourseService {
 
   /**
    * Fetches course progress for the current user
+   * @param courseId
    */
-  async fetchCourseProgress(courseId: string): Promise<any> {
-    try {
-      const response = await apiService.get(API_CONFIG.endpoints.courses.progress(courseId));
-      return response.data;
-    } catch (error) {
-      console.error(`Error fetching progress for course ${courseId}:`, error);
-      throw error;
-    }
+  async fetchCourseProgress(courseId: string): Promise<unknown> {
+    return this.apiAny.get(API_CONFIG.endpoints.courses.progress(courseId));
   }
 
   /**
    * Fetches tasks for a specific course
+   * @param courseId
    */
-  async getCourseTasks(courseId: string): Promise<any> {
-    try {
-      const response = await apiService.get(API_CONFIG.endpoints.courses.tasks(courseId));
-      return response.data;
-    } catch (error) {
-      console.error(`Error fetching tasks for course ${courseId}:`, error);
-      throw error;
-    }
+  async getCourseTasks(courseId: string): Promise<unknown> {
+    return this.apiAny.get(API_CONFIG.endpoints.courses.tasks(courseId));
   }
 }
 

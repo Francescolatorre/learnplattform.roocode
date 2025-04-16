@@ -19,12 +19,6 @@
 - TASK-SKILL-PROGRESSION-TRACKING: Skill Progression Tracking
   - **Dependencies**: None
   - **Validation Criteria**: Skill progression must be tracked.
-
-## IN_PROGRESS
-
-- TASK-MODEL-CONSOLIDATION-002: Model Consolidation Task
-  - **Dependencies**: TASK-MODEL-UPDATE-PLAN-001
-  - **Progress**: Consolidating and standardizing data models across the platform.
 - TASK-UI-005: Implement Task Progress Tracking UI
   - **Dependencies**: None
   - **Progress**: UI components for task tracking are being developed.
@@ -34,8 +28,22 @@
 - TASK-CREATION-001: Course Creation Feature
   - **Dependencies**: None
   - **Progress**: Development of course creation feature is in progress.
+- TASK-MODEL-CONSOLIDATION-002: Model Consolidation Task
+  - **Dependencies**: TASK-MODEL-UPDATE-PLAN-001
+  - **Status**: TODO (was POSTPONED 2025-04-11, User requested postponement)
+  - **Progress**: Consolidating and standardizing data models across the platform.
+
+## IN_PROGRESS
+
+## POSTPONED
+
+(empty)
 
 ## DONE
+
+- TASK-INTEGRATION-TEST-WORKFLOW: Vitest Multi-Project Integration Test Workflow
+  - **Completion Date**: 2025-04-13
+  - **Summary**: Implemented and validated canonical Vitest Multi-Project test workflow using separate config files for unit and integration tests, robust setup files, and cross-platform scripts. All requirements from the canonical guide were met. Unit test suite executed and passed (except for one legitimate test failure unrelated to setup).
 
 - TASK-002: Implement Progress Tracking Frontend Components
   - **Completion Date**: 2025-03-21
@@ -114,10 +122,11 @@
 - TASK-API-IMPLEMENTATION-COMPLETION
 - TASK-CREATION-001
 - TASK-UI-005
-- TASK-MODEL-CONSOLIDATION-002
+- TASK-MODEL-CONSOLIDATION-002 (POSTPONED 2025-04-11, User requested postponement)
 
 ### Tasks To Do
 
+- TASK-INTEGRATION-TEST-WORKFLOW
 - TASK-PERSONALIZED-LEARNING
 - TASK-ADAPTIVE-ASSESSMENT
 - TASK-AI-POWERED-SUBMISSION
@@ -162,4 +171,7 @@
 - TASK-FRONTEND-SETUP
 - TASK-GOVERNANCE-001
 - TASK-GOVERNANCE-002
+- TYPESCRIPT-SERVICES-STANDARDIZATION-001: TypeScript Service Layer Standardization
+  - **Completion Date**: 2025-04-12
+  - **Summary**: All TypeScript service modules refactored to class-based, strictly typed, generic API layer with centralized endpoint configuration. ADR-013 fully implemented; codebase harmonized under the new standard.
 - TASK-ERROR-TOAST-001

@@ -230,7 +230,7 @@ const CourseLearningTasksPage: React.FC = () => {
     if (!taskToDelete) return;
 
     try {
-      await delete (taskToDelete);
+      await deleteLearningTask(taskToDelete);
       setTasks(tasks.filter(task => task.id !== taskToDelete));
       notify('Task deleted successfully', 'success');
     } catch (err: any) {

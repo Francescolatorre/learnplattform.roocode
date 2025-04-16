@@ -1,5 +1,5 @@
 import React from 'react';
-import {useParams, useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 
 import {
@@ -10,16 +10,14 @@ import {
   CardContent,
   Chip,
   Alert,
+  CircularProgress,
 } from '@mui/material';
 
-import {ErrorAlert} from '@components/common/ErrorAlert';
-import {LoadingOverlay} from '@components/common/LoadingOverlay';
-import {StatusChip} from '@components/common/StatusChip';
 import {useAuth} from '@context/auth/AuthContext';
 
 import {courseService} from '@services/resources/courseService';
 import enrollmentService from '@services/resources/enrollmentService';
-import {Course, CompletionStatus, EnrollmentStatus} from '@types/entities';
+import {Course, CompletionStatus} from 'src/types/common/entities';
 
 
 interface ICourseEnrollmentProps {
@@ -65,7 +63,7 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
     mutationFn: () =>
       enrollmentService.create({
         course: Number(courseId),
-        user: user?.id,
+        user: user ? Number(user.id) : undefined,
         status: 'active',
       }),
     onSuccess: () => {
@@ -78,11 +76,11 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
   });
 
   if (courseLoading || enrollmentLoading) {
-    return <LoadingOverlay />;
+    return <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200}}><CircularProgress /></Box>;
   }
 
   if (courseError) {
-    return <ErrorAlert error={courseError} />;
+    return <Alert severity="error">{String(courseError)}</Alert>;
   }
 
   if (!course) {
@@ -116,7 +114,7 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
             isPublished={course.status === 'published'}
             onEnroll={handleEnroll}
             onViewTasks={handleViewTasks}
-            isEnrolling={enrollMutation.isLoading}
+            isEnrolling={enrollMutation.isPending}
           />
         </CardContent>
       </Card>
@@ -139,13 +137,13 @@ const CourseDescription: React.FC<{description: string}> = ({description}) => (
 
 const CourseStatusTags: React.FC<{course: Course}> = ({course}) => (
   <Box sx={{display: 'flex', gap: 1, mb: 2}}>
-    <StatusChip status={course.status} />
+    <Chip label={course.status} color="primary" size="small" variant="outlined" />
     <Chip label={course.visibility} color="primary" size="small" variant="outlined" />
   </Box>
 );
 
 interface IEnrollmentActionsProps {
-  enrollmentStatus: EnrollmentStatus | undefined;
+  enrollmentStatus: CompletionStatus | undefined;
   isPublished: boolean;
   onEnroll: () => void;
   onViewTasks: () => void;

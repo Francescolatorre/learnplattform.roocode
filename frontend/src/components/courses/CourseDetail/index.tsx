@@ -1,37 +1,47 @@
-import { AccessTime, Visibility, Person, DateRange } from '@mui/icons-material';
-import { Box, Typography, Chip, Paper, Container, Grid } from '@mui/material';
+import {Visibility, Person, DateRange} from '@mui/icons-material';
+import {Box, Typography, Chip, Paper, Container, Grid} from '@mui/material';
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import {useParams} from 'react-router-dom';
+import {useQuery} from '@tanstack/react-query';
+import {courseService} from 'src/services/resources/courseService';
 
-import { Course } from 'src/types/common/entities';
 
 const CourseDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const {id} = useParams<{id: string}>();
 
-  // TODO: Replace with actual API call using React Query
-  const course: Course = {
-    id: 1,
-    title: 'Loading...',
-    description: '',
-    learningObjectives: '',
-    prerequisites: '',
-    creator: { displayName: '' },
-    status: '',
-    visibility: '',
-    createdAt: '',
-  };
+  const {
+    data: course,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['course', id],
+    queryFn: () => courseService.getCourseDetails(id!),
+    enabled: Boolean(id),
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading course details: {String(error)}</div>;
+  }
+
+  if (!course) {
+    return <div>Course not found.</div>;
+  }
 
   return (
     <Container maxWidth="lg">
-      <Paper elevation={2} sx={{ p: 3, my: 3 }}>
+      <Paper elevation={2} sx={{p: 3, my: 3}}>
         <Typography variant="h4" gutterBottom>
           {course.title}
         </Typography>
 
-        <Box sx={{ mb: 3, display: 'flex', gap: 1 }}>
-          <Chip icon={<Person />} label={course.creator.displayName} />
+        <Box sx={{mb: 3, display: 'flex', gap: 1}}>
+          <Chip icon={<Person />} label={course.creator_details.display_name} />
           <Chip icon={<Visibility />} label={course.visibility} />
-          <Chip icon={<DateRange />} label={new Date(course.createdAt).toLocaleDateString()} />
+          <Chip icon={<DateRange />} label={course.created_at ? new Date(course.created_at).toLocaleDateString() : ''} />
         </Box>
 
         <Typography variant="h6" gutterBottom>
@@ -44,7 +54,7 @@ const CourseDetail: React.FC = () => {
             <Typography variant="h6" gutterBottom>
               Learning Objectives
             </Typography>
-            <Typography paragraph>{course.learningObjectives}</Typography>
+            <Typography paragraph>{course.learning_objectives}</Typography>
           </Grid>
           <Grid item xs={12} md={6}>
             <Typography variant="h6" gutterBottom>

@@ -2,12 +2,13 @@
 
 memory_bank:
   read_strategy:
-    - "Read `activeContext.md` ONCE per execution"
-    - "If active task exists, read only necessary files"
-    - "If no active task, check `project_status.md`"
-    - "If no tasks in progress, WAIT"
+    - if your are not in a subtask:
+      - "Read `activeContext.md` ONCE per execution"
+      - "If active task exists, read only necessary files"
+    -   "If no active task, check `project_status.md`"
+      - "If no tasks in progress, WAIT"
 
-  consistency_checks:
+  consistency_checks for boomerang-mode:
     - "Compare `activeContext.md` & `project_status.md`"
     - "If mismatch exists, follow `inconsistency_resolution.md`"
     - "Escalate task conflicts to Architect Mode"
@@ -67,7 +68,6 @@ git_commit_rules:
 
 language_specific_rules:
 
-- "Follow language rules in `/languages/{LANGUAGE}_rules.yaml`"
 - "Maintain task enhancement framework principles"
 - "For Python/Django projects, adhere to the rules defined in `memory_bank/languages/python_django_rules.yaml`"
 - "For React/TypeScript projects, adhere to the rules defined in `memory_bank/languages/react_typescript_rules.yaml`"

@@ -57,7 +57,7 @@ const StudentDashboard: React.FC = () => {
           <ProgressOverview
             totalCourses={overall_stats.total_courses}
             completedCourses={overall_stats.completed_courses}
-            averageScore={overall_stats.average_score}
+            averageScore={overall_stats.average_score ?? 0}
             overallCompletion={overall_stats.overall_completion}
           />
         </Grid>

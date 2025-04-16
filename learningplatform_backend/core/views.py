@@ -318,6 +318,13 @@ class LearningTaskViewSet(viewsets.ModelViewSet):
     serializer_class = LearningTaskSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        queryset = LearningTask.objects.all()
+        course_id = self.request.query_params.get("course")
+        if course_id is not None:
+            queryset = queryset.filter(course_id=course_id)
+        return queryset
+
     @action(detail=False, methods=["get"], url_path="course/(?P<course_id>[^/.]+)")
     def tasks_by_course(self, request, course_id=None):
         """

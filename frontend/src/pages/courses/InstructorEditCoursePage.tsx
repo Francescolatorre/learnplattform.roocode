@@ -7,15 +7,14 @@ import {
   Box,
   CircularProgress,
 } from '@mui/material';
-import {useCourses} from '@utils/useApiResource';
+import {useCourse} from '@utils/useApiResource';
 import React, {useEffect, useState} from 'react';
 import {useNotification} from '../../components/ErrorNotifier/useErrorNotifier';
 import {useForm, SubmitHandler} from 'react-hook-form';
 import {useParams, useNavigate} from 'react-router-dom';
 
-import {useAuth} from 'src';
-
-import CourseService from '../services/courseService';
+import {useAuth} from '@context/auth/AuthContext';
+import {courseService} from 'src/services/resources/courseService';
 
 
 // Define the form data type
@@ -27,7 +26,7 @@ interface ICourseFormData {
 const InstructorEditCoursePage: React.FC = () => {
   const {courseId} = useParams<{courseId: string}>();
   const navigate = useNavigate();
-  const {data: course, loading: isLoading, error, refetch} = useCourses.useResource(courseId!);
+  const {data: course, isLoading, error, refetch} = useCourse(courseId);
   const {
     register,
     handleSubmit,
@@ -57,10 +56,10 @@ const InstructorEditCoursePage: React.FC = () => {
   // Handle form submission
   const onSubmit: SubmitHandler<ICourseFormData> = async data => {
     setIsSubmitting(true);
-    setSubmitError(null);
+    // No local submit error state; errors are handled via notify
 
     try {
-      await CourseService.updateCourse(Number(courseId), data);
+      await courseService.updateCourse(String(courseId), data);
       navigate(`/courses/${courseId}`);
     } catch (err) {
       notify((err as any)?.message || 'Failed to update course. Please try again.', 'error');

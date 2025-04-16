@@ -4,6 +4,25 @@
 
 This document outlines the architectural improvements made to the frontend React TypeScript codebase, focusing on reducing code duplication, improving reusability, and enhancing overall code quality.
 
+## TypeScript Services Standardization
+
+This project enforces the [TypeScript Services Standardization Initiative](../memory_bank/tasks/Task_TYPESCRIPT-SERVICES-STANDARDIZATION-001.md) to ensure all TypeScript service modules are consistent, maintainable, and well-documented.
+
+### Key Requirements
+- **Naming:** Service files/folders must follow the `*Service.ts` convention.
+- **API:** All public service methods must be async, have explicit return types, and follow a unified API signature.
+- **Documentation:** All public classes and methods in services require JSDoc/TSDoc.
+- **Dependency Pattern:** Use dependency injection or the standardized pattern for service dependencies.
+- **Testing:** Unit tests are required for all service methods, with a minimum 80% coverage.
+- **Domain Logic:** Service modules must only contain domain-relevant logic.
+- **Documentation:** Service documentation must be up-to-date and accessible.
+- **Lint/Format:** Code must pass all linting and formatting checks.
+
+### Enforcement
+- **Linting:** Automated via ESLint rules (see `eslint.config.js`).
+- **Code Review:** Enforced via [Pull Request Checklist](../../.github/PULL_REQUEST_TEMPLATE.md).
+- **Full Standard:** See [memory_bank/drafts/typescript_services_standardization.md](../memory_bank/drafts/typescript_services_standardization.md) for detailed guidelines and migration instructions.
+
 ## Shared UI Components
 
 ### 1. DataTable

@@ -1,12 +1,12 @@
-import CourseService from '@features/courses/services/courseService';
-import { ICourse } from '@features/courses/types/courseTypes';
-import { Button } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import CourseService from '@/services/resources/courseService';
+import {Course} from '@/types/common/entities';
+import {Button} from '@mui/material';
+import {DataGrid, GridColDef} from '@mui/x-data-grid';
+import React, {useState, useEffect} from 'react';
+import {Link} from 'react-router-dom';
 
 const AdminCoursesPage: React.FC = () => {
-  const [courses, setCourses] = useState<ICourse[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,9 +26,9 @@ const AdminCoursesPage: React.FC = () => {
   }, []);
 
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 90 },
-    { field: 'title', headerName: 'Title', width: 200 },
-    { field: 'description', headerName: 'Description', width: 300 },
+    {field: 'id', headerName: 'ID', width: 90},
+    {field: 'title', headerName: 'Title', width: 200},
+    {field: 'description', headerName: 'Description', width: 300},
     {
       field: 'actions',
       headerName: 'Actions',
@@ -50,7 +50,7 @@ const AdminCoursesPage: React.FC = () => {
   }
 
   return (
-    <div style={{ height: 400, width: '100%' }}>
+    <div style={{height: 400, width: '100%'}}>
       <DataGrid rows={courses || []} columns={columns} getRowId={(row: any) => row.id} />
     </div>
   );

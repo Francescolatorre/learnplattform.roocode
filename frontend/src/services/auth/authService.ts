@@ -36,37 +36,60 @@ interface UserProfile {
 }
 
 const authService = {
-  async login(username: string, password: string): Promise<{ access: string; refresh: string }> {
-    const response = await apiClient.post('/auth/login/', { username, password });
-    return response.data; // Ensure the response matches the OpenAPI schema
+  async login(username: string, password: string): Promise<{access: string; refresh: string}> {
+    const response = await apiClient.post('/auth/login/', {username, password}); // Added trailing slash to handle APPEND_SLASH setting
+    if (!response || typeof response !== 'object' || !('data' in response) || !response.data) {
+      throw new Error('Login failed: No response data received from server.');
+    }
+    if (!response.data.access || !response.data.refresh) {
+      throw new Error('Login failed: Malformed response from server.');
+    }
+    return response.data;
   },
 
   async logout(refreshToken: string, accessToken: string): Promise<void> {
     try {
       const response = await apiClient.post<void>(
         '/auth/logout/',
-        { refresh: refreshToken },
+        {refresh: refreshToken},
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         }
       );
-      return response.data; // Ensure consistency in returning response data
-    } catch (error: any) {
+      if (!response || typeof response !== 'object' || !('data' in response)) {
+        throw new Error('Logout failed: No response data received from server.');
+      }
+      // Some logout endpoints may return empty data, so just return if no error
+      return;
+    } catch (error: unknown) {
       console.error('Failed to log out:', error);
       throw error;
     }
   },
 
-  async refreshToken(refreshToken: string): Promise<{ access: string }> {
+  async refreshToken(refreshToken: string): Promise<{access: string}> {
     try {
-      const response = await apiClient.post<{ access: string }>('/auth/token/refresh/', {
+      const response = await apiClient.post<{access: string}>('/auth/token/refresh/', {
         refresh: refreshToken,
       });
-      return response.data; // Extract the data property from the Axios response
-    } catch (error) {
-      console.error('Failed to refresh token:', error.response?.data || error.message);
+      if (!response || typeof response !== 'object' || !('data' in response) || !response.data) {
+        throw new Error('Token refresh failed: No response data received from server.');
+      }
+      if (!response.data.access) {
+        throw new Error('Token refresh failed: Malformed response from server.');
+      }
+      return response.data;
+    } catch (error: unknown) {
+      if (typeof error === 'object' && error !== null && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response) {
+        // @ts-expect-error: dynamic error shape
+        console.error('Failed to refresh token:', error.response.data);
+      } else if (error instanceof Error) {
+        console.error('Failed to refresh token:', error.message);
+      } else {
+        console.error('Failed to refresh token:', error);
+      }
       throw error;
     }
   },
@@ -76,14 +99,20 @@ const authService = {
       ...data,
       role: data.role || 'user',
     });
-    return response.data; // Extract the data property from the Axios response
+    if (!response || typeof response !== 'object' || !('data' in response) || !response.data) {
+      throw new Error('Registration failed: No response data received from server.');
+    }
+    return response.data;
   },
 
   async requestPasswordReset(email: string): Promise<PasswordResetResponse> {
     const response = await apiClient.post<PasswordResetResponse>('/auth/password-reset/', {
       email,
     });
-    return response.data; // Extract the data property from the Axios response
+    if (!response || typeof response !== 'object' || !('data' in response) || !response.data) {
+      throw new Error('Password reset request failed: No response data received from server.');
+    }
+    return response.data;
   },
 
   async resetPassword(token: string, newPassword: string): Promise<PasswordResetResponse> {
@@ -91,7 +120,10 @@ const authService = {
       token,
       new_password: newPassword,
     });
-    return response.data; // Extract the data property from the Axios response
+    if (!response || typeof response !== 'object' || !('data' in response) || !response.data) {
+      throw new Error('Password reset failed: No response data received from server.');
+    }
+    return response.data;
   },
 
   async getUserProfile(accessToken: string): Promise<UserProfile> {
@@ -101,7 +133,10 @@ const authService = {
           Authorization: `Bearer ${accessToken}`, // Include the access token
         },
       });
-      return response.data; // Return the user profile data
+      if (!response || typeof response !== 'object' || !('data' in response) || !response.data) {
+        throw new Error('Get user profile failed: No response data received from server.');
+      }
+      return response.data;
     } catch (error) {
       console.error('Failed to fetch user profile:', error);
       throw error; // Re-throw the error for the caller to handle

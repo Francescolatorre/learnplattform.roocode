@@ -1,4 +1,4 @@
-// src/types/common/entities.ts
+// src/types/common/progressTypes.ts
 
 // Enums und Typdefinitionen
 export type CompletionStatus = 'active' | 'completed' | 'dropped';
@@ -16,83 +16,7 @@ export interface LearningTask {
   is_published: boolean;
 }
 
-export interface TaskProgress {
-  id: number;
-  user: number;
-  task: number;
-  status: TaskStatus;
-  time_spent: string | null;
-  completion_date?: string | null;
-  user_details?: User;
-  task_details?: LearningTask;
-}
 
-export interface UserProgress {
-  id: number;
-  percentage: number;
-  label: string;
-}
-
-export interface QuizOption {
-  readonly id: number;
-  text: string;
-  is_correct: boolean;
-  order: number;
-}
-
-export interface CourseProgressResponse {
-  progress: number;
-  tasks: LearningTask[];
-}
-
-export interface CourseEnrollment {
-  readonly id: number;
-  user: number;
-  course: number;
-  enrollment_date?: string;
-  status: CompletionStatus;
-  settings?: Record<string, any> | null;
-  user_details?: User;
-  course_details?: Course;
-  progress_percentage?: string;
-}
-
-export interface CourseVersion {
-  readonly id: number;
-  course: number;
-  version_number: number;
-  created_at?: string;
-  content_snapshot: Record<string, any>;
-  notes?: string;
-  created_by?: number | null;
-  created_by_details?: User;
-}
-
-export interface QuizQuestion {
-  readonly id: number;
-  quiz: string;
-  text: string;
-  explanation: string;
-  points: number;
-  order: number;
-  readonly options: QuizOption[];
-}
-
-export interface QuizTask {
-  readonly id: number;
-  course: number;
-  title: string;
-  description: string;
-  order: number;
-  is_published: boolean;
-  readonly created_at: string;
-  readonly updated_at: string;
-  time_limit_minutes: number;
-  pass_threshold: number;
-  max_attempts: number;
-  randomize_questions: boolean;
-  readonly questions: QuizQuestion[];
-}
 
 export interface QuizResponse {
   readonly id: number;

@@ -3,17 +3,33 @@ import {useQuery} from '@tanstack/react-query';
 import {courseService} from 'src/services/resources/courseService';
 
 export const useCourses = () => {
-  return useQuery({
+  const query = useQuery({
     queryKey: ['courses'],
-    queryFn: () => courseService.fetchCourses(),
+    queryFn: async () => courseService.fetchCourses(),
     refetchOnWindowFocus: false,
   });
+  // DEBUG: Log the result and error from useCourses
+  // eslint-disable-next-line no-console
+  console.log('[useCourses] Query data:', query.data);
+  if (query.error) {
+     
+    console.error('[useCourses] Query error:', query.error);
+  }
+  return query;
 };
 export const useCourse = (id: string) => {
-  return useQuery({
+  const query = useQuery({
     queryKey: ['course', id],
-    queryFn: () => courseService.getCourseDetails(id),
+    queryFn: async () => courseService.getCourseDetails(id),
     enabled: !!id,
     refetchOnWindowFocus: false,
   });
+  // DEBUG: Log the result and error from useCourse
+  // eslint-disable-next-line no-console
+  console.log('[useCourse] Query data:', query.data);
+  if (query.error) {
+     
+    console.error('[useCourse] Query error:', query.error);
+  }
+  return query;
 };

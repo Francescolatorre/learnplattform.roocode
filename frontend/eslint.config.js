@@ -4,6 +4,7 @@ import {defineFlatConfig} from 'eslint-define-config';
 import eslintPluginImport from 'eslint-plugin-import';
 import eslintPluginReact from 'eslint-plugin-react';
 import eslintPluginReactHooks from 'eslint-plugin-react-hooks';
+import eslintPluginJsdoc from 'eslint-plugin-jsdoc';
 
 export default defineFlatConfig([
   {
@@ -43,6 +44,7 @@ export default defineFlatConfig([
       '@typescript-eslint': typescriptEslintPlugin,
       import: eslintPluginImport,
       'react-hooks': eslintPluginReactHooks,
+      jsdoc: eslintPluginJsdoc,
     },
     settings: {
       react: {
@@ -59,6 +61,34 @@ export default defineFlatConfig([
       },
     },
     rules: {
+      // --- TypeScript Services Standardization Initiative ---
+      // Enforce JSDoc/TSDoc for all public classes and methods in services
+      // '@typescript-eslint/require-jsdoc' rule removed: not supported in current plugin version.
+      // Consider using eslint-plugin-jsdoc or TSDoc for documentation enforcement.
+      // Enforce explicit return types for all exported functions (public API)
+      '@typescript-eslint/explicit-module-boundary-types': [
+        'error',
+        {
+          allowArgumentsExplicitlyTypedAsAny: false,
+          allowedNames: [],
+        },
+      ],
+      // Enforce async functions for service methods (consistent API)
+      '@typescript-eslint/promise-function-async': [
+        'error',
+        {
+          allowedPromiseNames: ['Promise'],
+          checkArrowFunctions: true,
+          checkFunctionDeclarations: true,
+          checkFunctionExpressions: true,
+          checkMethodDeclarations: true,
+        },
+      ],
+      // Enforce service file/folder naming convention (e.g., *Service.ts)
+      // Requires eslint-plugin-filenames installed and configured
+      // 'filenames/match-regex' rule removed: requires eslint-plugin-filenames, which is not installed.
+      // Consider adding the plugin and restoring this rule if filename enforcement is required.
+
       // Import rules
       'import/no-unresolved': 'error',
       'import/named': 'error',
@@ -187,6 +217,37 @@ export default defineFlatConfig([
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       'no-console': 'off',
+    },
+  },
+  // Enforce JSDoc for all public classes and methods in service modules
+  {
+    files: ['src/services/**/*.ts', 'src/services/**/*.tsx'],
+    plugins: {
+      jsdoc: eslintPluginJsdoc,
+    },
+    rules: {
+      'jsdoc/require-jsdoc': [
+        'warn',
+        {
+          require: {
+            ClassDeclaration: true,
+            MethodDefinition: true,
+            FunctionDeclaration: true,
+            ArrowFunctionExpression: false,
+            FunctionExpression: false,
+          },
+          contexts: [
+            'ClassDeclaration',
+            'MethodDefinition',
+            'FunctionDeclaration',
+          ],
+        },
+      ],
+      'jsdoc/require-description': 'warn',
+      'jsdoc/require-param': 'warn',
+      'jsdoc/require-returns': 'warn',
+      'jsdoc/check-tag-names': 'warn',
+      'jsdoc/check-types': 'warn',
     },
   },
 ]);

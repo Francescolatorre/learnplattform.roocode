@@ -60,6 +60,29 @@ This assessment will test your knowledge of {course_title}.
 """
 
     def handle(self, *args, **kwargs):
+        # Create admin superuser if it doesn't exist
+        admin, created = User.objects.get_or_create(
+            username="admin",
+            defaults={
+                "email": "admin@example.com",
+                "role": "admin",
+                "display_name": "Admin User",
+                "is_staff": True,
+                "is_superuser": True,
+            },
+        )
+        if created:
+            admin.set_password("adminpassword")
+            admin.save()
+            self.stdout.write(
+                self.style.SUCCESS(
+                    "Created admin superuser (username: admin, password: adminpassword)"
+                )
+            )
+        else:
+            self.stdout.write(
+                self.style.WARNING("Admin superuser already exists (username: admin)")
+            )
         self.stdout.write(self.style.SUCCESS("Creating sample data..."))
 
         # Create instructor if it doesn't exist

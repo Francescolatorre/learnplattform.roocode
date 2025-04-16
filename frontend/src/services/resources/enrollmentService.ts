@@ -1,167 +1,137 @@
-import {courseService} from 'src/services/resources/courseService';
+import {API_CONFIG} from 'src/services/api/apiConfig';
+import {ApiService} from 'src/services/api/apiService';
+import {CourseEnrollment as Enrollment} from 'src/types/common/entities';
 
-import {apiService} from 'src/services/api/apiService';
-import {Course, CourseEnrollment as Enrollment, User} from 'src/types/common/entities';
-import {EnrollmentServiceType} from 'src/types/common/entities';
+/**
+ * Service for managing course enrollments, including CRUD operations, user enrollments, and course-specific queries.
+ * All methods are asynchronous, strictly typed, and use centralized API_CONFIG endpoints.
+ */
+class EnrollmentService {
+  private apiEnrollments = new ApiService<Enrollment[]>();
+  private apiEnrollment = new ApiService<Enrollment>();
+  private apiVoid = new ApiService<void>();
 
-export interface IEnrollmentWithDetails {
-  id: number;
-  course: number;
-  course_details: Course;
+  /**
+   * Fetch all enrollments.
+   * @returns Promise resolving to an array of Enrollment objects.
+   */
+  async getAll(): Promise<Enrollment[]> {
+    return this.apiEnrollments.get(API_CONFIG.enrollments.list);
+  }
+
+  /**
+   * Fetch enrollment by ID.
+   * @param id Enrollment ID.
+   * @returns Promise resolving to the Enrollment object.
+   */
+  async getById(id: string | number): Promise<Enrollment> {
+    return this.apiEnrollment.get(API_CONFIG.enrollments.details(id));
+  }
+
+  /**
+   * Create a new enrollment.
+   * @param data Enrollment creation data.
+   * @returns Promise resolving to the created Enrollment object.
+   */
+  async create(data: Partial<Enrollment>): Promise<Enrollment> {
+    return this.apiEnrollment.post(API_CONFIG.enrollments.create, data);
+  }
+
+  /**
+   * Update an existing enrollment.
+   * @param id Enrollment ID.
+   * @param data Partial enrollment data to update.
+   * @returns Promise resolving to the updated Enrollment object.
+   */
+  async update(id: string | number, data: Partial<Enrollment>): Promise<Enrollment> {
+    return this.apiEnrollment.put(API_CONFIG.enrollments.update(id), data);
+  }
+
+  /**
+   * Delete an enrollment by ID.
+   * @param id Enrollment ID.
+   * @returns Promise resolving when the enrollment is deleted.
+   */
+  async delete(id: string | number): Promise<void> {
+    await this.apiVoid.delete(API_CONFIG.enrollments.delete(id));
+  }
+
+  /**
+   * Fetch all enrollments for the current user.
+   * @returns Promise resolving to an array of Enrollment objects.
+   */
+  async fetchUserEnrollments(): Promise<Enrollment[]> {
+    return this.apiEnrollments.get(API_CONFIG.enrollments.userEnrollments);
+  }
+
+  /**
+   * Enroll the current user in a course.
+   * @param courseId Course ID.
+   * @returns Promise resolving to the created Enrollment object.
+   */
+  async enrollInCourse(courseId: string | number): Promise<Enrollment> {
+    return this.apiEnrollment.post(API_CONFIG.enrollments.enroll, {course: courseId});
+  }
+
+  /**
+   * Unenroll the current user from a course.
+   * @param enrollmentId Enrollment ID.
+   * @returns Promise resolving when the user is unenrolled.
+   */
+  async unenrollFromCourse(enrollmentId: string | number): Promise<void> {
+    await this.apiVoid.delete(API_CONFIG.enrollments.unenroll(enrollmentId));
+  }
+
+  /**
+   * Fetch all enrollments for a specific course.
+   * @param courseId Course ID.
+   * @returns Promise resolving to an array of Enrollment objects.
+   */
+  async fetchEnrolledStudents(courseId: string | number): Promise<Enrollment[]> {
+    return this.apiEnrollments.get(API_CONFIG.enrollments.byCourse(courseId));
+  }
+
+  /**
+   * Find enrollments by filter.
+   * @param filter Key-value filter object.
+   * @returns Promise resolving to an array of Enrollment objects.
+   */
+  async findByFilter(filter: Record<string, unknown>): Promise<Enrollment[]> {
+    // For filter, we append as query params
+    const params = new URLSearchParams(
+      Object.entries(filter).reduce<Record<string, string>>((acc, [key, value]) => {
+        acc[key] = String(value);
+        return acc;
+      }, {})
+    ).toString();
+    const url = params
+      ? `${API_CONFIG.enrollments.list}?${params}`
+      : API_CONFIG.enrollments.list;
+    return this.apiEnrollments.get(url);
+  }
+  /**
+   * Set Authorization header for all ApiService instances (for integration tests).
+   * @param token JWT access token
+   */
+  setAuthHeader(token: string) {
+    const authHeader = {Authorization: `Bearer ${token}`};
+    this.apiEnrollments.setHeaders(authHeader);
+    this.apiEnrollment.setHeaders(authHeader);
+    this.apiVoid.setHeaders(authHeader);
+  }
 }
 
-interface UserEnrollment {
-  id: number;
-  user: number;
-  course: number;
-  status: string;
-  course_details: Course;
-}
+// Singleton export
+export const enrollmentService = new EnrollmentService();
 
-interface UserEnrollmentsResponse {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: UserEnrollment[];
-}
+// Backward compatibility exports (deprecated)
+export const fetchUserEnrollments = async () => enrollmentService.fetchUserEnrollments();
+export const enrollInCourse = async (courseId: string | number) => enrollmentService.enrollInCourse(courseId);
+export const unenrollFromCourse = async (enrollmentId: string | number) => enrollmentService.unenrollFromCourse(enrollmentId);
+export const fetchEnrolledStudents = async (courseId: string | number) => enrollmentService.fetchEnrolledStudents(courseId);
+export const findByFilter = async (filter: Record<string, unknown>) => enrollmentService.findByFilter(filter);
 
-const EnrollmentService = {
-  getAll: async (params?: {}) => {
-    try {
-      const response = await (apiService<any>() as any).get(`/api/v1/enrollments`);
-      return response.data;
-    } catch (error: any) {
-      console.error('Error fetching enrollments:', error);
-      throw error;
-    }
-  },
-  getById: async (id: string | number, params?: {}) => {
-    try {
-      const response = await (apiService<any>() as any).get(`/api/v1/enrollments/${id}`);
-      return response.data;
-    } catch (error: any) {
-      console.error('Error fetching enrollment by ID:', error);
-      throw error;
-    }
-  },
-  create: async (data?: {}) => {
-    try {
-      const response = await (apiService<any>() as any).post('/api/v1/enrollments', data);
-      return response.data;
-    } catch (error: any) {
-      console.error('Error creating enrollment:', error);
-      throw error;
-    }
-  },
-  update: async (id: string | number, data?: {}) => {
-    try {
-      const response = await (apiService<any>() as any).put(`/api/v1/enrollments/${id}`, data);
-      return response.data;
-    } catch (error: any) {
-      console.error('Error updating enrollment:', error);
-      throw error;
-    }
-  },
-  delete: async (id: string | number) => {
-    try {
-      await (apiService<any>() as any).delete(`/api/v1/enrollments/${id}`);
-    } catch (error: any) {
-      console.error('Error deleting enrollment:', error);
-      throw error;
-    }
-  },
-} as EnrollmentServiceType;
-
-EnrollmentService.fetchAllEnrollments = async () => {
-  try {
-    const response = await EnrollmentService.getAll();
-    EnrollmentService.enrollments = response;
-    // Fetch course details for each enrollment
-    const enrollmentsWithDetails = await Promise.all(
-      response.map(async enrollment => {
-        const courseDetails = await courseService.getCourseDetails(enrollment.course.toString());
-        return {
-          id: enrollment.id,
-          course: enrollment.course,
-          course_details: courseDetails,
-        };
-      })
-    );
-    return enrollmentsWithDetails;
-  } catch (error: any) {
-    console.error('Error fetching all enrollments:', error);
-    throw error;
-  }
-};
-
-EnrollmentService.fetchUserEnrollments = async () => {
-  console.info('fetchUserEnrollments function called');
-  try {
-    console.info('Fetching user enrollments...');
-    const response = await (apiService<any>() as any).get('/api/v1/course-enrollments/');
-    console.info('User enrollments response:', response);
-    const mappedResults = response.results.map((enrollment: UserEnrollment) => ({
-      ...enrollment,
-      courseDetails: {
-        ...enrollment.course_details, // Extract course details
-      },
-    }));
-    return {...response, results: mappedResults as any};
-  } catch (error) {
-    console.error('Failed to fetch user enrollments:', error);
-    throw error;
-  }
-};
-
-EnrollmentService.fetchCourseEnrollments = async () => {
-  const response = await (apiService<any>() as any).get('/api/v1/course-enrollments/');
-  return response;
-};
-
-EnrollmentService.enrollInCourse = async (courseId: string) => {
-  try {
-    await (apiService<any>() as any).post('/api/v1/course-enrollments/', {course: courseId});
-  } catch (error: any) {
-    console.error('API Error:', error);
-    console.error('Response status:', error.response?.status);
-    console.error('Response data:', error.response?.data);
-
-    if (
-      error.response?.status === 400 &&
-      error.response?.data?.detail === 'You are already enrolled in this course.'
-    ) {
-      throw new Error('You are already enrolled in this course.');
-    }
-
-    throw error;
-  }
-};
-
-EnrollmentService.unenrollFromCourse = async (enrollmentId: string) => {
-  try {
-    await (apiService<any>() as any).delete(`/api/v1/course-enrollments/${enrollmentId}/`);
-  } catch (error) {
-    console.error('Failed to unenroll from course:', error);
-    throw error;
-  }
-};
-
-EnrollmentService.fetchEnrolledStudents = async (courseId: string) => {
-  const response = await (apiService<any>() as any).get(`/api/v1/course-enrollments/?course=${courseId}`);
-  return response.data;
-} as EnrollmentServiceType;
-
-export default EnrollmentService;
-interface EnrollmentFilter {
-  [key: string]: any;
-}
-
-export const findByFilter = async (filter: EnrollmentFilter): Promise<Enrollment[]> => {
-  try {
-    const response = await EnrollmentService.getAll({params: filter});
-    return response;
-  } catch (error: any) {
-    console.error('Error fetching enrollments by filter:', error);
-    throw error;
-  }
-};
+/**
+ * @deprecated Use the EnrollmentService class and singleton export instead.
+ */
+export default enrollmentService;
