@@ -1,6 +1,7 @@
 import {API_CONFIG} from 'src/services/api/apiConfig';
 import {ApiService} from 'src/services/api/apiService';
 import {CourseEnrollment as Enrollment} from 'src/types/common/entities';
+import {IPaginatedResponse} from 'src/types/common';
 
 /**
  * Service for managing course enrollments, including CRUD operations, user enrollments, and course-specific queries.
@@ -10,6 +11,7 @@ class EnrollmentService {
   private apiEnrollments = new ApiService<Enrollment[]>();
   private apiEnrollment = new ApiService<Enrollment>();
   private apiVoid = new ApiService<void>();
+  private apiEnrollmentsPaginatedResults = new ApiService<IPaginatedResponse<Enrollment>>();
 
   /**
    * Fetch all enrollments.
@@ -91,12 +93,7 @@ class EnrollmentService {
     return this.apiEnrollments.get(API_CONFIG.endpoints.enrollments.byCourse(courseId));
   }
 
-  private apiEnrollmentsResults = new ApiService<{
-    count: number;
-    next: string | null;
-    previous: string | null;
-    results: Enrollment[];
-  }>();
+
 
   /**
    * Find enrollments by filter.
@@ -117,7 +114,7 @@ class EnrollmentService {
       : API_CONFIG.endpoints.enrollments.list;
 
     // The API returns a paginated response
-    const response = await this.apiEnrollmentsResults.get(url);
+    const response = await this.apiEnrollmentsPaginatedResults.get(url);
     return response.results;
   }
   /**
@@ -129,6 +126,7 @@ class EnrollmentService {
     this.apiEnrollments.setHeaders(authHeader);
     this.apiEnrollment.setHeaders(authHeader);
     this.apiVoid.setHeaders(authHeader);
+    this.apiEnrollmentsPaginatedResults.setHeaders(authHeader);
   }
 }
 

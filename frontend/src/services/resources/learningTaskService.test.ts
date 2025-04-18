@@ -2,7 +2,9 @@ import {describe, it, expect, vi, beforeEach} from 'vitest';
 
 import type {LearningTask, TaskCreationData} from 'src/types/common/entities';
 
-import {learningTaskService} from './learningTaskService';
+import {API_CONFIG} from '../api/apiConfig';
+
+import learningTaskService from './learningTaskService';
 
 const mockTask: LearningTask = {
     id: 1,
@@ -38,7 +40,7 @@ vi.mock('@/services/api/apiService', () => {
     };
 });
 
-describe.skip('learningTaskService', () => {
+describe('learningTaskService', () => {
     let mockGet: any, mockPost: any, mockPatch: any, mockDelete: any;
     beforeEach(() => {
         mockGet = (globalThis as any).mockGet;
@@ -49,23 +51,23 @@ describe.skip('learningTaskService', () => {
     });
 
     it('getAll calls apiService.get with correct endpoint', async () => {
-        mockGet.mockResolvedValueOnce([mockTask]);
+        mockGet.mockResolvedValueOnce({results: [mockTask]});
         const result = await learningTaskService.getAll({course: '101'});
-        expect(mockGet).toHaveBeenCalledWith('/api/v1/tasks/?course=101');
+        expect(mockGet).toHaveBeenCalledWith(API_CONFIG.endpoints.tasks.list + '?course=101');
         expect(result).toEqual([mockTask]);
     });
 
     it('getById returns the task if found', async () => {
         mockGet.mockResolvedValueOnce(mockTask);
         const result = await learningTaskService.getById('1');
-        expect(mockGet).toHaveBeenCalledWith('/api/v1/tasks/1/');
+        expect(mockGet).toHaveBeenCalledWith(API_CONFIG.endpoints.tasks.details('1'));
         expect(result).toEqual(mockTask);
     });
 
     it('getById throws if task not found', async () => {
         mockGet.mockResolvedValueOnce(undefined);
         await expect(learningTaskService.getById('999')).rejects.toThrow('Task not found');
-        expect(mockGet).toHaveBeenCalledWith('/api/v1/tasks/999/');
+        expect(mockGet).toHaveBeenCalledWith(API_CONFIG.endpoints.tasks.details('999'));
     });
 
     it('create calls apiService.post and returns created task', async () => {
@@ -83,6 +85,21 @@ describe.skip('learningTaskService', () => {
         expect(result).toEqual(mockTask);
     });
 
+    it('create throws and logs error on failure', async () => {
+        const error = new Error('Network error');
+        mockPost.mockRejectedValueOnce(error);
+        const data: TaskCreationData = {
+            id: 3,
+            title: 'Fail Task',
+            course: 101,
+            description: 'desc',
+            order: 3,
+            is_published: false,
+        };
+        await expect(learningTaskService.create(data)).rejects.toThrow('Failed to create learning task');
+        expect(mockPost).toHaveBeenCalled();
+    });
+
     it('update calls apiService.patch and returns updated task', async () => {
         mockPatch.mockResolvedValueOnce(mockTask);
         const result = await learningTaskService.update('1', {title: 'Updated'});
@@ -97,16 +114,16 @@ describe.skip('learningTaskService', () => {
     });
 
     it('getByStudentId returns tasks if found', async () => {
-        mockGet.mockResolvedValueOnce([mockTask]);
+        mockGet.mockResolvedValueOnce({results: [mockTask]});
         const result = await learningTaskService.getByStudentId('42');
-        expect(mockGet).toHaveBeenCalledWith('/api/v1/students/42/tasks');
+        expect(mockGet).toHaveBeenCalledWith('/api/v1/tasks/?student=42');
         expect(result).toEqual([mockTask]);
     });
 
     it('getByStudentId throws if not found', async () => {
-        mockGet.mockResolvedValueOnce(undefined);
+        mockGet.mockResolvedValueOnce({results: []});
         await expect(learningTaskService.getByStudentId('999')).rejects.toThrow('Tasks not found');
-        expect(mockGet).toHaveBeenCalledWith('/api/v1/students/999/tasks');
+        expect(mockGet).toHaveBeenCalledWith('/api/v1/tasks/?student=999');
     });
 
     it('getByCourseId returns tasks from results', async () => {
@@ -117,7 +134,7 @@ describe.skip('learningTaskService', () => {
     });
 
     it('getByCourseId returns empty array if no results', async () => {
-        mockGet.mockResolvedValueOnce(undefined);
+        mockGet.mockResolvedValueOnce({results: []});
         const result = await learningTaskService.getByCourseId('101');
         expect(mockGet).toHaveBeenCalled();
         expect(result).toEqual([]);

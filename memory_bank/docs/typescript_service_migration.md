@@ -98,6 +98,84 @@ export async function getData(id: string): Promise<Data> {
 
 ---
 
+## Refactored React Hooks and Service Modules
+
+This section explains how React hooks have been refactored to utilize the standardized TypeScript service modules, such as `progressService`, to manage data fetching and business logic.
+
+### Overview
+
+- Service modules encapsulate API calls and business logic, providing a clean and consistent interface.
+- React hooks use these service modules to fetch data asynchronously and manage component state.
+- This separation improves maintainability, testability, and code reuse.
+
+### Example: ProgressDebugger Component
+
+The `ProgressDebugger` component demonstrates how to use React hooks with the `progressService` module.
+
+```tsx
+import React, {useState, useEffect} from 'react';
+import {fetchStudentProgressByCourse} from '@services/resources/progressService';
+import {useAuth} from '@context/auth/AuthContext';
+
+const ProgressDebugger: React.FC = () => {
+  const {user, isAuthenticated, getAccessToken, getUserRole} = useAuth();
+  const [debugInfo, setDebugInfo] = useState({
+    isAuthenticated: false,
+    userRole: null,
+    accessToken: null,
+    progressFetchResult: 'Not attempted',
+  });
+
+  useEffect(() => {
+    const runDiagnostics = async () => {
+      const accessToken = getAccessToken();
+      const userRole = getUserRole();
+
+      setDebugInfo(prev => ({
+        ...prev,
+        isAuthenticated,
+        userRole: userRole,
+        accessToken: accessToken,
+      }));
+
+      if (isAuthenticated) {
+        try {
+          await fetchStudentProgressByCourse('1', String(user?.id) || 'defaultStudentId');
+          setDebugInfo(prev => ({
+            ...prev,
+            progressFetchResult: 'Success',
+          }));
+        } catch (error: any) {
+          setDebugInfo(prev => ({
+            ...prev,
+            progressFetchResult: `Failed with status ${error?.response?.status || 'unknown'}: ${error.message || 'No error message provided'}`,
+          }));
+        }
+      }
+    };
+
+    runDiagnostics();
+  }, [user, isAuthenticated, getAccessToken, getUserRole]);
+
+  return (
+    <div>
+      {/* UI rendering omitted for brevity */}
+    </div>
+  );
+};
+
+export default ProgressDebugger;
+```
+
+### Usage Notes
+
+- Always handle authentication and authorization when calling service methods.
+- Use React's `useEffect` to perform asynchronous data fetching.
+- Manage loading, success, and error states appropriately in component state.
+- Service modules should not contain UI logic; keep UI concerns in React components.
+
+---
+
 ## Example Migration
 
 **Legacy Service (Before):**

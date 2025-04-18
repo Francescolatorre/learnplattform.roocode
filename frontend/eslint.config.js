@@ -5,6 +5,7 @@ import eslintPluginImport from 'eslint-plugin-import';
 import eslintPluginReact from 'eslint-plugin-react';
 import eslintPluginReactHooks from 'eslint-plugin-react-hooks';
 import eslintPluginJsdoc from 'eslint-plugin-jsdoc';
+import reactHookServiceComplianceRule from './eslint-rules/react-hook-service-compliance';
 
 export default defineFlatConfig([
   {
@@ -45,6 +46,11 @@ export default defineFlatConfig([
       import: eslintPluginImport,
       'react-hooks': eslintPluginReactHooks,
       jsdoc: eslintPluginJsdoc,
+      'custom-rules': {
+        rules: {
+          'react-hook-service-compliance': reactHookServiceComplianceRule,
+        },
+      },
     },
     settings: {
       react: {
@@ -151,6 +157,7 @@ export default defineFlatConfig([
       'no-shadow': 'off',
       'no-var': 'error',
       'prefer-const': 'warn',
+      'custom-rules/react-hook-service-compliance': 'error',
     },
   },
   {

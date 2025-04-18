@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {useAuth} from '@context/auth/AuthContext';
 
 const isTesting = import.meta.env.NODE_ENV === 'test';
 
@@ -32,7 +31,7 @@ axiosInstance.interceptors.request.use(
 // Add a response interceptor for logging and error handling
 axiosInstance.interceptors.response.use(
   (response) => {
-    if (!isTesting) {console.log('Response from', response.config.url);}
+    //if (!isTesting) {console.log('Response from', response.config.url);}
     return response;
   },
   (error) => {

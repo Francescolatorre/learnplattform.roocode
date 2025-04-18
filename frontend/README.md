@@ -86,11 +86,11 @@ A comprehensive course data management hook with:
 
 ## Key Benefits
 
-- **Reduced Code Duplication**: Centralized, reusable components
-- **Improved Type Safety**: TypeScript generics
-- **Enhanced Performance**: Optimized data fetching and caching
-- **Consistent User Experience**: Standardized UI components
-- **Flexible Architecture**: Easily extensible design
+- **Reduced Code Duplication:** Centralized, reusable components
+- **Improved Type Safety:** TypeScript generics
+- **Enhanced Performance:** Optimized data fetching and caching
+- **Consistent User Experience:** Standardized UI components
+- **Flexible Architecture:** Easily extensible design
 
 ## Best Practices Implemented
 
@@ -116,3 +116,16 @@ A comprehensive course data management hook with:
 ## Contributing
 
 Please follow our coding guidelines and contribute to improving the frontend architecture.
+
+---
+
+## Documentation Updates
+
+### Refactored Hooks
+
+The following hooks have been refactored to improve usability and maintainability:
+
+- **useApiResource**: Enhanced to support automatic state handling and CRUD operations with type-safe implementations.
+- **useCourseData**: Updated to integrate with React Query for better data management and error handling.
+
+Ensure that all examples and usage instructions reflect these changes for clarity and consistency.

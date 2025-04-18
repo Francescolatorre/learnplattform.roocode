@@ -2,7 +2,14 @@ import {ApiService} from 'src/services/api/apiService';
 import {LearningTask, TaskCreationData} from 'src/types/common/entities';
 
 import {API_CONFIG} from '../api/apiConfig';
+import {logger} from 'src/utils/logger';
 
+class LearningTaskServiceError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'LearningTaskServiceError';
+  }
+}
 /**
  * Service for managing learning tasks, including CRUD operations and relationship queries.
  * Provides methods to interact with the backend API for learning tasks. All methods are asynchronous and strictly typed.
@@ -30,8 +37,8 @@ class LearningTaskService {
       ? `${API_CONFIG.endpoints.tasks.list}?${queryString}`
       : API_CONFIG.endpoints.tasks.list;
 
-    console.debug('Fetching all tasks with params:', params);
-    console.debug('Constructed endpoint:', endpoint);
+    logger.debug('Fetching all tasks with params:', params);
+    logger.debug('Constructed endpoint:', endpoint);
 
     const response = await this.apiTasksResults.get(endpoint);
     return response.results;
@@ -44,11 +51,16 @@ class LearningTaskService {
    * @throws Error if the task is not found.
    */
   async getById(taskId: string): Promise<LearningTask> {
-    const response = await this.apiTask.get(API_CONFIG.endpoints.tasks.details(taskId));
-    if (!response) {
-      throw new Error('Task not found');
+    try {
+      const response = await this.apiTask.get(API_CONFIG.endpoints.tasks.details(taskId));
+      if (!response) {
+        throw new LearningTaskServiceError('Task not found');
+      }
+      return response;
+    } catch (error) {
+      logger.error('Error fetching task by ID:', error);
+      throw error;
     }
-    return response;
   }
 
   /**
@@ -61,9 +73,15 @@ class LearningTaskService {
     taskData: TaskCreationData,
     notifyUsers = false
   ): Promise<LearningTask> {
-    const formData = this.prepareFormData(taskData);
-    formData.append('notifyUsers', String(notifyUsers));
-    return this.apiTask.post(API_CONFIG.endpoints.tasks.create, formData);
+    try {
+      const formData = this.prepareFormData(taskData);
+      formData.append('notifyUsers', String(notifyUsers));
+      const response = await this.apiTask.post(API_CONFIG.endpoints.tasks.create, formData);
+      return response;
+    } catch (error) {
+      logger.error('Error creating learning task:', error);
+      throw new LearningTaskServiceError('Failed to create learning task');
+    }
   }
 
   /**
@@ -97,10 +115,17 @@ class LearningTaskService {
    * @throws Error if no tasks are found.
    */
   async getByStudentId(studentId: string): Promise<LearningTask[]> {
-    // This is a custom implementation as there is no direct endpoint in the API
-    // You might need to check with your backend team for the correct endpoint
-    const params = {student: studentId};
-    return this.getAll(params);
+    try {
+      const params = {student: studentId};
+      const response = await this.apiTasksResults.get(`${API_CONFIG.endpoints.tasks.list}?${new URLSearchParams(params).toString()}`);
+      if (!response || !Array.isArray(response.results) || response.results.length === 0) {
+        throw new LearningTaskServiceError('Tasks not found');
+      }
+      return response.results;
+    } catch (error) {
+      logger.error('Error fetching tasks by student ID:', error);
+      throw error;
+    }
   }
 
   /**
@@ -109,11 +134,16 @@ class LearningTaskService {
    * @returns Promise resolving to an array of LearningTask objects.
    */
   async getByCourseId(courseId: string): Promise<LearningTask[]> {
-    const response = await this.apiTasksResults.get(API_CONFIG.endpoints.tasks.byCourse(courseId));
-    if (!response || !Array.isArray(response.results)) {
-      throw new Error('No tasks found or invalid response structure');
+    try {
+      const response = await this.apiTasksResults.get(API_CONFIG.endpoints.tasks.byCourse(courseId));
+      if (!response || !Array.isArray(response.results)) {
+        throw new LearningTaskServiceError('No tasks found or invalid response structure');
+      }
+      return response.results;
+    } catch (error) {
+      logger.error('Error fetching tasks by course ID:', error);
+      throw error;
     }
-    return response.results;
   }
 
   // Helper methods

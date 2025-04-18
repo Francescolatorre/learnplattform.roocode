@@ -25,26 +25,16 @@ class ProgressService {
   private apiAny = new ApiService<any>();
   private apiCourse = new ApiService<Course>();
 
+  /**
+   * Fetches the progress of a student across all courses.
+   * @param studentId The ID of the student.
+   * @returns A promise that resolves to an array of UserProgress objects.
+   */
 
-  /**
-   * Fetches the progress of a student across all courses.
-   * @param studentId The ID of the student.
-   * @returns A promise that resolves to an array of UserProgress objects.
-   */
-  /**
-   * Fetches the progress of a student across all courses.
-   * @param studentId The ID of the student.
-   * @returns A promise that resolves to an array of UserProgress objects.
-   */
-  /**
-   * Fetches the progress of a student across all courses.
-   * @param studentId The ID of the student.
-   * @returns A promise that resolves to an array of UserProgress objects.
-   */
   async fetchStudentProgressByUser(studentId: string): Promise<UserProgress[]> {
-    // No direct endpoint in API_CONFIG, so fallback to courses.progress or return empty array
-    // This is a placeholder; update with correct endpoint if available
-    return [];
+    console.log('Fetching student progress by user:', studentId);
+    const endpoint = API_CONFIG.endpoints.student.progress(studentId);
+    return this.apiUserProgressArr.get(endpoint);
   }
 
   /**
@@ -59,21 +49,11 @@ class ProgressService {
     studentId: string,
     includeDetails = false
   ): Promise<UserProgress | null> {
-    // No direct endpoint in API_CONFIG, so fallback to courses.progress or return null
-    // This is a placeholder; update with correct endpoint if available
-    return null;
+    console.log('Fetching student progress by course:', courseId, studentId);
+    const endpoint = API_CONFIG.endpoints.courses.studentProgressDetail(courseId, studentId);
+    return this.apiUserProgress.get(endpoint);
   }
 
-  /**
-   * Fetches the progress of all students in a specific course.
-   * @param courseId
-   * @returns A promise that resolves to an object containing the count, next page, previous page, and results.
-   */
-  /**
-   * Fetches the progress of all students in a specific course.
-   * @param courseId The ID of the course.
-   * @returns A promise that resolves to an object containing the count, next page, previous page, and results.
-   */
   /**
    * Fetches the progress of all students in a specific course.
    * @param courseId The ID of the course.
@@ -87,9 +67,9 @@ class ProgressService {
     previous: string | null;
     results: UserProgress[];
   }> {
-    // No direct endpoint in API_CONFIG, so fallback to courses.progress or return empty result
-    // This is a placeholder; update with correct endpoint if available
-    return {count: 0, next: null, previous: null, results: []};
+    console.log('Fetching all students progress for course:', courseId);
+    const endpoint = API_CONFIG.endpoints.courses.studentProgress(courseId);
+    return this.apiAny.get(endpoint);
   }
 
   /**
@@ -102,26 +82,13 @@ class ProgressService {
     courseId: string,
     studentId?: string
   ): Promise<QuizAttempt[]> {
-    // No quiz endpoints in API_CONFIG, so return empty array
-    // This is a placeholder; update with correct endpoint if available
-    return [];
+    console.log('Getting quiz history for course:', courseId, 'and student:', studentId);
+    const endpoint = API_CONFIG.endpoints.quizzes.attemptsList;
+    // If studentId is provided, filter by studentId (assuming API supports query param)
+    const url = studentId ? `${endpoint}?student=${studentId}` : endpoint;
+    return this.apiQuizAttemptArr.get(url);
   }
 
-
-  /**
-   * Updates task progress for a student in a course.
-   * @param courseId The ID of the course.
-   * @param taskId The ID of the task.
-   * @param progressData The progress data to update.
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Updates task progress for a student in a course.
-   * @param courseId The ID of the course.
-   * @param taskId The ID of the task.
-   * @param progressData The progress data to update.
-   * @returns A promise that resolves to any.
-   */
   /**
    * Updates task progress for a student in a course.
    * @param courseId The ID of the course.
@@ -134,84 +101,33 @@ class ProgressService {
     taskId: string,
     progressData: any
   ): Promise<any> {
-    // No tasks endpoint in API_CONFIG, so return null
-    // This is a placeholder; update with correct endpoint if available
-    return null;
+    const endpoint = API_CONFIG.endpoints.tasks.details(taskId);
+    return this.apiAny.put(endpoint, progressData);
   }
 
   /**
    * Submits a task for a student in a course.
    * @param courseId The ID of the course.
    * @param taskId The ID of the task.
-   * @param submissionData The submission data.
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Submits a task for a student in a course.
-   * @param courseId The ID of the course.
-   * @param taskId The ID of the task.
-   * @param submissionData The submission data.
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Submits a task for a student in a course.
-   * @param courseId The ID of the course.
-   * @param taskId The ID of the task.
-   * @param submissionData The submission data.
-   * @returns A promise that resolves to any.
+   * @param submissionData The submission data to be submitted.
+   * @returns A promise that resolves to the server response.
    */
   async submitTask(
     courseId: string,
     taskId: string,
     submissionData: any
   ): Promise<any> {
-    // No tasks endpoint in API_CONFIG, so return null
-    // This is a placeholder; update with correct endpoint if available
-    return null;
+    const endpoint = API_CONFIG.endpoints.tasks.details(taskId);
+    return this.apiAny.post(endpoint, submissionData);
   }
 
   /**
    * Grades a submission for a student in a course.
-   * @param courseId
-   * @param taskId
-   * @param studentId
-   * @param courseId
-   * @param taskId
-   * @param studentId
-   * @param gradingData
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Grades a submission for a student in a course.
    * @param courseId The ID of the course.
    * @param taskId The ID of the task.
    * @param studentId The ID of the student.
-   * @param gradingData The grading data.
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Grades a submission for a student in a course.
-   * @param courseId The ID of the course.
-   * @param taskId The ID of the task.
-   * @param studentId The ID of the student.
-   * @param gradingData The grading data.
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Grades a submission for a student in a course.
-   * @param courseId The ID of the course.
-   * @param taskId The ID of the task.
-   * @param studentId The ID of the student.
-   * @param gradingData The grading data.
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Grades a submission for a student in a course.
-   * @param courseId The ID of the course.
-   * @param taskId The ID of the task.
-   * @param studentId The ID of the student.
-   * @param gradingData The grading data.
-   * @returns A promise that resolves to any.
+   * @param gradingData The grading data to apply.
+   * @returns A promise that resolves to the server response.
    */
   async gradeSubmission(
     courseId: string,
@@ -219,20 +135,15 @@ class ProgressService {
     studentId: string,
     gradingData: any
   ): Promise<any> {
-    // No tasks endpoint in API_CONFIG, so return null
-    // This is a placeholder; update with correct endpoint if available
-    return null;
+    const endpoint = `${API_CONFIG.endpoints.tasks.details(taskId)}grade/`;
+    return this.apiAny.post(endpoint, gradingData);
   }
 
   /**
    * Fetches course details.
-   * @param courseId
-   * @returns A promise that resolves to a Course object.  Throws an error if the course is not found.
-   */
-  /**
-   * Fetches course details.
    * @param courseId The ID of the course.
-   * @returns A promise that resolves to a Course object.  Throws an error if the course is not found.
+   * @returns A promise that resolves to a Course object.
+   * @throws Error if the course is not found.
    */
   async fetchCourseDetails(courseId: string): Promise<Course> {
     const response = await this.apiCourse.get(API_CONFIG.endpoints.courses.details(courseId));
@@ -244,117 +155,43 @@ class ProgressService {
 
   /**
    * Fetches progress analytics for a course.
-   * @param courseId
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Fetches progress analytics for a course.
    * @param courseId The ID of the course.
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Fetches progress analytics for a course.
-   * @param courseId The ID of the course.
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Fetches progress analytics for a course.
-   * @param courseId The ID of the course.
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Fetches progress analytics for a course.
-   * @param courseId The ID of the course.
-   * @returns A promise that resolves to any.
+   * @returns A promise that resolves to analytics data.
    */
   async fetchProgressAnalytics(courseId: string): Promise<any> {
-    // No analytics endpoint in API_CONFIG, so return null
-    // This is a placeholder; update with correct endpoint if available
-    return null;
+    const endpoint = API_CONFIG.endpoints.courses.analytics(courseId);
+    return this.apiAny.get(endpoint);
   }
 
   /**
-   * Fetches student progress summary.
-   * @param studentId
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Fetches student progress summary.
-   * @param studentId The ID of the student.
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Fetches student progress summary.
-   * @param studentId The ID of the student.
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Fetches student progress summary.
-   * @param studentId The ID of the student.
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Fetches student progress summary.
-   * @param studentId The ID of the student.
-   * @returns A promise that resolves to any.
+   * Fetches a summary of a student's progress.
+   * @param studentId - The ID of the student.
+   * @returns A promise that resolves to the student's progress summary.
    */
   async fetchStudentProgressSummary(studentId: string): Promise<any> {
-    // No summary endpoint in API_CONFIG, so return null
-    // This is a placeholder; update with correct endpoint if available
-    return null;
+    const endpoint = API_CONFIG.endpoints.student.progress(studentId);
+    return this.apiAny.get(endpoint);
   }
 
   /**
-   * Fetches instructor dashboard data.
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Fetches instructor dashboard data.
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Fetches instructor dashboard data.
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Fetches instructor dashboard data.
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Fetches instructor dashboard data.
-   * @returns A promise that resolves to any.
+   * Fetches data for the instructor's dashboard.
+   * @returns A promise that resolves to the instructor's dashboard data.
    */
   async fetchInstructorDashboardData(): Promise<any> {
-    // No instructor endpoint in API_CONFIG, so return null
-    // This is a placeholder; update with correct endpoint if available
-    return null;
+    const endpoint = API_CONFIG.endpoints.dashboard.instructor;
+    return this.apiAny.get(endpoint);
   }
 
   /**
-   * Fetches course structure analytics.
-   * @param courseId
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Fetches course structure analytics.
-   * @param courseId The ID of the course.
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Fetches course structure analytics.
-   * @param courseId The ID of the course.
-   * @returns A promise that resolves to any.
-   */
-  /**
-   * Fetches course structure analytics.
-   * @param courseId The ID of the course.
-   * @returns A promise that resolves to any.
+   * Fetches analytics data related to the structure of a course.
+   * @param courseId - The ID of the course.
+   * @returns A promise that resolves to the course structure analytics data.
    */
   async fetchCourseStructure(courseId: string): Promise<any> {
-    // No analytics endpoint in API_CONFIG, so return null
-    // This is a placeholder; update with correct endpoint if available
-    return null;
+    const endpoint = API_CONFIG.endpoints.courses.analytics(courseId);
+    return this.apiAny.get(endpoint);
   }
+
 }
 
 // Singleton export

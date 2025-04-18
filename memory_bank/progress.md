@@ -129,7 +129,6 @@
   - Integration/API-level tests for all service modules (courseService, enrollmentService, learningTaskService, progressService) are present, use the real API, and all tests are passing (see test runner output, 17/17 tests passed, real API used). This subtask is now complete and compliant with ADR-013 and governance.
 - Linting/Formatting Compliance for TypeScript Service Modules: TODO
   - Fix ESLint configuration and ensure all modules pass linting/formatting checks.
-
 - Next Steps: Delegate each subtask to Code mode for implementation and tracking. Log all status changes and outcomes in progress.md as required by governance.
 
 ### [2025-04-13 09:49 CEST] [CODE MODE SESSION START]
@@ -166,7 +165,7 @@
 - Subtask: Fix all import order and formatting errors in frontend/src/services/resources/progressService.int.test.ts as reported by ESLint (import/order). Ensure all modules in frontend/src/services (and subdirectories) pass linting and formatting checks, with no outstanding import/order or formatting errors. Document the actions taken and the outcome in memory_bank/progress.md, including the status (IN_PROGRESS, DONE, or BLOCKED) and any issues encountered.
 - Status: DONE
 - Rationale: Outstanding linting errors were reported in progressService.int.test.ts. This subtask will address these errors and ensure all modules pass linting/formatting checks.
-- Next Steps: Verify compliance and update status in progress.md. All import order and formatting errors in frontend/src/services/resources/progressService.int.test.ts and all TypeScript service modules in frontend/src/services (and subdirectories) have been resolved using ESLint with --fix, as mandated by ADR-013 and project governance. ESLint now reports no remaining import/order or formatting errors. The outcome and DONE status have been documented in memory_bank/progress.md. Outstanding linter errors are unrelated to import order or formatting and are outside the scope of this subtask.
+- Next Steps: Verify compliance and update status in progress.md. All import order and formatting errors in frontend/src/services/resources/progressService.int.test.ts and all TypeScript service modules in frontend/src/services (and subdirectories) have been resolved using ESLint with --fix, as mandated by ADR-013 and project governance. ESLint now reports no remaining import/order or formatting errors. Outstanding linter errors are unrelated to import order or formatting and are outside the scope of this subtask.
 
 ### [2025-04-15 15:17 CEST] [SUBTASK CREATED]
 
@@ -180,6 +179,7 @@
 - Next Steps: Update the status of TYPESCRIPT-SERVICES-STANDARDIZATION-001 in memory_bank/progress.md to reflect the completion of all subtasks.  This step is now complete.
 
 ---
+
 **Orchestration Session Start:** 2025-04-16 16:26 CEST
 
 - **Orchestrator:** Boomerang Mode
@@ -191,5 +191,60 @@
 - **Task ID:** SUBTASK-FIX-LEARNINGTASKSERVICE-001 (New)
 - **Summary:** Fix corruption in `learningTaskService.ts` by removing duplicate comments, correcting the `setAuthToken` method, and removing deprecated exports. Run unit tests upon completion.
 - **Status at Delegation:** TODO
+
+---
+
+---
+
+**Orchestration Log Entry**
+
+- **Timestamp:** 2025-04-17 18:37
+- **Orchestrator:** Boomerang Mode
+- **Action:** Delegating Subtask Implementation Task Generation
+- **Subtask ID:** REACT-HOOK-COMPLIANCE-002
+- **Target Mode:** Code
+- **Summary:** Generating and queueing implementation task for adding JSDoc to `progressService.ts` based on `Subtask_REACT-HOOK-COMPLIANCE-002-Add-JSDoc-To-ProgressService.md`. Task details will be appended to `memory_bank/tasks/tasks_for_implementation.md`.
+- **Status at Delegation:** IN_PROGRESS (Subtask status)
+
+---
+
+---
+
+**Orchestration Log Entry**
+
+- **Timestamp:** 2025-04-17 18:40
+- **Orchestrator:** Boomerang Mode
+- **Action:** Delegating Subtask Implementation Task Generation
+- **Subtask ID:** REACT-HOOK-COMPLIANCE-003
+- **Target Mode:** Code
+- **Summary:** Generating and queueing implementation task for reviewing and testing `progressService.ts` based on `Subtask_REACT-HOOK-COMPLIANCE-003-Review-Test-ProgressService.md`. Task details will be appended to `memory_bank/tasks/tasks_for_implementation.md`.
+- **Status at Delegation:** IN_PROGRESS (Subtask status)
+
+---
+
+---
+
+**Orchestration Log Entry**
+
+- **Timestamp:** 2025-04-17 18:43
+- **Orchestrator:** Boomerang Mode
+- **Action:** Delegating Subtask Implementation Task Generation
+- **Subtask ID:** REACT-HOOK-COMPLIANCE-004
+- **Target Mode:** Code
+- **Summary:** Generating and queueing implementation task for addressing TypeScript errors in `progressService.ts` based on `Subtask_REACT-HOOK-COMPLIANCE-004-Address-TypeScript-Errors-ProgressService.md`. Task details will be appended to `memory_bank/tasks/tasks_for_implementation.md`.
+- **Status at Delegation:** IN_PROGRESS (Subtask status)
+
+---
+
+---
+**Orchestration Log Entry**
+
+- **Timestamp:** 2025-04-17 18:46
+- **Orchestrator:** Boomerang Mode
+- **Action:** Delegating Subtask Implementation Task Generation (RETRY after interruption)
+- **Subtask ID:** REACT-HOOK-COMPLIANCE-004
+- **Target Mode:** Code
+- **Summary:** Generating and queueing implementation task for addressing TypeScript errors in `progressService.ts` based on `Subtask_REACT-HOOK-COMPLIANCE-004-Address-TypeScript-Errors-ProgressService.md`. Task details will be appended to `memory_bank/tasks/tasks_for_implementation.md`.
+- **Status at Delegation:** IN_PROGRESS (Subtask status)
 
 ---

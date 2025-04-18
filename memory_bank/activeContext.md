@@ -20,9 +20,6 @@
 - **Course Creation Feature** (TASK-CREATION-001): TODO
 - **Implement Task Progress Tracking UI** (TASK-UI-005): TODO
 - **Model Consolidation Task** (TASK-MODEL-CONSOLIDATION-002): TODO
-- **Progress Tracking Frontend Components** (TASK-002): DONE
-- **Progress Tracking API Endpoints** (TASK-003): DONE
-- **Error Toast/Message Mechanism** (TASK-ERROR-TOAST-001): DONE
 
 ## Priority TODO Tasks
 

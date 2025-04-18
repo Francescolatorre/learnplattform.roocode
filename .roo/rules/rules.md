@@ -1,75 +1,126 @@
-# Roo-Code Core Governance Rules
+# 🧠 Roo-Code Core Governance Rules
 
-memory_bank:
-  read_strategy:
-    - if your are not in a subtask:
-      - "Read `activeContext.md` ONCE per execution"
-      - "If active task exists, read only necessary files"
-    -   "If no active task, check `project_status.md`"
-      - "If no tasks in progress, WAIT"
+## Memory Bank Governance
 
-  consistency_checks for boomerang-mode:
-    - "Compare `activeContext.md` & `project_status.md`"
-    - "If mismatch exists, follow `inconsistency_resolution.md`"
-    - "Escalate task conflicts to Architect Mode"
+### 🔍 Read Strategy
 
-  resolution_protocol:
-    - "STOP if inconsistency exists"
-    - "Proceed only with user confirmation"
+- **On initial execution**:
+  - Read `activeContext.md` **once**.
+  - If an **active task** exists, read **only** the necessary supporting files.
+  - If **no active task** is found:
+    - Check `project_status.md`.
+    - If **no tasks are in progress**, **pause and wait** for input.
 
-  mandatory_reads:
-    - "Read `activeContext.md` first"
-    - "State `[Memory Bank: active]` after reading"
-    - "Request missing files"
+### 🔄 Consistency Checks (Boomerang Mode)
 
-task_management:
-  lifecycle:
-    - "Digital Design defines (DRAFT): requirements, user stories, acceptance criteria"
-    - "Digital Design validates (VALIDATED): ensure completeness, business alignment"
-    - "Architect refines and sets (TODO): finalize templates, identify risks, resources"
-    - "Code implements (IN_PROGRESS): validate, mitigate, document, monitor"
-    - "Code validates (DONE): test, review, document, update"
-    - "Architect reviews: verify goals, assess quality, provide feedback"
+- Compare `activeContext.md` with `project_status.md`.
+- If inconsistencies are found:
+  - Follow steps in `inconsistency_resolution.md`.
+  - Escalate unresolved issues to **Architect Mode**.
 
-  task_review_criteria:
-    - "Completeness, clarity, resources, risks, alignment"
-    - "Validated tasks must have clear requirements before moving to TODO"
+### 🛑 Resolution Protocol
 
-  prioritization:
-    - "Critical-path first, resolve dependencies, review postponed tasks"
-    - "Consider complexity and constraints"
+- **STOP** immediately if a data inconsistency exists.
+- Proceed only with **explicit user confirmation**.
 
-switching_protocol:
-  "Digital Design → Architect": "Validate requirements, finalize specification, confirm feasibility"
-  "Architect → Code": "Define task, set TODO, provide context, highlight challenges"
-  "Code → Architect": "Mark DONE, document implementation, request review"
-  "Debug <-> Code": "Switch if bug blocks progress"
-  "Emergency": "Log blocker, switch mode, escalate"
+### 📌 Mandatory Reads
 
-status_updates:
+- Always start with `activeContext.md`.
+- After reading, declare: `[Memory Bank: active]`.
+- Prompt the user to provide **any missing files**.
 
-- "Sync across all task files"
-- "Use standard statuses: DRAFT, VALIDATED, TODO, IN_PROGRESS, DONE, POSTPONED"
-- "Include timestamps and reasons"
-- "Document knowledge and challenges"
-- "Digital Design Mode must verify task validity before setting VALIDATED"
+---
 
-automation:
+## 📋 Task Management Lifecycle
 
-- "Auto-sync updates, track deadlines, use Git metadata"
-- "Implement quality checks"
+### 🧬 Task States & Roles
 
-git_commit_rules:
+| Status       | Role           | Description                                                      |
+|--------------|----------------|------------------------------------------------------------------|
+| `DRAFT`      | Digital Design | Define requirements, user stories, and acceptance criteria       |
+| `VALIDATED`  | Digital Design | Ensure completeness and business alignment                      |
+| `TODO`       | Architect      | Finalize templates, identify risks and resources                |
+| `IN_PROGRESS`| Code           | Implement, validate, document, and monitor                      |
+| `DONE`       | Code           | Test, review, document, and update                              |
+| `REVIEW`     | Architect      | Verify goals, assess quality, and provide feedback              |
 
-- "Format: [TASK-ID] [STATUS] [SUMMARY]"
-- "Include validation status and explanation"
-- "Stage all files, squash minor commits"
-- "Proper merge format"
+### ✅ Task Review Criteria
 
-language_specific_rules:
+- Tasks must meet:
+  - Completeness
+  - Clarity
+  - Adequate resources
+  - Risk awareness
+  - Business alignment
+- Tasks must be clearly defined before moving from `VALIDATED` to `TODO`.
 
-- "Maintain task enhancement framework principles"
-- "For Python/Django projects, adhere to the rules defined in `memory_bank/languages/python_django_rules.yaml`"
-- "For React/TypeScript projects, adhere to the rules defined in `memory_bank/languages/react_typescript_rules.yaml`"
+### 🚦 Prioritization
 
-Remember: After every memory reset, you begin completely fresh. Your only link to previous work is the Memory Bank. Maintain it as if your functionality depends on it - because it does.
+- Prioritize **critical-path** items.
+- Resolve dependencies before proceeding.
+- Reassess **postponed tasks** regularly.
+- Consider complexity and constraints when sequencing tasks.
+
+---
+
+## 🔁 Role Switching Protocol
+
+| From → To           | Purpose                                                                 |
+|---------------------|-------------------------------------------------------------------------|
+| Digital Design → Architect | Validate requirements, confirm feasibility, finalize specifications     |
+| Architect → Code     | Define task, set `TODO`, provide context and challenges                 |
+| Code → Architect     | Mark as `DONE`, document implementation, and request review             |
+| Debug ↔ Code         | Switch freely when bugs block progress                                 |
+| Any → Emergency Mode | Log blocker, switch mode, and escalate task                             |
+
+---
+
+## 📡 Status Updates
+
+- Sync task data across all files.
+- Use **standard statuses**:
+  - `DRAFT`, `VALIDATED`, `TODO`, `IN_PROGRESS`, `DONE`, `POSTPONED`
+- Include:
+  - Timestamp
+  - Reason for status change
+  - Summary of knowledge or blockers
+- `VALIDATED` tasks must be verified by Digital Design before promotion.
+
+---
+
+## 🤖 Automation Guidelines
+
+- Automatically sync status and task file updates.
+- Track deadlines via Git metadata.
+- Run quality checks routinely.
+
+---
+
+## 🔐 Git Commit Rules
+
+- Use this format:
+  `[TASK-ID] [STATUS] [SUMMARY]`
+- Include:
+  - Validation status
+  - Reason for change
+- Stage all relevant files.
+- Squash minor commits.
+- Follow proper merge commit format.
+
+---
+
+## 💻 Language-Specific Rules
+
+- Follow **Task Enhancement Framework** principles.
+- For **Python/Django** projects:
+  Refer to `memory_bank/languages/python_django_rules.yaml`
+- For **React/TypeScript** projects:
+  Refer to `memory_bank/languages/react_typescript_rules.yaml`
+
+---
+
+## 🧠 Final Note
+
+> After every memory reset, you begin with zero internal state.
+> Your only persistent context is the **Memory Bank**.
+> Treat it as your **source of truth**—your functionality depends on it.
