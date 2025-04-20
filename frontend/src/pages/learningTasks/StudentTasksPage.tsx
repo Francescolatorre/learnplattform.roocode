@@ -2,7 +2,7 @@ import {Box, Grid, Typography, CircularProgress} from '@mui/material';
 import {useQuery} from '@tanstack/react-query';
 import React, {useEffect} from 'react';
 
-import {learningTaskService} from '@services/resources/learningTaskService';
+import learningTaskService from '@services/resources/learningTaskService';
 import {LearningTask} from 'src/types/common/entities';
 import {useAuth} from 'src/context/auth'; // Annahme: Auth-Kontext für Benutzer-ID
 
@@ -10,8 +10,8 @@ import LearningTaskCard from 'src/pages/learningTasks/LearningTaskCard';
 import {useNotification} from 'src/components/ErrorNotifier/useErrorNotifier';
 
 const StudentTasksPage: React.FC = () => {
-  const {currentUser} = useAuth();
-  const studentId = currentUser?.id;
+  const {user} = useAuth();
+  const studentId = user?.id;
   const notify = useNotification();
 
   const {

@@ -62,8 +62,10 @@ This project is a **learning platform MVP** built with:
 
 ### Tests
 
+- You need to be in frontend directory to run tests using these commands
 - **Unit Tests**: `npm run test:unit`
 - **Integration Tests**: `npm run test:integration`
+- prefer testing a specific file over running all tests for efficiency reasons
 - Minimum 80% coverage required for newly written logic
 - Coverage must be enforced through Vite-compatible tools (e.g., Vitest + jsdom + Testing Library)
 

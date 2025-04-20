@@ -1,166 +1,314 @@
-# ADR-005: Architekturentscheidungen: Frontend der Lernplattform
+# ADR-005: Frontend Architecture
 
-## Entscheidung: Technologien und Struktur
+## Status
 
-### 1. **Build-Tool**: Vite
+Accepted
 
-- Vite wird als Build-Tool und Entwicklungsserver genutzt, um schnellere Builds und Hot Module Replacement (HMR) zu ermöglichen.
+## Context
 
-### 2. **Frontend-Framework**: React
+The Learning Platform requires a modern, maintainable, and scalable frontend architecture that enables efficient development, testing, and user experience. This ADR documents the key architectural decisions for the frontend implementation.
 
-- React wird für die Benutzeroberfläche verwendet, um eine komponentenbasierte Architektur mit hoher Wiederverwendbarkeit zu ermöglichen.
+## Decision: Technologies and Structure
 
-### 3. **UI-Bibliothek**: Material UI (MUI)
+### 1. **Build Tool**: Vite
 
-- Material UI wird als Design-System genutzt, um konsistente und ansprechende UI-Komponenten bereitzustellen.
+- Vite is used as the build tool and development server to enable faster builds and Hot Module Replacement (HMR).
+- Optimized for React and TypeScript with minimal configuration.
+- Leverages native ES modules for faster development feedback loops.
 
-### 4. **State-Management**: Zustand
+### 2. **Frontend Framework**: React 18
 
-- Zustand wird für die zentrale Verwaltung des Anwendungszustands genutzt, um eine schlanke und performante State-Management-Lösung bereitzustellen.
+- React is used for the user interface to enable a component-based architecture with high reusability.
+- Utilizes functional components with hooks for state management and lifecycle events.
+- Takes advantage of React 18 features like automatic batching and concurrent rendering capabilities.
 
-### 5. **Test-Framework**: Playwright
+### 3. **UI Library**: Material UI (MUI)
 
-- End-to-End-Tests werden mit Playwright durchgeführt, um UI- und API-Stabilität sicherzustellen.
+- Material UI is used as the design system to provide consistent and appealing UI components.
+- Centralized theme configuration for consistent styling across the application.
+- Custom component extensions maintain visual consistency while meeting specific requirements.
 
-### 6. **Programmiersprache**: TypeScript
+### 4. **State Management**: Zustand & React Query
 
-- TypeScript wird genutzt, um Typensicherheit und bessere Wartbarkeit des Codes zu gewährleisten.
+- Zustand is used for centralized application state management to provide a lean and performant state management solution.
+- React Query is used for server state management, providing automatic caching, background updates, and optimistic UI updates.
+- Clear separation between client state (Zustand) and server state (React Query).
+
+### 5. **Test Framework**: Vitest & Playwright
+
+- End-to-end tests are conducted with Playwright to ensure UI and API stability.
+- Vitest for unit and component testing with a focus on testing behavior rather than implementation.
+- Global test mocks and utilities defined in setupTests.ts for consistency across tests.
+
+### 6. **Programming Language**: TypeScript
+
+- TypeScript is used to ensure type safety and better maintainability of the code.
+- Strict type checking enabled to catch potential errors during development.
+- Interfaces prefixed with 'I' (e.g., IUserProps) for clarity and consistency.
 
 ### 7. **Linting**: ESLint
 
-- ESLint wird zur Code-Qualitätssicherung und Konsistenz innerhalb des Projekts genutzt.
+- ESLint is used to ensure code quality and consistency within the project.
+- Custom rule configuration aligned with project requirements and best practices.
+- Integration with TypeScript for enhanced static analysis.
 
-### 8. **Projektstruktur**
+### 8. **Project Structure**
 
 ```
 frontend/
 │── src/
 │   ├── assets/                # Global assets (images, fonts, global styles)
-│   ├── core/                  # Shared functionality
-│   │   ├── components/        # Shared UI components
-│   │   ├── hooks/             # Shared React hooks
-│   │   ├── utils/             # Pure utility functions
-│   │   └── types/             # Shared TypeScript types
+│   ├── components/            # Reusable UI components
+│   │   ├── common/            # Shared components (e.g., DataTable, StatusChip)
+│   │   └── layout/            # Layout components (Header, Footer, etc.)
 │   │
-│   ├── courses/               # Courses domain
-│   │   ├── components/        # Course-specific components
-│   │   ├── pages/             # Course page components
-│   │   ├── hooks/             # Course-specific hooks
-│   │   ├── services/          # Course-specific API services
-│   │   ├── store/             # Course-specific state management
-│   │   ├── types/             # Course-specific TypeScript types
-│   │   └── utils/             # Course-specific utilities
+│   ├── features/              # Feature-specific components and logic
+│   │   ├── auth/              # Authentication-related components and hooks
+│   │   ├── courses/           # Course management components
+│   │   ├── dashboard/         # Dashboard and analytics components
+│   │   └── learningTasks/     # Learning task-related components
 │   │
-│   ├── tasks/                 # (similar structure as courses)
-│   ├── users/                 # (similar structure as courses)
+│   ├── hooks/                 # Custom React hooks
 │   │
-│   ├── routes/                # Application routing
-│   │   ├── index.tsx          # Root router
-│   │   ├── protected.tsx      # Protected routes
-│   │   └── public.tsx         # Public routes
+│   ├── services/              # API service layer
+│   │   ├── api/               # Centralized API logic
+│   │   └── auth/              # Authentication services
 │   │
-│   ├── app/                   # Application-level components
-│   │   ├── layout/            # Layout components (Header, Footer, etc.)
-│   │   ├── providers/         # Context providers
-│   │   └── App.tsx            # Root application component
+│   ├── store/                 # Zustand state management stores
 │   │
-│   ├── config/                # Environment & app configuration
+│   ├── theme/                 # Material UI theme configuration
+│   │
+│   ├── types/                 # TypeScript type definitions
+│   │
+│   ├── utils/                 # Shared utility functions
+│   │
+│   ├── routes/                # Application routing configuration
 │   │
 │   ├── tests/                 # Test utilities and setup
+│   │   └── setupTests.ts      # Global test configuration
 │   │
+│   ├── App.tsx                # Root application component
 │   ├── main.tsx               # Application entry point
 │   └── vite-env.d.ts          # Vite environment types
 ```
 
-- **core/:** Contains shared components, hooks, and utility functions used across multiple domains.
-- **courses/, tasks/, users/:** Each directory represents a bounded context, containing all the code related to that specific domain.
-- **app/:** Contains application-level components and routing logic that orchestrates the different domains.
+- **Feature-based Organization**: Code is primarily organized by features/domains rather than by technical types.
+- **Shared Components**: Common UI components are extracted to a shared folder to promote reuse.
+- **Path Aliases**: Use of path aliases (e.g., `@components/*`, `@features/*`) for cleaner imports.
 
-### 9. **API-Schicht (Isolierte Kommunikation mit dem Backend)**
+### 9. **API Layer (Isolated Communication with Backend)**
 
 API services are organized within each domain. Each domain has its own set of API services responsible for interacting with the backend. For example, the `courses` domain has `coursesApi.ts` for managing courses, and the `tasks` domain has `tasksApi.ts` for managing tasks.
 
-- API-Module wurden auf Basis der OpenAPI-Spezifikation erweitert:
-  - `coursesApi.ts` → Kurse abrufen, erstellen, bearbeiten, löschen (`/courses/`)
-  - `tasksApi.ts` → Lerneinheiten & Aufgaben (`/tasks/learning-tasks/`)
-  - `quizzesApi.ts` → Multiple-Choice-Tests (`/tasks/multiple-choice-quizzes/`)
-  - `authApi.ts` → Benutzer-Authentifizierung (`/users/login/`, `/users/logout/`)
+- **Centralized API Service Layer**:
+  - Base `ApiService` class provides core functionality for API requests.
+  - Resource-specific services extend or use the base service.
+  - Standardized error handling and response normalization.
+  - Automatic token inclusion via Axios interceptors.
 
-### 10. **Zustandsverwaltung mit Zustand**
+- **API Endpoints Structure**:
+  - `authApi.ts` → Authentication endpoints (`/auth/login/`, `/auth/logout/`, `/auth/register/`)
+  - `usersApi.ts` → User profile and management (`/users/profile/`)
+  - `coursesApi.ts` → Course management (`/courses/`)
+  - `learningTasksApi.ts` → Learning task management (`/learning-tasks/`)
+  - `quizApi.ts` → Quiz-related endpoints (`/quizzes/`, `/quiz-attempts/`)
 
-- Der Zustand für **Kurse, Aufgaben und Tests** wird in separaten Stores verwaltet:
-  - `coursesStore.ts`
-  - `tasksStore.ts`
-  - `quizzesStore.ts`
-  - `authStore.ts` für den Login-Status
-- Durch **getrennte Stores** werden Seiteneffekte minimiert.
+### 10. **Authentication Architecture**
 
-### 11. **UI-Komponenten sind stateless**
+- **JWT-based Authentication**:
+  - Token management via dedicated `AuthService`.
+  - Tokens stored in localStorage with appropriate security measures.
+  - Automatic token refresh when expired.
+  - Auth state globally available through `useAuth` hook.
 
-- UI-Komponenten erhalten ihre Daten über **Props** und bleiben unabhängig vom globalen Zustand.
-- Material UI (MUI) wird als primäre Design-Bibliothek verwendet.
+- **Access Control**:
+  - Role-based route protection using `ProtectedRoute` and `RoleBasedRoute` components.
+  - Component-level access control through conditional rendering.
+  - Permission checks embedded in API service calls.
 
-### 12. **End-to-End-Tests mit Playwright**
+### 11. **State Management with Zustand & React Query**
 
-- Tests überprüfen die Hauptfunktionen wie **Login, Kursnavigation, Tests abschließen**.
+- **Client State Management** (Zustand):
+  - Separate stores for different domains:
+    - `authStore.ts` - Authentication state
+    - `uiStore.ts` - UI state (modals, themes, etc.)
+    - `settingsStore.ts` - User preferences
 
-### 13. **Linting mit ESLint**
+- **Server State Management** (React Query):
+  - Consistent query and mutation hooks:
+    - `useQuery` for data fetching
+    - `useMutation` for data updates
+    - `useQueryClient` for cache manipulation
+  - Optimistic updates for better user experience
+  - Automatic retries and background refetching
 
-- ESLint wird eingesetzt, um Code-Style und Best Practices sicherzustellen.
+- Stores are organized by domain with clear boundaries between functionality.
 
----
+### 12. **Component Design Philosophy**
 
-## **Konzeptionelle Ideen & Best Practices**
+- **Separation of Concerns**:
+  - UI components focus on presentation only
+  - Business logic extracted to custom hooks and services
+  - Container components connect UI to data sources
 
-### **1. Trennung von Zustands- und UI-Logik**
+- **Reusable Component Patterns**:
+  - `DataTable` - For displaying tabular data with sorting, filtering
+  - `StatusChip` - For displaying status indicators
+  - `ProgressIndicator` - For showing progress/completion
+  - Form components with built-in validation
 
-- React-Komponenten sollten möglichst **stateless** sein und keine Geschäftslogik enthalten.
-- Die API-Kommunikation und Datenverarbeitung erfolgt in **Hooks oder Services** (`hooks/`, `store/`).
+- **UI Components are Stateless**:
+  - Data flows through props
+  - Event handlers defined at container level
+  - Material UI theming applied consistently
 
-### **6. Separate Endpoints for Authentication and API Usage**
+### 13. **Form Handling & Validation**
 
-- Authentication should be handled via the `/auth/` endpoint, while data retrieval and manipulation should occur through the `/api/v1/` endpoint. This separation enhances security and maintainability.
+- React Hook Form for form state management
+- Yup/Zod schema validation
+- Consistent error display patterns
+- Custom form field components with built-in validation support
 
-### **2. Fehlerhandling & Resilienz**
+### 14. **Routing Strategy**
 
-- **Axios-Interceptors** für globale Fehlerbehandlung und automatische Token-Erneuerung in `axiosClient.ts`.
-- UI-Feedback durch **Snackbar-Notifications (Material UI)**.
+- React Router v7 with `v7_startTransition` future flag enabled
+- Centralized route configuration in `routes` directory
+- Route-based code splitting for performance optimization
+- ProtectedRoute component for authentication checks
+- RoleBasedRoute for authorization control
 
-### **3. Skalierbarkeit durch Code-Splitting**
+### 15. **Error Handling Strategy**
 
-- **React Lazy Loading & Suspense** für das Laden von Modulen.
-- **Dynamisches Laden von Routen** mit `React Router`.
+- Global error boundary catches unhandled exceptions
+- API error handling standardized across services
+- User-friendly error messages through notification system
+- Fallback UI for failed component rendering
+- Consistent loading state presentation
 
-### **4. Performance-Optimierung**
+### 16. **Testing Architecture**
 
-- Memoization mit `React.memo()` und `useMemo()` zur Vermeidung unnötiger Re-Renders.
-- Optimierung von API-Calls mit **React Query oder SWR (optional)**.
-- **Code-Splitting und Lazy Loading für Routen** implementieren.
-- **Strategie für Caching von API-Responses definieren**.
+- **Unit Testing** (Vitest):
+  - Components tested for behavior not implementation
+  - Hooks tested with custom render utilities
+  - Services tested with mocked API responses
+  - Store/state management tested for correctness
 
-### **5. Sicherheit & Authentifizierung**
+- **End-to-End Testing** (Playwright):
+  - Critical user flows tested across browsers
+  - Authentication flows thoroughly covered
+  - Course and task interactions tested
+  - API mocking when needed for stable tests
 
-- **JWT-Handling** mit lokalem Speicher oder `httpOnly` Cookies.
-- Zugriffsbeschränkungen mit **React Context für Auth** und Middleware in den Routen.
+- **Test Utilities**:
+  - Global mocks in `setupTests.ts`
+  - Reusable test helpers
+  - Consistent mock data aligned with API schema
+  - LocalStorage mocking for authentication tests
 
-### **6. Testing-Ansatz verbessern**
+### 17. **Performance Optimization**
 
-- **Unit-Tests für Komponenten und Hooks einführen** (Vite, Testing Library).
-- **Integration-Tests für die Zusammenarbeit von Komponenten implementieren**.
+- **Code Splitting**:
+  - Route-based splitting using React.lazy and Suspense
+  - Feature-based splitting for large feature sets
+  - Dynamic imports for conditional functionality
 
-### **7. Fehlerbehandlung verbessern**
+- **Rendering Optimization**:
+  - React.memo for expensive components
+  - useMemo and useCallback for referential stability
+  - Virtualization for long lists (react-window)
 
-- **Globale Fehlerbehandlung für API-Anfragen implementieren**.
-- **Benutzerfreundliche Fehlermeldungen und Fallback-UI definieren**.
+- **Data Loading**:
+  - React Query for efficient caching
+  - Optimistic updates for immediate feedback
+  - Pagination and infinite scrolling where appropriate
 
-### **8. Build und Deployment**
+### 18. **Accessibility**
 
-- **CI/CD-Pipeline definieren**.
-- **Build-Optimierungen für Produktionsumgebung festlegen**.
+- ARIA attributes applied consistently
+- Semantic HTML structure
+- Keyboard navigation support
+- Screen reader compatibility
+- Color contrast compliance
+- Focus management for modal dialogs
 
-### **9. Dokumentation**
+## **Conceptual Ideas & Best Practices**
 
-- **Komponentendokumentation mit Storybook oder ähnlichen Tools einführen**.
-- **API-Nutzung und State Management dokumentieren**.
+### **1. Separation of State and UI Logic**
 
-Diese **Best Practices** helfen dabei, das Frontend langfristig **skalierbar, wartbar und performant** zu halten.
+- React components should be as **stateless** as possible and contain no business logic.
+- API communication and data processing takes place in **hooks or services** (`hooks/`, `store/`).
+- Custom hooks encapsulate complex logic and provide simple interfaces to components.
+
+### **2. Error Handling & Resilience**
+
+- **Axios interceptors** for global error handling and automatic token renewal in `axiosClient.ts`.
+- UI feedback through **Snackbar notifications (Material UI)**.
+- Fallback components and error boundaries catch and display errors gracefully.
+- Comprehensive logging for debugging and monitoring.
+
+### **3. Scalability through Code Splitting**
+
+- **React Lazy Loading & Suspense** for loading modules.
+- **Dynamic loading of routes** with `React Router`.
+- Feature flags for progressive feature rollout.
+- Microfrontend architecture considerations for future growth.
+
+### **4. Performance Optimization**
+
+- Memoization with `React.memo()` and `useMemo()` to avoid unnecessary re-renders.
+- Optimization of API calls with **React Query**.
+- **Code splitting and lazy loading for routes** implementation.
+- **Strategy for caching API responses** with React Query's caching capabilities.
+- Bundle analysis and optimization for production builds.
+
+### **5. Security & Authentication**
+
+- **JWT handling** with local storage and secure practices.
+- Access restrictions with **React Context for Auth** and middleware in routes.
+- CSRF protection measures.
+- Content Security Policy implementation.
+- Regular security audits and dependency updates.
+
+### **6. Testing Strategy**
+
+- **Unit tests for components and hooks** using Vitest and Testing Library.
+- **Integration tests** for component interaction.
+- **End-to-end tests** with Playwright for critical user journeys.
+- Mock service worker for API mocking in tests.
+- Test coverage monitoring and thresholds.
+
+### **7. Comprehensive Error Handling**
+
+- **Global error handling** for API requests.
+- **User-friendly error messages** and fallback UI.
+- Contextual errors with actionable feedback.
+- Offline support and connection recovery.
+- Error tracking and reporting to monitoring systems.
+
+### **8. Build and Deployment**
+
+- **CI/CD pipeline** for automated testing and deployment.
+- **Environment-specific builds** with environment variables.
+- Progressive deployment strategy.
+- Feature flags for controlled feature rollout.
+- Performance monitoring in production.
+
+### **9. Documentation**
+
+- **Component documentation** with Props interfaces.
+- **API usage guidelines** and examples.
+- **State management patterns** documented.
+- **Development workflows** documented in README.
+- **Architecture diagrams** for visual representation of system design.
+
+## Consequences
+
+- The feature-based organization allows for easier feature development and maintenance.
+- Strict typing with TypeScript improves code quality and developer experience.
+- The separation of client state (Zustand) and server state (React Query) leads to clearer state management.
+- The centralized API layer provides consistency and simplifies error handling.
+- Material UI enables a consistent design system but may require customization for specific needs.
+- Testing architecture ensures both component correctness and end-to-end functionality.
+- The comprehensive approach to error handling enhances user experience and system resilience.
+
+These architectural decisions aim to create a maintainable, performant, and scalable frontend application for the Learning Platform.

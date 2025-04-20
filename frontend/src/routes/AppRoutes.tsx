@@ -5,7 +5,7 @@ import React, {lazy} from 'react';
 import {Routes, Route, Navigate} from 'react-router-dom';
 
 import LoginPage from 'src/pages/auth/LoginPage';
-import {StudentCoursesPage} from 'src/pages/courses/CoursesPage';
+import {StudentCoursesPage} from '@/pages/courses/StudentCoursesPage';
 import StudentTasksPage from 'src/pages/learningTasks/StudentTasksPage';
 import Dashboard from 'src/pages/DashboardPage';
 import HomePage from 'src/pages/HomePage';

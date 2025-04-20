@@ -15,7 +15,10 @@
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "build": "npm run lint && vite build",
     "test:coverage": "vitest run --coverage --mode=ci --passWithNoTests",
-    "test:ci": "vitest run --coverage --mode=ci --passWithNoTests"
+    "test:ci": "vitest run --coverage --mode=ci --passWithNoTests",
+    "deps:graph": "depcruise --validate .dependency-cruiser.js --output-type dot src --exclude 'node_modules'| dot -T svg > dependency-graph.svg",
+    "deps:validate": "depcruise --validate .dependency-cruiser.js src ",
+    "deps:json": "depcruise --output-type json src --exclude 'node_modules' > dependency-graph.json"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",

@@ -1,7 +1,11 @@
-// src/types/common/entities.ts
+export interface CourseProgress {
+  completedTasks: number;
+  totalTasks: number;
+  averageScore: number;
+}
 
-// Enums und Typdefinitionen
 export type CompletionStatus = 'active' | 'completed' | 'dropped';
+
 export type TaskStatus = 'not_started' | 'in_progress' | 'completed' | 'graded' | 'pending';
 export type QuizCompletionStatus = 'passed' | 'failed' | 'in_progress';
 export type CourseStatus = 'published' | 'draft' | 'private';
@@ -37,7 +41,7 @@ export interface Course {
   creator_details: IUserDetails;
 }
 
-export type CourseDetails = Course
+export type CourseDetails = Course;
 
 export interface LearningTask {
   readonly id: number;

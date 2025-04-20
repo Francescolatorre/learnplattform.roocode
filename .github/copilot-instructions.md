@@ -260,7 +260,7 @@ The project follows a well-defined folder structure to ensure maintainability an
 - Include authentication tokens via Axios interceptors
 - Handle loading, error, and success states consistently
 - **Harmonizing Services**:
-  - Centralize API logic in a dedicated service layer (e.g., `services/apiService.ts`)
+  - Centralize API logic in a dedicated service layer (e.g., `services/api/apiService.ts`)
   - Use consistent naming conventions for service methods (e.g., `fetchCourses`, `createTask`)
   - Implement reusable hooks (e.g., `useApiResource`) for common API patterns
   - Ensure all services follow the same error-handling and logging strategy

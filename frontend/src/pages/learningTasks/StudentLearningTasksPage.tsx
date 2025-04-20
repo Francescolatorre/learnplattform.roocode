@@ -1,5 +1,5 @@
-import LearningTaskList from '@features/learningTasks/components/LearningTaskList';
-import { Typography } from '@mui/material';
+import UpcomingTasksList from 'src/components/UpcomingTasksList';
+import {Typography} from '@mui/material';
 import React from 'react';
 
 
@@ -7,7 +7,7 @@ interface StudentLearningTasksPageProps {
   userRole: string; // Accept user role as a prop
 }
 
-const StudentLearningTasksPage: React.FC<StudentLearningTasksPageProps> = ({ userRole }) => {
+const StudentLearningTasksPage: React.FC<StudentLearningTasksPageProps> = ({userRole}) => {
   if (userRole !== 'student') {
     return <Typography variant="h6">Access Denied: This page is for students only.</Typography>;
   }
@@ -17,7 +17,7 @@ const StudentLearningTasksPage: React.FC<StudentLearningTasksPageProps> = ({ use
       <Typography variant="h4" gutterBottom>
         Your Learning Tasks
       </Typography>
-      <LearningTaskList />
+      TO BE IMPLEMENTED
     </div>
   );
 };
