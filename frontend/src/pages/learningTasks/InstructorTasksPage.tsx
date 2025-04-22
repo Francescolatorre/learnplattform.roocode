@@ -1,20 +1,21 @@
-import { DataTable } from '@components/core/DataTable';
-import { Container, Typography, Paper, Button } from '@mui/material';
+import {Container, Typography, Paper, Button, CircularProgress} from '@mui/material';
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import {useParams, useNavigate} from 'react-router-dom';
 
-import { useCourseTasks } from '@services/useCourseTasks';
+import {ILearningTask} from '@/types';
+import {useCourseTasks} from '@services/useCourseTasks';
+import {DataTable} from 'src/components/DataTable';
 
 
 const InstructorTasksPage: React.FC = () => {
-  const { courseId } = useParams();
+  const {courseId} = useParams();
   const navigate = useNavigate();
-  const { data, isLoading, error } = useCourseTasks(courseId!);
+  const {data, isLoading, error} = useCourseTasks(courseId || '');
 
   if (!courseId) {
     return (
       <Container maxWidth="lg">
-        <Paper sx={{ p: 3, mt: 3 }}>
+        <Paper sx={{p: 3, mt: 3}}>
           <Typography variant="h5" gutterBottom>
             Course Not Found
           </Typography>
@@ -35,25 +36,27 @@ const InstructorTasksPage: React.FC = () => {
         variant="contained"
         color="primary"
         onClick={() => navigate(`/instructor/courses/${courseId}/tasks/new`)}
-        sx={{ mb: 2 }}
+        sx={{mb: 2}}
       >
         Add New Task
       </Button>
       {isLoading ? (
-        <Typography>Loading tasks...</Typography>
+        <CircularProgress />
       ) : error ? (
-        <Typography>Error loading tasks: {error.message}</Typography>
+        <Typography>
+          Error loading tasks: {error instanceof Error ? error.message : 'Unknown error'}
+        </Typography>
       ) : (
         <DataTable
           data={data || []}
           columns={[
-            { id: 'title', label: 'Title' },
-            { id: 'description', label: 'Description' },
-            { id: 'order', label: 'Order' },
+            {id: 'title', label: 'Title'},
+            {id: 'description', label: 'Description'},
+            {id: 'order', label: 'Order'},
             {
               id: 'actions',
               label: 'Actions',
-              format: (value: any, row: any) => (
+              format: (value: unknown, row: ILearningTask) => (
                 <Button
                   variant="outlined"
                   onClick={() => navigate(`/instructor/courses/${courseId}/tasks/${row.id}/edit`)}

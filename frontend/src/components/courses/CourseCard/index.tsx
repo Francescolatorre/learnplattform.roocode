@@ -1,5 +1,4 @@
-import { Card, CardContent, CardActions, Typography, Button, Box } from '@mui/material';
-import React from 'react';
+import {Card, CardContent, CardActions, Typography, Button, Box} from '@mui/material';
 
 interface ICourseCardProps {
   title: string;
@@ -17,15 +16,15 @@ const CourseCard: React.FC<ICourseCardProps> = ({
   onEnroll,
 }) => {
   return (
-    <Card sx={{ maxWidth: 345, m: 2 }}>
+    <Card sx={{maxWidth: 345, m: 2}}>
       <CardContent>
         <Typography variant="h5" component="div">
           {title}
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+        <Typography variant="body2" color="text.secondary" sx={{mt: 1}}>
           {description}
         </Typography>
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{mt: 2}}>
           <Typography variant="subtitle2" color="text.secondary">
             Instructor: {instructor}
           </Typography>

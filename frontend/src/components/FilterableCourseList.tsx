@@ -1,21 +1,24 @@
-import React, {useState, useMemo, useEffect} from 'react';
-import {useDebounce} from '@utils/useDebounce';
-import {Course, CourseStatus} from 'src/types/common/entities';
-import CourseList from './courses/CourseList';
-import {courseService, CourseFilterOptions} from '../services/resources/courseService';
 import {Box, Typography, TextField, CircularProgress, MenuItem, Select, FormControl, InputLabel, Grid, SelectChangeEvent, Pagination} from '@mui/material';
+import React, {useState, useMemo, useEffect} from 'react';
+
+import {ICourse, TCourseStatus} from '@/types/course';
+import {useDebounce} from '@utils/useDebounce';
+
+import {courseService, CourseFilterOptions} from '../services/resources/courseService';
+
+import CourseList from './courses/CourseList';
 
 
 interface FilterableCourseListProps {
-  initialCourses?: Course[];
+  initialCourses?: ICourse[];
   title?: string;
   clientSideFiltering?: boolean;
-  filterPredicate?: (course: Course, searchTerm: string) => boolean;
+  filterPredicate?: (course: ICourse, searchTerm: string) => boolean;
   emptyMessage?: string;
   noResultsMessage?: string;
   showStatusFilter?: boolean;
   showCreatorFilter?: boolean;
-  onCoursesLoaded?: (courses: Course[]) => void;
+  onCoursesLoaded?: (courses: ICourse[]) => void;
   pageSize?: number;
   onPageChange?: (page: number) => void;
 }
@@ -34,12 +37,12 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
   pageSize = 20,
   onPageChange,
 }) => {
-  const [courses, setCourses] = useState<Course[]>(initialCourses || []);
+  const [courses, setCourses] = useState<ICourse[]>(initialCourses || []);
   const [loading, setLoading] = useState<boolean>(!initialCourses);
   const [error, setError] = useState<{message: string; details?: string} | null>(null);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [searchTerm, setSearchTerm] = useState('');
-  const [status, setStatus] = useState<CourseStatus | ''>('');
+  const [status, setStatus] = useState<TCourseStatus | ''>('');
   const [creator] = useState<number | null>(null);
   const [page, setPage] = useState(1);
 
@@ -74,7 +77,7 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
       };
 
       if (debouncedSearchTerm) filterOptions.search = debouncedSearchTerm;
-      if (status) filterOptions.status = status as CourseStatus;
+      if (status) filterOptions.status = status as TCourseStatus;
       if (creator) filterOptions.creator = creator;
 
       console.info('Fetching courses with options:', filterOptions);
@@ -144,7 +147,7 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
   };
 
   const handleStatusChange = (event: SelectChangeEvent<string>) => {
-    setStatus(event.target.value as CourseStatus);
+    setStatus(event.target.value as TCourseStatus);
     setPage(1);
   };
 

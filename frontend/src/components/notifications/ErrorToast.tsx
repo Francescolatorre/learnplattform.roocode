@@ -4,10 +4,11 @@
  * Fully accessible, extensible, and references ADR-012.
  */
 
-import React, {useEffect, useRef} from "react";
-import Snackbar from "@mui/material/Snackbar";
 import MuiAlert, {AlertProps} from "@mui/material/Alert";
-import {useErrorNotifier} from "../../context/notifications/ErrorNotificationContext";
+import Snackbar from "@mui/material/Snackbar";
+import React, {useEffect, useRef} from "react";
+
+import {useErrorNotifier} from "src/context/notifications/ErrorNotificationContext";
 
 // Extensible for future notification types
 const ALERT_SEVERITY = {

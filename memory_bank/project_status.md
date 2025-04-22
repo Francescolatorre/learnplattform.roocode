@@ -28,10 +28,6 @@
 - TASK-CREATION-001: Course Creation Feature
   - **Dependencies**: None
   - **Progress**: Development of course creation feature is in progress.
-- TASK-MODEL-CONSOLIDATION-002: Model Consolidation Task
-  - **Dependencies**: TASK-MODEL-UPDATE-PLAN-001
-  - **Status**: TODO (was POSTPONED 2025-04-11, User requested postponement)
-  - **Progress**: Consolidating and standardizing data models across the platform.
 
 ## IN_PROGRESS
 
@@ -44,7 +40,6 @@
 - TASK-INTEGRATION-TEST-WORKFLOW: Vitest Multi-Project Integration Test Workflow
   - **Completion Date**: 2025-04-13
   - **Summary**: Implemented and validated canonical Vitest Multi-Project test workflow using separate config files for unit and integration tests, robust setup files, and cross-platform scripts. All requirements from the canonical guide were met. Unit test suite executed and passed (except for one legitimate test failure unrelated to setup).
-
 - TASK-002: Implement Progress Tracking Frontend Components
   - **Completion Date**: 2025-03-21
   - **Summary**: Implemented frontend components for progress tracking, including ModuleProgressView, PerformanceAnalysisView, ActivityHistoryView, TaskDetailsView, and InstructorProgressDashboard. Added TypeScript interfaces and service functions for data fetching and visualization.
@@ -114,6 +109,12 @@
 - TASK-ERROR-TOAST-001: Error Toast/Message Mechanism
   - **Completion Date**: 2025-04-11
   - **Summary**: Centralized frontend error toast/message mechanism fully implemented and validated (2025-04-11). Queueing logic fixed and validated by passing all relevant tests, including "queues multiple errors but only shows one at a time (ADR-012)". All manual and automated regression issues resolved. Codebase is now fully compliant with ADR-012 and finalized requirements in memory_bank/productContext.md.
+- TASK-ARCH-DOC-001: Frontend Architecture Overview
+  - **Completion Date**: 2025-04-20
+  - **Summary**: Comprehensive frontend architecture overview document created at analysis/frontend_architecture_overview.md.
+- TASK-MODEL-CONSOLIDATION-002: Model Consolidation Task
+  - **Completion Date**: 2025-04-20
+  - **Summary**: Consolidated and standardized data models across the platform. Task file archived.
 
 ## Comprehensive Task List
 
@@ -122,7 +123,7 @@
 - TASK-API-IMPLEMENTATION-COMPLETION
 - TASK-CREATION-001
 - TASK-UI-005
-- TASK-MODEL-CONSOLIDATION-002 (POSTPONED 2025-04-11, User requested postponement)
+- TASK-MODEL-CONSOLIDATION-002 (DONE)
 
 ### Tasks To Do
 
@@ -175,3 +176,4 @@
   - **Completion Date**: 2025-04-12
   - **Summary**: All TypeScript service modules refactored to class-based, strictly typed, generic API layer with centralized endpoint configuration. ADR-013 fully implemented; codebase harmonized under the new standard.
 - TASK-ERROR-TOAST-001
+- TASK-ARCH-DOC-001

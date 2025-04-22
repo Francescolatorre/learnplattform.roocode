@@ -1,7 +1,11 @@
+//src/context/auth/AuthContext.tsx
+
 import React, {createContext, useContext, useState, useEffect} from 'react';
-import {AuthContextProps, AuthEventType, AuthUser} from './types';
-import {authEventService} from './AuthEventService';
+
 import authService from '../../services/auth/authService';
+
+import {authEventService} from './AuthEventService';
+import {AuthContextProps, AuthEventType, AuthUser} from './types';
 
 // Erstelle den Kontext mit einem Default-Wert
 const AuthContext = createContext<AuthContextProps>({

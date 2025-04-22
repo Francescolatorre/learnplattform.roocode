@@ -1,25 +1,25 @@
-import FilterableCourseList from '@components/courses/FilterableCourseList';
-import courseService from '@features/courses/services/courseService';
-import { Box, CircularProgress, Typography } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
-import React from 'react';
+import {Box, CircularProgress, Typography} from '@mui/material';
+import {useQuery} from '@tanstack/react-query';
 
-import { IPaginatedResponse } from '../../../types/common';
-import { Course } from '../../../types/common/entities';
+
+import FilterableCourseList from '@components/FilterableCourseList';
+import courseService from '@services/resources/courseService';
+import {ICourse, IPaginatedResponse} from 'src/types/';
+
 
 const StudentCourseEnrollmentPage: React.FC = () => {
   const {
     data: enrollmentsResponse,
     isLoading,
     error,
-  } = useQuery<IPaginatedResponse<Course>, Error>({
+  } = useQuery<IPaginatedResponse<ICourse>, Error>({
     queryKey: ['courses'],
     queryFn: () => courseService.fetchCourses(),
   });
 
   if (isLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+      <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
         <CircularProgress />
       </Box>
     );
@@ -27,7 +27,7 @@ const StudentCourseEnrollmentPage: React.FC = () => {
 
   if (error) {
     return (
-      <Box sx={{ textAlign: 'center', mt: 4 }}>
+      <Box sx={{textAlign: 'center', mt: 4}}>
         <Typography variant="h6" color="error">
           Failed to load enrollments. Please try again later.
         </Typography>
@@ -38,7 +38,7 @@ const StudentCourseEnrollmentPage: React.FC = () => {
   const courses = enrollmentsResponse?.results || [];
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{p: 3}}>
       <FilterableCourseList
         courses={courses}
         title="Available Courses"

@@ -3,14 +3,9 @@ import {useQuery} from '@tanstack/react-query';
 import axios from 'axios';
 import React, {useEffect} from 'react';
 
-import ProgressIndicator from 'src/components/ProgressIndicator';
 import {useAuth} from '@context/auth/AuthContext';
+import ProgressIndicator from 'src/components/ProgressIndicator';
 
-interface UserProgress {
-  id: number;
-  percentage: number;
-  label: string;
-}
 
 const Dashboard: React.FC = () => {
   const {user} = useAuth();
@@ -23,7 +18,7 @@ const Dashboard: React.FC = () => {
     };
   }, [user]);
 
-  const fetchUserProgress = async (): Promise<UserProgress[]> => {
+  const fetchUserProgress = async (): Promise<IUserProgress[]> => {
     if (!user) {
       throw new Error('User not authenticated');
     }

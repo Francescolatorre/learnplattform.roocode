@@ -1,13 +1,17 @@
+import {ILearningTask, ITaskCreationData} from '@/types/task';
 import {ApiService} from 'src/services/api/apiService';
-import {LearningTask, TaskCreationData} from 'src/types/common/entities';
-
-import {API_CONFIG} from '../api/apiConfig';
 import {logger} from 'src/utils/logger';
 
+import {API_CONFIG} from '../api/apiConfig';
+import {IPaginatedResponse} from '@/types';
+
 class LearningTaskServiceError extends Error {
-  constructor(message: string) {
+  statusCode?: number;
+
+  constructor(message: string, statusCode?: number) {
     super(message);
     this.name = 'LearningTaskServiceError';
+    this.statusCode = statusCode;
   }
 }
 /**
@@ -15,15 +19,10 @@ class LearningTaskServiceError extends Error {
  * Provides methods to interact with the backend API for learning tasks. All methods are asynchronous and strictly typed.
  */
 class LearningTaskService {
-  private apiTask = new ApiService<LearningTask>();
-  private apiTasks = new ApiService<LearningTask[]>();
+  private apiTask = new ApiService<ILearningTask>();
+  private apiTasks = new ApiService<ILearningTask[]>();
   private apiVoid = new ApiService<void>();
-  private apiTasksResults = new ApiService<{
-    count: number;
-    next: string | null;
-    previous: string | null;
-    results: LearningTask[];
-  }>();
+  private apiTasksResults = new ApiService<IPaginatedResponse<ILearningTask>>();
 
   // Main CRUD operations
   /**
@@ -31,7 +30,7 @@ class LearningTaskService {
    * @param params Query parameters as key-value pairs.
    * @returns Promise resolving to an array of LearningTask objects.
    */
-  async getAll(params: Record<string, string> = {}): Promise<LearningTask[]> {
+  async getAll(params: Record<string, string> = {}): Promise<ILearningTask[]> {
     const queryString = new URLSearchParams(params).toString();
     const endpoint = queryString
       ? `${API_CONFIG.endpoints.tasks.list}?${queryString}`
@@ -50,7 +49,7 @@ class LearningTaskService {
    * @returns Promise resolving to the LearningTask object.
    * @throws Error if the task is not found.
    */
-  async getById(taskId: string): Promise<LearningTask> {
+  async getById(taskId: string): Promise<ILearningTask> {
     try {
       const response = await this.apiTask.get(API_CONFIG.endpoints.tasks.details(taskId));
       if (!response) {
@@ -70,9 +69,9 @@ class LearningTaskService {
    * @returns Promise resolving to the created LearningTask object.
    */
   async create(
-    taskData: TaskCreationData,
+    taskData: ITaskCreationData,
     notifyUsers = false
-  ): Promise<LearningTask> {
+  ): Promise<ILearningTask> {
     try {
       const formData = this.prepareFormData(taskData);
       formData.append('notifyUsers', String(notifyUsers));
@@ -92,8 +91,8 @@ class LearningTaskService {
    */
   async update(
     taskId: string,
-    updatedData: Partial<LearningTask>
-  ): Promise<LearningTask> {
+    updatedData: Partial<ILearningTask>
+  ): Promise<ILearningTask> {
     return this.apiTask.patch(API_CONFIG.endpoints.tasks.update(taskId), updatedData);
   }
 
@@ -114,7 +113,7 @@ class LearningTaskService {
    * @returns Promise resolving to an array of LearningTask objects.
    * @throws Error if no tasks are found.
    */
-  async getByStudentId(studentId: string): Promise<LearningTask[]> {
+  async getByStudentId(studentId: string): Promise<ILearningTask[]> {
     try {
       const params = {student: studentId};
       const response = await this.apiTasksResults.get(`${API_CONFIG.endpoints.tasks.list}?${new URLSearchParams(params).toString()}`);
@@ -133,7 +132,7 @@ class LearningTaskService {
    * @param courseId The ID of the course.
    * @returns Promise resolving to an array of LearningTask objects.
    */
-  async getByCourseId(courseId: string): Promise<LearningTask[]> {
+  async getByCourseId(courseId: string): Promise<ILearningTask[]> {
     try {
       const response = await this.apiTasksResults.get(API_CONFIG.endpoints.tasks.byCourse(courseId));
       if (!response || !Array.isArray(response.results)) {
@@ -152,7 +151,7 @@ class LearningTaskService {
    * @param data The data to prepare.
    * @returns A FormData object.
    */
-  private prepareFormData(data: TaskCreationData): FormData {
+  private prepareFormData(data: ITaskCreationData): FormData {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
@@ -179,11 +178,11 @@ const learningTaskService = new LearningTaskService();
 export default learningTaskService;
 
 // For backward compatibility, export the old function names as references to methods
-export const fetchCourseTasks = async (courseId: string): Promise<LearningTask[]> =>
+export const fetchCourseTasks = async (courseId: string): Promise<ILearningTask[]> =>
   learningTaskService.getByCourseId(courseId);
-export const createTask = async (taskData: TaskCreationData, notifyUsers = false): Promise<LearningTask> =>
+export const createTask = async (taskData: ITaskCreationData, notifyUsers = false): Promise<ILearningTask> =>
   learningTaskService.create(taskData, notifyUsers);
-export const updateTask = async (taskId: string, updatedData: Partial<LearningTask>): Promise<LearningTask> =>
+export const updateTask = async (taskId: string, updatedData: Partial<ILearningTask>): Promise<ILearningTask> =>
   learningTaskService.update(taskId, updatedData);
 export const deleteTask = async (taskId: string): Promise<void> =>
   learningTaskService.delete(taskId);

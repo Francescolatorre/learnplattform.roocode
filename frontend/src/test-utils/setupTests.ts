@@ -1,5 +1,4 @@
 // src/test-utils/setupTests.ts
-import axios from 'axios';
 import {vi} from 'vitest';
 
 

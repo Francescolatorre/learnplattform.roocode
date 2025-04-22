@@ -1,12 +1,11 @@
 import {useQuery} from '@tanstack/react-query';
 
-import {learningTaskService} from 'src/services/resources/learningTaskService';
-import {LearningTask} from 'src/types/common/entities';
+import {ILearningTask} from '@/types/task';
+import learningTaskService from 'src/services/resources/learningTaskService';
 
-type ITask = LearningTask;
-
+// Return the same type as what learningTaskService.getAll returns
 export const useCourseTasks = (courseId: string) => {
-  return useQuery<ITask[], Error>({
+  return useQuery<ILearningTask[], Error>({
     queryKey: ['courseTasks', courseId],
     queryFn: async () => learningTaskService.getAll({course: courseId}),
   });

@@ -1,10 +1,11 @@
-import React from 'react';
-import {Snackbar, Alert, AlertTitle, IconButton, Stack} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import {ErrorNotification} from './types';
+import {Snackbar, Alert, AlertTitle, IconButton} from '@mui/material';
+import React from 'react';
+
+import {IErrorNotification} from './types';
 
 interface ErrorToastProps {
-    errors: ErrorNotification[];
+    errors: IErrorNotification[];
     onDismiss: (id: number) => void;
 }
 

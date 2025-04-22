@@ -1,5 +1,5 @@
-import { Box, Typography, Button } from '@mui/material';
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import {Box, Typography, Button} from '@mui/material';
+import {Component, ErrorInfo, ReactNode} from 'react'; // Ensure React is in scope
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -14,11 +14,11 @@ interface ErrorBoundaryState {
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = { hasError: false };
+    this.state = {hasError: false};
   }
 
   static getDerivedStateFromError(error: Error) {
-    return { hasError: true, error };
+    return {hasError: true, error};
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
@@ -27,7 +27,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   }
 
   handleRetry = () => {
-    this.setState({ hasError: false, error: undefined });
+    this.setState({hasError: false, error: undefined});
   };
 
   render() {

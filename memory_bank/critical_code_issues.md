@@ -32,3 +32,79 @@
 ## Prioritization Rationale
 
 High-priority issues (blockers) directly prevent compilation and impact core functionality. Medium-priority issues (significant) affect code quality and maintainability, which is important for long-term sustainability but less critical for the immediate MVP launch.  The prioritization focuses on resolving compilation errors first, then addressing type safety, and finally improving code quality.
+
+## Specific Solutions
+
+### Missing Imports Solutions
+
+1. For `src/components/dashboards/StudentDashboard.tsx`:
+
+   ```typescript
+   // Add to top of file:
+   import { getStudentDashboard } from '@features/dashboard/services/dashboardService';
+   ```
+
+2. For `src/pages/courses/AdminCoursesPage.tsx`:
+
+   ```typescript
+   // Add to top of file:
+   import { fetchCourses, createCourse, updateCourse, deleteCourse } from '@features/courses/services/courseService';
+   import { ICourse, ICourseCreateRequest } from '@features/courses/types/courseTypes';
+   ```
+
+### Type Mismatch Solutions
+
+1. For `src/components/dashboards/StudentDashboard.tsx`:
+
+   ```typescript
+   // Change:
+   const averageScore = dashboardData.averageScore;
+
+   // To:
+   const averageScore: number = dashboardData.averageScore || 0;
+   ```
+
+### Missing Type Definitions Solutions
+
+1. Create type definitions for TaskProgress:
+
+   ```typescript
+   // src/features/tasks/types/taskTypes.ts
+   export interface ITaskProgress {
+     id: number;
+     userId: number;
+     taskId: number;
+     completionStatus: 'not_started' | 'in_progress' | 'completed';
+     score?: number;
+     completedAt?: Date;
+     attempts: number;
+     lastAttemptAt?: Date;
+   }
+   ```
+
+2. Create type definitions for ModuleProgress:
+
+   ```typescript
+   // src/features/courses/types/moduleTypes.ts
+   export interface IModuleProgress {
+     id: number;
+     userId: number;
+     moduleId: number;
+     completionStatus: 'not_started' | 'in_progress' | 'completed';
+     completionPercentage: number;
+     tasksCompleted: number;
+     totalTasks: number;
+     lastAccessedAt?: Date;
+   }
+   ```
+
+3. Import these types in the affected files:
+
+   ```typescript
+   // src/components/TaskDetailsView/index.tsx
+   import { ITaskProgress } from '@features/tasks/types/taskTypes';
+
+   // src/dashboardFeature/components/progress/CourseDetailView/index.tsx
+   import { IModuleProgress } from '@features/courses/types/moduleTypes';
+   import { ITaskProgress } from '@features/tasks/types/taskTypes';
+   ```

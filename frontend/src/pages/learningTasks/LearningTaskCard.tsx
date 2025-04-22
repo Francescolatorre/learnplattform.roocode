@@ -1,5 +1,5 @@
-import React from 'react';
 import {Card, CardContent, CardActions, Typography, Button} from '@mui/material';
+import React from 'react';
 
 interface ILearningTaskCardProps {
     title: string;

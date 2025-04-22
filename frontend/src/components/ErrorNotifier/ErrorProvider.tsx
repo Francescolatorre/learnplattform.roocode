@@ -1,14 +1,15 @@
 import React, {createContext, useCallback, useContext, useRef, useState} from 'react';
+
 import {ErrorToast} from './ErrorToast';
-import {ErrorNotification, ErrorNotifierContextType} from './types';
+import {IErrorNotification, ErrorNotifierContextType} from './types';
 
 const ErrorNotifierContext = createContext<ErrorNotifierContextType | undefined>(undefined);
 
 export const ErrorProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
-    const [errors, setErrors] = useState<ErrorNotification[]>([]);
+    const [errors, setErrors] = useState<IErrorNotification[]>([]);
     const idCounter = useRef(0);
 
-    const addError = useCallback((error: Omit<ErrorNotification, 'id'>) => {
+    const addError = useCallback((error: Omit<IErrorNotification, 'id'>) => {
         setErrors((prev) => [
             ...prev,
             {...error, id: idCounter.current++}

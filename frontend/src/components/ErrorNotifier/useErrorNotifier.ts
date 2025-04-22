@@ -1,6 +1,7 @@
 import {useCallback} from 'react';
+
 import {useErrorNotifierContext} from './ErrorProvider';
-import {ErrorNotification} from './types';
+import {IErrorNotification} from './types';
 
 /**
  * useNotification
@@ -11,7 +12,7 @@ function useNotification() {
 
     const notify = useCallback(
         (
-            notification: Omit<ErrorNotification, 'id'> | string,
+            notification: Omit<IErrorNotification, 'id'> | string,
             severity: 'error' | 'success' | 'info' | 'warning' = 'error'
         ) => {
             if (typeof notification === 'string') {

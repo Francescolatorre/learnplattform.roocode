@@ -1,6 +1,7 @@
 import {useEffect} from 'react';
-import {AuthEvent} from './types';
+
 import {authEventService} from './AuthEventService';
+import {AuthEvent} from './types';
 
 export const useAuthEvents = (callback: (event: AuthEvent) => void) => {
     useEffect(() => {

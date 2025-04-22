@@ -1,13 +1,13 @@
 import {Box, Grid, Typography, CircularProgress} from '@mui/material';
 import {useQuery} from '@tanstack/react-query';
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 
+import {ILearningTask} from '@/types/task';
 import learningTaskService from '@services/resources/learningTaskService';
-import {LearningTask} from 'src/types/common/entities';
-import {useAuth} from 'src/context/auth'; // Annahme: Auth-Kontext für Benutzer-ID
-
-import LearningTaskCard from 'src/pages/learningTasks/LearningTaskCard';
 import {useNotification} from 'src/components/ErrorNotifier/useErrorNotifier';
+import {useAuth} from 'src/context/auth'; // Annahme: Auth-Kontext für Benutzer-ID
+import LearningTaskCard from 'src/pages/learningTasks/LearningTaskCard';
+
 
 const StudentTasksPage: React.FC = () => {
   const {user} = useAuth();
@@ -18,7 +18,7 @@ const StudentTasksPage: React.FC = () => {
     data: tasks,
     isLoading,
     error,
-  } = useQuery<LearningTask[]>({
+  } = useQuery<ILearningTask[]>({
     queryKey: ['learningTasks', studentId],
     queryFn: () => {
       if (!studentId) {
@@ -48,8 +48,13 @@ const StudentTasksPage: React.FC = () => {
   }
 
   if (error) {
-    // Error toast is shown, so just return null or a fallback UI
-    return null;
+    return (
+      <Box sx={{mt: 4, textAlign: 'center'}}>
+        <Typography variant="body1" color="error">
+          Failed to load tasks. Please try again later.
+        </Typography>
+      </Box>
+    );
   }
 
   return (
@@ -61,7 +66,7 @@ const StudentTasksPage: React.FC = () => {
       {(!tasks || tasks.length === 0) ? (
         <Box sx={{mt: 4, textAlign: 'center'}}>
           <Typography variant="body1" color="textSecondary">
-            You don't have any learning tasks assigned yet.
+            You don&apos;t have any learning tasks assigned yet.
           </Typography>
         </Box>
       ) : (
@@ -71,8 +76,8 @@ const StudentTasksPage: React.FC = () => {
               <LearningTaskCard
                 title={task.title ?? ''}
                 description={task.description ?? ''}
-                dueDate={task.dueDate ?? ''}
-                onViewTask={() => console.info(`View task ${task.id}`)}
+                dueDate={''}
+                onViewTask={() => console.info("View task ${task.id}")}
               />
             </Grid>
           ))}

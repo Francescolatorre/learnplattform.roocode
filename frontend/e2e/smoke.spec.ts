@@ -1,4 +1,5 @@
 import {test, expect} from '@playwright/test';
+
 import {TEST_USERS, login} from './setupTests';
 
 test.describe('Smoke Tests', () => {

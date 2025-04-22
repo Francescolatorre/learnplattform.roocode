@@ -1,9 +1,10 @@
-import CourseService from '@/services/resources/courseService';
-import {Course} from '@/types/common/entities';
 import {Button} from '@mui/material';
 import {DataGrid, GridColDef} from '@mui/x-data-grid';
 import React, {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
+
+import CourseService from '@/services/resources/courseService';
+import {Course} from '@/types/entities';
 
 const AdminCoursesPage: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);

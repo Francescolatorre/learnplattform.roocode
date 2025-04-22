@@ -1,5 +1,5 @@
 /**
- * ErrorNotificationContext.tsx
+ * IErrorNotificationContext.tsx
  * Centralized error notification system using React Context API and Material UI.
  * Fully accessible, extensible, and globally available.
  * References ADR-012: Centralized Frontend Error Notification System.
@@ -7,7 +7,7 @@
 
 import React, {createContext, useContext, useState, useCallback, ReactNode, useRef} from "react";
 
-export type ErrorNotification = {
+export type IErrorNotification = {
     message: string;
     key?: string | number;
     actions?: React.ReactNode;
@@ -18,18 +18,18 @@ type NotificationType = "error"; // Extensible for "success" | "warning" | "info
 type NotificationState = {
     open: boolean;
     type: NotificationType;
-    notification: ErrorNotification | null;
+    notification: IErrorNotification | null;
 };
 
-type ErrorNotificationContextProps = {
+type IErrorNotificationContextProps = {
     showError: (message: string, options?: {key?: string | number; actions?: React.ReactNode}) => void;
     close: () => void;
     state: NotificationState;
 };
 
-const ErrorNotificationContext = createContext<ErrorNotificationContextProps | undefined>(undefined);
+const IErrorNotificationContext = createContext<IErrorNotificationContextProps | undefined>(undefined);
 
-export const ErrorNotificationProvider = ({children}: {children: ReactNode}) => {
+export const IErrorNotificationProvider = ({children}: {children: ReactNode}) => {
     // Only one notification at a time; new errors replace previous.
     const [state, setState] = useState<NotificationState>({
         open: false,
@@ -38,7 +38,7 @@ export const ErrorNotificationProvider = ({children}: {children: ReactNode}) => 
     });
 
     // For future extensibility: queue (not used for error, but ready for info/success)
-    const queueRef = useRef<ErrorNotification[]>([]);
+    const queueRef = useRef<IErrorNotification[]>([]);
 
     const showError = useCallback(
         (message: string, options?: {key?: string | number; actions?: React.ReactNode}) => {
@@ -61,9 +61,9 @@ export const ErrorNotificationProvider = ({children}: {children: ReactNode}) => 
     // For extensibility: addNotification(type, notification) and queue logic can be added here.
 
     return (
-        <ErrorNotificationContext.Provider value={{showError, close, state}}>
+        <IErrorNotificationContext.Provider value={{showError, close, state}}>
             {children}
-        </ErrorNotificationContext.Provider>
+        </IErrorNotificationContext.Provider>
     );
 };
 
@@ -73,9 +73,9 @@ export const ErrorNotificationProvider = ({children}: {children: ReactNode}) => 
  * Fully typed and simple API.
  */
 export const useErrorNotifier = () => {
-    const ctx = useContext(ErrorNotificationContext);
+    const ctx = useContext(IErrorNotificationContext);
     if (!ctx) {
-        throw new Error("useErrorNotifier must be used within an ErrorNotificationProvider");
+        throw new Error("useErrorNotifier must be used within an IErrorNotificationProvider");
     }
     return {
         showError: ctx.showError,

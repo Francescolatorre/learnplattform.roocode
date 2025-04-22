@@ -1,6 +1,6 @@
 import {describe, it, expect} from 'vitest';
 
-import {Course} from 'src/types/common/entities';
+import {ICourse} from '@/types/course';
 
 import authService from '../auth/authService';
 
@@ -37,7 +37,7 @@ describe('learningTaskService Integration', () => {
         userId = userProfile.id;
 
         // Create a course for testing
-        const courseData: Partial<Course> = {
+        const courseData: Partial<ICourse> = {
             title: 'Integration Test Course for LearningTask',
             description: 'Created by integration test for learningTaskService',
             version: 1,

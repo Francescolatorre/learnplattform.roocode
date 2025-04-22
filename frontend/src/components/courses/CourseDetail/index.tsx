@@ -1,19 +1,21 @@
 import {Visibility, Person, DateRange} from '@mui/icons-material';
 import {Box, Typography, Chip, Paper, Container, Grid} from '@mui/material';
+import {useQuery} from '@tanstack/react-query';
 import React from 'react';
 import {useParams} from 'react-router-dom';
-import {useQuery} from '@tanstack/react-query';
+
+import {ICourse} from '@/types/course';
 import {courseService} from 'src/services/resources/courseService';
 
 
 const CourseDetail: React.FC = () => {
-  const {id} = useParams<{id: string}>();
+  const {id} = useParams() as {id: string | undefined};
 
   const {
     data: course,
     isLoading,
     error,
-  } = useQuery({
+  } = useQuery<ICourse>({
     queryKey: ['course', id],
     queryFn: () => courseService.getCourseDetails(id!),
     enabled: Boolean(id),
@@ -24,7 +26,7 @@ const CourseDetail: React.FC = () => {
   }
 
   if (error) {
-    return <div>Error loading course details: {String(error)}</div>;
+    return <div>Error loading course details: {(error as Error).message}</div>;
   }
 
   if (!course) {

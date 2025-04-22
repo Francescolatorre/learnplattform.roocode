@@ -1,5 +1,4 @@
 import {vi} from 'vitest';
-
 vi.mock('@/services/api/apiService', () => {
     const mockGet = vi.fn();
     const mockPost = vi.fn();
@@ -29,15 +28,14 @@ vi.mock('@/services/api/apiService', () => {
         __esModule: true,
     };
 });
-
 import {describe, it, expect, beforeEach} from 'vitest';
 
-import type {Course, CourseStatus} from 'src/types/common/entities';
-import type {IPaginatedResponse} from 'src/types/common/paginatedResponse';
+import type {ICourse, TCourseStatus} from '@/types/course';
+import type {IPaginatedResponse} from '@/types/paginatedResponse';
 
 import {courseService} from './courseService';
 
-const mockCourse: Course = {
+const mockCourse: ICourse = {
     id: 1,
     title: 'Test Course',
     description: 'A test course',
@@ -58,7 +56,7 @@ const mockCourse: Course = {
     }
 };
 
-const mockPaginatedResponse: IPaginatedResponse<Course> = {
+const mockPaginatedResponse: IPaginatedResponse<ICourse> = {
     count: 1,
     next: null,
     previous: null,
@@ -138,7 +136,7 @@ describe('courseService', () => {
 
     it('updateCourseStatus calls apiService.patch and returns data', async () => {
         mockPatch.mockResolvedValueOnce(mockCourse);
-        const result = await courseService.updateCourseStatus('1', 'published' as CourseStatus);
+        const result = await courseService.updateCourseStatus('1', 'published' as TCourseStatus);
         expect(mockPatch).toHaveBeenCalled();
         expect(result).toEqual(mockCourse);
     });

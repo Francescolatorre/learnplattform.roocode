@@ -1,23 +1,26 @@
 import {useQuery} from '@tanstack/react-query';
-import {courseService} from 'src/services/resources/courseService';
-import {Course} from 'src/types/common/entities';
+
+import {IPaginatedResponse} from '@/types/paginatedResponse';
+import {courseService, CourseFilterOptions} from 'src/services/resources/courseService';
+import {ICourse} from 'src/types/course';
 
 /**
  * React hook for fetching a paginated list of courses using the standardized courseService.
  * Delegates all data access and business logic to the service module, in compliance with the TypeScript Services Standardization Initiative.
+ */
 export function useCourses(options: CourseFilterOptions = {}) {
-  return useQuery<IPaginatedResponse<Course>, Error>({
+  return useQuery<IPaginatedResponse<ICourse>, Error>({
     queryKey: ['courses', options],
     queryFn: () => courseService.fetchCourses(options),
   });
 }
 
- /**
-  * React hook for fetching a single course by ID using the standardized courseService.
-  * Delegates all data access and business logic to the service module.
-  */
+/**
+ * React hook for fetching a single course by ID using the standardized courseService.
+ * Delegates all data access and business logic to the service module.
+ */
 export function useCourse(courseId: string | undefined) {
-  return useQuery<Course, Error>({
+  return useQuery<ICourse, Error>({
     queryKey: ['course', courseId],
     queryFn: () => {
       if (!courseId) throw new Error('No courseId provided');

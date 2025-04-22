@@ -1,4 +1,3 @@
-import {useAuth} from '@context/auth/AuthContext';
 import {
   CircularProgress,
   Typography,
@@ -14,8 +13,9 @@ import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import React from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 
+import {Course} from '@/types/entities';
+import {useAuth} from '@context/auth/AuthContext';
 import {courseService} from '@services/resources/courseService';
-import {Course} from 'src/types/common/entities';
 
 const CourseDetailsPage: React.FC = () => {
   const {courseId} = useParams<{courseId: string}>();
@@ -34,7 +34,7 @@ const CourseDetailsPage: React.FC = () => {
   }, [isAuthenticated, navigate, courseId]);
 
   const {
-    data: courseDetails,
+    data: ICourseDetails,
     isLoading: isCourseLoading,
     error: courseError,
   } = useQuery<Course>({

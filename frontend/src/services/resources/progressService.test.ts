@@ -131,8 +131,8 @@ describe('progressService', () => {
         expect(result).toEqual({count: 0, next: null, previous: null, results: []});
     });
 
-    it('getQuizHistory returns empty array', async () => {
-        const result = await progressService.getQuizHistory('1', '2');
+    it('getIQuizHistory returns empty array', async () => {
+        const result = await progressService.getIQuizHistory('1', '2');
         expect(result).toEqual([]);
     });
 

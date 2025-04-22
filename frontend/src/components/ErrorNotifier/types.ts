@@ -1,6 +1,6 @@
 export type ErrorSeverity = 'error' | 'warning' | 'info' | 'success';
 
-export interface ErrorNotification {
+export interface IErrorNotification {
     id: number;
     message: string;
     title?: string;
@@ -10,6 +10,6 @@ export interface ErrorNotification {
 }
 
 export interface ErrorNotifierContextType {
-    addError: (error: Omit<ErrorNotification, 'id'>) => void;
+    addError: (error: Omit<IErrorNotification, 'id'>) => void;
     dismissError: (id: number) => void;
 }

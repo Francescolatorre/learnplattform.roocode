@@ -11,10 +11,10 @@ import {
 import React, {useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 
-import {Course} from 'src/types/common/entities';
+import {ICourse} from '@/types/course';
 
 export interface ICourseListProps {
-  courses: Course[] | null | undefined;
+  courses: ICourse[] | null | undefined;
   onError?: (error: Error) => void;
 }
 

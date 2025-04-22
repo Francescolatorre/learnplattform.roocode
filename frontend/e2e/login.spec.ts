@@ -1,4 +1,5 @@
 import {test, expect} from '@playwright/test';
+
 import {TEST_USERS, waitForGlobalLoadingToDisappear} from './setupTests';
 
 test.describe('Login Functionality', () => {

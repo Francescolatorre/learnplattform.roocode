@@ -1,23 +1,24 @@
+
+import {ICourseEnrollment} from '@/types/entities';
 import {API_CONFIG} from 'src/services/api/apiConfig';
 import {ApiService} from 'src/services/api/apiService';
-import {CourseEnrollment as Enrollment} from 'src/types/common/entities';
-import {IPaginatedResponse} from 'src/types/common';
+import {IPaginatedResponse} from 'src/types/paginatedResponse';
 
 /**
  * Service for managing course enrollments, including CRUD operations, user enrollments, and course-specific queries.
  * All methods are asynchronous, strictly typed, and use centralized API_CONFIG endpoints.
  */
 class EnrollmentService {
-  private apiEnrollments = new ApiService<Enrollment[]>();
-  private apiEnrollment = new ApiService<Enrollment>();
+  private apiEnrollments = new ApiService<ICourseEnrollment[]>();
+  private apiEnrollment = new ApiService<ICourseEnrollment>();
   private apiVoid = new ApiService<void>();
-  private apiEnrollmentsPaginatedResults = new ApiService<IPaginatedResponse<Enrollment>>();
+  private apiEnrollmentsPaginatedResults = new ApiService<IPaginatedResponse<ICourseEnrollment>>();
 
   /**
    * Fetch all enrollments.
    * @returns Promise resolving to an array of Enrollment objects.
    */
-  async getAll(): Promise<Enrollment[]> {
+  async getAll(): Promise<ICourseEnrollment[]> {
     return this.apiEnrollments.get(API_CONFIG.endpoints.enrollments.list);
   }
 
@@ -26,7 +27,7 @@ class EnrollmentService {
    * @param id Enrollment ID.
    * @returns Promise resolving to the Enrollment object.
    */
-  async getById(id: string | number): Promise<Enrollment> {
+  async getById(id: string | number): Promise<ICourseEnrollment> {
     return this.apiEnrollment.get(API_CONFIG.endpoints.enrollments.details(id));
   }
 
@@ -35,7 +36,7 @@ class EnrollmentService {
    * @param data Enrollment creation data.
    * @returns Promise resolving to the created Enrollment object.
    */
-  async create(data: Partial<Enrollment>): Promise<Enrollment> {
+  async create(data: Partial<ICourseEnrollment>): Promise<ICourseEnrollment> {
     return this.apiEnrollment.post(API_CONFIG.endpoints.enrollments.create, data);
   }
 
@@ -45,7 +46,7 @@ class EnrollmentService {
    * @param data Partial enrollment data to update.
    * @returns Promise resolving to the updated Enrollment object.
    */
-  async update(id: string | number, data: Partial<Enrollment>): Promise<Enrollment> {
+  async update(id: string | number, data: Partial<ICourseEnrollment>): Promise<ICourseEnrollment> {
     return this.apiEnrollment.put(API_CONFIG.endpoints.enrollments.update(id), data);
   }
 
@@ -62,7 +63,7 @@ class EnrollmentService {
    * Fetch all enrollments for the current user.
    * @returns Promise resolving to an array of Enrollment objects.
    */
-  async fetchUserEnrollments(): Promise<Enrollment[]> {
+  async fetchUserEnrollments(): Promise<ICourseEnrollment[]> {
     return this.apiEnrollments.get(API_CONFIG.endpoints.enrollments.list);
   }
 
@@ -71,7 +72,7 @@ class EnrollmentService {
    * @param courseId Course ID.
    * @returns Promise resolving to the created Enrollment object.
    */
-  async enrollInCourse(courseId: string | number): Promise<Enrollment> {
+  async enrollInCourse(courseId: string | number): Promise<ICourseEnrollment> {
     return this.apiEnrollment.post(API_CONFIG.endpoints.enrollments.create, {course: courseId});
   }
 
@@ -89,7 +90,7 @@ class EnrollmentService {
    * @param courseId Course ID.
    * @returns Promise resolving to an array of Enrollment objects.
    */
-  async fetchEnrolledStudents(courseId: string | number): Promise<Enrollment[]> {
+  async fetchEnrolledStudents(courseId: string | number): Promise<ICourseEnrollment[]> {
     return this.apiEnrollments.get(API_CONFIG.endpoints.enrollments.byCourse(courseId));
   }
 
@@ -100,7 +101,7 @@ class EnrollmentService {
    * @param filter Key-value filter object.
    * @returns Promise resolving to an array of Enrollment objects.
    */
-  async findByFilter(filter: Record<string, unknown>): Promise<Enrollment[]> {
+  async findByFilter(filter: Record<string, unknown>): Promise<ICourseEnrollment[]> {
     // For filter, we append as query params
     const params = new URLSearchParams(
       Object.entries(filter).reduce<Record<string, string>>((acc, [key, value]) => {

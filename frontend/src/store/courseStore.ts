@@ -1,22 +1,21 @@
-import { create } from 'zustand';
+//src/store/courseStore.ts
 
-interface Course {
-  id: string;
-  title: string;
-  description: string;
+import {create} from 'zustand';
+
+import {ICourse} from '@/types/course';
+// Importing the ICourse type from the course module
+
+interface ICourseState {
+  courses: ICourse[];
+  addCourse: (course: ICourse) => void;
+  removeCourse: (courseId: number) => void;
 }
 
-interface CourseState {
-  courses: Course[];
-  addCourse: (course: Course) => void;
-  removeCourse: (courseId: string) => void;
-}
-
-const useCourseStore = create<CourseState>(set => ({
+const useCourseStore = create<ICourseState>(set => ({
   courses: [],
-  addCourse: (course: Course) => set(state => ({ ...state, courses: [...state.courses, course] })),
-  removeCourse: (courseId: string) =>
-    set(state => ({ ...state, courses: state.courses.filter(course => course.id !== courseId) })),
+  addCourse: (course: ICourse) => set(state => ({...state, courses: [...state.courses, course]})),
+  removeCourse: (courseId: number) =>
+    set(state => ({...state, courses: state.courses.filter(c => c.id !== courseId)})),
 }));
 
 export default useCourseStore;

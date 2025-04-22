@@ -1,16 +1,7 @@
-import React, {useEffect, useState} from 'react';
-
-import {fetchCourseStructure} from 'src/services/resources/progressService';
-
-interface CourseStructure {
-  modules: {
-    id: string;
-    title: string;
-  }[];
-}
+import {ICourseStructure} from '@/types/course';
 
 interface ProgressTrackingUIProps {
-  courseStructure: CourseStructure | null;
+  courseStructure: ICourseStructure | null;
   loading: boolean;
   error: string | null;
 }

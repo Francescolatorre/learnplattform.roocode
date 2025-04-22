@@ -1,12 +1,12 @@
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 
-import type {LearningTask, TaskCreationData} from 'src/types/common/entities';
+import type {ILearningTask, ITaskCreationData} from '@/types/task';
 
 import {API_CONFIG} from '../api/apiConfig';
 
 import learningTaskService from './learningTaskService';
 
-const mockTask: LearningTask = {
+const mockTask: ILearningTask = {
     id: 1,
     course: 101,
     title: 'Sample Task',
@@ -72,7 +72,7 @@ describe('learningTaskService', () => {
 
     it('create calls apiService.post and returns created task', async () => {
         mockPost.mockResolvedValueOnce(mockTask);
-        const data: TaskCreationData = {
+        const data: ITaskCreationData = {
             id: 2,
             title: 'New Task',
             course: 101,
@@ -88,7 +88,7 @@ describe('learningTaskService', () => {
     it('create throws and logs error on failure', async () => {
         const error = new Error('Network error');
         mockPost.mockRejectedValueOnce(error);
-        const data: TaskCreationData = {
+        const data: ITaskCreationData = {
             id: 3,
             title: 'Fail Task',
             course: 101,

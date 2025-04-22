@@ -14,7 +14,6 @@ import {
   useTheme,
 } from '@mui/material';
 import {useQuery} from '@tanstack/react-query';
-
 import {
   Chart as ChartJS,
   ArcElement,
@@ -29,15 +28,15 @@ import {parseISO, isAfter, isBefore, addDays} from 'date-fns';
 import React, {useState} from 'react';
 import {Doughnut} from 'react-chartjs-2';
 
+import ActivityHistoryView from 'src/components/ActivityHistoryView/index';
+import InstructorProgressDashboard from 'src/components/dashboards/InstructorProgressDashboard.tsx';
+import TaskDetailsView from 'src/components/TaskDetailsView';
+import UpcomingTasksList from 'src/components/UpcomingTasksList/index.tsx';
 import {
   fetchCourseStructure,
   fetchStudentProgressByCourse,
 } from 'src/services/resources/progressService';
 
-import TaskDetailsView from 'src/components/TaskDetailsView';
-import UpcomingTasksList from 'src/components/UpcomingTasksList/index.tsx';
-import InstructorProgressDashboard from 'src/components/dashboards/InstructorProgressDashboard.tsx';
-import ActivityHistoryView from 'src/components/ActivityHistoryView/index';
 
 import PerformanceAnalysisView from './PerformanceAnalysisView';
 import ProgressSummaryCard from './ProgressSummaryCard';
@@ -132,13 +131,13 @@ const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
       }
     });
 
-    const taskTypes = Object.keys(taskTypeGroups);
-    const averageScores = taskTypes.map(
+    const tasks = Object.keys(taskTypeGroups);
+    const averageScores = tasks.map(
       type => taskTypeGroups[type].total / taskTypeGroups[type].count
     );
 
     return {
-      labels: taskTypes.map(type => type.replace('_', ' ')),
+      labels: tasks.map(type => type.replace('_', ' ')),
       datasets: [
         {
           label: 'Average Score',

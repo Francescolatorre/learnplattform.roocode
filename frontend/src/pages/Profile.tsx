@@ -1,6 +1,6 @@
-import {Navigate} from 'react-router-dom';
 import {Typography, Container, Paper, Box} from '@mui/material';
 import React from 'react';
+import {Navigate} from 'react-router-dom';
 
 import {useAuth} from '@context/auth/AuthContext';
 

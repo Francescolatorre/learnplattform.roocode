@@ -1,6 +1,6 @@
 import React from 'react';
 /* Mock MUI transitions to be immediate for tests */
-import {describe, it, expect, vi, beforeEach, afterEach} from 'vitest';
+import {describe, it, expect, vi, beforeEach} from 'vitest';
 vi.mock('@mui/material/Collapse', () => ({
     default: ({children}: any) => children
 }));
@@ -8,6 +8,7 @@ vi.mock('@mui/material/Fade', () => ({
     default: ({children}: any) => children
 }));
 import {render, screen, fireEvent, waitFor, act} from '@testing-library/react';
+
 import '@testing-library/jest-dom'; // Import for jest-dom matchers
 import {ErrorProvider} from './ErrorProvider';
 import {useNotification} from './useErrorNotifier';

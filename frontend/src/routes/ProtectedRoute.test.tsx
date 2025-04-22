@@ -1,15 +1,16 @@
-// vi.mock must be at the top
+import {render, screen, waitFor} from "@testing-library/react";
+import '@testing-library/jest-dom'; // Import for toBeInTheDocument
+import {MemoryRouter, Route, Routes} from "react-router-dom";
 import {vi, Mock} from "vitest";
 vi.mock("@context/auth/AuthContext", () => ({
     useAuth: vi.fn(),
 }));
-import {describe, it, expect, beforeAll, afterAll} from 'vitest';
-import React from "react";
-import {render, screen, waitFor} from "@testing-library/react";
-import {MemoryRouter, Route, Routes} from "react-router-dom";
+import {describe, it, expect} from 'vitest';
+
 import {useAuth} from "@context/auth/AuthContext";
+
 import ProtectedRoute from "./ProtectedRoute";
-import '@testing-library/jest-dom'; // Import for toBeInTheDocument
+
 
 
 describe("ProtectedRoute with isRestoring logic", () => {

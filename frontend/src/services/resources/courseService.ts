@@ -1,15 +1,19 @@
 import {ApiService} from '@/services/api/apiService';
-import {IPaginatedResponse} from 'src/types/common';
-import {Course, CourseStatus} from 'src/types/common/entities';
+import {ICourse, TCourseStatus} from '@/types/course';
+import {IPaginatedResponse} from 'src/types/paginatedResponse';
 
 import {API_CONFIG} from '../api/apiConfig';
 
+/**
+ * Options for filtering courses in API requests
+ */
 export interface CourseFilterOptions {
   page?: number;
   page_size?: number;
   search?: string;
-  status?: CourseStatus;
-  creator?: number;
+  status?: string;
+  creator?: number | null;
+  ordering?: string;
 }
 
 /**
@@ -29,8 +33,8 @@ export interface CourseFilterOptions {
  * All public methods are documented with TSDoc.
  */
 class CourseService {
-  private apiCourse = new ApiService<Course>();
-  private apiCourses = new ApiService<IPaginatedResponse<Course>>();
+  private apiCourse = new ApiService<ICourse>();
+  private apiCourses = new ApiService<IPaginatedResponse<ICourse>>();
   private apiVoid = new ApiService<void>();
   private apiAny = new ApiService<unknown>();
 
@@ -38,7 +42,7 @@ class CourseService {
    * Fetches a paginated list of courses with optional filtering
    * @param options
    */
-  async fetchCourses(options: CourseFilterOptions = {}): Promise<IPaginatedResponse<Course>> {
+  async fetchCourses(options: CourseFilterOptions = {}): Promise<IPaginatedResponse<ICourse>> {
     const queryParams = new URLSearchParams();
 
     if (options.page) queryParams.append('page', options.page.toString());
@@ -56,7 +60,7 @@ class CourseService {
    * Creates a new course
    * @param courseData
    */
-  async createCourse(courseData: Partial<Course>): Promise<Course> {
+  async createCourse(courseData: Partial<ICourse>): Promise<ICourse> {
     return this.apiCourse.post(API_CONFIG.endpoints.courses.create, courseData);
   }
 
@@ -64,7 +68,7 @@ class CourseService {
    * Retrieves detailed information for a specific course
    * @param courseId
    */
-  async getCourseDetails(courseId: string): Promise<Course> {
+  async getCourseDetails(courseId: string): Promise<ICourse> {
     const response = await this.apiCourse.get(API_CONFIG.endpoints.courses.details(courseId));
     if (!response) {
       throw new Error('Course not found');
@@ -77,7 +81,7 @@ class CourseService {
    * @param courseId
    * @param courseData
    */
-  async updateCourse(courseId: string, courseData: Partial<Course>): Promise<Course> {
+  async updateCourse(courseId: string, courseData: Partial<ICourse>): Promise<ICourse> {
     return this.apiCourse.patch(
       API_CONFIG.endpoints.courses.update(courseId),
       courseData
@@ -105,7 +109,7 @@ class CourseService {
   /**
    * Fetches courses where the current user is an instructor
    */
-  async fetchInstructorCourses(): Promise<IPaginatedResponse<Course>> {
+  async fetchInstructorCourses(): Promise<IPaginatedResponse<ICourse>> {
     return this.apiCourses.get(API_CONFIG.endpoints.courses.instructorCourses);
   }
 
@@ -114,7 +118,7 @@ class CourseService {
    * @param courseId
    * @param status
    */
-  async updateCourseStatus(courseId: string, status: CourseStatus): Promise<Course> {
+  async updateCourseStatus(courseId: string, status: TCourseStatus): Promise<ICourse> {
     return this.apiCourse.patch(`${API_CONFIG.endpoints.courses.updateStatus}/${courseId}`, {status});
   }
 
@@ -122,7 +126,7 @@ class CourseService {
    * Archives a course
    * @param courseId
    */
-  async archiveCourse(courseId: string): Promise<Course> {
+  async archiveCourse(courseId: string): Promise<ICourse> {
     return this.updateCourseStatus(courseId, 'private');
   }
 
@@ -130,7 +134,7 @@ class CourseService {
    * Publishes a course
    * @param courseId
    */
-  async publishCourse(courseId: string): Promise<Course> {
+  async publishCourse(courseId: string): Promise<ICourse> {
     return this.updateCourseStatus(courseId, 'published');
   }
 

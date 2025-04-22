@@ -1,10 +1,13 @@
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 
+import {ICourseEnrollment} from '@/types/entities';
+import {TCompletionStatus} from '@/types/entities';
+
+import {API_CONFIG} from '../api/apiConfig';
+
 import {enrollmentService} from './enrollmentService';
 // Import the real API_CONFIG
-import {API_CONFIG} from '../api/apiConfig';
 // Import the types from your entities file
-import {CourseEnrollment, CompletionStatus} from 'src/types/common/entities';
 
 // Now we mock the ApiService module more accurately
 vi.mock('../api/apiService', () => {
@@ -41,22 +44,22 @@ describe('enrollmentService', () => {
     let mockGet: any, mockPost: any, mockPut: any, mockDelete: any;
 
     // Sample data for consistent testing with correct types
-    const sampleEnrollment: Partial<CourseEnrollment> = {
+    const sampleEnrollment: Partial<ICourseEnrollment> = {
         id: 1,
         user: 101,
         course: 201,
-        status: 'active' as CompletionStatus,
+        status: 'active' as TCompletionStatus,
         enrollment_date: '2023-01-15T10:30:00Z',
         progress_percentage: '45%'
     };
 
-    const sampleEnrollmentList: Partial<CourseEnrollment>[] = [
+    const sampleEnrollmentList: Partial<ICourseEnrollment>[] = [
         sampleEnrollment,
         {
             id: 2,
             user: 102,
             course: 201,
-            status: 'active' as CompletionStatus,
+            status: 'active' as TCompletionStatus,
             enrollment_date: '2023-02-20T14:15:00Z',
             progress_percentage: '30%'
         }
@@ -93,12 +96,12 @@ describe('enrollmentService', () => {
     });
 
     it('create calls apiService.post with correct data and returns created enrollment', async () => {
-        const newEnrollment: Partial<CourseEnrollment> = {
+        const newEnrollment: Partial<ICourseEnrollment> = {
             course: 201,
-            status: 'active' as CompletionStatus
+            status: 'active' as TCompletionStatus
         };
 
-        const createdEnrollment: Partial<CourseEnrollment> = {
+        const createdEnrollment: Partial<ICourseEnrollment> = {
             ...newEnrollment,
             id: 3,
             user: 103,
@@ -113,11 +116,11 @@ describe('enrollmentService', () => {
     });
 
     it('update calls apiService.put with correct data and returns updated enrollment', async () => {
-        const updateData: Partial<CourseEnrollment> = {
-            status: 'completed' as CompletionStatus
+        const updateData: Partial<ICourseEnrollment> = {
+            status: 'completed' as TCompletionStatus
         };
 
-        const updatedEnrollment: Partial<CourseEnrollment> = {
+        const updatedEnrollment: Partial<ICourseEnrollment> = {
             ...sampleEnrollment,
             ...updateData
         };
@@ -143,11 +146,11 @@ describe('enrollmentService', () => {
     });
 
     it('enrollInCourse calls apiService.post with course id and returns enrollment', async () => {
-        const enrollResponse: Partial<CourseEnrollment> = {
+        const enrollResponse: Partial<ICourseEnrollment> = {
             id: 4,
             user: 104,
             course: 202,
-            status: 'active' as CompletionStatus,
+            status: 'active' as TCompletionStatus,
             enrollment_date: '2023-04-05T11:20:00Z'
         };
 
@@ -174,7 +177,7 @@ describe('enrollmentService', () => {
     it.skip('findByFilter calls apiService.get with correctly formatted query params', async () => {
         mockGet.mockResolvedValueOnce([sampleEnrollment]);
 
-        const filter = {course: 201, user: 101, status: 'active' as CompletionStatus};
+        const filter = {course: 201, user: 101, status: 'active' as TCompletionStatus};
         const result = await enrollmentService.findByFilter(filter);
 
         expect(mockGet).toHaveBeenCalledWith(`${API_CONFIG.endpoints.enrollments.list}?course=201&user=101&status=active`);

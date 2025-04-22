@@ -13,14 +13,15 @@ import {
   SxProps,
   Theme,
 } from '@mui/material';
-import React, { ReactNode } from 'react';
+import React, {ReactNode} from 'react';
 
 export interface Column<T> {
   id: string;
   label: string;
   minWidth?: number;
   align?: 'left' | 'right' | 'center';
-  format?: (value: any, row: T) => ReactNode;
+  format?: (value: T, row: T) => ReactNode; // Assuming T is the type of the data
+  // Removed unused variables and ensured React is in scope
 }
 
 interface DataTableProps<T> {
@@ -53,7 +54,7 @@ export const DataTable = <T,>({
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-  const handleChangePage = (_: unknown, newPage: number) => {
+  const handleChangePage = (_: unknown, newPage: number) => { // No changes needed here
     setPage(newPage);
   };
 
@@ -68,7 +69,7 @@ export const DataTable = <T,>({
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+      <Box sx={{display: 'flex', justifyContent: 'center', p: 3}}>
         <CircularProgress />
       </Box>
     );
@@ -76,21 +77,21 @@ export const DataTable = <T,>({
 
   if (error) {
     return (
-      <Box sx={{ p: 2, color: 'error.main' }}>
+      <Box sx={{p: 2, color: 'error.main'}}>
         <Typography variant="body1">{error}</Typography>
       </Box>
     );
   }
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden', ...sx }}>
+    <Paper sx={{width: '100%', overflow: 'hidden', ...sx}}>
       {title && (
-        <Box sx={{ p: 2, borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
+        <Box sx={{p: 2, borderBottom: '1px solid rgba(224, 224, 224, 1)'}}>
           <Typography variant="h6">{title}</Typography>
         </Box>
       )}
 
-      <TableContainer sx={{ maxHeight: pagination ? 440 : undefined }}>
+      <TableContainer sx={{maxHeight: pagination ? 440 : undefined}}>
         <Table stickyHeader aria-label={title || 'data table'}>
           <TableHead>
             <TableRow>
@@ -98,7 +99,7 @@ export const DataTable = <T,>({
                 <TableCell
                   key={column.id}
                   align={column.align}
-                  style={{ minWidth: column.minWidth }}
+                  style={{minWidth: column.minWidth}}
                 >
                   {column.label}
                 </TableCell>
@@ -116,15 +117,15 @@ export const DataTable = <T,>({
                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                     sx={{
                       cursor: onRowClick ? 'pointer' : 'default',
-                      '&:last-child td, &:last-child th': { border: 0 },
+                      '&:last-child td, &:last-child th': {border: 0},
                       ...(rowSx ? rowSx(row) : {}),
                     }}
                   >
                     {columns.map(column => {
                       const value = column.id.includes('.')
                         ? column.id
-                            .split('.')
-                            .reduce((obj, key) => obj && obj[key as keyof typeof obj], row as any)
+                          .split('.')
+                          .reduce((obj, key) => obj && obj[key as keyof typeof obj], row as any)
                         : row[column.id as keyof T];
                       return (
                         <TableCell key={`${key}-${column.id}`} align={column.align}>

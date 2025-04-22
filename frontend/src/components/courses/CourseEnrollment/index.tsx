@@ -1,7 +1,3 @@
-import React from 'react';
-import {useNavigate} from 'react-router-dom';
-import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
-
 import {
   Box,
   Button,
@@ -12,12 +8,16 @@ import {
   Alert,
   CircularProgress,
 } from '@mui/material';
+import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
+import React from 'react';
+import {useNavigate} from 'react-router-dom';
 
+
+import {ICourse} from '@/types/course';
+import {TCompletionStatus} from '@/types/entities';
 import {useAuth} from '@context/auth/AuthContext';
-
 import {courseService} from '@services/resources/courseService';
 import enrollmentService from '@services/resources/enrollmentService';
-import {Course, CompletionStatus} from 'src/types/common/entities';
 
 
 interface ICourseEnrollmentProps {
@@ -25,7 +25,7 @@ interface ICourseEnrollmentProps {
 }
 
 interface EnrollmentResponse {
-  status: CompletionStatus;
+  status: TCompletionStatus;
 }
 
 const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
@@ -123,7 +123,7 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
 };
 
 // Sub-components for better organization
-const CourseHeader: React.FC<{course: Course}> = ({course}) => (
+const CourseHeader: React.FC<{course: ICourse}> = ({course}) => (
   <Typography variant="h5" gutterBottom>
     {course.title}
   </Typography>
@@ -135,7 +135,7 @@ const CourseDescription: React.FC<{description: string}> = ({description}) => (
   </Typography>
 );
 
-const CourseStatusTags: React.FC<{course: Course}> = ({course}) => (
+const CourseStatusTags: React.FC<{course: ICourse}> = ({course}) => (
   <Box sx={{display: 'flex', gap: 1, mb: 2}}>
     <Chip label={course.status} color="primary" size="small" variant="outlined" />
     <Chip label={course.visibility} color="primary" size="small" variant="outlined" />
@@ -143,7 +143,7 @@ const CourseStatusTags: React.FC<{course: Course}> = ({course}) => (
 );
 
 interface IEnrollmentActionsProps {
-  enrollmentStatus: CompletionStatus | undefined;
+  enrollmentStatus: TCompletionStatus | undefined;
   isPublished: boolean;
   onEnroll: () => void;
   onViewTasks: () => void;
@@ -189,7 +189,7 @@ const EnrollmentActions: React.FC<IEnrollmentActionsProps> = ({
   );
 };
 
-const EnrollmentStatusAlert: React.FC<{status: CompletionStatus}> = ({status}) => (
+const EnrollmentStatusAlert: React.FC<{status: TCompletionStatus}> = ({status}) => (
   <Alert severity="info">
     You are already enrolled in this course.
     {status === 'active' && ' Your enrollment is active.'}

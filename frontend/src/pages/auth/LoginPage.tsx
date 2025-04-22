@@ -1,8 +1,9 @@
-import {useAuth} from '@context/auth/AuthContext';
 import {Box, TextField, Button, Typography, CircularProgress} from '@mui/material';
 import React from 'react';
 import {useForm, SubmitHandler} from 'react-hook-form';
+
 import {useNotification} from '@components/ErrorNotifier/useErrorNotifier';
+import {useAuth} from '@context/auth/AuthContext';
 
 interface ILoginFormInputs {
   username: string;

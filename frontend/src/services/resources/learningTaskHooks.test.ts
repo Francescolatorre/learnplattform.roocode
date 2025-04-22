@@ -1,7 +1,8 @@
-import {describe, it, expect, beforeEach} from 'vitest';
 import {renderHook, act} from '@testing-library/react';
-import learningTaskService from './learningTaskService';
+import {describe, it, expect, beforeEach} from 'vitest';
+
 import {useTaskCreation} from './learningTaskHooks';
+import learningTaskService from './learningTaskService';
 
 vi.mock('./learningTaskService');
 

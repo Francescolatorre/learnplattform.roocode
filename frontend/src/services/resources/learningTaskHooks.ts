@@ -1,4 +1,4 @@
-import {TaskCreationData} from 'src/types/common/entities';
+import {TaskCreationData} from '@/types/entities';
 
 import learningTaskService from './learningTaskService';
 

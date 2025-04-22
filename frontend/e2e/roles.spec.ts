@@ -1,4 +1,5 @@
 import {test, expect} from '@playwright/test';
+
 import {TEST_USERS, UserSession, waitForGlobalLoadingToDisappear} from './setupTests';
 
 test.describe('User Roles and Permissions', () => {

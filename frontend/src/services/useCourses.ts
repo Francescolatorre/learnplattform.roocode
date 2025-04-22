@@ -9,7 +9,7 @@ export const useCourses = () => {
     refetchOnWindowFocus: false,
   });
   // DEBUG: Log the result and error from useCourses
-  // eslint-disable-next-line no-console
+   
   console.log('[useCourses] Query data:', query.data);
   if (query.error) {
      
@@ -25,7 +25,7 @@ export const useCourse = (id: string) => {
     refetchOnWindowFocus: false,
   });
   // DEBUG: Log the result and error from useCourse
-  // eslint-disable-next-line no-console
+   
   console.log('[useCourse] Query data:', query.data);
   if (query.error) {
      

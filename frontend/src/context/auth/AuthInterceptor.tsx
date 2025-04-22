@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
-import {AuthEventType, AuthInterceptorProps} from './types';
+
 import {authEventService} from './AuthEventService';
+import {AuthEventType, AuthInterceptorProps} from './types';
 
 // Keine Abhängigkeit mehr zu AuthContext!
 export const AuthInterceptor: React.FC<AuthInterceptorProps> = ({

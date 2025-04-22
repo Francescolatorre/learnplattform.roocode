@@ -1,10 +1,10 @@
-import { User } from 'src/types/common/entities';
+import {IUser} from '@/types/user';
 
 interface UserProfileProps {
-  user: User;
+  user: IUser;
 }
 
-const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
+const UserProfile: React.FC<UserProfileProps> = ({user}) => {
   return (
     <div>
       <h1>{user.display_name || user.username}</h1>

@@ -1,11 +1,12 @@
-import CourseList from 'src/components/courses/CourseList';
-import {useAuth} from '@context/auth/AuthContext';
 import {Box, Grid, Typography, CircularProgress} from '@mui/material';
 import {useQuery} from '@tanstack/react-query';
-import {DashboardResponse} from 'src/types/common/progressTypes';
 import React from 'react';
-import {getStudentDashboard} from 'src/services/resources/progressService';
+
+import {IDashboardResponse} from '@/types/progressTypes';
 import ProgressOverview from '@components/ProgressOverview';
+import {useAuth} from '@context/auth/AuthContext';
+import CourseList from 'src/components/courses/CourseList';
+import {getStudentDashboard} from 'src/services/resources/progressService';
 
 
 const StudentDashboard: React.FC = () => {
@@ -15,7 +16,7 @@ const StudentDashboard: React.FC = () => {
     data: dashboardData,
     isLoading,
     error,
-  } = useQuery<DashboardResponse>({
+  } = useQuery<IDashboardResponse>({
     queryKey: ['studentDashboard'],
     queryFn: () => getStudentDashboard(user?.id),
     enabled: !!user?.id,

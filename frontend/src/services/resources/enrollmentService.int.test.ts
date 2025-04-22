@@ -1,6 +1,6 @@
 import {describe, it, expect} from 'vitest';
 
-import {CourseStatus} from 'src/types/common/entities';
+import {CourseStatus} from '@/types/entities';
 
 import authService from '../auth/authService';
 
@@ -35,7 +35,7 @@ describe('enrollmentService Integration', () => {
             description: 'Created by enrollmentService integration test',
             version: 1,
             status: 'published' as CourseStatus,
-            visibility: 'public' as 'public',
+            visibility: 'public' as const,
             learning_objectives: 'Test objectives',
             prerequisites: 'None',
             creator: userId,

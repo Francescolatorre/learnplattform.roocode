@@ -1,10 +1,10 @@
+import {LinearProgress, Typography, Box} from '@mui/material';
 import React, {useState, useEffect} from 'react';
 import {useParams} from 'react-router-dom';
-import {LinearProgress, Typography, Box} from '@mui/material';
 
-import {fetchStudentProgressByCourse} from '@services/resources/progressService';
+import {ILearningTask} from '@/types/entities';
 import {fetchCourseTasks} from '@services/resources/learningTaskService'; // Updated import
-import {LearningTask} from 'src/types/common/entities';
+import {fetchStudentProgressByCourse} from '@services/resources/progressService';
 
 // Define styles
 const styles: {[key: string]: React.CSSProperties} = {

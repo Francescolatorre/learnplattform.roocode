@@ -1,13 +1,4 @@
 
-import {Navigate} from 'react-router-dom';
-import {useAuth} from '@context/auth/authValidation';
-import CourseService from '@services/resources/courseService';
-import LearningTaskService, {
-  deleteTask as deleteLearningTask,
-  updateTask as updateLearningTask,
-  createTask as createLearningTask,
-} from '@services/resources/learningTaskService';
-import {LearningTask, TaskCreationData} from 'src/types/common/entities';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -32,40 +23,52 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Snackbar,
+  SelectChangeEvent,
 } from '@mui/material';
 import React, {useEffect, useState} from 'react';
-import {useNotification} from '../../components/ErrorNotifier/useErrorNotifier';
+import {Navigate} from 'react-router-dom';
 import {useNavigate, useParams} from 'react-router-dom';
 
+import {useNotification} from '@/components/ErrorNotifier/useErrorNotifier';
+import {ILearningTask} from '@/types/task';
+import {useAuth} from '@context/auth/AuthContext';
+import CourseService from '@services/resources/courseService';
+import LearningTaskService, {
+  deleteTask as deleteLearningTask,
+  updateTask as updateLearningTask,
+  createTask as createLearningTask,
+} from '@services/resources/learningTaskService';
+
+
+
+
 // Create or Edit Task dialog props
-interface TaskDialogProps {
+interface ITaskDialogProps {
   open: boolean;
   onClose: () => void;
-  onSave: (task: Partial<LearningTask>) => void;
-  task: Partial<LearningTask>;
+  onSave: (task: Partial<ILearningTask>) => void;
+  task: Partial<ILearningTask>;
   isEditing: boolean;
 }
 
 // Task Dialog Component
-const TaskDialog: React.FC<TaskDialogProps> = ({open, onClose, onSave, task, isEditing}) => {
-  const [formData, setFormData] = useState<Partial<LearningTask>>(task);
-
+const TaskDialog: React.FC<ITaskDialogProps> = ({open, onClose, onSave, task, isEditing}) => {
+  const [formData, setFormData] = useState<Partial<ILearningTask>>(task);
   useEffect(() => {
     setFormData(task);
   }, [task]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const {name, value} = e.target;
-    setFormData((prev: Partial<LearningTask>) => ({
+    setFormData((prev: Partial<ILearningTask>) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleSelectChange = (e: any) => {
+  const handleSelectChange = (e: SelectChangeEvent<string>) => {
     const {name, value} = e.target;
-    setFormData((prev: Partial<LearningTask>) => ({
+    setFormData((prev: Partial<ILearningTask>) => ({
       ...prev,
       [name]: value === 'true', // Convert string to boolean
     }));
@@ -89,6 +92,8 @@ const TaskDialog: React.FC<TaskDialogProps> = ({open, onClose, onSave, task, isE
             value={formData.title || ''}
             onChange={handleChange}
             margin="normal"
+            inputProps={{maxLength: 200}}
+            helperText="Title of the task (max 200 characters)"
           />
 
           <TextField
@@ -101,6 +106,8 @@ const TaskDialog: React.FC<TaskDialogProps> = ({open, onClose, onSave, task, isE
             margin="normal"
             multiline
             rows={4}
+            inputProps={{maxLength: 500}}
+            helperText="Description of the task (max 500 characters)"
           />
 
           <FormControl fullWidth margin="normal">
@@ -143,26 +150,24 @@ const TaskDialog: React.FC<TaskDialogProps> = ({open, onClose, onSave, task, isE
 const CourseLearningTasksPage: React.FC = () => {
   const {courseId} = useParams<{courseId: string}>();
   const navigate = useNavigate();
-  const {isAuthenticated} = useAuth();
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
+  const {user, isAuthenticated} = useAuth();
+  const canEdit = ['admin', 'instructor'].includes(user?.role ?? '');
 
   const [courseName, setCourseName] = useState('');
-  const [tasks, setTasks] = useState<LearningTask[]>([]);
+  const [tasks, setTasks] = useState<ILearningTask[]>([]);
   const [loading, setLoading] = useState(true);
   const notify = useNotification();
-  const [success, setSuccess] = useState<string | null>(null);
 
   // Dialog state
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [currentTask, setCurrentTask] = useState<Partial<LearningTask>>({});
+  const [currentTask, setCurrentTask] = useState<Partial<ILearningTask>>({});
   const [isEditing, setIsEditing] = useState(false);
 
   // Delete confirmation
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<number | null>(null);
+
+
 
   // Fetch course and tasks
   useEffect(() => {
@@ -173,7 +178,7 @@ const CourseLearningTasksPage: React.FC = () => {
         setLoading(true);
 
         // Fetch course details
-        const courseResult = await CourseService.fetchCourseById(parseInt(courseId, 10));
+        const courseResult = await CourseService.getCourseDetails(courseId);
         if (
           'error' in courseResult &&
           courseResult.error &&
@@ -188,23 +193,28 @@ const CourseLearningTasksPage: React.FC = () => {
 
         // Fetch tasks for this course
         const tasksResponse = await LearningTaskService.getAll({courseId: courseId});
-        setTasks(tasksResponse.sort((a: LearningTask, b: LearningTask) => a.order - b.order));
-      } catch (err: any) {
-        console.error('Failed to load course tasks:', err);
-        notify(err.message || 'Failed to load course tasks', 'error');
+        setTasks(tasksResponse.sort((a: ILearningTask, b: ILearningTask) => a.order - b.order));
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        console.error('Failed to load course tasks:', errorMessage);
+        notify(errorMessage, 'error');
       } finally {
         setLoading(false);
       }
     };
 
     loadCourseAndTasks();
-  }, [courseId]);
+  }, [courseId, notify]);
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
   // Handle create new task
   const handleCreateTask = () => {
     setCurrentTask({
-      title: '' as string & {maxLength: 200},
-      description: '' as string & {maxLength: 500},
+      title: '',
+      description: '',
       is_published: false,
       order: tasks.length + 1,
     });
@@ -213,7 +223,7 @@ const CourseLearningTasksPage: React.FC = () => {
   };
 
   // Handle edit task
-  const handleEditTask = (task: LearningTask) => {
+  const handleEditTask = (task: ILearningTask) => {
     setCurrentTask(task);
     setIsEditing(true);
     setDialogOpen(true);
@@ -230,12 +240,13 @@ const CourseLearningTasksPage: React.FC = () => {
     if (!taskToDelete) return;
 
     try {
-      await deleteLearningTask(taskToDelete);
+      await deleteLearningTask(String(taskToDelete));
       setTasks(tasks.filter(task => task.id !== taskToDelete));
       notify('Task deleted successfully', 'success');
-    } catch (err: any) {
-      console.error('Failed to delete task:', err);
-      notify(err.message || 'Failed to delete task', 'error');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      console.error('Failed to delete task:', errorMessage);
+      notify(errorMessage, 'error');
     } finally {
       setDeleteDialogOpen(false);
       setTaskToDelete(null);
@@ -243,11 +254,11 @@ const CourseLearningTasksPage: React.FC = () => {
   };
 
   // Save task (create or update)
-  const handleSaveTask = async (taskData: Partial<LearningTask>) => {
+  const handleSaveTask = async (taskData: Partial<ILearningTask>) => {
     try {
       if (isEditing && taskData.id) {
         // Update existing task
-        const updatedTask = await updateLearningTask(taskData.id, {
+        const updatedTask = await updateLearningTask(String(taskData.id), {
           ...taskData,
           course: parseInt(courseId!, 10),
         });
@@ -255,13 +266,14 @@ const CourseLearningTasksPage: React.FC = () => {
         notify('Task updated successfully', 'success');
       } else {
         // Create new task
-        const newTask = await createLearningTask({...taskData, course: parseInt(courseId!, 10)});
+        const newTask = await createLearningTask({...taskData, course: Number(courseId!)});
         setTasks([...tasks, newTask]);
         notify('Task created successfully', 'success');
       }
-    } catch (err: any) {
-      console.error('Failed to save task:', err);
-      notify(err.message || 'Failed to save task', 'error');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      console.error('Failed to save task:', errorMessage);
+      notify(errorMessage, 'error');
     }
   };
 
@@ -290,11 +302,9 @@ const CourseLearningTasksPage: React.FC = () => {
           variant="contained"
           color="primary"
           startIcon={<AddIcon />}
-          onClick={() => navigate(`/courses/${courseId}/edit`)}
+          onClick={handleCreateTask}
           sx={{
-            display: ['admin', 'instructor'].includes(useAuth().user?.role ?? '')
-              ? 'block'
-              : 'none',
+            display: canEdit ? 'block' : 'none',
           }}
         >
           Add Task
@@ -350,7 +360,7 @@ const CourseLearningTasksPage: React.FC = () => {
                     }
                   />
                   <ListItemSecondaryAction>
-                    {['admin', 'instructor'].includes(useAuth().user?.role ?? '') && (
+                    {isAuthenticated && (
                       <React.Fragment>
                         <IconButton edge="end" onClick={() => handleEditTask(task)}>
                           <EditIcon />
@@ -396,9 +406,6 @@ const CourseLearningTasksPage: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
-
-      {/* Error Snackbar */}
     </Box>
   );
 };

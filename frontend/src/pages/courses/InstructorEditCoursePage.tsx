@@ -7,14 +7,15 @@ import {
   Box,
   CircularProgress,
 } from '@mui/material';
-import {useCourse} from '@utils/useApiResource';
 import React, {useEffect, useState} from 'react';
-import {useNotification} from '../../components/ErrorNotifier/useErrorNotifier';
 import {useForm, SubmitHandler} from 'react-hook-form';
 import {useParams, useNavigate} from 'react-router-dom';
 
 import {useAuth} from '@context/auth/AuthContext';
+import {useCourse} from '@utils/useApiResource';
 import {courseService} from 'src/services/resources/courseService';
+
+import {useNotification} from '../../components/ErrorNotifier/useErrorNotifier';
 
 
 // Define the form data type
@@ -35,6 +36,7 @@ const InstructorEditCoursePage: React.FC = () => {
   } = useForm<ICourseFormData>();
   const {user} = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const notify = useNotification();
 
   // Reset form values when course data is loaded
   useEffect(() => {
@@ -70,7 +72,6 @@ const InstructorEditCoursePage: React.FC = () => {
   };
 
   if (isLoading) return <CircularProgress />;
-  const notify = useNotification();
   useEffect(() => {
     if (error) {
       notify(typeof error === 'string' ? error : 'An error occurred while loading the course.', 'error');

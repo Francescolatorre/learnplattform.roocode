@@ -21,7 +21,7 @@ import {format, parseISO} from 'date-fns';
 import React, {useState} from 'react';
 import {Bar, Radar} from 'react-chartjs-2';
 
-import {TaskProgress} from 'src/types/common/progressTypes';
+import {TaskProgress} from '@/types/progressTypes';
 
 interface PerformanceAnalysisViewProps {
   taskProgress: TaskProgress[];

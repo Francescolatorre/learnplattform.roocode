@@ -1,9 +1,9 @@
 import React from 'react';
 
-import {CourseVersion} from 'src/types/common/entities';
+import {ICourseVersion} from 'src/types/course';
 
 interface CourseVersionListProps {
-  versions: CourseVersion[];
+  versions: ICourseVersion[];
 }
 
 const CourseVersionList: React.FC<CourseVersionListProps> = ({versions}) => {

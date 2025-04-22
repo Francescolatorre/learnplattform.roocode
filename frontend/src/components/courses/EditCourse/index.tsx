@@ -1,11 +1,10 @@
-import {useAuth} from '@context/auth/AuthContext';
 import {Button, Container, Typography, Box, TextField, MenuItem, CircularProgress, Alert} from '@mui/material';
 import React, {useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 
-
+import {useAuth} from '@context/auth/AuthContext';
 import {courseService} from 'src/services/resources/courseService';
-import {Course} from 'src/types/common/entities';
+import {ICourse} from 'src/types/course';
 
 const EditCourse: React.FC = () => {
   const navigate = useNavigate();
@@ -13,7 +12,7 @@ const EditCourse: React.FC = () => {
   const {getUserRole, setError} = useAuth();
   const userRole = getUserRole(); // Use utility function
 
-  const [courseData, setCourseData] = useState<Partial<Course>>({
+  const [courseData, setCourseData] = useState<Partial<ICourse>>({
     title: 'test',
     description: 'test description',
     status: 'draft',
@@ -31,7 +30,7 @@ const EditCourse: React.FC = () => {
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      await courseService.updateCourse(courseId!, courseData as Course);
+      await courseService.updateCourse(courseId!, courseData as ICourse);
       navigate(userRole === 'admin' ? '/admin/courses' : '/instructor/courses');
     } catch (err: unknown) {
       console.error('Failed to save course details:', err);

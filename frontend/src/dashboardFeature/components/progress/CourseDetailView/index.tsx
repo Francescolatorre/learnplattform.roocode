@@ -17,38 +17,33 @@ import {
   TableCell,
   TableBody,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 
-import {
-  CourseProgress,
-  ModuleProgress,
-  TaskProgress,
-  QuizHistory,
-} from 'src/types/common/progressTypes';
+import {IModuleProgress} from '@/types/moduleTypes';
+import {ITaskProgress} from '@/types/task';
 
 import ModuleProgressView from './ModuleProgressView';
 
 interface CourseDetailViewProps {
-  courseProgress: CourseProgress;
-  onQuizSelect?: (quiz: QuizHistory) => void;
+  moduleProgress: IModuleProgress[];
 }
 
-const CourseDetailView: React.FC<CourseDetailViewProps> = ({ courseProgress, onQuizSelect }) => {
+const CourseDetailView: React.FC<CourseDetailViewProps> = ({moduleProgress}) => {
   const [activeTab, setActiveTab] = useState(0);
-  const [selectedModule, setSelectedModule] = useState<ModuleProgress | null>(null);
+  const [selectedModule, setSelectedModule] = useState<IModuleProgress | null>(null);
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
 
-  const calculateModuleCompletion = (module: ModuleProgress) => {
-    const completedTasks = module.taskProgress.filter(
+  const calculateModuleCompletion = (module: IModuleProgress) => {
+    const completedTasks = (module.taskProgress ?? []).filter(
       task => task.status === 'completed' || task.status === 'graded'
     ).length;
-    return Math.round((completedTasks / module.taskProgress.length) * 100);
+    return Math.round((completedTasks / (module.taskProgress?.length ?? 1)) * 100);
   };
 
-  const getTaskStatusColor = (task: TaskProgress) => {
+  const getTaskStatusColor = (task: ITaskProgress) => {
     switch (task.status) {
       case 'completed':
         return 'success';
@@ -63,10 +58,10 @@ const CourseDetailView: React.FC<CourseDetailViewProps> = ({ courseProgress, onQ
     }
   };
 
-  const handleQuizSelect = (quiz: TaskProgress) => {
+  const handleQuizSelect = (quiz: ITaskProgress) => {
     if (onQuizSelect) {
-      // Convert TaskProgress to QuizHistory format
-      const quizHistory: QuizHistory = {
+      // Convert TaskProgress to IQuizHistory format
+      const IQuizHistory: TIQuizHistory = {
         quizId: quiz.taskId,
         moduleId: quiz.moduleId,
         quizTitle: quiz.title,
@@ -78,13 +73,13 @@ const CourseDetailView: React.FC<CourseDetailViewProps> = ({ courseProgress, onQ
         answers: [], // This would ideally be fetched from an API
         timeSpent: quiz.timeSpent || 0,
       };
-      onQuizSelect(quizHistory);
+      onQuizSelect(IQuizHistory);
     }
   };
 
   return (
     <Box>
-      <Tabs value={activeTab} onChange={handleTabChange} sx={{ mb: 3 }}>
+      <Tabs value={activeTab} onChange={handleTabChange} sx={{mb: 3}}>
         <Tab label="Modules" />
         <Tab label="Tasks" />
         <Tab label="Achievements" />
@@ -99,13 +94,13 @@ const CourseDetailView: React.FC<CourseDetailViewProps> = ({ courseProgress, onQ
                 sx={{
                   cursor: 'pointer',
                   transition: 'transform 0.2s',
-                  '&:hover': { transform: 'scale(1.02)' },
+                  '&:hover': {transform: 'scale(1.02)'},
                 }}
                 onClick={() => setSelectedModule(module)}
               >
                 <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                  <Box sx={{display: 'flex', alignItems: 'center', mb: 2}}>
+                    <Typography variant="h6" sx={{flexGrow: 1}}>
                       {module.moduleTitle}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
@@ -183,7 +178,7 @@ const CourseDetailView: React.FC<CourseDetailViewProps> = ({ courseProgress, onQ
                     <Typography
                       variant="caption"
                       color="textSecondary"
-                      sx={{ mt: 1, display: 'block' }}
+                      sx={{mt: 1, display: 'block'}}
                     >
                       Earned on: {new Date(achievement.timestamp).toLocaleString()}
                     </Typography>
@@ -195,12 +190,12 @@ const CourseDetailView: React.FC<CourseDetailViewProps> = ({ courseProgress, onQ
       )}
 
       {selectedModule && (
-        <Box sx={{ mt: 4 }}>
+        <Box sx={{mt: 4}}>
           <ModuleProgressView moduleProgress={selectedModule} />
           <Button
             variant="outlined"
             color="primary"
-            sx={{ mt: 2 }}
+            sx={{mt: 2}}
             onClick={() => setSelectedModule(null)}
           >
             Close Module Details

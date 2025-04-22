@@ -54,7 +54,7 @@ The Learning Platform requires a modern, maintainable, and scalable frontend arc
 
 ### 8. **Project Structure**
 
-```
+```plaintext
 frontend/
 │── src/
 │   ├── assets/                # Global assets (images, fonts, global styles)

@@ -1,9 +1,9 @@
 import {Typography, Paper, Grid} from '@mui/material';
 import React, {useState, useEffect} from 'react';
 
+import {useAuth} from '@context/auth/AuthContext';
 import {fetchStudentProgressByCourse} from '@services/resources/progressService';
 
-import {useAuth} from '@context/auth/AuthContext';
 
 const ProgressDebugger: React.FC = () => {
   const {user, isAuthenticated, getAccessToken, getUserRole} = useAuth();

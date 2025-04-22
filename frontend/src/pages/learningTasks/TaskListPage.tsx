@@ -3,24 +3,22 @@ import React, {useEffect, useState} from 'react';
 import {Link, useParams} from 'react-router-dom';
 
 import {fetchCourseTasks} from 'src/services/resources/learningTaskService';
+import {ILearningTask} from 'src/types/task';
 
-interface ILearningTask {
-  id: string;
-  title: string;
-}
+
 
 const TaskListPage: React.FC = () => {
   const {courseId} = useParams<{courseId: string}>();
-
   const [learningTasks, setLearningTasks] = useState<ILearningTask[]>([]);
 
   useEffect(() => {
+    if (!courseId) return; // Defensive guard
     const loadTasks = async () => {
       const tasks = await fetchCourseTasks(courseId!);
       setLearningTasks(tasks);
     };
     loadTasks();
-  }, []);
+  }, [courseId]);
 
   return (
     <div>

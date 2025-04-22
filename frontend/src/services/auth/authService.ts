@@ -83,7 +83,6 @@ const authService = {
       return response.data;
     } catch (error: unknown) {
       if (typeof error === 'object' && error !== null && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response) {
-        // @ts-expect-error: dynamic error shape
         console.error('Failed to refresh token:', error.response.data);
       } else if (error instanceof Error) {
         console.error('Failed to refresh token:', error.message);

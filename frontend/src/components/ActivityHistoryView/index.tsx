@@ -20,10 +20,10 @@ import {
 import {format, parseISO} from 'date-fns';
 import React from 'react';
 
-import {ActivityEntry} from 'src/types/common/progressTypes.ts';
+import {IActivityEntry} from '@/types/progressTypes';
 
 interface ActivityHistoryViewProps {
-  recentActivity: ActivityEntry[];
+  recentActivity: IActivityEntry[];
 }
 
 const ActivityHistoryView: React.FC<ActivityHistoryViewProps> = ({recentActivity}) => {
@@ -35,7 +35,7 @@ const ActivityHistoryView: React.FC<ActivityHistoryViewProps> = ({recentActivity
   });
 
   // Group activities by date
-  const groupedActivities: Record<string, ActivityEntry[]> = {};
+  const groupedActivities: Record<string, IActivityEntry[]> = {};
 
   sortedActivities.forEach(activity => {
     const date = format(parseISO(activity.timestamp), 'yyyy-MM-dd');
@@ -78,7 +78,7 @@ const ActivityHistoryView: React.FC<ActivityHistoryViewProps> = ({recentActivity
   };
 
   // Format activity text
-  const getActivityText = (activity: ActivityEntry) => {
+  const getActivityText = (activity: IActivityEntry) => {
     switch (activity.activityType) {
       case 'submission':
         return `Submitted "${activity.taskTitle}"`;

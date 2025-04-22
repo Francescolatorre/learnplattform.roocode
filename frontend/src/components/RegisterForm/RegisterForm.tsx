@@ -16,9 +16,10 @@ import React, {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 
 import {useAuth} from '@context/auth/AuthContext';
+import PasswordStrengthIndicator from 'src/components/PasswordStrengthIndicator/PasswordStrengthIndicator';
+
 import {validatePassword, type PasswordStrength} from '../../utils/passwordValidation';
 
-import PasswordStrengthIndicator from 'src/components/PasswordStrengthIndicator/PasswordStrengthIndicator';
 
 const RegisterForm: React.FC = () => {
   const {login} = useAuth(); // Use login after successful registration
