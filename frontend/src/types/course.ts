@@ -16,17 +16,18 @@ export interface ICourseVersion {
 
 // Kurs-bezogene Typen
 export interface ICourse {
-    id: number | string;
+    id: string;
     title: string;
-    description: string;
+    description?: string;
     image_url?: string;
     instructor_id?: string;
     instructor_name?: string;
     created_at?: string;
     updated_at?: string;
-    status?: TCourseStatus;
+    status: TCourseStatus;
 
     // Enrollment related fields
+    student_count?: number;
     isEnrolled?: boolean;
     isCompleted?: boolean;
     enrollmentDate?: string;

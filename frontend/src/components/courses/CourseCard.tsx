@@ -9,7 +9,7 @@ import {
   Box,
   Skeleton,
 } from '@mui/material';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, Link as RouterLink} from 'react-router-dom';
 
 import {ICourse} from '@/types/course';
 import EnrollmentStatusIndicator from './EnrollmentStatusIndicator';
@@ -28,6 +28,12 @@ interface ICourseCardProps {
    * @default false
    */
   isLoading?: boolean;
+
+  /**
+   * Whether the card is in instructor view
+   * @default false
+   */
+  isInstructorView?: boolean;
 }
 
 /**
@@ -40,7 +46,7 @@ interface ICourseCardProps {
  *
  * @returns A card component displaying course information
  */
-const CourseCard: React.FC<ICourseCardProps> = ({course, isLoading = false}) => {
+const CourseCard: React.FC<ICourseCardProps> = ({course, isLoading = false, isInstructorView = false}) => {
   const navigate = useNavigate();
 
   if (isLoading) {
@@ -117,6 +123,20 @@ const CourseCard: React.FC<ICourseCardProps> = ({course, isLoading = false}) => 
           {course.isEnrolled ? 'Continue Learning' : 'View Course'}
         </Button>
       </CardActions>
+
+      {isInstructorView && (
+        <CardActions>
+          <Button
+            component={RouterLink}
+            to={`/instructor/courses/${course.id}/edit`}
+            size="small"
+            color="primary"
+          >
+            Edit
+          </Button>
+          {/* Other instructor actions */}
+        </CardActions>
+      )}
     </Card>
   );
 };
