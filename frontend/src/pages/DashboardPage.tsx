@@ -7,16 +7,20 @@ import {
   Alert,
   Card,
   CardContent,
-  Divider
+  Divider,
+  Button
 } from '@mui/material';
 import {useQuery} from '@tanstack/react-query';
 import React, {useEffect} from 'react';
+import {Link as RouterLink} from 'react-router-dom';
 
 import {IUserProgress} from '@/types';
 import {IProgressResponse} from '@/types/progress';
 import {useAuth} from '@context/auth/AuthContext';
 import ProgressIndicator from '@components/ProgressIndicator';
 import progressService from '@services/resources/progressService';
+import {enrollmentService} from '@services/resources/enrollmentService';
+import {ICourseEnrollment, IPaginatedResponse} from '@/types';
 
 /**
  * Student Dashboard Page
@@ -103,10 +107,21 @@ const Dashboard: React.FC = () => {
     return Math.round(sum / courses.length);
   };
 
+  // Fetch enrollments to get course details
+  const {
+    data: enrollmentsResponse,
+    isLoading: isLoadingEnrollments
+  } = useQuery({
+    queryKey: ['enrollments'],
+    queryFn: () => enrollmentService.fetchUserEnrollments(),
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
   // User progress data query using React Query
   const {
     data: progressResponse,
-    isLoading,
+    isLoading: isLoadingProgress,
     error,
   } = useQuery<IProgressResponse>({
     queryKey: ['userProgress', user?.id],
@@ -116,7 +131,62 @@ const Dashboard: React.FC = () => {
     retry: 2,
   });
 
+  // Extract enrollments array from the response
+  const extractEnrollments = (response: any): ICourseEnrollment[] => {
+    // If response is an array, return it directly
+    if (Array.isArray(response)) {
+      return response;
+    }
+
+    // If response is a paginated response object
+    if (response && typeof response === 'object') {
+      // Check for results field (common in paginated responses)
+      if ('results' in response && Array.isArray(response.results)) {
+        return response.results;
+      }
+
+      // Check for data field (another common pattern)
+      if ('data' in response && Array.isArray(response.data)) {
+        return response.data;
+      }
+
+      // Check for items field (another common pattern)
+      if ('items' in response && Array.isArray(response.items)) {
+        return response.items;
+      }
+
+      // Check if response itself is an enrollment object (single enrollment)
+      if ('course' in response) {
+        return [response];
+      }
+    }
+
+    console.warn('Could not extract enrollments from response:', response);
+    return [];
+  };
+
+  // Get enrollments array from response
+  const enrollments = enrollmentsResponse ? extractEnrollments(enrollmentsResponse) : [];
+
+  // Create a map of course IDs to course titles from enrollments
+  const courseTitleMap = React.useMemo(() => {
+    console.debug('Building course title map from enrollments:', enrollments);
+
+    const titleMap: Record<string | number, string> = {};
+
+    if (Array.isArray(enrollments)) {
+      enrollments.forEach(enrollment => {
+        if (enrollment && enrollment.course && enrollment.course_details?.title) {
+          titleMap[enrollment.course] = enrollment.course_details.title;
+        }
+      });
+    }
+
+    return titleMap;
+  }, [enrollments]);
+
   // Loading state
+  const isLoading = isLoadingProgress || isLoadingEnrollments;
   if (isLoading) {
     return (
       <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
@@ -216,48 +286,78 @@ const Dashboard: React.FC = () => {
             <Typography variant="body1" color="text.secondary">
               You have not started any courses yet. Enroll in courses to track your progress.
             </Typography>
+            <Button
+              component={RouterLink}
+              to="/courses"
+              variant="contained"
+              color="primary"
+              sx={{mt: 2}}
+            >
+              Browse Courses
+            </Button>
           </Paper>
         ) : (
           <Grid container spacing={3}>
-            {progressData.map((progress, idx) => (
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={4}
-                key={progress.id !== undefined ? progress.id : `progress-${idx}`}
-              >
-                <Paper
-                  elevation={2}
-                  sx={{p: 2, height: '100%', display: 'flex', flexDirection: 'column'}}
+            {progressData.map((progress, idx) => {
+              // Get course title from enrollment data or fallback to progress data
+              const courseId = progress.course_id || progress.id;
+              const courseTitle =
+                courseTitleMap[courseId] ||
+                progress.label ||
+                progress.course_name ||
+                `Course ${idx + 1}`;
+
+              return (
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  md={4}
+                  key={progress.id !== undefined ? progress.id : `progress-${idx}`}
                 >
-                  <Typography variant="h6" gutterBottom align="center">
-                    {progress.label || progress.course_name || `Course ${idx + 1}`}
-                  </Typography>
-
-                  <Box sx={{display: 'flex', justifyContent: 'center', my: 2}}>
-                    <ProgressIndicator
-                      value={progress.percentage || 0}
-                      label={`${progress.percentage || 0}% Complete`}
-                      size={120}
-                    />
-                  </Box>
-
-                  <Divider sx={{my: 1}} />
-
-                  <Box sx={{pt: 1}}>
-                    <Typography variant="body2" color="text.secondary">
-                      <strong>Tasks Completed:</strong> {progress.completed_tasks || 0}/{progress.total_tasks || 0}
+                  <Paper
+                    elevation={2}
+                    sx={{p: 2, height: '100%', display: 'flex', flexDirection: 'column'}}
+                  >
+                    <Typography variant="h6" gutterBottom align="center">
+                      {courseTitle}
                     </Typography>
-                    {progress.last_activity && (
+
+                    <Box sx={{display: 'flex', justifyContent: 'center', my: 2}}>
+                      <ProgressIndicator
+                        value={progress.percentage || 0}
+                        label={`${progress.percentage || 0}% Complete`}
+                        size={120}
+                      />
+                    </Box>
+
+                    <Divider sx={{my: 1}} />
+
+                    <Box sx={{pt: 1}}>
                       <Typography variant="body2" color="text.secondary">
-                        <strong>Last Activity:</strong> {new Date(progress.last_activity).toLocaleDateString()}
+                        <strong>Tasks Completed:</strong> {progress.completed_tasks || 0}/{progress.total_tasks || 0}
                       </Typography>
-                    )}
-                  </Box>
-                </Paper>
-              </Grid>
-            ))}
+                      {progress.last_activity && (
+                        <Typography variant="body2" color="text.secondary">
+                          <strong>Last Activity:</strong> {new Date(progress.last_activity).toLocaleDateString()}
+                        </Typography>
+                      )}
+                    </Box>
+
+                    <Box sx={{mt: 'auto', pt: 2, display: 'flex', justifyContent: 'center'}}>
+                      <Button
+                        component={RouterLink}
+                        to={`/courses/${courseId}`}
+                        variant="outlined"
+                        size="small"
+                      >
+                        Continue Learning
+                      </Button>
+                    </Box>
+                  </Paper>
+                </Grid>
+              );
+            })}
           </Grid>
         )}
       </Box>

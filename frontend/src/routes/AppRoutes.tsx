@@ -9,6 +9,7 @@ import HomePage from '@/pages/HomePage';
 import StudentTasksPage from '@/pages/learningTasks/StudentTasksPage';
 import Profile from '@/pages/Profile';
 import ProtectedRoute from '@/routes/ProtectedRoute';
+import InstructorDashboard from '@/components/dashboards/InstructorDashboard';
 
 const CourseDetailsPage = lazy(() => import('@/pages/courses/StudentCourseDetailsPage'));
 
@@ -22,6 +23,14 @@ const AppRoutes: React.FC = () => {
         element={
           <ProtectedRoute allowedRoles={['student', 'instructor', 'admin']}>
             <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/instructor/dashboard"
+        element={
+          <ProtectedRoute requiredRoles={['instructor', 'admin']}>
+            <InstructorDashboard />
           </ProtectedRoute>
         }
       />

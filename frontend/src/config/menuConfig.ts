@@ -34,4 +34,9 @@ export const menuConfig = [
     path: '/courses',
     roles: ['student'],
   },
+  {
+    text: 'Instructor Dashboard',
+    path: '/instructor/dashboard',
+    roles: ['instructor', 'admin'],
+  },
 ];

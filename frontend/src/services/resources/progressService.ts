@@ -179,9 +179,15 @@ class ProgressService {
    * @returns A promise that resolves to the instructor's dashboard data.
    */
   async fetchInstructorDashboardData(): Promise<IInstructorDashboardData> {
-    const endpoint = API_CONFIG.endpoints.dashboard.instructor;
-    return this.apiAny.get(endpoint) as Promise<IInstructorDashboardData>;
+    try {
+      const response = await this.apiAny.get(API_CONFIG.endpoints.dashboard.instructor);
+      return response as IInstructorDashboardData;
+    } catch (error) {
+      console.error('Error fetching instructor dashboard data:', error);
+      throw new Error('Instructor dashboard data not found');
+    }
   }
+
 
   /**
    * Fetches analytics data related to the structure of a course.
@@ -260,5 +266,6 @@ export const getStudentDashboard = async (studentId?: number | string | null): P
   // Use the existing progressService instance to call the method
   return progressService.getStudentDashboard(studentId);
 };
+
 
 export default progressService;
