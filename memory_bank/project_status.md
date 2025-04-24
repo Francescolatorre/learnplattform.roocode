@@ -1,6 +1,7 @@
 # Project Status Overview
 
 ## TODO
+
 - TASK-PERSONALIZED-LEARNING: Personalized Learning Path Task
   - **Dependencies**: TASK-MODEL-CONSOLIDATION-002
   - **Validation Criteria**: Module must generate personalized learning paths based on student goals and skill levels.
@@ -14,13 +15,10 @@
   - **Dependencies**: None
   - **Validation Criteria**: Interface must allow intuitive course exploration and enrollment.
 - TASK-PERFORMANCE_SECURITY_ENHANCEMENTS: Performance and Security Enhancements
-  - **Dependencies**: None
   - **Validation Criteria**: Code-splitting and secure JWT handling must be implemented.
-
-## IN_PROGRESS
-- TASK-MODEL-CONSOLIDATION-002: Model Consolidation Task
-  - **Dependencies**: TASK-MODEL-UPDATE-PLAN-001
-  - **Progress**: Consolidating and standardizing data models across the platform.
+- TASK-SKILL-PROGRESSION-TRACKING: Skill Progression Tracking
+  - **Dependencies**: None
+  - **Validation Criteria**: Skill progression must be tracked.
 - TASK-UI-005: Implement Task Progress Tracking UI
   - **Dependencies**: None
   - **Progress**: UI components for task tracking are being developed.
@@ -31,7 +29,17 @@
   - **Dependencies**: None
   - **Progress**: Development of course creation feature is in progress.
 
+## IN_PROGRESS
+
+## POSTPONED
+
+(empty)
+
 ## DONE
+
+- TASK-INTEGRATION-TEST-WORKFLOW: Vitest Multi-Project Integration Test Workflow
+  - **Completion Date**: 2025-04-13
+  - **Summary**: Implemented and validated canonical Vitest Multi-Project test workflow using separate config files for unit and integration tests, robust setup files, and cross-platform scripts. All requirements from the canonical guide were met. Unit test suite executed and passed (except for one legitimate test failure unrelated to setup).
 - TASK-002: Implement Progress Tracking Frontend Components
   - **Completion Date**: 2025-03-21
   - **Summary**: Implemented frontend components for progress tracking, including ModuleProgressView, PerformanceAnalysisView, ActivityHistoryView, TaskDetailsView, and InstructorProgressDashboard. Added TypeScript interfaces and service functions for data fetching and visualization.
@@ -98,15 +106,28 @@
 - TASK-GOVERNANCE-002: Implement Mode Definitions
   - **Completion Date**: 2025-02-23
   - **Summary**: Mode definitions implemented.
+- TASK-ERROR-TOAST-001: Error Toast/Message Mechanism
+  - **Completion Date**: 2025-04-11
+  - **Summary**: Centralized frontend error toast/message mechanism fully implemented and validated (2025-04-11). Queueing logic fixed and validated by passing all relevant tests, including "queues multiple errors but only shows one at a time (ADR-012)". All manual and automated regression issues resolved. Codebase is now fully compliant with ADR-012 and finalized requirements in memory_bank/productContext.md.
+- TASK-ARCH-DOC-001: Frontend Architecture Overview
+  - **Completion Date**: 2025-04-20
+  - **Summary**: Comprehensive frontend architecture overview document created at analysis/frontend_architecture_overview.md.
+- TASK-MODEL-CONSOLIDATION-002: Model Consolidation Task
+  - **Completion Date**: 2025-04-20
+  - **Summary**: Consolidated and standardized data models across the platform. Task file archived.
 
 ## Comprehensive Task List
-### Tasks in Progress:
+
+### Tasks in Progress
+
 - TASK-API-IMPLEMENTATION-COMPLETION
 - TASK-CREATION-001
 - TASK-UI-005
-- TASK-MODEL-CONSOLIDATION-002
+- TASK-MODEL-CONSOLIDATION-002 (DONE)
 
-### Tasks To Do:
+### Tasks To Do
+
+- TASK-INTEGRATION-TEST-WORKFLOW
 - TASK-PERSONALIZED-LEARNING
 - TASK-ADAPTIVE-ASSESSMENT
 - TASK-AI-POWERED-SUBMISSION
@@ -127,7 +148,8 @@
 - TESTING_STRATEGY_IMPLEMENTATION
 - UI_COMPONENTS_DEVELOPMENT
 
-### Completed Tasks:
+### Completed Tasks
+
 - TASK-002
 - TASK-003
 - TASK-001
@@ -150,3 +172,8 @@
 - TASK-FRONTEND-SETUP
 - TASK-GOVERNANCE-001
 - TASK-GOVERNANCE-002
+- TYPESCRIPT-SERVICES-STANDARDIZATION-001: TypeScript Service Layer Standardization
+  - **Completion Date**: 2025-04-12
+  - **Summary**: All TypeScript service modules refactored to class-based, strictly typed, generic API layer with centralized endpoint configuration. ADR-013 fully implemented; codebase harmonized under the new standard.
+- TASK-ERROR-TOAST-001
+- TASK-ARCH-DOC-001

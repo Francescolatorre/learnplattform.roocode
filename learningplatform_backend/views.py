@@ -18,12 +18,15 @@ logger = logging.getLogger(__name__)
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
+        logger.debug("get_token called for user: %s", user.username)
         token = super().get_token(user)
+        logger.debug("Token after super().get_token(user): %s", token)
         # Ensure the role field exists and is populated
         token["username"] = user.username
         token["role"] = getattr(
             user, "role", "user"
         )  # Default to "user" if role is not set
+        logger.debug("Token before return: %s", token)
         return token
 
 

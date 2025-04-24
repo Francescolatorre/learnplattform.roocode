@@ -1,4 +1,6 @@
 # ruff: noqa: F401 (suppress unused import warnings)
+# ruff: noqa: G004
+
 import logging  # Add a logger for this module
 
 from django.contrib.auth.models import AnonymousUser
@@ -108,6 +110,7 @@ class IsEnrolledInCourse(permissions.BasePermission):
         # Safely check user role and staff status
         user_role = getattr(request.user, "role", "")
         is_staff = getattr(request.user, "is_staff", False)
+
         logger.info(
             f"Checking permissions for user {request.user.id}: role={user_role}, is_staff={is_staff}"
         )
@@ -204,6 +207,10 @@ class EnhancedTaskProgressViewSet(BaseViewSet):
                 "Invalid status. Must be one of: not_started, in_progress, completed"
             )
 
+        # Set start_date when task is started
+        if status == "in_progress" and not progress.start_date:
+            progress.start_date = timezone.now()
+
         progress.status = status
 
         # Update completion date if status is completed
@@ -226,7 +233,7 @@ class EnhancedQuizAttemptViewSet(BaseViewSet):
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["quiz__title"]
-    ordering_fields = ["submission_date", "score"]
+    ordering_fields = ["attempt_date", "score"]
 
     def perform_create(self, serializer):
         """
@@ -249,7 +256,7 @@ class EnhancedQuizAttemptViewSet(BaseViewSet):
                 f"Maximum number of attempts ({quiz.max_attempts}) reached"
             )
 
-        serializer.save(user=self.request.user, submission_date=timezone.now())
+        serializer.save(user=self.request.user, attempt_date=timezone.now())
 
     @action(detail=True, methods=["post"])
     def submit_responses(self, request, pk=None):
@@ -259,7 +266,7 @@ class EnhancedQuizAttemptViewSet(BaseViewSet):
         quiz_attempt = self.get_object()
 
         # Check if the attempt is already submitted
-        if quiz_attempt.is_submitted:
+        if quiz_attempt.completion_status == "completed":
             return Response(
                 {"error": "This quiz attempt has already been submitted"}, status=400
             )
@@ -301,8 +308,8 @@ class EnhancedQuizAttemptViewSet(BaseViewSet):
 
         # Update the quiz attempt
         quiz_attempt.score = score_percentage
-        quiz_attempt.is_submitted = True
-        quiz_attempt.submission_date = timezone.now()
+        quiz_attempt.completion_status = "completed"
+        quiz_attempt.attempt_date = timezone.now()
         quiz_attempt.save()
 
         # Return the updated quiz attempt
@@ -407,8 +414,7 @@ class CourseAnalyticsAPI(APIView):
 
         # Calculate average scores for quiz tasks
         quiz_attempts = QuizAttempt.objects.filter(
-            quiz__course=course,
-            completion_status="submitted",  # Replace 'is_submitted' with a valid field
+            quiz__course=course, completion_status="completed"
         )
 
         avg_quiz_score = quiz_attempts.aggregate(Avg("score"))["score__avg"] or 0
@@ -747,7 +753,7 @@ class CourseTaskAnalyticsAPI(APIView):
                 try:
                     quiz_task = QuizTask.objects.get(id=task.id)
                     quiz_attempts = QuizAttempt.objects.filter(
-                        quiz=quiz_task, is_submitted=True
+                        quiz=quiz_task, completion_status="completed"
                     )
                     avg_quiz_score = (
                         quiz_attempts.aggregate(Avg("score"))["score__avg"] or 0
@@ -852,6 +858,9 @@ class StudentProgressAPI(APIView):
         if pk is None:
             # No user ID provided, use the current user
             user = request.user
+            logger.info(
+                f"[StudentProgressAPI] No user ID provided. Using current user: {user.id}"
+            )
         else:
             # User ID provided, check permissions
             user = get_object_or_404(User, pk=pk)
@@ -920,7 +929,9 @@ class StudentProgressAPI(APIView):
             )
 
             # Get quiz performance
-            quiz_attempts = QuizAttempt.objects.filter(user=user, quiz__course=course)
+            quiz_attempts = QuizAttempt.objects.filter(
+                user=user, quiz__course=course, completion_status="completed"
+            )
 
             avg_quiz_score = quiz_attempts.aggregate(Avg("score"))["score__avg"] or 0
 
@@ -959,8 +970,10 @@ class StudentProgressAPI(APIView):
             (completed_tasks / total_tasks) * 100 if total_tasks > 0 else 0
         )
 
-        # Get overall quiz performance
-        all_quiz_attempts = QuizAttempt.objects.filter(user=user, is_submitted=True)
+        # Get overall quiz performance"completed")
+        all_quiz_attempts = QuizAttempt.objects.filter(
+            user=user, completion_status="completed"
+        )
 
         overall_avg_quiz_score = (
             all_quiz_attempts.aggregate(Avg("score"))["score__avg"] or 0
@@ -1047,7 +1060,7 @@ class StudentQuizPerformanceAPI(APIView):
 
         # Get all quiz attempts for this user
         quiz_attempts = QuizAttempt.objects.filter(
-            user=user, is_submitted=True
+            user=user, completion_status="completed"
         ).select_related("quiz", "quiz__course")
 
         # Calculate overall statistics
@@ -1130,7 +1143,7 @@ class StudentQuizPerformanceAPI(APIView):
         # Recent quiz attempts (last 5)
         recent_attempts = []
 
-        for attempt in quiz_attempts.order_by("-submission_date")[:5]:
+        for attempt in quiz_attempts.order_by("-attempt_date")[:5]:
             # Get responses for this attempt
             attempt_responses = quiz_responses.filter(quiz_attempt=attempt)
 
@@ -1147,10 +1160,10 @@ class StudentQuizPerformanceAPI(APIView):
                     "score": round(attempt.score, 2),
                     "correct_answers": correct_responses,
                     "total_questions": total_responses,
-                    "submission_date": attempt.submission_date,
+                    "submission_time": attempt.attempt_date,
                     "time_spent": (
-                        str(attempt.submission_date - attempt.start_date)
-                        if attempt.start_date
+                        str(attempt.attempt_date - attempt.started_at)
+                        if attempt.started_at
                         else None
                     ),
                 }
@@ -1229,8 +1242,49 @@ class CourseProgressAPI(APIView):
     permission_classes = [IsAuthenticated, IsEnrolledInCourse]
 
     def get(self, request, course_id):
-        # Fetch progress data for enrolled users
-        progress = CourseProgress.objects.filter(user=request.user, course_id=course_id)
+        """Calculate course progress on demand without storing progress data"""
+        # Get all learning tasks for the course
+        tasks = LearningTask.objects.filter(course_id=course_id).values(
+            "id", "title", "type", "order"
+        )
+
+        # Get all completed tasks for this user in this course
+        completed_tasks = set(
+            TaskProgress.objects.filter(
+                user=request.user, task__course_id=course_id, status="completed"
+            ).values_list("task_id", flat=True)
+        )
+
+        # Calculate progress for each task
+        progress = []
+        for task in tasks:
+            task_status = (
+                "completed" if task["id"] in completed_tasks else "not_started"
+            )
+            progress.append(
+                {
+                    "task_id": task["id"],
+                    "title": task["title"],
+                    "type": task["type"],
+                    "status": task_status,
+                    "order": task["order"],
+                }
+            )
+
+        # Calculate overall progress percentage
+        total_tasks = len(tasks)
+        completed_count = len(completed_tasks)
+        progress_percentage = (
+            (completed_count / total_tasks * 100) if total_tasks > 0 else 0
+        )
+
         return Response(
-            {"progress": [{"task_id": p.task_id, "status": p.status} for p in progress]}
+            {
+                "progress": sorted(progress, key=lambda x: x["order"]),
+                "summary": {
+                    "total_tasks": total_tasks,
+                    "completed_tasks": completed_count,
+                    "progress_percentage": round(progress_percentage, 2),
+                },
+            }
         )

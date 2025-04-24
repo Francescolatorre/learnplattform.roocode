@@ -1,52 +1,47 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import tsconfigPaths from 'vite-tsconfig-paths';
-import path from 'path';
+import {resolve} from 'path';
 
-// https://vitejs.dev/config/
+import react from '@vitejs/plugin-react';
+import {defineConfig} from 'vite';
+import tsconfigPaths from 'vite-tsconfig-paths';
+
+const customPaths = {
+  '@assets': resolve(__dirname, './src/assets'),
+  '@components': resolve(__dirname, './src/components'),
+  '@config': resolve(__dirname, './src/config'),
+  '@constants': resolve(__dirname, './src/constants'),
+  '@context': resolve(__dirname, './src/context'),
+  '@hooks': resolve(__dirname, './src/hooks'),
+  '@routes': resolve(__dirname, './src/routes'),
+  '@services': resolve(__dirname, './src/services'),
+  '@store': resolve(__dirname, './src/store'),
+  '@styles': resolve(__dirname, './src/styles'),
+  '@types': resolve(__dirname, './src/types'),
+  '@utils': resolve(__dirname, './src/utils'),
+};
+
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   resolve: {
-    alias: {
-      '@': '/src',
-      '@features': path.resolve(__dirname, './src/features'),
-      '@components': path.resolve(__dirname, './src/components'),
-      '@hooks': '/src/hooks',
-      '@theme': path.resolve(__dirname, './src/theme'),
-      '@utils': '/src/utils',
-      '@pages': '/src/pages',
-      '@services': '/src/services',
-      '@types': '/src/types',
-      '@config': path.resolve(__dirname, './src/config'), // Add this alias
-    },
-  },
-  define: {
-    'process.env.REACT_ROUTER_FUTURE': JSON.stringify({
-      v7_startTransition: true,
-      v7_relativeSplatPath: true,
-    }),
+    alias: customPaths,
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
   },
   server: {
     proxy: {
       '/api': {
         target: 'http://localhost:8000',
         changeOrigin: true,
-        secure: false,
+        secure: process.env.NODE_ENV === 'production',
       },
       '/swagger': {
         target: 'http://localhost:8000',
         changeOrigin: true,
-        secure: false,
+        secure: process.env.NODE_ENV === 'production',
       },
     },
   },
-});
-
-// Move test config outside defineConfig
-export const testConfig = {
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: './src/setupTests.ts',
+    setupFiles: './src/tests/setupTests.ts',
   },
-};
+});

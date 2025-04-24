@@ -1,179 +1,113 @@
-/**
- * Progress Tracking Type Definitions
- *
- * This file contains TypeScript interfaces for the progress tracking components.
- */
+// src/types/common/progressTypes.ts
+
+import {ITaskProgress} from './task';
 
 /**
- * Represents a student's progress in a course
+ * Interface für Activity-Einträge in den Fortschrittsdaten
  */
-export interface CourseProgress {
-    courseId: string;
-    studentId: string;
-    completedTasks: number;
-    totalTasks: number;
-    averageScore: number;
-    completionPercentage: number;
-    totalTimeSpent: number;
-    achievedObjectives: number;
-    totalObjectives: number;
-    moduleProgress: ModuleProgress[];
-    taskProgress: TaskProgress[];
-    recentActivity: ActivityEntry[];
+export interface IActivityEntry {
+  id: string;
+  activityType: 'submission' | 'grade_received' | 'task_started' | 'achievement_earned';
+  timestamp: string;
+  taskId?: string;
+  taskTitle?: string;
+  score?: number;
+  achievementTitle?: string;
+  achievementDescription?: string;
 }
 
 /**
- * Represents a student's progress in a module
+ * Interface für detaillierte Kursfortschritte
+ * Umbenannt, um Konflikte mit der einfacheren Version zu vermeiden
  */
-export interface ModuleProgress {
-    moduleId: string;
-    moduleTitle: string;
-    completionPercentage: number;
-    completedTasks: number;
-    totalTasks: number;
-    averageScore: number | null;
-    taskProgress: TaskProgress[];
-    timeSpent: number;
-}
-
-/**
- * Represents a student's progress on a specific task
- */
-export interface TaskProgress {
-    taskId: string;
-    moduleId: string;
+export interface IDetailedCourseProgress {
+  studentId: string;
+  taskProgress: ITaskProgress[];
+  completedTasks: number;
+  totalTasks: number;
+  averageScore: number;
+  recentActivity: IActivityEntry[];
+  upcomingTasks?: {
     title: string;
-    taskType: string; // 'quiz', 'assignment', 'reading', 'video', etc.
-    status: string; // 'not_started', 'in_progress', 'completed', 'graded', 'pending'
-    score: number | null;
-    maxScore: number;
-    attempts: number;
-    maxAttempts: number;
-    timeSpent: number | null; // in seconds
-    dueDate: string | null; // ISO date string
-    submissionDate: string | null; // ISO date string
+    dueDate: string;
+  }[];
 }
 
 /**
- * Represents an activity entry in the student's activity history
+ * Einfacher Kursfortschritt (für Typ-Kompatibilität mit altem Code)
  */
-export interface ActivityEntry {
-    id: string;
-    studentId: string;
-    courseId: string;
-    moduleId: string;
-    taskId?: string;
-    activityType: string; // 'submission', 'grade_received', 'task_started', 'achievement_earned'
-    timestamp: string; // ISO date string
-    taskTitle?: string;
-    score?: number;
-    achievementTitle?: string;
-    achievementDescription?: string;
+export interface ICourseProgressSummary {
+  completedTasks: number;
+  totalTasks: number;
+  averageScore: number;
 }
 
 /**
- * Represents an upcoming task
+ * Interface für Kursfortschrittsantwort
  */
-export interface UpcomingTask {
+export interface ICourseProgressResponse {
+  progress: number;
+  tasks: {
+    id: number;
     title: string;
-    dueDate: string; // ISO date string
+    status: string;
+  }[];
 }
 
 /**
- * Represents a quiz history entry
+ * Interface für Dashboard-Benutzerinformationen
  */
-export interface QuizHistory {
-    quizId: string;
-    moduleId: string;
-    quizTitle: string;
-    score: number;
-    maxScore: number;
-    attempts: number;
-    maxAttempts: number;
-    date: string; // ISO date string
-    answers: QuizAnswer[];
-    timeSpent: number; // in seconds
+export interface IDashboardUserInfo {
+  id: number;
+  username: string;
+  email: string;
+  full_name: string;
 }
 
 /**
- * Represents a quiz answer
+ * Interface für allgemeine Dashboard-Statistiken
  */
-export interface QuizAnswer {
-    questionId: string;
-    questionText: string;
-    userAnswer: string;
-    correctAnswer: string;
-    isCorrect: boolean;
-    points: number;
-    maxPoints: number;
+export interface IDashboardOverallStats {
+  total_courses: number;
+  completed_courses: number;
+  active_courses: number;
+  dropped_courses: number;
+  overall_completion: number;
+  average_score?: number;
 }
 
 /**
- * Represents content effectiveness data for instructor analysis
+ * Interface für Kursinfos im Dashboard
  */
-export interface ContentEffectivenessData {
-    challengingQuestions: ChallengingQuestion[];
-    timeSpentAnalysis: TimeSpentAnalysis[];
-    revisionRecommendations: RevisionRecommendation[];
+export interface IDashboardCourseInfo {
+  id: number;
+  title: string;
+  description?: string;
+  progress_percentage: number;
+  status: string;
+  enrollment_date: string;
+  last_activity?: string;
+  instructor_name?: string;
 }
 
 /**
- * Represents a challenging question in content effectiveness analysis
+ * Interface für die Dashboard-Antwort vom Server
  */
-export interface ChallengingQuestion {
-    text: string;
-    moduleTitle: string;
-    successRate: number;
-    averageAttempts: number;
-}
-
-/**
- * Represents time spent analysis in content effectiveness data
- */
-export interface TimeSpentAnalysis {
-    title: string;
+export interface IDashboardResponse {
+  user_info: IDashboardUserInfo;
+  overall_stats: IDashboardOverallStats;
+  courses: IDashboardCourseInfo[];
+  recent_activities?: Array<{
+    id: number;
     type: string;
-    moduleTitle: string;
-    averageTimeSpent: number; // in seconds
-    expectedTime: number; // in minutes
-}
-
-/**
- * Represents a revision recommendation in content effectiveness data
- */
-export interface RevisionRecommendation {
-    contentTitle: string;
-    issue: string;
-    recommendation: string;
-    priority: 'High' | 'Medium' | 'Low';
-}
-
-/**
- * Represents the structure of a course
- */
-export interface CourseStructure {
-    courseId: string;
-    courseTitle: string;
-    modules: ModuleStructure[];
-    learningObjectives: string[];
-}
-
-/**
- * Represents the structure of a module
- */
-export interface ModuleStructure {
-    id: string;
-    title: string;
     description: string;
-    sections: SectionStructure[];
+    timestamp: string;
+    course_id?: number;
+    task_id?: number;
+  }>;
 }
 
 /**
- * Represents the structure of a section within a module
+ * Typ-Aliasdefinitionen für Abwärtskompatibilität
  */
-export interface SectionStructure {
-    id: string;
-    title: string;
-    description: string;
-    taskIds: string[];
-}
+export type ICourseProgress = IDetailedCourseProgress;

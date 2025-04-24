@@ -1,33 +1,29 @@
-import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { theme } from '@theme/theme';
-import { AuthProvider } from '@features/auth/AuthContext';
-import ErrorBoundary from '@components/ErrorBoundary';
-import AppRoutes from './app/routes';
-import NavigationBar from './components/common/NavigationBar'; // Import NavigationBar
+import {ThemeProvider} from '@mui/material/styles';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import React from 'react';
+
+import ErrorBoundary from './components/ErrorBoundary';
+import {ErrorProvider} from './components/ErrorNotifier/ErrorProvider';
+import NavigationBar from './components/NavigationBar';
+import AppRoutes from './routes/AppRoutes.tsx';
+import {theme} from './styles/theme.ts';
 
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
   return (
-    <Router>
-      <div>
-        <ErrorBoundary>
-          <QueryClientProvider client={queryClient}>
-            <ThemeProvider theme={theme}>
-              <CssBaseline />
-              <AuthProvider>
-                <NavigationBar /> {/* Add NavigationBar */}
-                <AppRoutes />
-              </AuthProvider>
-            </ThemeProvider>
-          </QueryClientProvider>
-        </ErrorBoundary>
-      </div>
-    </Router>
+    <QueryClientProvider client={queryClient}>
+      <ErrorBoundary>
+        <ErrorProvider>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <NavigationBar />
+            <AppRoutes />
+          </ThemeProvider>
+        </ErrorProvider>
+      </ErrorBoundary>
+    </QueryClientProvider>
   );
 };
 
