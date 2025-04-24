@@ -10,6 +10,17 @@ interface ILoginFormInputs {
   password: string;
 }
 
+// Define a specific interface for API errors instead of using any
+interface IApiError {
+  response?: {
+    data?: {
+      detail?: string;
+      [key: string]: unknown;
+    };
+  };
+  message?: string;
+}
+
 const LoginPage: React.FC = () => {
   const {
     register,
@@ -25,13 +36,23 @@ const LoginPage: React.FC = () => {
       await login(data.username, data.password);
       console.info('LoginPage: handleLogin: Login successful, redirecting to dashboard');
       redirectToDashboard();
-    } catch (error: any) {
-      console.error('LoginPage: handleLogin: Login error:', error.response?.data || error.message); // Log detailed error
+    } catch (error: unknown) {
+      const apiError = error as IApiError;
+      console.error(
+        'LoginPage: handleLogin: Login error:',
+        'response' in apiError
+          ? apiError.response?.data
+          : apiError instanceof Error
+            ? apiError.message
+            : 'Unknown error'
+      );
 
       // Use centralized error notification system instead of setError
       notify({
         title: 'Login Failed',
-        message: error.response?.data?.detail || 'An error occurred during login',
+        message: 'response' in apiError
+          ? apiError.response?.data?.detail || 'An error occurred during login'
+          : 'An error occurred during login',
         severity: 'error',
         duration: 5000 // Auto-dismiss after 5 seconds
       });

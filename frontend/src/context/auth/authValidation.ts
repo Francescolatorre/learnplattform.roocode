@@ -7,6 +7,6 @@ export const isValidUsername = (username: string): boolean => {
 };
 
 export const isValidEmail = (email: string): boolean => {
-  const pattern = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/);
-  return pattern.test(email);
+  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+  return emailRegex.test(email);
 };

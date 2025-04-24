@@ -1,6 +1,6 @@
 import {test, expect} from '@playwright/test';
 
-import {TEST_USERS, UserSession, waitForGlobalLoadingToDisappear} from './setupTests';
+import {UserSession, waitForGlobalLoadingToDisappear} from './setupTests'; // Removed unused TEST_USERS import
 
 test.describe('User Roles and Permissions', () => {
   let userSession: UserSession;

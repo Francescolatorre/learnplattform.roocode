@@ -2,6 +2,7 @@ export interface AuthUser {
     id: string;
     username: string;
     role?: string; // user role, e.g. 'student', 'instructor', 'admin'
+    display_name?: string;
     // weitere Benutzerfelder
 }
 
@@ -12,8 +13,8 @@ export interface AuthContextProps {
     login: (username: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
     getUserRole: () => string;
-    redirectToDashboard: () => void;
-    setError: (error: string) => void;
+    redirectToDashboard: (options?: {path?: string; replace?: boolean}) => void;
+    setError: (errorMessage: string) => void;
     // weitere Methoden
 }
 
@@ -32,5 +33,20 @@ export enum AuthEventType {
 
 export interface AuthEvent {
     type: AuthEventType;
-    payload?: any;
+    payload?: IAuthEventPayload;
+}
+
+// Define specific payload interface
+export interface IAuthEventPayload {
+    user?: AuthUser;
+    error?: IAuthContextError;
+    token?: string;
+    message?: string;
+    [key: string]: unknown; // Allow for additional properties while maintaining type safety
+}
+
+export interface IAuthContextError {
+    message: string;
+    code?: string;
+    details?: Record<string, unknown>;
 }

@@ -6,44 +6,53 @@ import {
   ListItemText,
   Button,
   Box,
-  Alert,
-  Snackbar,
 } from '@mui/material';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import React from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 
-import {Course} from '@/types/entities';
+import {useNotification} from '@/components/ErrorNotifier/useErrorNotifier';
+import {ICourse} from '@/types/course'
 import {useAuth} from '@context/auth/AuthContext';
 import {courseService} from '@services/resources/courseService';
+import {enrollmentService} from '@services/resources/enrollmentService';
 
-const CourseDetailsPage: React.FC = () => {
+/**
+ * StudentCourseDetailsPage displays detailed information about a specific course.
+ *
+ * Features:
+ * - Displays course title and description
+ * - Shows enrollment status and enrollment button for non-enrolled users
+ * - Lists associated learning tasks for enrolled users
+ * - Provides navigation to individual learning tasks
+ *
+ * @returns {React.ReactElement} The CourseDetailsPage component
+ */
+const StudentCourseDetailsPage: React.FC = () => {
   const {courseId} = useParams<{courseId: string}>();
-  const navigate = useNavigate();
-  const {user, isAuthenticated} = useAuth();
   const queryClient = useQueryClient();
-  const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
+  const {isAuthenticated} = useAuth();
+  const navigate = useNavigate();
+  const notify = useNotification();
 
-  React.useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login', {
-        state: {from: `/courses/${courseId}`},
-        replace: true,
-      });
-    }
-  }, [isAuthenticated, navigate, courseId]);
-
+  /**
+   * Query to fetch course details by courseId
+   */
   const {
-    data: ICourseDetails,
+    data: courseDetails,
     isLoading: isCourseLoading,
     error: courseError,
-  } = useQuery<Course>({
+  } = useQuery<ICourse>({
     queryKey: ['courseDetails', courseId],
     queryFn: () => courseService.getCourseDetails(courseId!),
     enabled: !!courseId,
     retry: false,
   });
 
+  /**
+   * Query to fetch learning tasks associated with the course
+   * Only enabled when course exists and user is enrolled
+   */
   const {
     data: learningTasks,
     isLoading: isTasksLoading,
@@ -51,28 +60,46 @@ const CourseDetailsPage: React.FC = () => {
   } = useQuery({
     queryKey: ['learningTasks', courseId],
     queryFn: () => courseService.getCourseTasks(courseId!), // Updated to use courseService
-    enabled: !!courseId && isAuthenticated && courseDetails?.isEnrolled,
+    enabled: !!courseId && courseDetails?.isEnrolled,
     retry: false,
   });
 
+  /**
+   * Mutation to handle course enrollment using enrollmentService
+   * On success, invalidates the courseDetails query and shows success message
+   */
   const enrollMutation = useMutation({
-    mutationFn: () => courseService.enrollInCourse(courseId!),
+    mutationFn: () => enrollmentService.enrollInCourse(courseId!),
     onSuccess: () => {
-      queryClient.invalidateQueries(['courseDetails', courseId]);
-      setShowSuccessMessage(true);
+      // Update to use the new invalidateQueries syntax with filters
+      queryClient.invalidateQueries({
+        queryKey: ['courseDetails', courseId],
+      });
+
+      notify({
+        message: 'Successfully enrolled in course!',
+        severity: 'success',
+        title: 'Enrollment Success',
+        duration: 6000,
+      });
+    },
+    onError: () => {
+      notify({
+        message: 'Failed to enroll in course. Please try again later.',
+        severity: 'error',
+        title: 'Enrollment Error',
+      });
     },
   });
 
   const canViewTasks = isAuthenticated && courseDetails?.isEnrolled;
 
+  /**
+   * Handles the enrollment button click
+   * If user is not authenticated, redirects to login page
+   * Otherwise, triggers the enrollment mutation
+   */
   const handleEnrollClick = () => {
-    if (!isAuthenticated) {
-      navigate('/login', {
-        state: {from: `/courses/${courseId}`},
-        replace: true,
-      });
-      return;
-    }
     enrollMutation.mutate();
   };
 
@@ -111,11 +138,7 @@ const CourseDetailsPage: React.FC = () => {
           >
             {enrollMutation.isPending ? 'Enrolling...' : 'Enroll in Course'}
           </Button>
-          {enrollMutation.isError && (
-            <Typography color="error" sx={{mt: 1}}>
-              Failed to enroll. Please try again later.
-            </Typography>
-          )}
+          {/* Error handling moved to the onError callback in the mutation */}
         </Box>
       )}
 
@@ -132,7 +155,7 @@ const CourseDetailsPage: React.FC = () => {
             </Typography>
           ) : learningTasks?.results?.length > 0 ? (
             <List>
-              {learningTasks.results.map((task: {id: string; title: string}) => (
+              {learningTasks!.results.map((task: {id: number; title: string}) => (
                 <ListItem key={task.id} divider>
                   <ListItemText primary={task.title} />
                   <Button
@@ -154,18 +177,8 @@ const CourseDetailsPage: React.FC = () => {
           Enroll in this course to access learning tasks.
         </Typography>
       )}
-
-      <Snackbar
-        open={showSuccessMessage}
-        autoHideDuration={6000}
-        onClose={() => setShowSuccessMessage(false)}
-      >
-        <Alert severity="success" onClose={() => setShowSuccessMessage(false)}>
-          Successfully enrolled in course!
-        </Alert>
-      </Snackbar>
     </div>
   );
 };
 
-export default CourseDetailsPage;
+export default StudentCourseDetailsPage;

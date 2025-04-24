@@ -1,4 +1,4 @@
-import {AuthEvent, AuthEventType} from './types';
+import {AuthEvent} from './types';
 
 type Listener = (event: AuthEvent) => void;
 

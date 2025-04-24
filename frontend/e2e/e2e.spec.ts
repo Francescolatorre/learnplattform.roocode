@@ -250,8 +250,8 @@ test.describe('API Authentication and Authorization', () => {
       return;
     }
 
-    // Get tasks for the course
-    const tasksResponse = await apiHelper.getCourseTasks(courseId.toString());
+    // Get tasks for the course (Removed unused variable)
+    // const tasksResponse = await apiHelper.getCourseTasks(courseId.toString());
 
     // Try to create a task (should fail for student)
     const createTaskResponse = await apiHelper.createTask(courseId.toString(), {

@@ -53,6 +53,9 @@ const ForgotPasswordForm: React.FC = () => {
         <Typography variant="body1" align="center" color="textSecondary" sx={{mb: 3}}>
           Enter your email address and we'll send you instructions to reset your password.
         </Typography>
+        <Typography variant="body2" gutterBottom>
+          We&apos;ll send a password reset link to your email address.
+        </Typography>
         <Box component="form" onSubmit={handleSubmit}>
           <TextField
             variant="outlined"

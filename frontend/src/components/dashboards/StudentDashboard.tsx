@@ -2,12 +2,16 @@ import {Box, Grid, Typography, CircularProgress} from '@mui/material';
 import {useQuery} from '@tanstack/react-query';
 import React from 'react';
 
-import {IDashboardResponse} from '@/types/progressTypes';
+import {
+  IDashboardCourseInfo,
+  IDashboardResponse
+} from '@/types/progressTypes';
 import ProgressOverview from '@components/ProgressOverview';
 import {useAuth} from '@context/auth/AuthContext';
-import CourseList from 'src/components/courses/CourseList';
-import {getStudentDashboard} from 'src/services/resources/progressService';
-
+import CourseList from '@/components/courses/CourseList';
+import progressService from 'src/services/resources/progressService';
+import {ICourse, ICourseEnrollment, TCourseStatus} from '@/types';
+import {enrollmentService} from '@/services';
 
 const StudentDashboard: React.FC = () => {
   const {user} = useAuth();
@@ -18,9 +22,24 @@ const StudentDashboard: React.FC = () => {
     error,
   } = useQuery<IDashboardResponse>({
     queryKey: ['studentDashboard'],
-    queryFn: () => getStudentDashboard(user?.id),
+    queryFn: () => progressService.getStudentDashboard(user?.id),
     enabled: !!user?.id,
   });
+
+  const enrolledCourses = enrollmentService.fetchUserEnrollments();
+
+  const renderEnrolledCourses = (coursesData: ICourseEnrollment[]) => {
+    return (
+      <div>
+        {coursesData.map(course => (
+          <div key={course.id}>
+            <Typography>{course.course_details?.description}</Typography>
+            {/* Additional course details can be displayed here */}
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   if (isLoading) {
     return (
@@ -34,7 +53,7 @@ const StudentDashboard: React.FC = () => {
     return (
       <Box sx={{p: 2}}>
         <Typography color="error">
-          Error loading dashboard data: {(error).message}
+          Error loading dashboard data: {(error as Error).message}
         </Typography>
       </Box>
     );
@@ -44,30 +63,12 @@ const StudentDashboard: React.FC = () => {
     return null;
   }
 
-  const {overall_stats, courses} = dashboardData;
 
   return (
     <Box sx={{p: 3}}>
       <Typography variant="h4" gutterBottom>
-        Welcome Back, {dashboardData.user_info.full_name || dashboardData.user_info.username}
+        Welcome Back, {user?.display_name || user?.username}
       </Typography>
-
-      <Grid container spacing={3}>
-        {/* Overall Progress */}
-        <Grid item xs={12}>
-          <ProgressOverview
-            totalCourses={overall_stats.total_courses}
-            completedCourses={overall_stats.completed_courses}
-            averageScore={overall_stats.average_score ?? 0}
-            overallCompletion={overall_stats.overall_completion}
-          />
-        </Grid>
-
-        {/* Active Courses */}
-        <Grid item xs={12}>
-          <CourseList courses={courses as any} />
-        </Grid>
-      </Grid>
     </Box>
   );
 };

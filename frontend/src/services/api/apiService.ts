@@ -1,24 +1,35 @@
-import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
+import {AxiosInstance, AxiosRequestConfig} from 'axios';
 
+import axiosInstance from './axiosConfig';
 import {API_CONFIG} from './apiConfig';
 
 /**
+ * Generic API Service
  *
+ * Provides type-safe methods for API operations
+ * Uses the centralized axios instance with auth interceptors
  */
 export class ApiService<T = unknown> {
-  private api: AxiosInstance;
+  protected api: AxiosInstance;
 
   /**
-   *
-   * @param config
+   * Creates a new ApiService instance
+   * @param config Optional custom axios config (defaults to API_CONFIG)
    */
   constructor(config: AxiosRequestConfig = API_CONFIG) {
-    this.api = axios.create(config);
+    // Use the shared axiosInstance with interceptors instead of creating a new instance
+    this.api = axiosInstance;
+
+    // Apply any custom configurations if needed
+    if (config.baseURL && config.baseURL !== API_CONFIG.baseURL) {
+      console.warn('Custom baseURL detected. This may override global configuration.');
+    }
   }
 
   /**
-   *
-   * @param url
+   * Performs a GET request to the specified URL
+   * @param url The endpoint URL
+   * @returns Promise resolving to the response data
    */
   async get(url: string): Promise<T> {
     try {
@@ -108,9 +119,10 @@ export class ApiService<T = unknown> {
       throw error;
     }
   }
+
   /**
    * Sets the Authorization header for this ApiService instance.
-   * @param token
+   * @param token The authentication token
    */
   setAuthToken(token: string) {
     this.api.defaults.headers.common['Authorization'] = `Bearer ${token}`;

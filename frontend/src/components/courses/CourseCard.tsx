@@ -1,11 +1,12 @@
 import {Card, CardContent, CardActions, Typography, Button, Box} from '@mui/material';
+import React from 'react';
 
 interface ICourseCardProps {
   title: string;
   description: string;
-  instructor?: string;
+  instructor: string;
   onViewDetails: () => void;
-  onEnroll?: () => void;
+  onEnroll: () => void;
 }
 
 const CourseCard: React.FC<ICourseCardProps> = ({

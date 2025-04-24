@@ -1,4 +1,3 @@
-
 import {
   Box,
   Typography,
@@ -12,15 +11,18 @@ import {
   SelectChangeEvent,
   Pagination,
 } from '@mui/material';
-import React, {useState, useMemo, useEffect} from 'react';
+import React, {useState, useMemo, useEffect, useCallback} from 'react';
 
-import {ICourse, TCourseStatus} from '@/types/course'; // Ensure correct import
+import {ICourse, TCourseStatus} from '@/types/course';
 import {useDebounce} from '@utils/useDebounce';
-// Removed unused variables and ensured dependencies are correct
 
 import {courseService, CourseFilterOptions} from '../../services/resources/courseService';
-import CourseList from '../courses/CourseList';
+import CourseList from './CourseList';
 
+// Define proper interface for options parameter
+interface IFilterOptions extends CourseFilterOptions {
+  [key: string]: unknown;
+}
 
 interface FilterableCourseListProps {
   initialCourses?: ICourse[];
@@ -56,30 +58,12 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
   const [totalCount, setTotalCount] = useState<number>(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [status, setStatus] = useState<TCourseStatus | ''>('');
-  // const [creator, setCreator] = useState<number | null>(null);
+  const [creator] = useState<number | null>(null); // Used in loadCourses
   const [page, setPage] = useState(1);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
-  useEffect(() => {
-    if (!clientSideFiltering && (!initialCourses || initialCourses.length === 0)) {
-      loadCourses();
-    }
-  }, [clientSideFiltering, initialCourses, debouncedSearchTerm, status, page]);
-
-  useEffect(() => {
-    if (initialCourses) {
-      setCourses(initialCourses);
-    }
-  }, [initialCourses]);
-
-  useEffect(() => {
-    if (onCoursesLoaded && courses.length > 0) {
-      onCoursesLoaded(courses);
-    }
-  }, [courses, onCoursesLoaded]);
-
-  const loadCourses = async () => {
+  const loadCourses = useCallback(async (options?: IFilterOptions) => {
     try {
       setLoading(true);
       setError(null);
@@ -91,7 +75,7 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
 
       if (debouncedSearchTerm) filterOptions.search = debouncedSearchTerm;
       if (status) filterOptions.status = status;
-      // if (creator) filterOptions.creator = creator;
+      if (creator) filterOptions.creator = creator;  // Use creator variable
 
       console.info('Fetching courses with options:', filterOptions);
 
@@ -152,7 +136,29 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, pageSize, debouncedSearchTerm, status, creator]);
+
+  useEffect(() => {
+    if (!clientSideFiltering && (!initialCourses || initialCourses.length === 0)) {
+      loadCourses();
+    }
+  }, [clientSideFiltering, initialCourses, debouncedSearchTerm, status, page]);
+
+  useEffect(() => {
+    if (initialCourses) {
+      setCourses(initialCourses);
+    }
+  }, [initialCourses]);
+
+  useEffect(() => {
+    if (onCoursesLoaded && courses.length > 0) {
+      onCoursesLoaded(courses);
+    }
+  }, [courses, onCoursesLoaded]);
+
+  useEffect(() => {
+    loadCourses();
+  }, [loadCourses]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);

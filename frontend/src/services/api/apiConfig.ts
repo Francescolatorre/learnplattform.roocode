@@ -1,4 +1,8 @@
-const API_BASE_URL = 'http://localhost:8000';
+let API_BASE_URL = 'http://localhost:8000'; // Change const to let for mutability
+export const setApiBaseUrl = (url: string) => {
+  API_BASE_URL = url; // Update the base URL
+  API_CONFIG.baseURL = API_BASE_URL; // Update the API_CONFIG
+};
 
 export const API_CONFIG = {
   baseURL: API_BASE_URL,
@@ -126,6 +130,7 @@ export const API_CONFIG = {
       admin: '/api/v1/admin/dashboard/',
       adminSummary: '/api/v1/dashboard/admin-summary/',
       instructor: '/api/v1/instructor/dashboard/',
+      student: (studentId: string | number): string => `/api/v1/students/${studentId}/dashboard/`,
     },
     health: {
       check: '/health/',

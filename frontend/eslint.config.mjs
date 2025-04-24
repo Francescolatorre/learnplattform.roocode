@@ -25,6 +25,7 @@ export default defineConfig([
       },
     },
     languageOptions: {
+      // Apply browser globals by default
       globals: globals.browser,
       parserOptions: {
         ecmaVersion: 'latest',
@@ -84,6 +85,14 @@ export default defineConfig([
           },
         },
       ],
+    },
+  },
+
+  // Apply Node.js globals specifically for .cjs files
+  {
+    files: ['**/*.cjs'],
+    languageOptions: {
+      globals: globals.node,
     },
   },
 

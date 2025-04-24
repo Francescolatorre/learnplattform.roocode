@@ -1,10 +1,16 @@
-import {IUser} from '@/types/user';
+import React from 'react';
 
-interface UserProfileProps {
-  user: IUser;
+interface IUserProfileProps {
+  user: {
+    display_name: string;
+    username: string;
+    email: string;
+    role: string;
+    [key: string]: unknown;
+  };
 }
 
-const UserProfile: React.FC<UserProfileProps> = ({user}) => {
+const UserProfile: React.FC<IUserProfileProps> = ({user}) => {
   return (
     <div>
       <h1>{user.display_name || user.username}</h1>

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
 
-import {ILearningTask} from '@/types/entities';
+import {ILearningTask} from '@/types/task';
 import LearningTaskService from 'src/services/resources/learningTaskService';
 
 

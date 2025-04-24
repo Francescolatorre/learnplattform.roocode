@@ -35,7 +35,7 @@ const DetailedTaskViewPage: React.FC = () => {
   }
 
   if (!task) {
-    return <div>Loading...</div>;
+    return <div>Loading task...</div>; // Add proper return statement
   }
 
   return (

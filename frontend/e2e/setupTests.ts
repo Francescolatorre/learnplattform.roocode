@@ -22,7 +22,7 @@ export const TEST_USERS = {
 };
 
 // Reusable login helper for Playwright tests
-export const login = async (page: Page, username: string, password: string): Promise<any> => {
+export const login = async (page: Page, username: string, password: string): Promise<{access: string; refresh: string}> => {
     await page.goto('/login');
     await page.fill('input[data-testid="login-username-input"]', username);
     await page.fill('input[data-testid="login-password-input"]', password);
@@ -99,7 +99,7 @@ export class UserSession {
         await this.page.evaluate(() => {
             try {
                 localStorage.clear();
-            } catch (e) {
+            } catch {
                 // Ignore SecurityError or other storage errors
             }
         });

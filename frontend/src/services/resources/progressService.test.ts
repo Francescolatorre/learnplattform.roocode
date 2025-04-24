@@ -1,6 +1,6 @@
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 
-import {progressService} from './progressService';
+import progressService from './progressService';
 
 vi.mock('../api/apiService', () => {
     const mockGet = vi.fn();
@@ -147,7 +147,7 @@ describe('progressService', () => {
     });
 
     it('gradeSubmission returns empty object', async () => {
-        const result = await progressService.gradeSubmission('1', '2', '3', {});
+        const result = await progressService.gradeSubmission('1', '2', '3', {} as unknown);
         expect(result).toEqual({});
     });
 

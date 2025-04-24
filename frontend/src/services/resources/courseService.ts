@@ -1,5 +1,9 @@
+import {IUserProgress} from '@/types/entities';
+import {IStudentProgressSummary} from '@/types/analyticsTypes';
+
 import {ApiService} from '@/services/api/apiService';
 import {ICourse, TCourseStatus} from '@/types/course';
+import {ILearningTask, ITaskProgress} from '@/types/task';
 import {IPaginatedResponse} from 'src/types/paginatedResponse';
 
 import {API_CONFIG} from '../api/apiConfig';
@@ -37,6 +41,17 @@ class CourseService {
   private apiCourses = new ApiService<IPaginatedResponse<ICourse>>();
   private apiVoid = new ApiService<void>();
   private apiAny = new ApiService<unknown>();
+  private transformUserProgressToStudentSummary(userProgress: IUserProgress[]): IStudentProgressSummary[] {
+    return userProgress.map(progress => ({
+      user_id: progress.id, // Assuming 'id' corresponds to 'user_id'
+      username: progress.label || 'Unknown', // Using 'label' as a fallback for username
+      overall_progress: progress.percentage, // Using 'percentage' for overall progress
+      courses_enrolled: 1 // Example logic, adjust as necessary
+    }));
+  }
+
+  private apiTaskProgressArray = new ApiService<ITaskProgress[]>();
+  private apiLearningTasks = new ApiService<IPaginatedResponse<ILearningTask>>();
 
   /**
    * Fetches a paginated list of courses with optional filtering
@@ -104,8 +119,6 @@ class CourseService {
     await this.apiVoid.post(API_CONFIG.endpoints.courses.enroll(courseId), {course_id: courseId});
   }
 
-
-
   /**
    * Fetches courses where the current user is an instructor
    */
@@ -140,18 +153,20 @@ class CourseService {
 
   /**
    * Fetches course progress for the current user
-   * @param courseId
+   * @param courseId - ID of the course to fetch progress for
+   * @returns Promise containing an array of task progress records
    */
-  async fetchCourseProgress(courseId: string): Promise<unknown> {
-    return this.apiAny.get(`${API_CONFIG.endpoints.courses.progress}/${courseId}`);
+  async fetchCourseProgress(courseId: string): Promise<ITaskProgress[]> {
+    return this.apiTaskProgressArray.get(`${API_CONFIG.endpoints.courses.progress}/${courseId}`);
   }
 
   /**
-   * Fetches tasks for a specific course
-   * @param courseId
+   * Fetches learning tasks associated with a specific course
+   * @param courseId - ID of the course to fetch tasks for
+   * @returns Promise containing a paginated response of learning tasks
    */
-  async getCourseTasks(courseId: string): Promise<unknown> {
-    return this.apiAny.get(API_CONFIG.endpoints.courses.tasks(courseId));
+  async getCourseTasks(courseId: string): Promise<IPaginatedResponse<ILearningTask>> {
+    return this.apiLearningTasks.get(API_CONFIG.endpoints.tasks.byCourse(courseId));
   }
 }
 

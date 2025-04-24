@@ -7,7 +7,6 @@ export type {
     TCompletionStatus,
     TQuizCompletionStatus,
     ICourseEnrollment,
-    IEnrollment,
     IQuizOption,
     IQuizQuestion,
     IQuizTask,

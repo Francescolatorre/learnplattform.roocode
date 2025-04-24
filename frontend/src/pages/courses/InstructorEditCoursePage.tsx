@@ -27,7 +27,8 @@ interface ICourseFormData {
 const InstructorEditCoursePage: React.FC = () => {
   const {courseId} = useParams<{courseId: string}>();
   const navigate = useNavigate();
-  const {data: course, isLoading, error, refetch} = useCourse(courseId);
+  // Removed unused variable 'refetch'
+  const {data: course, isLoading, error} = useCourse(courseId);
   const {
     register,
     handleSubmit,
@@ -55,6 +56,15 @@ const InstructorEditCoursePage: React.FC = () => {
     }
   }, [course, reset]);
 
+  // Fixed conditional React Hook usage
+  useEffect(() => {
+    if (error) {
+      notify(typeof error === 'string' ? error : 'An error occurred while loading the course.', 'error');
+    }
+    // Only notify when error changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
+
   // Handle form submission
   const onSubmit: SubmitHandler<ICourseFormData> = async data => {
     setIsSubmitting(true);
@@ -63,8 +73,9 @@ const InstructorEditCoursePage: React.FC = () => {
     try {
       await courseService.updateCourse(String(courseId), data);
       navigate(`/courses/${courseId}`);
-    } catch (err) {
-      notify((err as any)?.message || 'Failed to update course. Please try again.', 'error');
+    } catch (err: unknown) {
+      const errorMessage = (err as {message: string})?.message || 'Failed to update course. Please try again.';
+      notify(errorMessage, 'error');
       console.error('Failed to update course:', err);
     } finally {
       setIsSubmitting(false);
@@ -72,13 +83,6 @@ const InstructorEditCoursePage: React.FC = () => {
   };
 
   if (isLoading) return <CircularProgress />;
-  useEffect(() => {
-    if (error) {
-      notify(typeof error === 'string' ? error : 'An error occurred while loading the course.', 'error');
-    }
-    // Only notify when error changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [error]);
 
   return (
     <Container maxWidth="sm">

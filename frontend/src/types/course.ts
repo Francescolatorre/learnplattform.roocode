@@ -1,6 +1,5 @@
 import {IUser} from './user';
 
-
 export type TCourseStatus = 'published' | 'draft' | 'private';
 
 export interface ICourseVersion {
@@ -29,6 +28,7 @@ export interface ICourse {
     updated_at: string;
     creator: number;
     creator_details: IUser;
+    isEnrolled?: boolean; // Optional because it might not be available in all contexts
 }
 
 export interface ICourseStructure {

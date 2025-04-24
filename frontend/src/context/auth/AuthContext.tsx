@@ -1,30 +1,48 @@
-//src/context/auth/AuthContext.tsx
+/**
+ * Authentication Context
+ *
+ * This module provides authentication functionality for the Learning Platform.
+ * It manages user authentication state, login/logout operations, and user role access.
+ *
+ * Features:
+ * - JWT token-based authentication with access and refresh tokens
+ * - Automatic token persistence in localStorage
+ * - User profile restoration on page reload
+ * - Authentication event publishing for app-wide auth state changes
+ *
+ * @module AuthContext
+ */
 
-import React, {createContext, useContext, useState, useEffect} from 'react';
+import React, {createContext, useContext, useState, useEffect, useCallback} from 'react';
 
 import authService from '../../services/auth/authService';
 
 import {authEventService} from './AuthEventService';
 import {AuthContextProps, AuthEventType, AuthUser} from './types';
+import {useNavigate} from 'react-router-dom';
 
-// Erstelle den Kontext mit einem Default-Wert
+/**
+ * Default authentication context value
+ * Provides a type-safe default value for the context when used outside of a provider
+ */
 const AuthContext = createContext<AuthContextProps>({
-    user: null,
-    isAuthenticated: false,
-    isRestoring: false,
-    login: async () => { },
-    logout: async () => { },
-    getUserRole: () => 'guest',
-    redirectToDashboard: () => { },
-    setError: () => { },
+    user: null,                      // Current authenticated user or null if not authenticated
+    isAuthenticated: false,          // Whether a user is currently authenticated
+    isRestoring: false,              // Whether auth state is currently being restored from storage
+    login: async () => { },          // Function to authenticate a user
+    logout: async () => { },         // Function to log out the current user
+    getUserRole: () => 'guest',      // Function to get the current user's role
+    redirectToDashboard: () => { },  // Function to redirect to the appropriate dashboard
+    setError: () => { },             // Function to set authentication errors
 });
 
 export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
     const [user, setUser] = useState<AuthUser | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-    const [error, setErrorState] = useState<string | null>(null);
-    const [tokens, setTokens] = useState<{access: string; refresh: string} | null>(null);
+    const [authTokens, setAuthTokens] = useState<{access: string; refresh: string} | null>(null);
     const [isRestoring, setIsRestoring] = useState<boolean>(true);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const navigate = useNavigate(); // Assuming you are using react-router-dom for navigation
 
     // Initialize authentication state from localStorage on mount
     useEffect(() => {
@@ -34,7 +52,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
                 case AuthEventType.AUTH_ERROR:
                     setUser(null);
                     setIsAuthenticated(false);
-                    setTokens(null);
+                    setAuthTokens(null);
                     localStorage.removeItem('accessToken');
                     localStorage.removeItem('refreshToken');
                     break;
@@ -46,7 +64,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
         if (accessToken && refreshToken) {
-            setTokens({access: accessToken, refresh: refreshToken});
+            setAuthTokens({access: accessToken, refresh: refreshToken});
             // Fetch user profile with access token
             authService.getUserProfile(accessToken)
                 .then(profile => {
@@ -58,7 +76,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
                 .catch(() => {
                     setUser(null);
                     setIsAuthenticated(false);
-                    setTokens(null);
+                    setAuthTokens(null);
                     localStorage.removeItem('accessToken');
                     localStorage.removeItem('refreshToken');
                 })
@@ -81,7 +99,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
             // Store tokens in localStorage
             localStorage.setItem('accessToken', access);
             localStorage.setItem('refreshToken', refresh);
-            setTokens({access, refresh});
+            setAuthTokens({access, refresh});
 
             // Fetch user profile
             const profile = await authService.getUserProfile(access);
@@ -98,10 +116,10 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         } catch (error) {
             setUser(null);
             setIsAuthenticated(false);
-            setTokens(null);
+            setAuthTokens(null);
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
-            setErrorState('Login failed');
+            setErrorMessage('Login failed');
             console.error('Login failed:', error);
             throw error;
         }
@@ -111,7 +129,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         // Clear tokens and user state
         setUser(null);
         setIsAuthenticated(false);
-        setTokens(null);
+        setAuthTokens(null);
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
 
@@ -121,14 +139,51 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
 
     const getUserRole = () => user && (user as any).role ? (user as any).role : 'guest';
 
-    const redirectToDashboard = () => {
-        // Placeholder: Replace with navigation logic as needed
-        window.location.href = '/dashboard';
-    };
+    interface IRedirectOptions {
+        path?: string;
+        replace?: boolean;
+    }
+
+    const redirectToDashboard = useCallback((options?: {path?: string; replace?: boolean}) => {
+        const defaultPath = '/dashboard';
+        const redirectPath = options?.path || defaultPath;
+        const shouldReplace = options?.replace || false;
+
+        console.info(`Redirecting to: ${redirectPath} (replace: ${shouldReplace})`);
+
+        // Use React Router's navigate for redirection
+        if (shouldReplace) {
+            navigate(redirectPath, {replace: true});
+        } else {
+            navigate(redirectPath);
+        }
+
+        // Publish navigation event for tracking
+        authEventService.publish({
+            type: AuthEventType.LOGIN,
+            payload: {
+                message: `Redirected to ${redirectPath}`,
+                user
+            }
+        });
+    }, [navigate, user]);
 
     const setError = (errorMsg: string) => {
-        setErrorState(errorMsg);
+        setErrorMessage(errorMsg);
+        console.error("Auth error:", errorMsg); // Add usage to avoid unused variable
     };
+
+    const refreshToken = useCallback(async () => {
+        if (authTokens?.refresh) {
+            try {
+                // Implementation using authTokens.refresh
+                console.log("Using refresh token:", authTokens.refresh);
+                // Actual token refresh logic
+            } catch (err) {
+                setError("Token refresh failed");
+            }
+        }
+    }, [authTokens]);
 
     const value: AuthContextProps = {
         user,

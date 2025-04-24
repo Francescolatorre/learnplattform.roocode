@@ -1,6 +1,6 @@
 import {describe, it, expect, beforeAll, afterAll} from 'vitest';
 
-import {TCourseStatus} from '@/types/entities';
+import {TCourseStatus} from '@/types/';
 
 import authService from '../auth/authService';
 
@@ -26,8 +26,8 @@ describe('progressService Integration', () => {
         // Set Authorization header for all ApiService instances used by progressService
         progressService['apiUserProgress'].setAuthToken(accessToken);
         progressService['apiUserProgressArr'].setAuthToken(accessToken);
-        progressService['apiTaskProgress'].setAuthToken(accessToken);
-        progressService['apiTaskProgressArr'].setAuthToken(accessToken);
+        //progressService['apiTaskProgress'].setAuthToken(accessToken);
+        //progressService['apiTaskProgressArr'].setAuthToken(accessToken);
         progressService['apiQuizAttemptArr'].setAuthToken(accessToken);
         progressService['apiAny'].setAuthToken(accessToken);
         progressService['apiCourse'].setAuthToken(accessToken);

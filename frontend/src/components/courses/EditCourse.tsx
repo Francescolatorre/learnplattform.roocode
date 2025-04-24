@@ -17,7 +17,7 @@ const EditCourse: React.FC = () => {
     description: 'test description',
     status: 'draft',
     visibility: 'private',
-  } as any);
+  });
   const [isLoading, setIsLoading] = useState(false);
   const error = null;
 

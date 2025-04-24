@@ -1,17 +1,18 @@
+import {act, fireEvent, render, screen, waitFor} from '@testing-library/react';
+import '@testing-library/jest-dom';
 import React from 'react';
+import {vi, describe, it, expect, beforeEach} from 'vitest';
+
+import {ErrorProvider} from './ErrorProvider';
+import {useNotification} from './useErrorNotifier';
+
 /* Mock MUI transitions to be immediate for tests */
-import {describe, it, expect, vi, beforeEach} from 'vitest';
 vi.mock('@mui/material/Collapse', () => ({
     default: ({children}: any) => children
 }));
 vi.mock('@mui/material/Fade', () => ({
     default: ({children}: any) => children
 }));
-import {render, screen, fireEvent, waitFor, act} from '@testing-library/react';
-
-import '@testing-library/jest-dom'; // Import for jest-dom matchers
-import {ErrorProvider} from './ErrorProvider';
-import {useNotification} from './useErrorNotifier';
 
 // Create a more flexible test component that can send different messages
 const TestComponent: React.FC = () => {
@@ -48,12 +49,12 @@ const TestComponent: React.FC = () => {
     );
 };
 
-describe.skip('Error Notification System', () => {
+describe('Error Notification System', () => {
     beforeEach(() => {
         vi.restoreAllMocks();
     });
 
-    it.skip('renders error toast when error is triggered', async () => {
+    it('renders error toast when error is triggered', async () => {
         render(
             <ErrorProvider>
                 <TestComponent />
@@ -84,18 +85,18 @@ describe.skip('Error Notification System', () => {
             vi.advanceTimersByTime(2500); // A bit more than the 2000ms duration
         });
 
-        // Verify alert is gone
+        // Verify alert is gone - Fix the unused expression by converting it to a complete expect statement
         await waitFor(() => {
-            expect(screen.queryByRole('alert')).not.toBeInTheDocument(), {
-                timeout: 5000,  // 5s timeout for this specific waitFor
-                interval: 100   // Check every 100ms instead of default
-            };
+            expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+        }, {
+            timeout: 5000,  // 5s timeout for this specific waitFor
+            interval: 100   // Check every 100ms instead of default
         });
 
         vi.useRealTimers();
     }, 50000);
 
-    it.skip('allows manual dismiss via close button', async () => {
+    it('allows manual dismiss via close button', async () => {
         render(
             <ErrorProvider>
                 <TestComponent />
@@ -112,7 +113,7 @@ describe.skip('Error Notification System', () => {
         });
     }, 50000);
 
-    it.skip('queues multiple errors but only shows one at a time (ADR-012)', async () => {
+    it('queues multiple errors but only shows one at a time (ADR-012)', async () => {
         render(
             <ErrorProvider>
                 <TestComponent />

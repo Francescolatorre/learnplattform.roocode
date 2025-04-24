@@ -1,4 +1,4 @@
-import {TaskCreationData} from '@/types/entities';
+import {ITaskCreationData} from '@/types/task';
 
 import learningTaskService from './learningTaskService';
 
@@ -16,10 +16,13 @@ export function useTaskCreation() {
      * @param taskData - The data for the new task, excluding the course.
      * @returns A promise resolving to the created learning task.
      */
-    const createTask = async (courseId: number, taskData: Omit<TaskCreationData, 'course'>) => {
+    const createTask = async (courseId: number, taskData: Omit<ITaskCreationData, 'course'>) => {
         try {
             const result = await learningTaskService.create({
-                ...taskData,
+                id: taskData.id,
+                title: taskData.title,
+                description: taskData.description,
+                order: taskData.order,
                 course: courseId,
                 is_published: taskData.is_published || false,
             });

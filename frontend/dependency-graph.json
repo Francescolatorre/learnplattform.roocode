@@ -211,7 +211,7 @@
       "dependencies": [],
       "dependents": [
         "src/App.tsx",
-        "src/pages/courses/CourseDetailsPage.tsx",
+        "src/pages/courses/StudentCourseDetailsPage.tsx",
         "src/pages/DashboardPage.tsx",
         "src/pages/learningTasks/StudentTasksPage.tsx",
         "src/components/courses/CourseDetail/index.tsx",
@@ -247,14 +247,14 @@
         "src/components/NavigationBar/index.tsx",
         "src/context/auth/AuthContext.tsx",
         "src/routes/AppRoutes.tsx",
-        "src/components/courses/EditCourse/index.tsx",
-        "src/pages/auth/LoginPage.tsx",
+        "src/pages/courses/StudentCourseDetailsPage.tsx",
         "src/components/ErrorNotifier/useErrorNotifier.ts",
-        "src/pages/courses/CourseDetailsPage.tsx",
-        "src/pages/courses/CoursesPage.tsx",
+        "src/pages/courses/StudentCoursesPage.tsx",
         "src/components/FilterableCourseList.tsx",
         "src/components/courses/CourseList/index.tsx",
         "src/utils/useDebounce.ts",
+        "src/components/courses/EditCourse/index.tsx",
+        "src/pages/auth/LoginPage.tsx",
         "src/pages/DashboardPage.tsx",
         "src/components/ProgressIndicator/index.tsx",
         "src/pages/HomePage.tsx",
@@ -265,7 +265,7 @@
         "src/pages/Profile.tsx",
         "src/routes/ProtectedRoute.tsx",
         "src/components/ActivityHistoryView/index.tsx",
-        "src/components/DataTable/DataTable.tsx",
+        "src/components/DataTable.tsx",
         "src/components/ErrorMessage/index.tsx",
         "src/components/ErrorNotifier/ErrorNotifier.test.tsx",
         "src/components/FilterableCourseList/index.tsx",
@@ -278,6 +278,10 @@
         "src/components/ProgressTrackingUI/ProgressTrackingUI.tsx",
         "src/components/RegisterForm/RegisterForm.tsx",
         "src/components/StatusChip/index.tsx",
+        "src/components/TaskDetailsView/ExpandedTaskDetails.tsx",
+        "src/components/TaskDetailsView/TaskDetailsHeader.tsx",
+        "src/components/TaskDetailsView/TaskTable.tsx",
+        "src/components/TaskDetailsView/TaskTabs.tsx",
         "src/components/TaskDetailsView/index.tsx",
         "src/components/TokenRefreshHandler/index.tsx",
         "src/components/UpcomingTasksList/index.tsx",
@@ -285,12 +289,14 @@
         "src/components/courses/CourseDetail/index.tsx",
         "src/components/courses/CourseEnrollment/index.tsx",
         "src/components/courses/CourseVersionList/index.tsx",
+        "src/components/dashboards/Dashboard.tsx",
         "src/components/dashboards/DashboardLayout.tsx",
         "src/components/dashboards/InstructorProgressDashboard.tsx",
         "src/components/dashboards/StudentDashboard.tsx",
         "src/components/enrollments/EnrollmentList.tsx",
         "src/components/notifications/ErrorToast.tsx",
         "src/context/notifications/ErrorNotificationContext.tsx",
+        "src/components/users/UserProfile.tsx",
         "src/dashboardFeature/components/progress/CourseDetailView/index.tsx",
         "src/dashboardFeature/components/progress/PerformanceAnalysisView.tsx",
         "src/dashboardFeature/components/progress/ProgressDebugger.tsx",
@@ -302,11 +308,9 @@
         "src/pages/auth/LogoutPage.tsx",
         "src/pages/auth/ResetPasswordForm/ResetPasswordForm.tsx",
         "src/pages/courses/AdminCoursesPage.tsx",
-        "src/pages/courses/AdminTasksPage.tsx",
         "src/pages/courses/CourseProgressPage.tsx",
         "src/pages/courses/InstructorCourseDetailPage.tsx",
         "src/pages/courses/InstructorEditCoursePage.tsx",
-        "src/pages/courses/StudentCourseEnrollmentPage.tsx",
         "src/pages/learningTasks/CourseLearningTasksPage.tsx",
         "src/pages/learningTasks/DetailedTaskViewPage.tsx",
         "src/pages/learningTasks/InstructorTasksPage.tsx",
@@ -315,7 +319,6 @@
         "src/pages/learningTasks/TaskListPage.tsx",
         "src/pages/learningTasks/TaskViewPage.tsx",
         "src/routes/AuthRoutes.tsx",
-        "src/routes/ProtectedRoute.test.tsx",
         "src/routes/RoleBasedRoute.tsx"
       ],
       "orphan": false,
@@ -380,12 +383,12 @@
         "src/components/ErrorBoundary/index.tsx",
         "src/components/ErrorNotifier/ErrorToast.tsx",
         "src/components/NavigationBar/index.tsx",
-        "src/components/courses/EditCourse/index.tsx",
-        "src/pages/auth/LoginPage.tsx",
-        "src/pages/courses/CourseDetailsPage.tsx",
-        "src/pages/courses/CoursesPage.tsx",
+        "src/pages/courses/StudentCourseDetailsPage.tsx",
+        "src/pages/courses/StudentCoursesPage.tsx",
         "src/components/FilterableCourseList.tsx",
         "src/components/courses/CourseList/index.tsx",
+        "src/components/courses/EditCourse/index.tsx",
+        "src/pages/auth/LoginPage.tsx",
         "src/pages/DashboardPage.tsx",
         "src/components/ProgressIndicator/index.tsx",
         "src/pages/HomePage.tsx",
@@ -393,7 +396,7 @@
         "src/pages/learningTasks/LearningTaskCard.tsx",
         "src/pages/Profile.tsx",
         "src/components/ActivityHistoryView/index.tsx",
-        "src/components/DataTable/DataTable.tsx",
+        "src/components/DataTable.tsx",
         "src/components/ErrorMessage/index.tsx",
         "src/components/FilterableCourseList/index.tsx",
         "src/components/ForgotPasswordForm/index.tsx",
@@ -404,6 +407,10 @@
         "src/components/ProgressOverview.tsx",
         "src/components/RegisterForm/RegisterForm.tsx",
         "src/components/StatusChip/index.tsx",
+        "src/components/TaskDetailsView/ExpandedTaskDetails.tsx",
+        "src/components/TaskDetailsView/TaskDetailsHeader.tsx",
+        "src/components/TaskDetailsView/TaskTable.tsx",
+        "src/components/TaskDetailsView/TaskTabs.tsx",
         "src/components/TaskDetailsView/index.tsx",
         "src/components/courses/CourseCard/index.tsx",
         "src/components/courses/CourseDetail/index.tsx",
@@ -713,9 +720,9 @@
       "dependents": [
         "src/components/NavigationBar/index.tsx",
         "src/routes/AppRoutes.tsx",
-        "src/components/courses/EditCourse/index.tsx",
-        "src/pages/courses/CourseDetailsPage.tsx",
+        "src/pages/courses/StudentCourseDetailsPage.tsx",
         "src/components/courses/CourseList/index.tsx",
+        "src/components/courses/EditCourse/index.tsx",
         "src/pages/HomePage.tsx",
         "src/pages/Profile.tsx",
         "src/routes/ProtectedRoute.tsx",
@@ -827,9 +834,9 @@
       ],
       "dependents": [
         "src/components/NavigationBar/index.tsx",
+        "src/pages/courses/StudentCourseDetailsPage.tsx",
         "src/components/courses/EditCourse/index.tsx",
         "src/pages/auth/LoginPage.tsx",
-        "src/pages/courses/CourseDetailsPage.tsx",
         "src/pages/DashboardPage.tsx",
         "src/context/auth/index.ts",
         "src/pages/Profile.tsx",
@@ -842,8 +849,8 @@
         "src/dashboardFeature/components/progress/ProgressDebugger.tsx",
         "src/index.tsx",
         "src/pages/auth/LogoutPage.tsx",
-        "src/pages/courses/InstructorCourseDetailPage.tsx",
         "src/pages/courses/InstructorEditCoursePage.tsx",
+        "src/pages/learningTasks/CourseLearningTasksPage.tsx",
         "src/routes/ProtectedRoute.test.tsx",
         "src/routes/RoleBasedRoute.tsx",
         "src/utils/authUtils.ts"
@@ -875,6 +882,7 @@
       "dependents": [
         "src/context/auth/AuthContext.tsx",
         "src/components/ForgotPasswordForm/index.tsx",
+        "src/pages/auth/ResetPasswordForm/ResetPasswordForm.tsx",
         "src/services/auth/authService.int.test.ts",
         "src/services/auth/authService.test.ts",
         "src/services/auth/index.ts",
@@ -903,8 +911,7 @@
         "src/pages/DashboardPage.tsx",
         "src/components/ForgotPasswordForm/index.tsx",
         "src/services/api/axiosConfig.ts",
-        "src/services/api/apiService.test.ts",
-        "src/test-utils/setupTests.ts"
+        "src/services/api/apiService.test.ts"
       ],
       "orphan": false,
       "valid": true
@@ -933,7 +940,6 @@
       "dependents": [
         "src/context/auth/AuthContext.tsx",
         "src/context/auth/index.ts",
-        "src/context/auth/AuthInterceptor.tsx",
         "src/context/auth/useAuthEvents.ts"
       ],
       "orphan": false,
@@ -955,6 +961,46 @@
     {
       "source": "src/routes/AppRoutes.tsx",
       "dependencies": [
+        {
+          "dynamic": true,
+          "module": "@/pages/courses/StudentCourseDetailsPage",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "dynamic-import"
+          ],
+          "resolved": "src/pages/courses/StudentCourseDetailsPage.tsx",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@/pages/courses/StudentCoursesPage",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/pages/courses/StudentCoursesPage.tsx",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
         {
           "dynamic": false,
           "module": "react",
@@ -1022,46 +1068,6 @@
             "import"
           ],
           "resolved": "src/pages/auth/LoginPage.tsx",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": true,
-          "module": "src/pages/courses/CourseDetailsPage",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "dynamic-import"
-          ],
-          "resolved": "src/pages/courses/CourseDetailsPage.tsx",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/pages/courses/CoursesPage",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/pages/courses/CoursesPage.tsx",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -1177,6 +1183,1006 @@
       "valid": true
     },
     {
+      "source": "src/pages/courses/StudentCourseDetailsPage.tsx",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "@/components/ErrorNotifier/useErrorNotifier",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/components/ErrorNotifier/useErrorNotifier.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@/types/course",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/course.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@context/auth/AuthContext",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/context/auth/AuthContext.tsx",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@mui/material",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/@mui/material/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@services/resources/courseService",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/services/resources/courseService.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@services/resources/enrollmentService",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/services/resources/enrollmentService.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@tanstack/react-query",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/@tanstack/react-query/build/modern/index.d.ts",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "react",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/react/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "react-router-dom",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/react-router-dom/dist/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [
+        "src/routes/AppRoutes.tsx"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/components/ErrorNotifier/useErrorNotifier.ts",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "./ErrorProvider",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "import"
+          ],
+          "resolved": "src/components/ErrorNotifier/ErrorProvider.tsx",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "./types",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "import"
+          ],
+          "resolved": "src/components/ErrorNotifier/types.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "react",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/react/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [
+        "src/pages/courses/StudentCourseDetailsPage.tsx",
+        "src/pages/auth/LoginPage.tsx",
+        "src/pages/learningTasks/StudentTasksPage.tsx",
+        "src/components/ErrorNotifier/ErrorNotifier.test.tsx",
+        "src/pages/auth/ResetPasswordForm/ResetPasswordForm.tsx",
+        "src/pages/courses/AdminCoursesPage.tsx",
+        "src/pages/courses/InstructorEditCoursePage.tsx",
+        "src/pages/learningTasks/CourseLearningTasksPage.tsx"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/types/course.ts",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "./user",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/user.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [
+        "src/pages/courses/StudentCourseDetailsPage.tsx",
+        "src/services/resources/courseService.ts",
+        "src/types/entities.ts",
+        "src/components/FilterableCourseList.tsx",
+        "src/components/courses/CourseList/index.tsx",
+        "src/components/courses/EditCourse/index.tsx",
+        "src/types/index.ts",
+        "src/components/FilterableCourseList/index.tsx",
+        "src/components/ProgressTrackingUI/ProgressTrackingUI.tsx",
+        "src/components/courses/CourseDetail/index.tsx",
+        "src/components/courses/CourseEnrollment/index.tsx",
+        "src/components/courses/CourseVersionList/index.tsx",
+        "src/pages/courses/AdminCoursesPage.tsx",
+        "src/pages/courses/InstructorCourseDetailPage.tsx",
+        "src/utils/useApiResource.ts",
+        "src/services/resources/courseService.int.test.ts",
+        "src/services/resources/courseService.test.ts",
+        "src/services/resources/learningTaskService.int.test.ts",
+        "src/services/useCourses.ts",
+        "src/store/courseStore.ts"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/types/user.ts",
+      "dependencies": [],
+      "dependents": [
+        "src/types/course.ts",
+        "src/types/task.ts",
+        "src/types/entities.ts",
+        "src/types/index.ts",
+        "src/types/authTypes.ts"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/services/resources/courseService.ts",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "../api/apiConfig",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "import"
+          ],
+          "resolved": "src/services/api/apiConfig.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@/services/api/apiService",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/services/api/apiService.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@/types/course",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/course.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@/types/task",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/task.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "src/types/paginatedResponse",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-base-url",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/paginatedResponse.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [
+        "src/pages/courses/StudentCourseDetailsPage.tsx",
+        "src/components/FilterableCourseList.tsx",
+        "src/components/courses/EditCourse/index.tsx",
+        "src/components/FilterableCourseList/index.tsx",
+        "src/components/courses/CourseDetail/index.tsx",
+        "src/components/courses/CourseEnrollment/index.tsx",
+        "src/pages/courses/AdminCoursesPage.tsx",
+        "src/pages/courses/InstructorCourseDetailPage.tsx",
+        "src/pages/courses/InstructorEditCoursePage.tsx",
+        "src/utils/useApiResource.ts",
+        "src/pages/courses/StudentCourseEnrollmentPage.tsx",
+        "src/pages/learningTasks/CourseLearningTasksPage.tsx",
+        "src/services/resources/index.ts",
+        "src/services/resources/courseService.int.test.ts",
+        "src/services/resources/courseService.test.ts",
+        "src/services/resources/enrollmentService.int.test.ts",
+        "src/services/resources/learningTaskService.int.test.ts",
+        "src/services/resources/progressService.int.test.ts",
+        "src/services/useCourses.ts"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/services/api/apiConfig.ts",
+      "dependencies": [],
+      "dependents": [
+        "src/services/resources/courseService.ts",
+        "src/services/api/apiService.ts",
+        "src/services/resources/enrollmentService.ts",
+        "src/services/resources/learningTaskService.ts",
+        "src/services/resources/progressService.ts",
+        "src/services/api/api.ts",
+        "src/services/resources/enrollmentService.test.ts",
+        "src/services/resources/learningTaskService.test.ts"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/services/api/apiService.ts",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "./apiConfig",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "import"
+          ],
+          "resolved": "src/services/api/apiConfig.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "axios",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/axios/index.d.cts",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [
+        "src/services/resources/courseService.ts",
+        "src/services/resources/enrollmentService.ts",
+        "src/services/resources/learningTaskService.ts",
+        "src/services/resources/progressService.ts",
+        "src/services/useCourseProgress.ts",
+        "src/services/useTaskData.ts",
+        "src/services/api/api.ts",
+        "src/services/api/apiService.int.test.ts",
+        "src/services/api/apiService.test.ts",
+        "src/services/api/index.ts"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/types/task.ts",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "@/types/user",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/user.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [
+        "src/services/resources/courseService.ts",
+        "src/types/index.ts",
+        "src/types/moduleTypes.ts",
+        "src/types/progressTypes.ts",
+        "src/pages/learningTasks/StudentTasksPage.tsx",
+        "src/services/resources/learningTaskService.ts",
+        "src/components/TaskDetailsView/ExpandedTaskDetails.tsx",
+        "src/components/TaskDetailsView/TaskTable.tsx",
+        "src/components/TaskDetailsView/index.tsx",
+        "src/dashboardFeature/components/progress/CourseDetailView/index.tsx",
+        "src/services/useCourseTasks.ts",
+        "src/pages/courses/InstructorCourseDetailPage.tsx",
+        "src/pages/learningTasks/CourseLearningTasksPage.tsx",
+        "src/pages/learningTasks/DetailedTaskViewPage.tsx",
+        "src/pages/learningTasks/TaskListPage.tsx",
+        "src/services/resources/learningTaskService.test.ts"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/types/paginatedResponse.ts",
+      "dependencies": [],
+      "dependents": [
+        "src/services/resources/courseService.ts",
+        "src/services/resources/enrollmentService.ts",
+        "src/types/index.ts",
+        "src/utils/useApiResource.ts",
+        "src/services/resources/courseService.test.ts",
+        "src/services/useCourses.ts"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/services/resources/enrollmentService.ts",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "@/types/entities",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/entities.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "src/services/api/apiConfig",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-base-url",
+            "local",
+            "import"
+          ],
+          "resolved": "src/services/api/apiConfig.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "src/services/api/apiService",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-base-url",
+            "local",
+            "import"
+          ],
+          "resolved": "src/services/api/apiService.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "src/types/paginatedResponse",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-base-url",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/paginatedResponse.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [
+        "src/pages/courses/StudentCourseDetailsPage.tsx",
+        "src/components/courses/CourseEnrollment/index.tsx",
+        "src/components/enrollments/EnrollmentList.tsx",
+        "src/services/resources/index.ts",
+        "src/services/resources/enrollmentService.int.test.ts",
+        "src/services/resources/enrollmentService.test.ts"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/types/entities.ts",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "./course",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/course.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "./user",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/user.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [
+        "src/services/resources/enrollmentService.ts",
+        "src/types/index.ts",
+        "src/types/moduleTypes.ts",
+        "src/components/courses/CourseEnrollment/index.tsx",
+        "src/components/enrollments/EnrollmentList.tsx",
+        "src/pages/courses/AdminTasksPage.tsx",
+        "src/pages/learningTasks/LearningTaskViewPage.tsx",
+        "src/services/resources/enrollmentService.int.test.ts",
+        "src/services/resources/enrollmentService.test.ts",
+        "src/services/resources/learningTaskHooks.ts"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/pages/courses/StudentCoursesPage.tsx",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "@mui/material",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/@mui/material/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "react",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/react/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "src/components/FilterableCourseList",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-base-url",
+            "local",
+            "import"
+          ],
+          "resolved": "src/components/FilterableCourseList.tsx",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [
+        "src/routes/AppRoutes.tsx"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/components/FilterableCourseList.tsx",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "../services/resources/courseService",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "import"
+          ],
+          "resolved": "src/services/resources/courseService.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "./courses/CourseList",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "import"
+          ],
+          "resolved": "src/components/courses/CourseList/index.tsx",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@/types/course",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/course.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@mui/material",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/@mui/material/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@utils/useDebounce",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/utils/useDebounce.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "react",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/react/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [
+        "src/pages/courses/StudentCoursesPage.tsx",
+        "src/pages/courses/StudentCourseEnrollmentPage.tsx"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/components/courses/CourseList/index.tsx",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "@/types/course",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/course.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@mui/material",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/@mui/material/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "react",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/react/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "react-router-dom",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/react-router-dom/dist/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [
+        "src/components/FilterableCourseList.tsx",
+        "src/components/FilterableCourseList/index.tsx",
+        "src/components/dashboards/StudentDashboard.tsx"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/utils/useDebounce.ts",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "react",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/react/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [
+        "src/components/FilterableCourseList.tsx",
+        "src/components/FilterableCourseList/index.tsx"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
       "source": "src/components/courses/EditCourse/index.tsx",
       "dependencies": [
         {
@@ -1272,7 +2278,7 @@
         },
         {
           "dynamic": false,
-          "module": "src/types/common/entities",
+          "module": "src/types/course",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
@@ -1282,7 +2288,7 @@
             "local",
             "import"
           ],
-          "resolved": "src/types/common/entities.ts",
+          "resolved": "src/types/course.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -1293,318 +2299,6 @@
       ],
       "dependents": [
         "src/routes/AppRoutes.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "src/services/resources/courseService.ts",
-      "dependencies": [
-        {
-          "dynamic": false,
-          "module": "../api/apiConfig",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
-          "resolved": "src/services/api/apiConfig.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "@/services/api/apiService",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-paths",
-            "local",
-            "import"
-          ],
-          "resolved": "src/services/api/apiService.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/types/common",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/types/common/index.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/types/common/entities",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/types/common/entities.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        }
-      ],
-      "dependents": [
-        "src/components/courses/EditCourse/index.tsx",
-        "src/pages/courses/CourseDetailsPage.tsx",
-        "src/components/FilterableCourseList.tsx",
-        "src/components/FilterableCourseList/index.tsx",
-        "src/components/courses/CourseDetail/index.tsx",
-        "src/components/courses/CourseEnrollment/index.tsx",
-        "src/pages/courses/AdminCoursesPage.tsx",
-        "src/pages/courses/InstructorEditCoursePage.tsx",
-        "src/utils/useApiResource.ts",
-        "src/pages/learningTasks/CourseLearningTasksPage.tsx",
-        "src/services/resources/index.ts",
-        "src/services/resources/courseService.int.test.ts",
-        "src/services/resources/courseService.test.ts",
-        "src/services/resources/enrollmentService.int.test.ts",
-        "src/services/resources/learningTaskService.int.test.ts",
-        "src/services/resources/progressService.int.test.ts",
-        "src/services/useCourses.ts"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "src/services/api/apiConfig.ts",
-      "dependencies": [],
-      "dependents": [
-        "src/services/resources/courseService.ts",
-        "src/services/api/apiService.ts",
-        "src/services/resources/learningTaskService.ts",
-        "src/services/resources/progressService.ts",
-        "src/services/resources/enrollmentService.ts",
-        "src/services/api/api.ts",
-        "src/services/resources/enrollmentService.test.ts",
-        "src/services/resources/learningTaskService.test.ts"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "src/services/api/apiService.ts",
-      "dependencies": [
-        {
-          "dynamic": false,
-          "module": "./apiConfig",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
-          "resolved": "src/services/api/apiConfig.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "axios",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
-          "resolved": "node_modules/axios/index.d.cts",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        }
-      ],
-      "dependents": [
-        "src/services/resources/courseService.ts",
-        "src/services/resources/learningTaskService.ts",
-        "src/services/resources/progressService.ts",
-        "src/services/resources/enrollmentService.ts",
-        "src/services/useCourseProgress.ts",
-        "src/services/useTaskData.ts",
-        "src/services/api/api.ts",
-        "src/services/api/apiService.int.test.ts",
-        "src/services/api/apiService.test.ts",
-        "src/services/api/index.ts"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "src/types/common/index.ts",
-      "dependencies": [
-        {
-          "dynamic": false,
-          "module": "./authTypes",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
-          "resolved": "src/types/common/authTypes.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "./entities",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
-          "resolved": "src/types/common/entities.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "./paginatedResponse",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
-          "resolved": "src/types/common/paginatedResponse.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        }
-      ],
-      "dependents": [
-        "src/services/resources/courseService.ts",
-        "src/services/resources/enrollmentService.ts"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "src/types/common/authTypes.ts",
-      "dependencies": [
-        {
-          "dynamic": false,
-          "module": "src/types/common/entities",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/types/common/entities.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        }
-      ],
-      "dependents": [
-        "src/types/common/index.ts"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "src/types/common/entities.ts",
-      "dependencies": [],
-      "dependents": [
-        "src/components/courses/EditCourse/index.tsx",
-        "src/services/resources/courseService.ts",
-        "src/types/common/index.ts",
-        "src/types/common/authTypes.ts",
-        "src/pages/courses/CourseDetailsPage.tsx",
-        "src/components/FilterableCourseList.tsx",
-        "src/components/courses/CourseList/index.tsx",
-        "src/pages/learningTasks/StudentTasksPage.tsx",
-        "src/services/resources/learningTaskService.ts",
-        "src/components/FilterableCourseList/index.tsx",
-        "src/services/resources/progressService.ts",
-        "src/components/courses/CourseEnrollment/index.tsx",
-        "src/services/resources/enrollmentService.ts",
-        "src/components/courses/CourseVersionList/index.tsx",
-        "src/components/enrollments/EnrollmentList.tsx",
-        "src/components/users/UserProfile.tsx",
-        "src/pages/courses/AdminCoursesPage.tsx",
-        "src/pages/courses/AdminTasksPage.tsx",
-        "src/services/useCourseTasks.ts",
-        "src/utils/useApiResource.ts",
-        "src/pages/learningTasks/CourseLearningTasksPage.tsx",
-        "src/services/resources/courseService.int.test.ts",
-        "src/services/resources/courseService.test.ts",
-        "src/services/resources/enrollmentService.int.test.ts",
-        "src/services/resources/enrollmentService.test.ts",
-        "src/services/resources/learningTaskHooks.ts",
-        "src/services/resources/learningTaskService.int.test.ts",
-        "src/services/resources/learningTaskService.test.ts",
-        "src/services/resources/progressService.int.test.ts",
-        "src/store/appStore.ts"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "src/types/common/paginatedResponse.ts",
-      "dependencies": [],
-      "dependents": [
-        "src/types/common/index.ts",
-        "src/services/resources/courseService.test.ts"
       ],
       "orphan": false,
       "valid": true
@@ -1731,504 +2425,28 @@
       "valid": true
     },
     {
-      "source": "src/components/ErrorNotifier/useErrorNotifier.ts",
-      "dependencies": [
-        {
-          "dynamic": false,
-          "module": "./ErrorProvider",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
-          "resolved": "src/components/ErrorNotifier/ErrorProvider.tsx",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "./types",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
-          "resolved": "src/components/ErrorNotifier/types.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "react",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
-          "resolved": "node_modules/react/index.js",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        }
-      ],
-      "dependents": [
-        "src/pages/auth/LoginPage.tsx",
-        "src/pages/learningTasks/StudentTasksPage.tsx",
-        "src/components/ErrorNotifier/ErrorNotifier.test.tsx",
-        "src/pages/courses/InstructorEditCoursePage.tsx",
-        "src/pages/learningTasks/CourseLearningTasksPage.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "src/pages/courses/CourseDetailsPage.tsx",
-      "dependencies": [
-        {
-          "dynamic": false,
-          "module": "@context/auth/AuthContext",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-paths",
-            "local",
-            "import"
-          ],
-          "resolved": "src/context/auth/AuthContext.tsx",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "@mui/material",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
-          "resolved": "node_modules/@mui/material/index.js",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "@services/resources/courseService",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-paths",
-            "local",
-            "import"
-          ],
-          "resolved": "src/services/resources/courseService.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "@tanstack/react-query",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
-          "resolved": "node_modules/@tanstack/react-query/build/modern/index.d.ts",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "react",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
-          "resolved": "node_modules/react/index.js",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "react-router-dom",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
-          "resolved": "node_modules/react-router-dom/dist/index.js",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/types/common/entities",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/types/common/entities.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        }
-      ],
-      "dependents": [
-        "src/routes/AppRoutes.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "src/pages/courses/CoursesPage.tsx",
-      "dependencies": [
-        {
-          "dynamic": false,
-          "module": "@mui/material",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
-          "resolved": "node_modules/@mui/material/index.js",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "react",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
-          "resolved": "node_modules/react/index.js",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/components/FilterableCourseList",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/components/FilterableCourseList.tsx",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        }
-      ],
-      "dependents": [
-        "src/routes/AppRoutes.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "src/components/FilterableCourseList.tsx",
-      "dependencies": [
-        {
-          "dynamic": false,
-          "module": "../services/resources/courseService",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
-          "resolved": "src/services/resources/courseService.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "./courses/CourseList",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
-          "resolved": "src/components/courses/CourseList/index.tsx",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "@mui/material",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
-          "resolved": "node_modules/@mui/material/index.js",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "@utils/useDebounce",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-paths",
-            "local",
-            "import"
-          ],
-          "resolved": "src/utils/useDebounce.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "react",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
-          "resolved": "node_modules/react/index.js",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/types/common/entities",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/types/common/entities.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        }
-      ],
-      "dependents": [
-        "src/pages/courses/CoursesPage.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "src/components/courses/CourseList/index.tsx",
-      "dependencies": [
-        {
-          "dynamic": false,
-          "module": "@mui/material",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
-          "resolved": "node_modules/@mui/material/index.js",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "react",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
-          "resolved": "node_modules/react/index.js",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "react-router-dom",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
-          "resolved": "node_modules/react-router-dom/dist/index.js",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/types/common/entities",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/types/common/entities.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        }
-      ],
-      "dependents": [
-        "src/components/FilterableCourseList.tsx",
-        "src/components/FilterableCourseList/index.tsx",
-        "src/components/dashboards/StudentDashboard.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "src/utils/useDebounce.ts",
-      "dependencies": [
-        {
-          "dynamic": false,
-          "module": "react",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
-          "resolved": "node_modules/react/index.js",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        }
-      ],
-      "dependents": [
-        "src/components/FilterableCourseList.tsx",
-        "src/components/FilterableCourseList/index.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
       "source": "src/pages/DashboardPage.tsx",
       "dependencies": [
+        {
+          "dynamic": false,
+          "module": "@/types",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/index.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
         {
           "dynamic": false,
           "module": "@context/auth/AuthContext",
@@ -2345,6 +2563,298 @@
       "valid": true
     },
     {
+      "source": "src/types/index.ts",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "./authTypes",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "type-only",
+            "export"
+          ],
+          "resolved": "src/types/authTypes.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "./course",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "type-only",
+            "export"
+          ],
+          "resolved": "src/types/course.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "./entities",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "type-only",
+            "export"
+          ],
+          "resolved": "src/types/entities.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "./gradingTypes",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "type-only",
+            "export"
+          ],
+          "resolved": "src/types/gradingTypes.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "./moduleTypes",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "type-only",
+            "export"
+          ],
+          "resolved": "src/types/moduleTypes.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "./paginatedResponse",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "type-only",
+            "export"
+          ],
+          "resolved": "src/types/paginatedResponse.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "./progressTypes",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "type-only",
+            "export"
+          ],
+          "resolved": "src/types/progressTypes.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "./task",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "type-only",
+            "export"
+          ],
+          "resolved": "src/types/task.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "./user",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "type-only",
+            "export"
+          ],
+          "resolved": "src/types/user.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [
+        "src/pages/DashboardPage.tsx",
+        "src/services/resources/learningTaskService.ts",
+        "src/services/resources/progressService.ts",
+        "src/pages/courses/StudentCourseEnrollmentPage.tsx",
+        "src/pages/learningTasks/InstructorTasksPage.tsx",
+        "src/services/resources/progressService.int.test.ts"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/types/authTypes.ts",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "@/types/user",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/user.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [
+        "src/types/index.ts"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/types/gradingTypes.ts",
+      "dependencies": [],
+      "dependents": [
+        "src/types/index.ts"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/types/moduleTypes.ts",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "./entities",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/entities.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "./task",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/task.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [
+        "src/types/index.ts",
+        "src/dashboardFeature/components/progress/CourseDetailView/index.tsx"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/types/progressTypes.ts",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "./task",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/task.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [
+        "src/types/index.ts",
+        "src/components/ActivityHistoryView/index.tsx",
+        "src/components/dashboards/StudentDashboard.tsx",
+        "src/dashboardFeature/components/progress/PerformanceAnalysisView.tsx",
+        "src/pages/DashboardPage/index.tsx"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
       "source": "src/components/ProgressIndicator/index.tsx",
       "dependencies": [
         {
@@ -2452,6 +2962,26 @@
     {
       "source": "src/pages/learningTasks/StudentTasksPage.tsx",
       "dependencies": [
+        {
+          "dynamic": false,
+          "module": "@/types/task",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/task.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
         {
           "dynamic": false,
           "module": "@mui/material",
@@ -2582,26 +3112,6 @@
           "matchesDoNotFollow": false,
           "circular": false,
           "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/types/common/entities",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/types/common/entities.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
         }
       ],
       "dependents": [
@@ -2632,6 +3142,46 @@
         },
         {
           "dynamic": false,
+          "module": "@/types",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/index.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@/types/task",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/task.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
           "module": "src/services/api/apiService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
@@ -2643,26 +3193,6 @@
             "import"
           ],
           "resolved": "src/services/api/apiService.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/types/common/entities",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/types/common/entities.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -2694,7 +3224,10 @@
       "dependents": [
         "src/pages/learningTasks/StudentTasksPage.tsx",
         "src/services/useCourseTasks.ts",
+        "src/pages/courses/InstructorCourseDetailPage.tsx",
         "src/pages/learningTasks/CourseLearningTasksPage.tsx",
+        "src/pages/learningTasks/DetailedTaskViewPage.tsx",
+        "src/pages/learningTasks/LearningTaskViewPage.tsx",
         "src/pages/learningTasks/TaskListPage.tsx",
         "src/services/resources/index.ts",
         "src/services/resources/learningTaskHooks.test.ts",
@@ -2831,23 +3364,6 @@
       "dependencies": [
         {
           "dynamic": false,
-          "module": "./AuthEventService",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
-          "resolved": "src/context/auth/AuthEventService.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
           "module": "./types",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
@@ -2891,8 +3407,7 @@
       "source": "src/context/auth/authValidation.ts",
       "dependencies": [],
       "dependents": [
-        "src/context/auth/index.ts",
-        "src/pages/learningTasks/CourseLearningTasksPage.tsx"
+        "src/context/auth/index.ts"
       ],
       "orphan": false,
       "valid": true
@@ -3180,6 +3695,26 @@
       "dependencies": [
         {
           "dynamic": false,
+          "module": "@/types/progressTypes",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/progressTypes.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
           "module": "@mui/icons-material/Assignment",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
@@ -3313,23 +3848,6 @@
           "matchesDoNotFollow": true,
           "circular": false,
           "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/types/common/progressTypes.ts",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "undetermined",
-            "import"
-          ],
-          "resolved": "src/types/common/progressTypes.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
         }
       ],
       "dependents": [
@@ -3436,6 +3954,8 @@
       "dependencies": [],
       "dependents": [
         "src/components/ActivityHistoryView/index.tsx",
+        "src/components/TaskDetailsView/ExpandedTaskDetails.tsx",
+        "src/components/TaskDetailsView/TaskTable.tsx",
         "src/components/TaskDetailsView/index.tsx",
         "src/dashboardFeature/components/progress/PerformanceAnalysisView.tsx",
         "src/dashboardFeature/components/progress/ProgressTrackingUI.tsx"
@@ -3444,33 +3964,7 @@
       "valid": true
     },
     {
-      "source": "src/types/common/progressTypes.ts",
-      "dependencies": [],
-      "dependents": [
-        "src/components/ActivityHistoryView/index.tsx",
-        "src/components/TaskDetailsView/index.tsx",
-        "src/components/dashboards/StudentDashboard.tsx",
-        "src/dashboardFeature/components/progress/CourseDetailView/index.tsx",
-        "src/dashboardFeature/components/progress/PerformanceAnalysisView.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "src/components/Dashboard/Dashboard.tsx",
-      "dependencies": [],
-      "dependents": [],
-      "orphan": true,
-      "valid": false,
-      "rules": [
-        {
-          "severity": "warn",
-          "name": "no-orphans"
-        }
-      ]
-    },
-    {
-      "source": "src/components/DataTable/DataTable.tsx",
+      "source": "src/components/DataTable.tsx",
       "dependencies": [
         {
           "dynamic": false,
@@ -3482,6 +3976,23 @@
             "import"
           ],
           "resolved": "node_modules/@mui/material/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "lodash/get",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/lodash/get.js",
           "coreModule": false,
           "followable": false,
           "couldNotResolve": false,
@@ -3507,7 +4018,27 @@
           "valid": true
         }
       ],
-      "dependents": [],
+      "dependents": [
+        "src/pages/courses/AdminTasksPage.tsx",
+        "src/pages/learningTasks/InstructorTasksPage.tsx"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "node_modules/lodash/get.js",
+      "followable": false,
+      "coreModule": false,
+      "couldNotResolve": false,
+      "matchesDoNotFollow": true,
+      "dependencyTypes": [
+        "npm",
+        "import"
+      ],
+      "dependencies": [],
+      "dependents": [
+        "src/components/DataTable.tsx"
+      ],
       "orphan": false,
       "valid": true
     },
@@ -3773,6 +4304,26 @@
         },
         {
           "dynamic": false,
+          "module": "@/types/course",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/course.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
@@ -3822,26 +4373,6 @@
           "followable": false,
           "couldNotResolve": false,
           "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/types/common/entities",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/types/common/entities.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
           "circular": false,
           "valid": true
         }
@@ -4265,6 +4796,26 @@
       "dependencies": [
         {
           "dynamic": false,
+          "module": "@/types/course",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/course.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
@@ -4279,100 +4830,9 @@
           "matchesDoNotFollow": true,
           "circular": false,
           "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/services/resources/progressService",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/services/resources/progressService.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
         }
       ],
       "dependents": [],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "src/services/resources/progressService.ts",
-      "dependencies": [
-        {
-          "dynamic": false,
-          "module": "../api/apiConfig",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
-          "resolved": "src/services/api/apiConfig.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "../api/apiService",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
-          "resolved": "src/services/api/apiService.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/types/common/entities",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/types/common/entities.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        }
-      ],
-      "dependents": [
-        "src/components/ProgressTrackingUI/ProgressTrackingUI.tsx",
-        "src/components/dashboards/StudentDashboard.tsx",
-        "src/dashboardFeature/components/progress/ProgressDebugger.tsx",
-        "src/dashboardFeature/components/progress/ProgressTrackingUI.tsx",
-        "src/pages/courses/InstructorCourseDetailPage.tsx",
-        "src/services/resources/index.ts",
-        "src/services/resources/progressService.int.test.ts",
-        "src/services/resources/progressService.test.ts"
-      ],
       "orphan": false,
       "valid": true
     },
@@ -4535,18 +4995,403 @@
       "valid": true
     },
     {
+      "source": "src/components/TaskDetailsView/ExpandedTaskDetails.tsx",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "@/types/task",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/task.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@mui/material",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/@mui/material/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "date-fns",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/date-fns/index.d.cts",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "react",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/react/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/components/TaskDetailsView/TaskDetailsHeader.tsx",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "@mui/icons-material/FilterList",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/@mui/icons-material/FilterList.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@mui/icons-material/Search",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/@mui/icons-material/Search.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@mui/material",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/@mui/material/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "react",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/react/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "node_modules/@mui/icons-material/FilterList.js",
+      "followable": false,
+      "coreModule": false,
+      "couldNotResolve": false,
+      "matchesDoNotFollow": true,
+      "dependencyTypes": [
+        "npm",
+        "import"
+      ],
+      "dependencies": [],
+      "dependents": [
+        "src/components/TaskDetailsView/TaskDetailsHeader.tsx",
+        "src/components/TaskDetailsView/index.tsx"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "node_modules/@mui/icons-material/Search.js",
+      "followable": false,
+      "coreModule": false,
+      "couldNotResolve": false,
+      "matchesDoNotFollow": true,
+      "dependencyTypes": [
+        "npm",
+        "import"
+      ],
+      "dependencies": [],
+      "dependents": [
+        "src/components/TaskDetailsView/TaskDetailsHeader.tsx",
+        "src/components/TaskDetailsView/index.tsx"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/components/TaskDetailsView/TaskTable.tsx",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "@/types/task",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/task.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@mui/icons-material/ExpandLess",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/@mui/icons-material/ExpandLess.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@mui/icons-material/ExpandMore",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/@mui/icons-material/ExpandMore.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@mui/material",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/@mui/material/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "date-fns",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/date-fns/index.d.cts",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "react",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/react/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "node_modules/@mui/icons-material/ExpandLess.js",
+      "followable": false,
+      "coreModule": false,
+      "couldNotResolve": false,
+      "matchesDoNotFollow": true,
+      "dependencyTypes": [
+        "npm",
+        "import"
+      ],
+      "dependencies": [],
+      "dependents": [
+        "src/components/TaskDetailsView/TaskTable.tsx",
+        "src/components/TaskDetailsView/index.tsx"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "node_modules/@mui/icons-material/ExpandMore.js",
+      "followable": false,
+      "coreModule": false,
+      "couldNotResolve": false,
+      "matchesDoNotFollow": true,
+      "dependencyTypes": [
+        "npm",
+        "import"
+      ],
+      "dependencies": [],
+      "dependents": [
+        "src/components/TaskDetailsView/TaskTable.tsx",
+        "src/components/TaskDetailsView/index.tsx"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/components/TaskDetailsView/TaskTabs.tsx",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "@mui/material",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/@mui/material/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "react",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/react/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [],
+      "orphan": false,
+      "valid": true
+    },
+    {
       "source": "src/components/TaskDetailsView/index.tsx",
       "dependencies": [
         {
           "dynamic": false,
-          "module": "../../types/common/progressTypes",
+          "module": "@/types/task",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
             "local",
             "import"
           ],
-          "resolved": "src/types/common/progressTypes.ts",
+          "resolved": "src/types/task.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -4681,74 +5526,6 @@
       "valid": true
     },
     {
-      "source": "node_modules/@mui/icons-material/ExpandLess.js",
-      "followable": false,
-      "coreModule": false,
-      "couldNotResolve": false,
-      "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
-      "dependencies": [],
-      "dependents": [
-        "src/components/TaskDetailsView/index.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "node_modules/@mui/icons-material/ExpandMore.js",
-      "followable": false,
-      "coreModule": false,
-      "couldNotResolve": false,
-      "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
-      "dependencies": [],
-      "dependents": [
-        "src/components/TaskDetailsView/index.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "node_modules/@mui/icons-material/FilterList.js",
-      "followable": false,
-      "coreModule": false,
-      "couldNotResolve": false,
-      "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
-      "dependencies": [],
-      "dependents": [
-        "src/components/TaskDetailsView/index.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "node_modules/@mui/icons-material/Search.js",
-      "followable": false,
-      "coreModule": false,
-      "couldNotResolve": false,
-      "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
-      "dependencies": [],
-      "dependents": [
-        "src/components/TaskDetailsView/index.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
       "source": "src/components/TokenRefreshHandler/index.tsx",
       "dependencies": [
         {
@@ -4867,6 +5644,26 @@
       "dependencies": [
         {
           "dynamic": false,
+          "module": "@/types/course",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/course.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
           "module": "@mui/icons-material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
@@ -4978,6 +5775,46 @@
     {
       "source": "src/components/courses/CourseEnrollment/index.tsx",
       "dependencies": [
+        {
+          "dynamic": false,
+          "module": "@/types/course",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/course.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@/types/entities",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/entities.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
         {
           "dynamic": false,
           "module": "@context/auth/AuthContext",
@@ -5105,123 +5942,9 @@
           "matchesDoNotFollow": true,
           "circular": false,
           "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/types/common/entities",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/types/common/entities.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
         }
       ],
       "dependents": [],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "src/services/resources/enrollmentService.ts",
-      "dependencies": [
-        {
-          "dynamic": false,
-          "module": "src/services/api/apiConfig",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/services/api/apiConfig.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/services/api/apiService",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/services/api/apiService.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/types/common",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/types/common/index.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/types/common/entities",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/types/common/entities.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        }
-      ],
-      "dependents": [
-        "src/components/courses/CourseEnrollment/index.tsx",
-        "src/components/enrollments/EnrollmentList.tsx",
-        "src/services/resources/index.ts",
-        "src/services/resources/enrollmentService.int.test.ts",
-        "src/services/resources/enrollmentService.test.ts"
-      ],
       "orphan": false,
       "valid": true
     },
@@ -5247,7 +5970,7 @@
         },
         {
           "dynamic": false,
-          "module": "src/types/common/entities",
+          "module": "src/types/course",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
@@ -5257,11 +5980,36 @@
             "local",
             "import"
           ],
-          "resolved": "src/types/common/entities.ts",
+          "resolved": "src/types/course.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
           "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        }
+      ],
+      "dependents": [],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/components/dashboards/Dashboard.tsx",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "react",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "npm",
+            "import"
+          ],
+          "resolved": "node_modules/react/index.js",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": true,
           "circular": false,
           "valid": true
         }
@@ -5342,6 +6090,26 @@
     {
       "source": "src/components/dashboards/StudentDashboard.tsx",
       "dependencies": [
+        {
+          "dynamic": false,
+          "module": "@/types/progressTypes",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/progressTypes.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
         {
           "dynamic": false,
           "module": "@components/ProgressOverview",
@@ -5472,10 +6240,72 @@
           "matchesDoNotFollow": false,
           "circular": false,
           "valid": true
+        }
+      ],
+      "dependents": [],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/services/resources/progressService.ts",
+      "dependencies": [
+        {
+          "dynamic": false,
+          "module": "../api/apiConfig",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "import"
+          ],
+          "resolved": "src/services/api/apiConfig.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
         },
         {
           "dynamic": false,
-          "module": "src/types/common/progressTypes",
+          "module": "../api/apiService",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "import"
+          ],
+          "resolved": "src/services/api/apiService.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@/types/analyticsTypes",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/analyticsTypes.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "src/types",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
@@ -5485,7 +6315,7 @@
             "local",
             "import"
           ],
-          "resolved": "src/types/common/progressTypes.ts",
+          "resolved": "src/types/index.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -5494,13 +6324,51 @@
           "valid": true
         }
       ],
-      "dependents": [],
+      "dependents": [
+        "src/components/dashboards/StudentDashboard.tsx",
+        "src/dashboardFeature/components/progress/ProgressDebugger.tsx",
+        "src/dashboardFeature/components/progress/ProgressTrackingUI.tsx",
+        "src/pages/courses/InstructorCourseDetailPage.tsx",
+        "src/services/resources/index.ts",
+        "src/services/resources/progressService.int.test.ts",
+        "src/services/resources/progressService.test.ts"
+      ],
+      "orphan": false,
+      "valid": true
+    },
+    {
+      "source": "src/types/analyticsTypes.ts",
+      "dependencies": [],
+      "dependents": [
+        "src/services/resources/progressService.ts",
+        "src/pages/courses/InstructorCourseDetailPage.tsx"
+      ],
       "orphan": false,
       "valid": true
     },
     {
       "source": "src/components/enrollments/EnrollmentList.tsx",
       "dependencies": [
+        {
+          "dynamic": false,
+          "module": "@/types/entities",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/entities.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
         {
           "dynamic": false,
           "module": "@services/resources/enrollmentService",
@@ -5537,26 +6405,6 @@
           "matchesDoNotFollow": true,
           "circular": false,
           "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/types/common/entities",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/types/common/entities.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
         }
       ],
       "dependents": [],
@@ -5566,23 +6414,6 @@
     {
       "source": "src/components/notifications/ErrorToast.tsx",
       "dependencies": [
-        {
-          "dynamic": false,
-          "module": "../../context/notifications/ErrorNotificationContext",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
-          "resolved": "src/context/notifications/ErrorNotificationContext.tsx",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
         {
           "dynamic": false,
           "module": "@mui/material/Alert",
@@ -5631,6 +6462,26 @@
           "followable": false,
           "couldNotResolve": false,
           "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "src/context/notifications/ErrorNotificationContext",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-base-url",
+            "local",
+            "import"
+          ],
+          "resolved": "src/context/notifications/ErrorNotificationContext.tsx",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
           "circular": false,
           "valid": true
         }
@@ -5706,21 +6557,18 @@
       "dependencies": [
         {
           "dynamic": false,
-          "module": "src/types/common/entities",
+          "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
+            "npm",
             "import"
           ],
-          "resolved": "src/types/common/entities.ts",
+          "resolved": "node_modules/react/index.js",
           "coreModule": false,
-          "followable": true,
+          "followable": false,
           "couldNotResolve": false,
-          "matchesDoNotFollow": false,
+          "matchesDoNotFollow": true,
           "circular": false,
           "valid": true
         }
@@ -5734,13 +6582,13 @@
       "dependencies": [
         {
           "dynamic": false,
-          "module": "./ModuleProgressView",
+          "module": "../ModuleProgressView",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
             "unknown"
           ],
-          "resolved": "./ModuleProgressView",
+          "resolved": "../ModuleProgressView",
           "coreModule": false,
           "followable": false,
           "couldNotResolve": true,
@@ -5753,6 +6601,46 @@
               "name": "not-to-unresolvable"
             }
           ]
+        },
+        {
+          "dynamic": false,
+          "module": "@/types/moduleTypes",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/moduleTypes.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@/types/task",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/task.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
         },
         {
           "dynamic": false,
@@ -5787,26 +6675,6 @@
           "matchesDoNotFollow": true,
           "circular": false,
           "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/types/common/progressTypes",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/types/common/progressTypes.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
         }
       ],
       "dependents": [],
@@ -5814,7 +6682,7 @@
       "valid": true
     },
     {
-      "source": "./ModuleProgressView",
+      "source": "../ModuleProgressView",
       "followable": false,
       "coreModule": false,
       "couldNotResolve": true,
@@ -5832,6 +6700,26 @@
     {
       "source": "src/dashboardFeature/components/progress/PerformanceAnalysisView.tsx",
       "dependencies": [
+        {
+          "dynamic": false,
+          "module": "@/types/progressTypes",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/progressTypes.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
         {
           "dynamic": false,
           "module": "@mui/material",
@@ -5914,26 +6802,6 @@
           "followable": false,
           "couldNotResolve": false,
           "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/types/common/progressTypes",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/types/common/progressTypes.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
           "circular": false,
           "valid": true
         }
@@ -6487,6 +7355,45 @@
       "dependencies": [
         {
           "dynamic": false,
+          "module": "../../components/Dashboard/Dashboard",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "unknown"
+          ],
+          "resolved": "../../components/Dashboard/Dashboard",
+          "coreModule": false,
+          "followable": false,
+          "couldNotResolve": true,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": false,
+          "rules": [
+            {
+              "severity": "error",
+              "name": "not-to-unresolvable"
+            }
+          ]
+        },
+        {
+          "dynamic": false,
+          "module": "../../types/progressTypes",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/progressTypes.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
@@ -6501,28 +7408,6 @@
           "matchesDoNotFollow": true,
           "circular": false,
           "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/components/DashboardPage/index",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "unknown"
-          ],
-          "resolved": "src/components/DashboardPage/index",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": true,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": false,
-          "rules": [
-            {
-              "severity": "error",
-              "name": "not-to-unresolvable"
-            }
-          ]
         }
       ],
       "dependents": [],
@@ -6530,7 +7415,7 @@
       "valid": true
     },
     {
-      "source": "src/components/DashboardPage/index",
+      "source": "../../components/Dashboard/Dashboard",
       "followable": false,
       "coreModule": false,
       "couldNotResolve": true,
@@ -6603,6 +7488,46 @@
             "import"
           ],
           "resolved": "src/utils/passwordValidation.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@/services/auth/authService",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/services/auth/authService.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@components/ErrorNotifier/useErrorNotifier",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/components/ErrorNotifier/useErrorNotifier.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -6960,6 +7885,26 @@
       "dependencies": [
         {
           "dynamic": false,
+          "module": "@/components/ErrorNotifier/useErrorNotifier",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/components/ErrorNotifier/useErrorNotifier.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
           "module": "@/services/resources/courseService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
@@ -6980,7 +7925,7 @@
         },
         {
           "dynamic": false,
-          "module": "@/types/common/entities",
+          "module": "@/types/course",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
@@ -6990,7 +7935,7 @@
             "local",
             "import"
           ],
-          "resolved": "src/types/common/entities.ts",
+          "resolved": "src/types/course.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -7093,25 +8038,43 @@
       "dependencies": [
         {
           "dynamic": false,
-          "module": "@components/core/DataTable",
+          "module": "@/types/entities",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
-            "unknown"
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
           ],
-          "resolved": "@components/core/DataTable",
+          "resolved": "src/types/entities.ts",
           "coreModule": false,
-          "followable": false,
-          "couldNotResolve": true,
+          "followable": true,
+          "couldNotResolve": false,
           "matchesDoNotFollow": false,
           "circular": false,
-          "valid": false,
-          "rules": [
-            {
-              "severity": "error",
-              "name": "not-to-unresolvable"
-            }
-          ]
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@components/DataTable",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/components/DataTable.tsx",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
         },
         {
           "dynamic": false,
@@ -7135,23 +8098,6 @@
         },
         {
           "dynamic": false,
-          "module": "react",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
-          "resolved": "node_modules/react/index.js",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
@@ -7166,26 +8112,6 @@
           "matchesDoNotFollow": true,
           "circular": false,
           "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/types/common/entities",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/types/common/entities.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
         }
       ],
       "dependents": [],
@@ -7193,25 +8119,28 @@
       "valid": true
     },
     {
-      "source": "@components/core/DataTable",
-      "followable": false,
-      "coreModule": false,
-      "couldNotResolve": true,
-      "matchesDoNotFollow": false,
-      "dependencyTypes": [
-        "unknown"
-      ],
-      "dependencies": [],
-      "dependents": [
-        "src/pages/courses/AdminTasksPage.tsx",
-        "src/pages/learningTasks/InstructorTasksPage.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
       "source": "src/services/useCourseTasks.ts",
       "dependencies": [
+        {
+          "dynamic": false,
+          "module": "@/types/task",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/task.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
         {
           "dynamic": false,
           "module": "@tanstack/react-query",
@@ -7242,26 +8171,6 @@
             "import"
           ],
           "resolved": "src/services/resources/learningTaskService.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/types/common/entities",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/types/common/entities.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -7408,73 +8317,7 @@
       "dependencies": [
         {
           "dynamic": false,
-          "module": "../../../hooks/useCourse",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "unknown"
-          ],
-          "resolved": "../../../hooks/useCourse",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": true,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": false,
-          "rules": [
-            {
-              "severity": "error",
-              "name": "not-to-unresolvable"
-            }
-          ]
-        },
-        {
-          "dynamic": false,
-          "module": "../../../types/common/entities",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "unknown"
-          ],
-          "resolved": "../../../types/common/entities",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": true,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": false,
-          "rules": [
-            {
-              "severity": "error",
-              "name": "not-to-unresolvable"
-            }
-          ]
-        },
-        {
-          "dynamic": false,
-          "module": "../../../types/common/progressTypes",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "unknown"
-          ],
-          "resolved": "../../../types/common/progressTypes",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": true,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": false,
-          "rules": [
-            {
-              "severity": "error",
-              "name": "not-to-unresolvable"
-            }
-          ]
-        },
-        {
-          "dynamic": false,
-          "module": "@context/auth/AuthContext",
+          "module": "@/types/analyticsTypes",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
@@ -7484,7 +8327,7 @@
             "local",
             "import"
           ],
-          "resolved": "src/context/auth/AuthContext.tsx",
+          "resolved": "src/types/analyticsTypes.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -7494,25 +8337,43 @@
         },
         {
           "dynamic": false,
-          "module": "@features/learningTasks/components/TaskManagementUI",
+          "module": "@/types/course",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
-            "unknown"
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
           ],
-          "resolved": "@features/learningTasks/components/TaskManagementUI",
+          "resolved": "src/types/course.ts",
           "coreModule": false,
-          "followable": false,
-          "couldNotResolve": true,
+          "followable": true,
+          "couldNotResolve": false,
           "matchesDoNotFollow": false,
           "circular": false,
-          "valid": false,
-          "rules": [
-            {
-              "severity": "error",
-              "name": "not-to-unresolvable"
-            }
-          ]
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@/types/task",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/task.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
         },
         {
           "dynamic": false,
@@ -7528,6 +8389,46 @@
           "followable": false,
           "couldNotResolve": false,
           "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@services/resources/courseService",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/services/resources/courseService.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@services/resources/learningTaskService",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/services/resources/learningTaskService.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
           "circular": false,
           "valid": true
         },
@@ -7550,28 +8451,6 @@
           "matchesDoNotFollow": false,
           "circular": false,
           "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "@services/resources/taskService",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "unknown"
-          ],
-          "resolved": "@services/resources/taskService",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": true,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": false,
-          "rules": [
-            {
-              "severity": "error",
-              "name": "not-to-unresolvable"
-            }
-          ]
         },
         {
           "dynamic": false,
@@ -7609,87 +8488,6 @@
         }
       ],
       "dependents": [],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "../../../hooks/useCourse",
-      "followable": false,
-      "coreModule": false,
-      "couldNotResolve": true,
-      "matchesDoNotFollow": false,
-      "dependencyTypes": [
-        "unknown"
-      ],
-      "dependencies": [],
-      "dependents": [
-        "src/pages/courses/InstructorCourseDetailPage.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "../../../types/common/entities",
-      "followable": false,
-      "coreModule": false,
-      "couldNotResolve": true,
-      "matchesDoNotFollow": false,
-      "dependencyTypes": [
-        "unknown"
-      ],
-      "dependencies": [],
-      "dependents": [
-        "src/pages/courses/InstructorCourseDetailPage.tsx",
-        "src/pages/courses/StudentCourseEnrollmentPage.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "../../../types/common/progressTypes",
-      "followable": false,
-      "coreModule": false,
-      "couldNotResolve": true,
-      "matchesDoNotFollow": false,
-      "dependencyTypes": [
-        "unknown"
-      ],
-      "dependencies": [],
-      "dependents": [
-        "src/pages/courses/InstructorCourseDetailPage.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "@features/learningTasks/components/TaskManagementUI",
-      "followable": false,
-      "coreModule": false,
-      "couldNotResolve": true,
-      "matchesDoNotFollow": false,
-      "dependencyTypes": [
-        "unknown"
-      ],
-      "dependencies": [],
-      "dependents": [
-        "src/pages/courses/InstructorCourseDetailPage.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "@services/resources/taskService",
-      "followable": false,
-      "coreModule": false,
-      "couldNotResolve": true,
-      "matchesDoNotFollow": false,
-      "dependencyTypes": [
-        "unknown"
-      ],
-      "dependencies": [],
-      "dependents": [
-        "src/pages/courses/InstructorCourseDetailPage.tsx"
-      ],
       "orphan": false,
       "valid": true
     },
@@ -7851,6 +8649,26 @@
       "dependencies": [
         {
           "dynamic": false,
+          "module": "@/types/paginatedResponse",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/paginatedResponse.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
           "module": "@tanstack/react-query",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
@@ -7888,7 +8706,7 @@
         },
         {
           "dynamic": false,
-          "module": "src/types/common/entities",
+          "module": "src/types/course",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
@@ -7898,7 +8716,7 @@
             "local",
             "import"
           ],
-          "resolved": "src/types/common/entities.ts",
+          "resolved": "src/types/course.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -7918,91 +8736,23 @@
       "dependencies": [
         {
           "dynamic": false,
-          "module": "../../../types/common",
+          "module": "@components/FilterableCourseList",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
-            "unknown"
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
           ],
-          "resolved": "../../../types/common",
+          "resolved": "src/components/FilterableCourseList.tsx",
           "coreModule": false,
-          "followable": false,
-          "couldNotResolve": true,
+          "followable": true,
+          "couldNotResolve": false,
           "matchesDoNotFollow": false,
           "circular": false,
-          "valid": false,
-          "rules": [
-            {
-              "severity": "error",
-              "name": "not-to-unresolvable"
-            }
-          ]
-        },
-        {
-          "dynamic": false,
-          "module": "../../../types/common/entities",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "unknown"
-          ],
-          "resolved": "../../../types/common/entities",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": true,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": false,
-          "rules": [
-            {
-              "severity": "error",
-              "name": "not-to-unresolvable"
-            }
-          ]
-        },
-        {
-          "dynamic": false,
-          "module": "@components/courses/FilterableCourseList",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "unknown"
-          ],
-          "resolved": "@components/courses/FilterableCourseList",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": true,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": false,
-          "rules": [
-            {
-              "severity": "error",
-              "name": "not-to-unresolvable"
-            }
-          ]
-        },
-        {
-          "dynamic": false,
-          "module": "@features/courses/services/courseService",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "unknown"
-          ],
-          "resolved": "@features/courses/services/courseService",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": true,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": false,
-          "rules": [
-            {
-              "severity": "error",
-              "name": "not-to-unresolvable"
-            }
-          ]
+          "valid": true
         },
         {
           "dynamic": false,
@@ -8018,6 +8768,26 @@
           "followable": false,
           "couldNotResolve": false,
           "matchesDoNotFollow": true,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@services/resources/courseService",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/services/resources/courseService.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
           "circular": false,
           "valid": true
         },
@@ -8040,18 +8810,18 @@
         },
         {
           "dynamic": false,
-          "module": "react",
+          "module": "src/types/",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
-            "npm",
+            "undetermined",
             "import"
           ],
-          "resolved": "node_modules/react/index.js",
+          "resolved": "src/types/index.ts",
           "coreModule": false,
-          "followable": false,
+          "followable": true,
           "couldNotResolve": false,
-          "matchesDoNotFollow": true,
+          "matchesDoNotFollow": false,
           "circular": false,
           "valid": true
         }
@@ -8061,62 +8831,17 @@
       "valid": true
     },
     {
-      "source": "../../../types/common",
-      "followable": false,
-      "coreModule": false,
-      "couldNotResolve": true,
-      "matchesDoNotFollow": false,
-      "dependencyTypes": [
-        "unknown"
-      ],
-      "dependencies": [],
-      "dependents": [
-        "src/pages/courses/StudentCourseEnrollmentPage.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "@components/courses/FilterableCourseList",
-      "followable": false,
-      "coreModule": false,
-      "couldNotResolve": true,
-      "matchesDoNotFollow": false,
-      "dependencyTypes": [
-        "unknown"
-      ],
-      "dependencies": [],
-      "dependents": [
-        "src/pages/courses/StudentCourseEnrollmentPage.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "@features/courses/services/courseService",
-      "followable": false,
-      "coreModule": false,
-      "couldNotResolve": true,
-      "matchesDoNotFollow": false,
-      "dependencyTypes": [
-        "unknown"
-      ],
-      "dependencies": [],
-      "dependents": [
-        "src/pages/courses/StudentCourseEnrollmentPage.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
       "source": "src/pages/learningTasks/CourseLearningTasksPage.tsx",
       "dependencies": [
         {
           "dynamic": false,
-          "module": "../../components/ErrorNotifier/useErrorNotifier",
+          "module": "@/components/ErrorNotifier/useErrorNotifier",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
             "local",
             "import"
           ],
@@ -8130,7 +8855,7 @@
         },
         {
           "dynamic": false,
-          "module": "@context/auth/authValidation",
+          "module": "@/types/task",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
@@ -8140,7 +8865,27 @@
             "local",
             "import"
           ],
-          "resolved": "src/context/auth/authValidation.ts",
+          "resolved": "src/types/task.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@context/auth/AuthContext",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/context/auth/AuthContext.tsx",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -8289,26 +9034,6 @@
           "matchesDoNotFollow": true,
           "circular": false,
           "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/types/common/entities",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/types/common/entities.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
         }
       ],
       "dependents": [],
@@ -8371,47 +9096,43 @@
       "dependencies": [
         {
           "dynamic": false,
-          "module": "@features/learningTasks/services/learningTaskService",
+          "module": "@/types/task",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
-            "unknown"
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
           ],
-          "resolved": "@features/learningTasks/services/learningTaskService",
+          "resolved": "src/types/task.ts",
           "coreModule": false,
-          "followable": false,
-          "couldNotResolve": true,
+          "followable": true,
+          "couldNotResolve": false,
           "matchesDoNotFollow": false,
           "circular": false,
-          "valid": false,
-          "rules": [
-            {
-              "severity": "error",
-              "name": "not-to-unresolvable"
-            }
-          ]
+          "valid": true
         },
         {
           "dynamic": false,
-          "module": "@features/learningTasks/types/learningTaskTypes",
+          "module": "@services/resources/learningTaskService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
-            "unknown"
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
           ],
-          "resolved": "@features/learningTasks/types/learningTaskTypes",
+          "resolved": "src/services/resources/learningTaskService.ts",
           "coreModule": false,
-          "followable": false,
-          "couldNotResolve": true,
+          "followable": true,
+          "couldNotResolve": false,
           "matchesDoNotFollow": false,
           "circular": false,
-          "valid": false,
-          "rules": [
-            {
-              "severity": "error",
-              "name": "not-to-unresolvable"
-            }
-          ]
+          "valid": true
         },
         {
           "dynamic": false,
@@ -8453,63 +9174,27 @@
       "valid": true
     },
     {
-      "source": "@features/learningTasks/services/learningTaskService",
-      "followable": false,
-      "coreModule": false,
-      "couldNotResolve": true,
-      "matchesDoNotFollow": false,
-      "dependencyTypes": [
-        "unknown"
-      ],
-      "dependencies": [],
-      "dependents": [
-        "src/pages/learningTasks/DetailedTaskViewPage.tsx",
-        "src/pages/learningTasks/LearningTaskViewPage.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "@features/learningTasks/types/learningTaskTypes",
-      "followable": false,
-      "coreModule": false,
-      "couldNotResolve": true,
-      "matchesDoNotFollow": false,
-      "dependencyTypes": [
-        "unknown"
-      ],
-      "dependencies": [],
-      "dependents": [
-        "src/pages/learningTasks/DetailedTaskViewPage.tsx",
-        "src/pages/learningTasks/LearningTaskViewPage.tsx"
-      ],
-      "orphan": false,
-      "valid": true
-    },
-    {
       "source": "src/pages/learningTasks/InstructorTasksPage.tsx",
       "dependencies": [
         {
           "dynamic": false,
-          "module": "@components/core/DataTable",
+          "module": "@/types",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
-            "unknown"
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
           ],
-          "resolved": "@components/core/DataTable",
+          "resolved": "src/types/index.ts",
           "coreModule": false,
-          "followable": false,
-          "couldNotResolve": true,
+          "followable": true,
+          "couldNotResolve": false,
           "matchesDoNotFollow": false,
           "circular": false,
-          "valid": false,
-          "rules": [
-            {
-              "severity": "error",
-              "name": "not-to-unresolvable"
-            }
-          ]
+          "valid": true
         },
         {
           "dynamic": false,
@@ -8581,6 +9266,26 @@
           "matchesDoNotFollow": true,
           "circular": false,
           "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "src/components/DataTable",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-base-url",
+            "local",
+            "import"
+          ],
+          "resolved": "src/components/DataTable.tsx",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
         }
       ],
       "dependents": [],
@@ -8592,47 +9297,23 @@
       "dependencies": [
         {
           "dynamic": false,
-          "module": "@features/learningTasks/services/learningTaskService",
+          "module": "@/types/entities",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
-            "unknown"
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
           ],
-          "resolved": "@features/learningTasks/services/learningTaskService",
+          "resolved": "src/types/entities.ts",
           "coreModule": false,
-          "followable": false,
-          "couldNotResolve": true,
+          "followable": true,
+          "couldNotResolve": false,
           "matchesDoNotFollow": false,
           "circular": false,
-          "valid": false,
-          "rules": [
-            {
-              "severity": "error",
-              "name": "not-to-unresolvable"
-            }
-          ]
-        },
-        {
-          "dynamic": false,
-          "module": "@features/learningTasks/types/learningTaskTypes",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "unknown"
-          ],
-          "resolved": "@features/learningTasks/types/learningTaskTypes",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": true,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": false,
-          "rules": [
-            {
-              "severity": "error",
-              "name": "not-to-unresolvable"
-            }
-          ]
+          "valid": true
         },
         {
           "dynamic": false,
@@ -8667,6 +9348,26 @@
           "matchesDoNotFollow": true,
           "circular": false,
           "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "src/services/resources/learningTaskService",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-base-url",
+            "local",
+            "import"
+          ],
+          "resolved": "src/services/resources/learningTaskService.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
         }
       ],
       "dependents": [],
@@ -8676,28 +9377,6 @@
     {
       "source": "src/pages/learningTasks/StudentLearningTasksPage.tsx",
       "dependencies": [
-        {
-          "dynamic": false,
-          "module": "@features/learningTasks/components/LearningTaskList",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "unknown"
-          ],
-          "resolved": "@features/learningTasks/components/LearningTaskList",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": true,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": false,
-          "rules": [
-            {
-              "severity": "error",
-              "name": "not-to-unresolvable"
-            }
-          ]
-        },
         {
           "dynamic": false,
           "module": "@mui/material",
@@ -8734,22 +9413,6 @@
         }
       ],
       "dependents": [],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "@features/learningTasks/components/LearningTaskList",
-      "followable": false,
-      "coreModule": false,
-      "couldNotResolve": true,
-      "matchesDoNotFollow": false,
-      "dependencyTypes": [
-        "unknown"
-      ],
-      "dependencies": [],
-      "dependents": [
-        "src/pages/learningTasks/StudentLearningTasksPage.tsx"
-      ],
       "orphan": false,
       "valid": true
     },
@@ -8820,6 +9483,26 @@
             "import"
           ],
           "resolved": "src/services/resources/learningTaskService.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "src/types/task",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-base-url",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/task.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -9087,23 +9770,6 @@
             "import"
           ],
           "resolved": "node_modules/@testing-library/react/dist/@testing-library/react.esm.js",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "react",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
-          "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
           "couldNotResolve": false,
@@ -9584,32 +10250,6 @@
       "valid": true
     },
     {
-      "source": "src/services/data/tasks.ts",
-      "dependencies": [],
-      "dependents": [],
-      "orphan": true,
-      "valid": false,
-      "rules": [
-        {
-          "severity": "warn",
-          "name": "no-orphans"
-        }
-      ]
-    },
-    {
-      "source": "src/services/data/users.ts",
-      "dependencies": [],
-      "dependents": [],
-      "orphan": true,
-      "valid": false,
-      "rules": [
-        {
-          "severity": "warn",
-          "name": "no-orphans"
-        }
-      ]
-    },
-    {
       "source": "src/services/index.ts",
       "dependencies": [
         {
@@ -9785,17 +10425,17 @@
         },
         {
           "dynamic": false,
-          "module": "src/types/common/entities",
+          "module": "@/types/course",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
             "aliased",
             "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
+            "aliased-tsconfig-paths",
             "local",
             "import"
           ],
-          "resolved": "src/types/common/entities.ts",
+          "resolved": "src/types/course.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -9847,18 +10487,18 @@
         },
         {
           "dynamic": false,
-          "module": "src/types/common/entities",
+          "module": "@/types/course",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
             "aliased",
             "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
+            "aliased-tsconfig-paths",
             "local",
             "type-only",
             "import"
           ],
-          "resolved": "src/types/common/entities.ts",
+          "resolved": "src/types/course.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -9868,18 +10508,18 @@
         },
         {
           "dynamic": false,
-          "module": "src/types/common/paginatedResponse",
+          "module": "@/types/paginatedResponse",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
             "aliased",
             "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
+            "aliased-tsconfig-paths",
             "local",
             "type-only",
             "import"
           ],
-          "resolved": "src/types/common/paginatedResponse.ts",
+          "resolved": "src/types/paginatedResponse.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -9965,17 +10605,17 @@
         },
         {
           "dynamic": false,
-          "module": "src/types/common/entities",
+          "module": "@/types/entities",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
             "aliased",
             "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
+            "aliased-tsconfig-paths",
             "local",
             "import"
           ],
-          "resolved": "src/types/common/entities.ts",
+          "resolved": "src/types/entities.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -10044,17 +10684,17 @@
         },
         {
           "dynamic": false,
-          "module": "src/types/common/entities",
+          "module": "@/types/entities",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
             "aliased",
             "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
+            "aliased-tsconfig-paths",
             "local",
             "import"
           ],
-          "resolved": "src/types/common/entities.ts",
+          "resolved": "src/types/entities.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -10182,17 +10822,17 @@
         },
         {
           "dynamic": false,
-          "module": "src/types/common/entities",
+          "module": "@/types/entities",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
             "aliased",
             "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
+            "aliased-tsconfig-paths",
             "local",
             "import"
           ],
-          "resolved": "src/types/common/entities.ts",
+          "resolved": "src/types/entities.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -10263,17 +10903,17 @@
         },
         {
           "dynamic": false,
-          "module": "src/types/common/entities",
+          "module": "@/types/course",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
             "aliased",
             "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
+            "aliased-tsconfig-paths",
             "local",
             "import"
           ],
-          "resolved": "src/types/common/entities.ts",
+          "resolved": "src/types/course.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -10342,18 +10982,18 @@
         },
         {
           "dynamic": false,
-          "module": "src/types/common/entities",
+          "module": "@/types/task",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
             "aliased",
             "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
+            "aliased-tsconfig-paths",
             "local",
             "type-only",
             "import"
           ],
-          "resolved": "src/types/common/entities.ts",
+          "resolved": "src/types/task.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -10470,17 +11110,17 @@
         },
         {
           "dynamic": false,
-          "module": "src/types/common/entities",
+          "module": "@/types/",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
             "aliased",
             "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
+            "aliased-tsconfig-paths",
             "local",
             "import"
           ],
-          "resolved": "src/types/common/entities.ts",
+          "resolved": "src/types/index.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -10557,6 +11197,66 @@
       "dependencies": [
         {
           "dynamic": false,
+          "module": "@/types/course",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/course.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@/types/paginatedResponse",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/types/paginatedResponse.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
+          "module": "@services/resources/courseService",
+          "moduleSystem": "es6",
+          "exoticallyRequired": false,
+          "dependencyTypes": [
+            "aliased",
+            "aliased-tsconfig",
+            "aliased-tsconfig-paths",
+            "local",
+            "import"
+          ],
+          "resolved": "src/services/resources/courseService.ts",
+          "coreModule": false,
+          "followable": true,
+          "couldNotResolve": false,
+          "matchesDoNotFollow": false,
+          "circular": false,
+          "valid": true
+        },
+        {
+          "dynamic": false,
           "module": "@tanstack/react-query",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
@@ -10571,26 +11271,6 @@
           "matchesDoNotFollow": true,
           "circular": false,
           "valid": true
-        },
-        {
-          "dynamic": false,
-          "module": "src/services/resources/courseService",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "aliased",
-            "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
-            "local",
-            "import"
-          ],
-          "resolved": "src/services/resources/courseService.ts",
-          "coreModule": false,
-          "followable": true,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": false,
-          "circular": false,
-          "valid": true
         }
       ],
       "dependents": [],
@@ -10598,21 +11278,21 @@
       "valid": true
     },
     {
-      "source": "src/store/appStore.ts",
+      "source": "src/store/courseStore.ts",
       "dependencies": [
         {
           "dynamic": false,
-          "module": "src/types/common/entities",
+          "module": "@/types/course",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
           "dependencyTypes": [
             "aliased",
             "aliased-tsconfig",
-            "aliased-tsconfig-base-url",
+            "aliased-tsconfig-paths",
             "local",
             "import"
           ],
-          "resolved": "src/types/common/entities.ts",
+          "resolved": "src/types/course.ts",
           "coreModule": false,
           "followable": true,
           "couldNotResolve": false,
@@ -10654,36 +11334,10 @@
       ],
       "dependencies": [],
       "dependents": [
-        "src/store/appStore.ts",
         "src/store/courseStore.ts",
         "src/store/quizStore.ts",
         "src/store/taskStore.ts"
       ],
-      "orphan": false,
-      "valid": true
-    },
-    {
-      "source": "src/store/courseStore.ts",
-      "dependencies": [
-        {
-          "dynamic": false,
-          "module": "zustand",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
-          "resolved": "node_modules/zustand/esm/index.d.mts",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        }
-      ],
-      "dependents": [],
       "orphan": false,
       "valid": true
     },
@@ -10738,19 +11392,6 @@
       "valid": true
     },
     {
-      "source": "src/styles/CourseDetailsPage.styles.ts",
-      "dependencies": [],
-      "dependents": [],
-      "orphan": true,
-      "valid": false,
-      "rules": [
-        {
-          "severity": "warn",
-          "name": "no-orphans"
-        }
-      ]
-    },
-    {
       "source": "src/styles/markdownStyles.ts",
       "dependencies": [],
       "dependents": [],
@@ -10779,23 +11420,6 @@
     {
       "source": "src/test-utils/setupTests.ts",
       "dependencies": [
-        {
-          "dynamic": false,
-          "module": "axios",
-          "moduleSystem": "es6",
-          "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
-          "resolved": "node_modules/axios/index.d.cts",
-          "coreModule": false,
-          "followable": false,
-          "couldNotResolve": false,
-          "matchesDoNotFollow": true,
-          "circular": false,
-          "valid": true
-        },
         {
           "dynamic": false,
           "module": "vitest",
@@ -10848,32 +11472,6 @@
       "dependents": [],
       "orphan": false,
       "valid": true
-    },
-    {
-      "source": "src/types/Task.ts",
-      "dependencies": [],
-      "dependents": [],
-      "orphan": true,
-      "valid": false,
-      "rules": [
-        {
-          "severity": "warn",
-          "name": "no-orphans"
-        }
-      ]
-    },
-    {
-      "source": "src/types/User.ts",
-      "dependencies": [],
-      "dependents": [],
-      "orphan": true,
-      "valid": false,
-      "rules": [
-        {
-          "severity": "warn",
-          "name": "no-orphans"
-        }
-      ]
     },
     {
       "source": "src/utils/authUtils.ts",
@@ -10986,97 +11584,7 @@
       {
         "type": "dependency",
         "from": "src/dashboardFeature/components/progress/CourseDetailView/index.tsx",
-        "to": "./ModuleProgressView",
-        "rule": {
-          "severity": "error",
-          "name": "not-to-unresolvable"
-        }
-      },
-      {
-        "type": "dependency",
-        "from": "src/pages/courses/AdminTasksPage.tsx",
-        "to": "@components/core/DataTable",
-        "rule": {
-          "severity": "error",
-          "name": "not-to-unresolvable"
-        }
-      },
-      {
-        "type": "dependency",
-        "from": "src/pages/courses/InstructorCourseDetailPage.tsx",
-        "to": "../../../hooks/useCourse",
-        "rule": {
-          "severity": "error",
-          "name": "not-to-unresolvable"
-        }
-      },
-      {
-        "type": "dependency",
-        "from": "src/pages/courses/InstructorCourseDetailPage.tsx",
-        "to": "../../../types/common/entities",
-        "rule": {
-          "severity": "error",
-          "name": "not-to-unresolvable"
-        }
-      },
-      {
-        "type": "dependency",
-        "from": "src/pages/courses/InstructorCourseDetailPage.tsx",
-        "to": "../../../types/common/progressTypes",
-        "rule": {
-          "severity": "error",
-          "name": "not-to-unresolvable"
-        }
-      },
-      {
-        "type": "dependency",
-        "from": "src/pages/courses/InstructorCourseDetailPage.tsx",
-        "to": "@features/learningTasks/components/TaskManagementUI",
-        "rule": {
-          "severity": "error",
-          "name": "not-to-unresolvable"
-        }
-      },
-      {
-        "type": "dependency",
-        "from": "src/pages/courses/InstructorCourseDetailPage.tsx",
-        "to": "@services/resources/taskService",
-        "rule": {
-          "severity": "error",
-          "name": "not-to-unresolvable"
-        }
-      },
-      {
-        "type": "dependency",
-        "from": "src/pages/courses/StudentCourseEnrollmentPage.tsx",
-        "to": "../../../types/common",
-        "rule": {
-          "severity": "error",
-          "name": "not-to-unresolvable"
-        }
-      },
-      {
-        "type": "dependency",
-        "from": "src/pages/courses/StudentCourseEnrollmentPage.tsx",
-        "to": "../../../types/common/entities",
-        "rule": {
-          "severity": "error",
-          "name": "not-to-unresolvable"
-        }
-      },
-      {
-        "type": "dependency",
-        "from": "src/pages/courses/StudentCourseEnrollmentPage.tsx",
-        "to": "@components/courses/FilterableCourseList",
-        "rule": {
-          "severity": "error",
-          "name": "not-to-unresolvable"
-        }
-      },
-      {
-        "type": "dependency",
-        "from": "src/pages/courses/StudentCourseEnrollmentPage.tsx",
-        "to": "@features/courses/services/courseService",
+        "to": "../ModuleProgressView",
         "rule": {
           "severity": "error",
           "name": "not-to-unresolvable"
@@ -11085,100 +11593,10 @@
       {
         "type": "dependency",
         "from": "src/pages/DashboardPage/index.tsx",
-        "to": "src/components/DashboardPage/index",
+        "to": "../../components/Dashboard/Dashboard",
         "rule": {
           "severity": "error",
           "name": "not-to-unresolvable"
-        }
-      },
-      {
-        "type": "dependency",
-        "from": "src/pages/learningTasks/DetailedTaskViewPage.tsx",
-        "to": "@features/learningTasks/services/learningTaskService",
-        "rule": {
-          "severity": "error",
-          "name": "not-to-unresolvable"
-        }
-      },
-      {
-        "type": "dependency",
-        "from": "src/pages/learningTasks/DetailedTaskViewPage.tsx",
-        "to": "@features/learningTasks/types/learningTaskTypes",
-        "rule": {
-          "severity": "error",
-          "name": "not-to-unresolvable"
-        }
-      },
-      {
-        "type": "dependency",
-        "from": "src/pages/learningTasks/InstructorTasksPage.tsx",
-        "to": "@components/core/DataTable",
-        "rule": {
-          "severity": "error",
-          "name": "not-to-unresolvable"
-        }
-      },
-      {
-        "type": "dependency",
-        "from": "src/pages/learningTasks/LearningTaskViewPage.tsx",
-        "to": "@features/learningTasks/services/learningTaskService",
-        "rule": {
-          "severity": "error",
-          "name": "not-to-unresolvable"
-        }
-      },
-      {
-        "type": "dependency",
-        "from": "src/pages/learningTasks/LearningTaskViewPage.tsx",
-        "to": "@features/learningTasks/types/learningTaskTypes",
-        "rule": {
-          "severity": "error",
-          "name": "not-to-unresolvable"
-        }
-      },
-      {
-        "type": "dependency",
-        "from": "src/pages/learningTasks/StudentLearningTasksPage.tsx",
-        "to": "@features/learningTasks/components/LearningTaskList",
-        "rule": {
-          "severity": "error",
-          "name": "not-to-unresolvable"
-        }
-      },
-      {
-        "type": "module",
-        "from": "src/components/Dashboard/Dashboard.tsx",
-        "to": "src/components/Dashboard/Dashboard.tsx",
-        "rule": {
-          "severity": "warn",
-          "name": "no-orphans"
-        }
-      },
-      {
-        "type": "module",
-        "from": "src/services/data/tasks.ts",
-        "to": "src/services/data/tasks.ts",
-        "rule": {
-          "severity": "warn",
-          "name": "no-orphans"
-        }
-      },
-      {
-        "type": "module",
-        "from": "src/services/data/users.ts",
-        "to": "src/services/data/users.ts",
-        "rule": {
-          "severity": "warn",
-          "name": "no-orphans"
-        }
-      },
-      {
-        "type": "module",
-        "from": "src/styles/CourseDetailsPage.styles.ts",
-        "to": "src/styles/CourseDetailsPage.styles.ts",
-        "rule": {
-          "severity": "warn",
-          "name": "no-orphans"
         }
       },
       {
@@ -11198,32 +11616,14 @@
           "severity": "warn",
           "name": "no-orphans"
         }
-      },
-      {
-        "type": "module",
-        "from": "src/types/Task.ts",
-        "to": "src/types/Task.ts",
-        "rule": {
-          "severity": "warn",
-          "name": "no-orphans"
-        }
-      },
-      {
-        "type": "module",
-        "from": "src/types/User.ts",
-        "to": "src/types/User.ts",
-        "rule": {
-          "severity": "warn",
-          "name": "no-orphans"
-        }
       }
     ],
-    "error": 21,
-    "warn": 8,
+    "error": 5,
+    "warn": 2,
     "info": 0,
     "ignore": 0,
-    "totalCruised": 198,
-    "totalDependenciesCruised": 466,
+    "totalCruised": 191,
+    "totalDependenciesCruised": 506,
     "optionsUsed": {
       "baseDir": "C:\\DEVELOPMENT\\projects\\learnplatfom2\\frontend",
       "combinedDependencies": false,

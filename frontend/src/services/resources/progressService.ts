@@ -31,7 +31,7 @@ class ProgressService {
   private apiQuizAttemptArr = new ApiService<IQuizAttempt[]>();
   private apiAny = new ApiService<unknown>();
   private apiCourse = new ApiService<ICourse>();
-  private apiTaskProgress = new ApiService<ITaskProgress>();
+  // private apiTaskProgress = new ApiService<ITaskProgress>();
 
   /**
    * Fetches the progress of a student across all courses.
@@ -54,7 +54,6 @@ class ProgressService {
   async fetchStudentProgressByCourse(
     courseId: string,
     studentId: string,
-    includeDetails = false
   ): Promise<IUserProgress | null> {
     console.log('Fetching student progress by course:', courseId, studentId);
     const endpoint = API_CONFIG.endpoints.courses.studentProgressDetail(courseId, studentId);
@@ -205,24 +204,23 @@ class ProgressService {
     }
 
     // Update to use a valid endpoint from API_CONFIG
-    // This assumes there is a student endpoint or we need to create one
-    const endpoint = studentId
-      ? API_CONFIG.endpoints.dashboard.instructor + `?student_id=${studentId.toString()}`
-      : API_CONFIG.endpoints.dashboard.instructor;
+    const endpoint = API_CONFIG.endpoints.dashboard.student
+      ? API_CONFIG.endpoints.dashboard.student(studentId.toString())
+      : API_CONFIG.endpoints.dashboard.instructor + `?student_id=${studentId.toString()}`;
 
     return this.apiAny.get(endpoint) as Promise<IDashboardResponse>;
   }
 }
 
 // Singleton export
-export const progressService = new ProgressService();
+const progressService = new ProgressService();
 
 // Backward compatibility exports (deprecated)
 export const fetchStudentProgressByUser = async (studentId: string): Promise<IUserProgress[]> =>
   progressService.fetchStudentProgressByUser(studentId);
 
-export const fetchStudentProgressByCourse = async (courseId: string, studentId: string, includeDetails = false): Promise<IUserProgress | null> =>
-  progressService.fetchStudentProgressByCourse(courseId, studentId, includeDetails);
+export const fetchStudentProgressByCourse = async (courseId: string, studentId: string): Promise<IUserProgress | null> =>
+  progressService.fetchStudentProgressByCourse(courseId, studentId);
 
 export const fetchAllStudentsProgress = async (courseId: string): Promise<IPaginatedResponse<IUserProgress>> =>
   progressService.fetchAllStudentsProgress(courseId);

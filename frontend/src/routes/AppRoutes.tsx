@@ -2,15 +2,15 @@ import React, {lazy} from 'react';
 import {Routes, Route, Navigate} from 'react-router-dom';
 
 import {StudentCoursesPage} from '@/pages/courses/StudentCoursesPage';
-import EditCourse from 'src/components/courses/EditCourse';
-import LoginPage from 'src/pages/auth/LoginPage';
-import Dashboard from 'src/pages/DashboardPage';
-import HomePage from 'src/pages/HomePage';
-import StudentTasksPage from 'src/pages/learningTasks/StudentTasksPage';
-import Profile from 'src/pages/Profile';
-import ProtectedRoute from 'src/routes/ProtectedRoute';
+import EditCourse from '@/components/courses/EditCourse';
+import LoginPage from '@/pages/auth/LoginPage';
+import Dashboard from '@/pages/DashboardPage';
+import HomePage from '@/pages/HomePage';
+import StudentTasksPage from '@/pages/learningTasks/StudentTasksPage';
+import Profile from '@/pages/Profile';
+import ProtectedRoute from '@/routes/ProtectedRoute';
 
-const CourseDetailsPage = lazy(() => import('src/pages/courses/CourseDetailsPage'));
+const CourseDetailsPage = lazy(() => import('@/pages/courses/StudentCourseDetailsPage'));
 
 const AppRoutes: React.FC = () => {
   return (

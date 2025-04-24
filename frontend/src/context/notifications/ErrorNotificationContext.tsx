@@ -5,7 +5,7 @@
  * References ADR-012: Centralized Frontend Error Notification System.
  */
 
-import React, {createContext, useContext, useState, useCallback, ReactNode, useRef} from "react";
+import React, {createContext, useContext, useState, useCallback, ReactNode} from "react";
 
 export type IErrorNotification = {
     message: string;
@@ -37,8 +37,8 @@ export const IErrorNotificationProvider = ({children}: {children: ReactNode}) =>
         notification: null,
     });
 
-    // For future extensibility: queue (not used for error, but ready for info/success)
-    const queueRef = useRef<IErrorNotification[]>([]);
+    // Will be used for batch notifications in the future
+    //const queueRef = useRef<IErrorNotification[]>([]);
 
     const showError = useCallback(
         (message: string, options?: {key?: string | number; actions?: React.ReactNode}) => {

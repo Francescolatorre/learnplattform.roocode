@@ -13,6 +13,7 @@ import {
   SxProps,
   Theme,
 } from '@mui/material';
+import get from 'lodash/get';
 import React, {ReactNode} from 'react';
 
 export interface Column<T> {
@@ -20,8 +21,7 @@ export interface Column<T> {
   label: string;
   minWidth?: number;
   align?: 'left' | 'right' | 'center';
-  format?: (value: T, row: T) => ReactNode; // Assuming T is the type of the data
-  // Removed unused variables and ensured React is in scope
+  format?: (value: unknown, row: T) => ReactNode;
 }
 
 interface DataTableProps<T> {
@@ -54,7 +54,7 @@ export const DataTable = <T,>({
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-  const handleChangePage = (_: unknown, newPage: number) => { // No changes needed here
+  const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
   };
 
@@ -122,14 +122,10 @@ export const DataTable = <T,>({
                     }}
                   >
                     {columns.map(column => {
-                      const value = column.id.includes('.')
-                        ? column.id
-                          .split('.')
-                          .reduce((obj, key) => obj && obj[key as keyof typeof obj], row as any)
-                        : row[column.id as keyof T];
+                      const value = get(row, column.id);
                       return (
                         <TableCell key={`${key}-${column.id}`} align={column.align}>
-                          {column.format ? column.format(value, row) : value}
+                          {column.format ? column.format(value, row) : String(value)}
                         </TableCell>
                       );
                     })}

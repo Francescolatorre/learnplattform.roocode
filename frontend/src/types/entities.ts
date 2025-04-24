@@ -18,13 +18,12 @@ export interface ICourseEnrollment {
   course: number;
   enrollment_date?: string;
   status: TCompletionStatus;
-  settings?: Record<string, any> | null;
+  settings?: Record<string, unknown> | null;
   user_details?: IUser;
   course_details?: ICourse;
   progress_percentage?: string;
 }
 
-export type IEnrollment = ICourseEnrollment;
 
 // Quiz-bezogene Typen
 export interface IQuizOption {

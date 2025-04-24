@@ -1,6 +1,6 @@
 import {useParams} from 'react-router-dom';
 
-import {ILearningTask} from '@/types/entities';
+import {ILearningTask} from '@/types/task';
 import DataTable, {Column} from '@components/DataTable'; // Corrected import // Corrected import
 import {useCourseTasks} from '@services/useCourseTasks';
 

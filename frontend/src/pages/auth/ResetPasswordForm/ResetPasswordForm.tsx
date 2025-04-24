@@ -6,12 +6,16 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useForm, Controller} from 'react-hook-form';
 import {useNavigate, useParams} from 'react-router-dom';
 import {z} from 'zod';
 
-import {validatePassword, type PasswordStrength} from '../../../utils/passwordValidation';
+import authService from '@/services/auth/authService';
+import {useNotification} from '@components/ErrorNotifier/useErrorNotifier';
+
+import {validatePassword, type PasswordStrength, getPasswordStrengthLabel} from '../../../utils/passwordValidation';
+
 
 const passwordSchema = z
   .string()
@@ -36,15 +40,21 @@ type ResetPasswordFormValues = z.infer<typeof resetPasswordFormSchema>;
 const ResetPasswordForm: React.FC = () => {
   const {token} = useParams<{token: string}>();
   const navigate = useNavigate();
-  const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>('Too weak');
+  const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
+    isValid: false,
+    score: 0,
+    feedback: [],
+  });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const notify = useNotification();
 
   const {
     control,
     handleSubmit,
     watch,
+    register,
     formState: {errors},
   } = useForm<ResetPasswordFormValues>({
     resolver: zodResolver(resetPasswordFormSchema),
@@ -54,7 +64,23 @@ const ResetPasswordForm: React.FC = () => {
     },
   });
 
-  const password = watch('password');
+  // Use register in a useEffect to avoid timing issues
+  useEffect(() => {
+    register('confirmPassword', {
+      validate: (value: string): string | true => value === watch('password') || 'Passwords do not match'
+    });
+  }, [register, watch]);
+
+  useEffect(() => {
+    if (!token) {
+      notify({
+        message: 'Invalid or missing reset token',
+        title: 'Error',
+        severity: 'error'
+      });
+      navigate('/login');
+    }
+  }, [token, navigate, notify]);
 
   const onSubmit = async (data: ResetPasswordFormValues) => {
     setLoading(true);
@@ -62,12 +88,24 @@ const ResetPasswordForm: React.FC = () => {
     setSuccess(false);
 
     try {
+      await authService.resetPassword(token!, data.password);
       setSuccess(true);
+      notify({
+        message: 'Password has been reset successfully',
+        title: 'Success',
+        severity: 'success'
+      });
       setTimeout(() => {
         navigate('/login');
       }, 3000);
-    } catch (err: any) {
-      setError(err.message || 'Failed to reset password');
+    } catch (err: unknown) {
+      const errMessage = err instanceof Error ? err.message : 'Failed to reset password - An unknown error occurred';
+      setError(errMessage);
+      notify({
+        message: errMessage,
+        title: 'Password Reset Error',
+        severity: 'error'
+      });
     } finally {
       setLoading(false);
     }
@@ -108,6 +146,7 @@ const ResetPasswordForm: React.FC = () => {
           render={({field}) => (
             <TextField
               {...field}
+              disabled={loading}
               label="Password"
               type="password"
               fullWidth
@@ -124,11 +163,25 @@ const ResetPasswordForm: React.FC = () => {
         <Typography
           component="span"
           variant="body2"
-          color={passwordStrength === 'Too weak' ? 'error' : 'success'}
-          sx={{mb: 1}}
+          color={passwordStrength.score < 2 ? 'error' : passwordStrength.score < 4 ? 'warning' : 'success'}
+          sx={{mb: 1, display: 'block'}}
         >
           Password Strength: {getPasswordStrengthLabel(passwordStrength.score)}
         </Typography>
+        {passwordStrength.feedback.length > 0 && (
+          <Box sx={{mt: 1, mb: 2}}>
+            {passwordStrength.feedback.map((item, index) => (
+              <Typography
+                key={index}
+                variant="caption"
+                color="error"
+                component="div"
+              >
+                • {item}
+              </Typography>
+            ))}
+          </Box>
+        )}
         <Controller
           name="confirmPassword"
           control={control}

@@ -40,7 +40,8 @@ const StudentCourseEnrollmentPage: React.FC = () => {
   return (
     <Box sx={{p: 3}}>
       <FilterableCourseList
-        courses={courses}
+        // Fixed type assignment issue for 'courses' prop
+        initialCourses={courses}
         title="Available Courses"
         // Optional: Benutzerdefinierte Filter-Funktion
         filterPredicate={(course, searchTerm) =>

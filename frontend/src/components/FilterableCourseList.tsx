@@ -1,5 +1,5 @@
 import {Box, Typography, TextField, CircularProgress, MenuItem, Select, FormControl, InputLabel, Grid, SelectChangeEvent, Pagination} from '@mui/material';
-import React, {useState, useMemo, useEffect} from 'react';
+import React, {useState, useMemo, useEffect, useCallback} from 'react';
 
 import {ICourse, TCourseStatus} from '@/types/course';
 import {useDebounce} from '@utils/useDebounce';
@@ -48,25 +48,7 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
-  useEffect(() => {
-    if (!clientSideFiltering && (!initialCourses || initialCourses.length === 0)) {
-      loadCourses();
-    }
-  }, [clientSideFiltering, initialCourses, debouncedSearchTerm, status, creator, page]);
-
-  useEffect(() => {
-    if (initialCourses) {
-      setCourses(initialCourses);
-    }
-  }, [initialCourses]);
-
-  useEffect(() => {
-    if (onCoursesLoaded && courses.length > 0) {
-      onCoursesLoaded(courses);
-    }
-  }, [courses, onCoursesLoaded]);
-
-  const loadCourses = async () => {
+  const loadCourses = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -139,7 +121,25 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [debouncedSearchTerm, status, creator, page, pageSize]); // Add all dependencies
+
+  useEffect(() => {
+    if (!clientSideFiltering && (!initialCourses || initialCourses.length === 0)) {
+      loadCourses();
+    }
+  }, [clientSideFiltering, initialCourses, loadCourses]); // Now loadCourses is properly memoized
+
+  useEffect(() => {
+    if (initialCourses) {
+      setCourses(initialCourses);
+    }
+  }, [initialCourses]);
+
+  useEffect(() => {
+    if (onCoursesLoaded && courses.length > 0) {
+      onCoursesLoaded(courses);
+    }
+  }, [courses, onCoursesLoaded]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);

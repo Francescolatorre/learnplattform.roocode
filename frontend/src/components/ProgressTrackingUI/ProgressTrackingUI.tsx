@@ -1,18 +1,20 @@
+import React from 'react';
+
 import {ICourseStructure} from '@/types/course';
 
-interface ProgressTrackingUIProps {
-  courseStructure: ICourseStructure | null;
+interface IProgressTrackingUIProps {
+  courseStructure: ICourseStructure;
   loading: boolean;
-  error: string | null;
+  error: Error | null;
 }
 
-const ProgressTrackingUI: React.FC<ProgressTrackingUIProps> = ({
+const ProgressTrackingUI: React.FC<IProgressTrackingUIProps> = ({
   courseStructure,
   loading,
   error,
 }) => {
   if (loading) return <p>Loading course structure...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
   return (
     <div>

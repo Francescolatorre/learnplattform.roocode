@@ -1,7 +1,13 @@
 import React, {useEffect} from 'react';
 
-import {authEventService} from './AuthEventService';
-import {AuthEventType, AuthInterceptorProps} from './types';
+/**
+ * These imports are temporarily commented out but will be needed
+ * for the upcoming session expiration handling feature
+ */
+// import {authEventService} from './AuthEventService';
+// import {AuthEventType} from './AuthEventService';
+
+import {AuthInterceptorProps} from './types';
 
 // Keine Abhängigkeit mehr zu AuthContext!
 export const AuthInterceptor: React.FC<AuthInterceptorProps> = ({
@@ -39,3 +45,22 @@ export const AuthInterceptor: React.FC<AuthInterceptorProps> = ({
     // Der Interceptor rendert nichts, er fügt nur Logik hinzu
     return null;
 };
+
+// Remove unused imports or comment them for future use
+// import { ... } from '...';
+// import {authEventService} from './AuthEventService';
+// import {AuthEventType} from './AuthEventService';
+
+// Add commented explanation why imports are kept but not used
+// These imports will be used in a future implementation for session expiration handling
+// import {authEventService} from './AuthEventService';
+// import {AuthEventType} from './AuthEventService';
+
+// Either use these imports or remove them
+// import { authEventService, AuthEventType } from './AuthEventService';
+
+// If they're needed later, keep them but mark them for future use
+// Will be used in future implementation
+// const authEventCallback = () => {
+//   authEventService.emit(AuthEventType.SESSION_EXPIRED);
+// };

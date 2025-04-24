@@ -68,7 +68,8 @@ const RegisterForm: React.FC = () => {
       await login(username, password);
       // Navigate to dashboard or home
       navigate('/dashboard');
-    } catch (err) {
+    } catch (errorObj) { // Rename 'err' to 'errorObj' and use it
+      console.error('Registration failed:', errorObj);
       setError('Registration failed. Please try again.');
     } finally {
       setIsLoading(false);

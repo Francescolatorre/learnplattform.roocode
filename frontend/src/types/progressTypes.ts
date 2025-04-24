@@ -77,26 +77,34 @@ export interface IDashboardOverallStats {
 }
 
 /**
- * Interface für im Dashboard angezeigte Kursinformationen
+ * Interface für Kursinfos im Dashboard
  */
 export interface IDashboardCourseInfo {
   id: number;
   title: string;
-  completion_percentage: number;
-  recent_activity?: IActivityEntry[];
-  upcoming_tasks?: {
-    title: string;
-    dueDate: string;
-  }[];
+  description?: string;
+  progress_percentage: number;
+  status: string;
+  enrollment_date: string;
+  last_activity?: string;
+  instructor_name?: string;
 }
 
 /**
- * Interface für Dashboard-API-Antwort
+ * Interface für die Dashboard-Antwort vom Server
  */
 export interface IDashboardResponse {
   user_info: IDashboardUserInfo;
   overall_stats: IDashboardOverallStats;
   courses: IDashboardCourseInfo[];
+  recent_activities?: Array<{
+    id: number;
+    type: string;
+    description: string;
+    timestamp: string;
+    course_id?: number;
+    task_id?: number;
+  }>;
 }
 
 /**
