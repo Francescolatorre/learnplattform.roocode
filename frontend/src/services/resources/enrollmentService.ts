@@ -2,6 +2,9 @@ import {ICourseEnrollment} from '@/types/entities';
 import {API_CONFIG} from 'src/services/api/apiConfig';
 import {ApiService} from 'src/services/api/apiService';
 import {IPaginatedResponse} from 'src/types/paginatedResponse';
+import {useAuth} from '@context/auth/AuthContext'; // Import at the top level of your file
+import {authEventService} from '@context/auth/AuthEventService';
+import {AuthEventType} from '@context/auth/types';
 
 /**
  * Service for managing course enrollments, including CRUD operations, user enrollments, and course-specific queries.
@@ -22,6 +25,9 @@ class EnrollmentService {
 
   /** @private API service instance for paginated enrollment results */
   private apiEnrollmentsPaginatedResults = new ApiService<IPaginatedResponse<ICourseEnrollment>>();
+
+  /** @private Cache for user profiles */
+  private userProfileCache: Record<string, any> = {};
 
   /**
    * Fetch all enrollments.
@@ -89,7 +95,83 @@ class EnrollmentService {
    * @throws {Error} If enrollment fails, the course is not found, or the user is already enrolled.
    */
   async enrollInCourse(courseId: string | number): Promise<ICourseEnrollment> {
-    return this.apiEnrollment.post(API_CONFIG.endpoints.enrollments.create, {course: courseId});
+    try {
+      // Get the current user's ID - Since we can't directly access AuthContext here,
+      // we use the token from localStorage which contains the user ID
+      const accessToken = localStorage.getItem('accessToken');
+
+      if (!accessToken) {
+        throw new Error('User not authenticated. Please log in to enroll in courses.');
+      }
+
+      // Since we don't have access to the auth context directly in a service,
+      // we need to get the current user ID from the backend
+      let profile;
+      const cacheKey = accessToken.substring(0, 10); // Use part of token as cache key
+
+      if (this.userProfileCache[cacheKey]) {
+        profile = this.userProfileCache[cacheKey];
+      } else {
+        const authService = await import('@services/auth/authService');
+        profile = await authService.default.getUserProfile(accessToken);
+        this.userProfileCache[cacheKey] = profile;
+      }
+
+      if (!profile || !profile.id) {
+        throw new Error('User profile not available. Please log in again.');
+      }
+
+      // Set up enrollment data with user ID from the profile
+      const enrollmentData = {
+        user: profile.id,
+        course: courseId,
+        status: 'active' // Default status for new enrollments
+      };
+
+      console.info('Enrolling in course:', courseId, 'for user:', profile.id);
+      console.debug('Enrollment payload:', enrollmentData);
+
+      // Send the enrollment request
+      const response = await this.apiEnrollment.post(
+        API_CONFIG.endpoints.enrollments.create,
+        enrollmentData
+      );
+
+      // Publish an event when enrollment succeeds
+      authEventService.publish({
+        type: AuthEventType.ENROLLMENT_SUCCESS,
+        payload: {
+          message: `Successfully enrolled in course ${courseId}`
+        }
+      });
+
+      return response;
+    } catch (error: any) {
+      console.error('Enrollment failed:', error);
+
+      // Enhanced error reporting
+      if (error.response?.data) {
+        console.error('Server responded with:', error.response.data);
+
+        // Check for specific error conditions
+        if (error.response.status === 400) {
+          // If we have detailed validation errors, include them in the message
+          const detailedMessage = error.response.data.detail ||
+            Object.entries(error.response.data)
+              .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
+              .join(', ');
+
+          throw new Error(`Failed to enroll in course: ${detailedMessage}`);
+        } else if (error.response.status === 401) {
+          throw new Error('You must be logged in to enroll in courses.');
+        } else if (error.response.status === 409) {
+          throw new Error('You are already enrolled in this course.');
+        }
+      }
+
+      // Generic error if we don't have specific details
+      throw new Error('Failed to enroll in course. Please try again later.');
+    }
   }
 
   /**

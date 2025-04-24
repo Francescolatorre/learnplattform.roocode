@@ -13,31 +13,10 @@ import {useQuery} from '@tanstack/react-query';
 import React, {useEffect} from 'react';
 
 import {IUserProgress} from '@/types';
+import {IProgressResponse} from '@/types/progress';
 import {useAuth} from '@context/auth/AuthContext';
 import ProgressIndicator from '@components/ProgressIndicator';
-import {apiService} from '@services/api/apiService';
-
-/**
- * Interface for progress response from API
- */
-interface IProgressResponse {
-  user_info: {
-    id: string;
-    username: string;
-    display_name?: string;
-    email?: string;
-    [key: string]: any;
-  };
-  overall_stats: {
-    courses_enrolled?: number;
-    courses_completed?: number;
-    completion_percentage?: number;
-    total_tasks?: number;
-    completed_tasks?: number;
-    [key: string]: any;
-  };
-  courses: IUserProgress[];
-}
+import progressService from '@services/resources/progressService';
 
 /**
  * Student Dashboard Page
@@ -56,7 +35,7 @@ const Dashboard: React.FC = () => {
   }, [user]);
 
   /**
-   * Fetches user progress data from the API
+   * Fetches user progress data using the progressService
    * @returns Complete progress response including user info, stats and course progress
    */
   const fetchUserProgress = async (): Promise<IProgressResponse> => {
@@ -65,12 +44,20 @@ const Dashboard: React.FC = () => {
     }
     try {
       console.info('Fetching user progress for user ID:', user.id);
-      const response = await apiService.get<IProgressResponse>('/api/v1/students/progress/');
+
+      // Use progressService instead of directly calling apiService
+      const response = await progressService.fetchStudentProgressByUser(user.id);
       console.info('User progress response:', response);
 
-      // If we get an array directly, adapt it to our expected format
+      // Handle the well-structured response that includes user_info, overall_stats, and courses
+      if (response && typeof response === 'object' && 'courses' in response) {
+        // This is already the expected structure
+        return response as IProgressResponse;
+      }
+
+      // If we get an array of progress items, adapt it to our expected format
       if (Array.isArray(response)) {
-        console.warn('Received legacy array response format, adapting to expected structure');
+        console.warn('Received array response format, adapting to expected structure');
         return {
           user_info: {
             id: user.id,
@@ -85,13 +72,22 @@ const Dashboard: React.FC = () => {
         };
       }
 
-      // For well-formed response, ensure courses is an array
-      if (response && !Array.isArray(response.courses)) {
-        console.error('Error: Expected courses array in response', response);
-        response.courses = [];
-      }
+      // If we received something neither in the expected structure nor an array
+      console.error('Error: Unexpected response format', response);
 
-      return response;
+      // Return a fallback structure
+      return {
+        user_info: {
+          id: user.id,
+          username: user.username,
+          display_name: user.display_name || user.username,
+        },
+        overall_stats: {
+          courses_enrolled: 0,
+          completion_percentage: 0,
+        },
+        courses: [],
+      };
     } catch (error: any) {
       console.error('Error fetching user progress:', error.message);
       throw new Error('Failed to load progress data.');
@@ -113,7 +109,7 @@ const Dashboard: React.FC = () => {
     isLoading,
     error,
   } = useQuery<IProgressResponse>({
-    queryKey: ['userProgress'],
+    queryKey: ['userProgress', user?.id],
     queryFn: fetchUserProgress,
     enabled: !!user,
     staleTime: 5 * 60 * 1000, // 5 minutes

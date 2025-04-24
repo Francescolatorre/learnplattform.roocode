@@ -1,104 +1,126 @@
-import {
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  CardActionArea,
-  Chip,
-  Box,
-  Alert,
-} from '@mui/material';
-import React, {useEffect} from 'react';
-import {useNavigate} from 'react-router-dom';
+import React from 'react';
+import {Grid, Typography, Box} from '@mui/material';
 
 import {ICourse} from '@/types/course';
+import CourseCard from './CourseCard';
 
-export interface ICourseListProps {
-  courses: ICourse[] | null | undefined;
-  onError?: (error: Error) => void;
+/**
+ * Interface for CourseList component props
+ */
+interface ICourseListProps {
+  /**
+   * Array of courses to display
+   */
+  courses: ICourse[];
+
+  /**
+   * Whether the list is in a loading state
+   * @default false
+   */
+  isLoading?: boolean;
+
+  /**
+   * Title to display above the course list
+   * @optional
+   */
+  title?: string;
+
+  /**
+   * Error message to display if there was an error loading courses
+   * @optional
+   */
+  error?: string;
 }
 
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'published':
-      return 'success';
-    case 'draft':
-      return 'warning';
-    case 'private':
-      return 'error';
-    default:
-      return 'default';
-  }
-};
-
-const CourseList: React.FC<ICourseListProps> = ({courses, onError}) => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    console.info('CourseList mounted');
+/**
+ * CourseList displays a grid of CourseCards
+ *
+ * Features:
+ * - Responsive grid layout for courses
+ * - Optional title and error message display
+ * - Loading state handling
+ *
+ * @returns A grid of course cards
+ */
+const CourseList: React.FC<ICourseListProps> = ({
+  courses,
+  isLoading = false,
+  title,
+  error,
+}) => {
+  React.useEffect(() => {
+    console.log('CourseList mounted');
     return () => {
-      console.info('CourseList unmounted');
+      console.log('CourseList unmounted');
     };
   }, []);
 
-  // Add more detailed logging
-  console.info('CourseList render - courses prop:', courses);
-
-  if (!courses) {
-    return <Alert severity="info">No courses available.</Alert>;
+  // Show loading skeleton cards
+  if (isLoading) {
+    return (
+      <Box>
+        {title && (
+          <Typography variant="h5" component="h2" gutterBottom>
+            {title}
+          </Typography>
+        )}
+        <Grid container spacing={4}>
+          {[1, 2, 3, 4, 5, 6].map((item) => (
+            <Grid item key={item} xs={12} sm={6} md={4}>
+              <CourseCard course={{} as ICourse} isLoading={true} />
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+    );
   }
 
-  if (!Array.isArray(courses)) {
-    const error = new Error('Invalid courses data provided');
-    onError?.(error);
-    return <Alert severity="error">Unable to display courses.</Alert>;
+  // Show error message
+  if (error) {
+    return (
+      <Box>
+        {title && (
+          <Typography variant="h5" component="h2" gutterBottom>
+            {title}
+          </Typography>
+        )}
+        <Typography color="error">{error}</Typography>
+      </Box>
+    );
   }
 
-  if (courses.length === 0) {
-    return <Alert severity="info">No courses found.</Alert>;
+  // Show empty state
+  if (!courses || courses.length === 0) {
+    return (
+      <Box>
+        {title && (
+          <Typography variant="h5" component="h2" gutterBottom>
+            {title}
+          </Typography>
+        )}
+        <Typography>No courses available.</Typography>
+      </Box>
+    );
   }
 
+  console.log('CourseList render - courses prop:', courses);
+
+  // Show courses
   return (
-    <Grid container spacing={2}>
-      {courses.map(course => {
-        if (!course || typeof course !== 'object') {
-          console.error('Invalid course data:', course);
-          return null;
-        }
-
-        const creatorName = course.creator_details?.display_name || 'Unknown Instructor';
-
-        return (
-          <Grid item xs={12} sm={6} md={4} key={course.id}>
-            <Card>
-              <CardActionArea
-                onClick={() => navigate(`/courses/${course.id}`)}
-                aria-label={`View course: ${course.title}`}
-              >
-                <CardContent>
-                  <Box sx={{display: 'flex', justifyContent: 'space-between', mb: 1}}>
-                    <Typography variant="h6" component="div">
-                      {course.title}
-                    </Typography>
-                    <Chip
-                      label={course.status}
-                      color={getStatusColor(course.status)}
-                      size="small"
-                    />
-                  </Box>
-                  <Typography variant="body2" color="text.secondary">
-                    {course.description}
-                  </Typography>
-                  <Typography variant="caption" sx={{mt: 1, display: 'block'}}>
-                    Created by {creatorName}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
+    <Box>
+      {title && (
+        <Typography variant="h5" component="h2" gutterBottom>
+          {title}
+        </Typography>
+      )}
+      <Grid container spacing={4}>
+        {courses.map((course) => (
+          <Grid item key={course.id} xs={12} sm={6} md={4}>
+            <CourseCard course={course} />
           </Grid>
-        );
-      })}
-    </Grid>
+        ))}
+      </Grid>
+    </Box>
   );
 };
 

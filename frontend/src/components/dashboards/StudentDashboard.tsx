@@ -5,7 +5,7 @@ import React from 'react';
 import {
   IDashboardCourseInfo,
   IDashboardResponse
-} from '@/types/progressTypes';
+} from '@/types/progress';
 import ProgressOverview from '@components/ProgressOverview';
 import {useAuth} from '@context/auth/AuthContext';
 import CourseList from '@/components/courses/CourseList';

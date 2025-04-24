@@ -224,11 +224,26 @@ class CourseViewSet(viewsets.ModelViewSet):
     )
     def course_details(self, request, pk=None):
         """
-        Fetch course details without progress data.
+        Fetch course details including enrollment status for the current user.
         """
         try:
             logger.info("Fetching course details for course ID: %s", pk)
             course = self.get_object()
+
+            # Check if the current user is enrolled in this course
+            is_enrolled = CourseEnrollment.objects.filter(
+                user=request.user, course=course, status="active"
+            ).exists()
+
+            # Check if the current user has completed this course
+            is_completed = False
+            if is_enrolled:
+                # Check if all tasks are completed
+                total_tasks = LearningTask.objects.filter(course=course).count()
+                completed_tasks = TaskProgress.objects.filter(
+                    user=request.user, task__course=course, status="completed"
+                ).count()
+                is_completed = total_tasks > 0 and total_tasks == completed_tasks
 
             # Fetch tasks related to the course
             tasks = LearningTask.objects.filter(course=course)
@@ -241,6 +256,8 @@ class CourseViewSet(viewsets.ModelViewSet):
                     "description": course.description,
                     "learning_objectives": course.learning_objectives,
                     "prerequisites": course.prerequisites,
+                    "isEnrolled": is_enrolled,
+                    "isCompleted": is_completed,
                     "tasks": [
                         {"id": task.id, "title": task.title, "type": task.type}
                         for task in tasks

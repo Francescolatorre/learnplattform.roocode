@@ -12,7 +12,6 @@ export type {
     IQuizTask,
     IQuizResponse,
     IQuizAttempt,
-    IUserProgress,
 
 } from './entities';
 
@@ -46,8 +45,11 @@ export type {
     IDashboardUserInfo,
     IDashboardOverallStats,
     IDashboardCourseInfo,
-    IDashboardResponse
-} from './progressTypes';
+    IDashboardResponse,
+    IUserProgress,
+    IProgressResponse,
+
+} from './progress';
 
 // Explizite Re-Exporte aus authTypes.ts
 export type {

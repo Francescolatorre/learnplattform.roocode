@@ -1,4 +1,4 @@
-import {IUserProgress} from '@/types/entities';
+import {IUserProgress} from '@/types/progress';
 import {IStudentProgressSummary} from '@/types/analyticsTypes';
 
 import {ApiService} from '@/services/api/apiService';

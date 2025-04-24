@@ -20,7 +20,7 @@ import {
 import {format, parseISO} from 'date-fns';
 import React from 'react';
 
-import {IActivityEntry} from '@/types/progressTypes';
+import {IActivityEntry} from '@/types/progress';
 
 interface ActivityHistoryViewProps {
   recentActivity: IActivityEntry[];

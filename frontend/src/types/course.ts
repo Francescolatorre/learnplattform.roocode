@@ -1,6 +1,6 @@
 import {IUser} from './user';
 
-export type TCourseStatus = 'published' | 'draft' | 'private';
+export type TCourseStatus = 'draft' | 'published' | 'archived';
 
 export interface ICourseVersion {
     readonly id: number;
@@ -16,19 +16,22 @@ export interface ICourseVersion {
 
 // Kurs-bezogene Typen
 export interface ICourse {
-    id: number;
+    id: number | string;
     title: string;
     description: string;
-    version: number;
-    status: TCourseStatus;
-    visibility: 'public' | 'private';
-    learning_objectives: string;
-    prerequisites: string;
-    created_at: string;
-    updated_at: string;
-    creator: number;
-    creator_details: IUser;
-    isEnrolled?: boolean; // Optional because it might not be available in all contexts
+    image_url?: string;
+    instructor_id?: string;
+    instructor_name?: string;
+    created_at?: string;
+    updated_at?: string;
+    status?: TCourseStatus;
+
+    // Enrollment related fields
+    isEnrolled?: boolean;
+    isCompleted?: boolean;
+    enrollmentDate?: string;
+    progress?: number;
+    completionDate?: string;
 }
 
 export interface ICourseStructure {

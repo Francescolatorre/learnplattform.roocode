@@ -29,6 +29,9 @@ export enum AuthEventType {
     LOGOUT = 'logout',
     TOKEN_REFRESH = 'token_refresh',
     AUTH_ERROR = 'auth_error',
+    AUTH_SUCCESS = 'auth_success',
+    ENROLLMENT_SUCCESS = 'enrollment_success',
+    ENROLLMENT_FAILURE = 'enrollment_failure',
 }
 
 export interface AuthEvent {

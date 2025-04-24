@@ -85,10 +85,5 @@ export interface IQuizAttempt {
 
 
 
-// Progress-bezogene Typen - ohne Konflikte
-export interface IUserProgress {
-  id: number;
-  percentage: number;
-  label: string;
-}
+
 

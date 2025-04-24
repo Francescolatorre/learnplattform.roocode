@@ -6,16 +6,19 @@ import {
   ListItemText,
   Button,
   Box,
+  Paper,
+  Divider,
 } from '@mui/material';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import React from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 
 import {useNotification} from '@/components/ErrorNotifier/useErrorNotifier';
-import {ICourse} from '@/types/course'
+import {ICourse} from '@/types/course';
 import {useAuth} from '@context/auth/AuthContext';
 import {courseService} from '@services/resources/courseService';
 import {enrollmentService} from '@services/resources/enrollmentService';
+import EnrollmentStatusIndicator from '@/components/courses/EnrollmentStatusIndicator';
 
 /**
  * StudentCourseDetailsPage displays detailed information about a specific course.
@@ -75,6 +78,8 @@ const StudentCourseDetailsPage: React.FC = () => {
       queryClient.invalidateQueries({
         queryKey: ['courseDetails', courseId],
       });
+      queryClient.invalidateQueries({queryKey: ['enrollments']});
+      queryClient.invalidateQueries({queryKey: ['courses', courseId]});
 
       notify({
         message: 'Successfully enrolled in course!',
@@ -103,6 +108,7 @@ const StudentCourseDetailsPage: React.FC = () => {
     enrollMutation.mutate();
   };
 
+  // Modified render method to include status indicator
   if (isCourseLoading) {
     return <CircularProgress />;
   }
@@ -120,30 +126,43 @@ const StudentCourseDetailsPage: React.FC = () => {
   }
 
   return (
-    <div>
-      <Typography variant="h3" gutterBottom>
-        {courseDetails.title}
-      </Typography>
-      <Typography variant="body1" gutterBottom>
-        {courseDetails.description}
-      </Typography>
-
-      {!canViewTasks && (
-        <Box sx={{mt: 2, mb: 2}}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleEnrollClick}
-            disabled={enrollMutation.isPending}
-          >
-            {enrollMutation.isPending ? 'Enrolling...' : 'Enroll in Course'}
-          </Button>
-          {/* Error handling moved to the onError callback in the mutation */}
+    <Box sx={{maxWidth: 1200, mx: 'auto', p: 2}}>
+      <Paper sx={{p: 3, mb: 3}}>
+        <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2}}>
+          <Typography variant="h3" gutterBottom>
+            {courseDetails.title}
+          </Typography>
+          <EnrollmentStatusIndicator
+            isEnrolled={!!courseDetails.isEnrolled}
+            isCompleted={!!courseDetails.isCompleted}
+          />
         </Box>
-      )}
 
+        <Divider sx={{my: 2}} />
+
+        <Typography variant="body1" paragraph>
+          {courseDetails.description}
+        </Typography>
+
+        {!canViewTasks && (
+          <Box sx={{mt: 2, mb: 2}}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleEnrollClick}
+              disabled={enrollMutation.isPending}
+              size="large"
+              sx={{px: 4}}
+            >
+              {enrollMutation.isPending ? 'Enrolling...' : 'Enroll in Course'}
+            </Button>
+          </Box>
+        )}
+      </Paper>
+
+      {/* Rest of your existing UI... */}
       {canViewTasks ? (
-        <>
+        <Paper sx={{p: 3}}>
           <Typography variant="h5" gutterBottom>
             Associated Learning Tasks
           </Typography>
@@ -171,13 +190,15 @@ const StudentCourseDetailsPage: React.FC = () => {
           ) : (
             <Typography variant="body1">No learning tasks available for this course.</Typography>
           )}
-        </>
+        </Paper>
       ) : (
-        <Typography variant="body2" color="textSecondary">
-          Enroll in this course to access learning tasks.
-        </Typography>
+        <Paper sx={{p: 3, backgroundColor: 'action.hover'}}>
+          <Typography variant="body2" color="textSecondary">
+            Enroll in this course to access learning tasks.
+          </Typography>
+        </Paper>
       )}
-    </div>
+    </Box>
   );
 };
 
