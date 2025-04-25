@@ -20,7 +20,8 @@ import {useAuth} from '@context/auth/AuthContext';
 import ProgressIndicator from '@components/ProgressIndicator';
 import progressService from '@services/resources/progressService';
 import {enrollmentService} from '@services/resources/enrollmentService';
-import {ICourseEnrollment, IPaginatedResponse} from '@/types';
+import {ICourseEnrollment} from '@/types';
+import {IPaginatedResponse} from '@/types/paginatedResponse';
 
 /**
  * Student Dashboard Page

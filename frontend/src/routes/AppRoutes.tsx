@@ -10,7 +10,12 @@ import StudentTasksPage from '@/pages/learningTasks/StudentTasksPage';
 import Profile from '@/pages/Profile';
 import ProtectedRoute from '@/routes/ProtectedRoute';
 import InstructorDashboard from '@/components/dashboards/InstructorDashboard';
-import AdminCoursesPage from '@/pages/courses/AdminCoursesPage';
+
+import AdminDashboard from '@/pages/admin/AdminDashboardPage';
+import AdminCoursesPage from '@/pages/admin/AdminCoursesPage';
+import AdminUsersPage from '@/pages/admin/AdminUsersPage';
+import AdminAnalyticsPage from '@/pages/admin/AdminAnalyticsPage';
+import AdminSettingsPage from '@/pages/admin/AdminSettingsPage';
 
 // Lazy-loaded components
 const CourseDetailsPage = lazy(() => import('@/pages/courses/StudentCourseDetailsPage'));
@@ -28,7 +33,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/dashboard"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['student']}>
             <Dashboard />
           </ProtectedRoute>
         }
@@ -36,7 +41,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/courses"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['student']}>
             <StudentCoursesPage />
           </ProtectedRoute>
         }
@@ -44,7 +49,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/courses/:courseId"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['student']}>
             <CourseDetailsPage />
           </ProtectedRoute>
         }
@@ -52,7 +57,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/tasks"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['student']}>
             <StudentTasksPage />
           </ProtectedRoute>
         }
@@ -60,7 +65,8 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/profile"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['student', 'instructor', 'admin']}>
+            {/* Profile page for all roles */}
             <Profile />
           </ProtectedRoute>
         }
@@ -108,8 +114,42 @@ const AppRoutes: React.FC = () => {
         }
       />
 
-      {/* Redirect to dashboard if no route matches */}
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      {/* Admin routes - CHECK THIS SECTION */}
+      <Route
+        path="/admin/dashboard"
+        element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminUsersPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/analytics"
+        element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminAnalyticsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/settings"
+        element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminSettingsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Redirect to profile if no route matches */}
+      <Route path="*" element={<Navigate to="/profile" replace />} />
     </Routes>
   );
 };

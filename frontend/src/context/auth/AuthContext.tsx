@@ -18,7 +18,7 @@ import React, {createContext, useContext, useState, useEffect, useCallback} from
 import authService from '../../services/auth/authService';
 
 import {authEventService} from './AuthEventService';
-import {AuthContextProps, AuthEventType, AuthUser} from './types';
+import {AuthContextProps, AuthEventType, AuthUser, TUserRole} from './types';
 import {useNavigate} from 'react-router-dom';
 
 /**
@@ -137,7 +137,24 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         authEventService.publish({type: AuthEventType.LOGOUT});
     };
 
-    const getUserRole = () => user && (user as any).role ? (user as any).role : 'guest';
+    const getUserRole = useCallback((): TUserRole => {
+        // If no user is logged in, return 'guest'
+        if (!user) {
+            return 'guest';
+        }
+
+        // Check if role property exists on user object and is a valid role
+        if (user.role &&
+            (user.role === 'student' ||
+                user.role === 'instructor' ||
+                user.role === 'admin')) {
+            return user.role;
+        }
+
+        // Default fallback if user exists but has invalid/missing role
+        console.warn('User exists but has invalid or missing role:', user);
+        return 'guest';
+    }, [user]);
 
     interface IRedirectOptions {
         path?: string;
@@ -145,7 +162,19 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
     }
 
     const redirectToDashboard = useCallback((options?: {path?: string; replace?: boolean}) => {
-        const defaultPath = '/dashboard';
+        const role = getUserRole();
+        console.info(`AuthContext | User role: ${role}`);
+
+        let defaultPath = '/dashboard';
+
+        // Determine default path based on user role
+        if (role === 'instructor') {
+            defaultPath = '/instructor/dashboard';
+        } else if (role === 'admin') {
+            defaultPath = '/admin/dashboard';
+        }
+
+        // Use provided path if specified, otherwise use role-based default
         const redirectPath = options?.path || defaultPath;
         const shouldReplace = options?.replace || false;
 
@@ -160,13 +189,15 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
 
         // Publish navigation event for tracking
         authEventService.publish({
-            type: AuthEventType.LOGIN,
+            type: AuthEventType.NAVIGATION,  // Changed from LOGIN to more appropriate NAVIGATION
             payload: {
                 message: `Redirected to ${redirectPath}`,
-                user
+                path: redirectPath,
+                role: role,
+                userId: user?.id
             }
         });
-    }, [navigate, user]);
+    }, [navigate, user, getUserRole]);
 
     const setError = (errorMsg: string) => {
         setErrorMessage(errorMsg);

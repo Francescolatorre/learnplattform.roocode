@@ -1,16 +1,16 @@
+import React, {useEffect, useState} from 'react';
 import {Box, TextField, Button, Typography, CircularProgress} from '@mui/material';
-import React from 'react';
 import {useForm, SubmitHandler} from 'react-hook-form';
 
 import {useNotification} from '@components/ErrorNotifier/useErrorNotifier';
 import {useAuth} from '@context/auth/AuthContext';
+import {TUserRole} from '@/types';
 
 interface ILoginFormInputs {
   username: string;
   password: string;
 }
 
-// Define a specific interface for API errors instead of using any
 interface IApiError {
   response?: {
     data?: {
@@ -21,21 +21,53 @@ interface IApiError {
   message?: string;
 }
 
+/**
+ * Login page component for user authentication
+ * Handles login form submission and redirects based on user role
+ */
 const LoginPage: React.FC = () => {
   const {
     register,
     handleSubmit,
     formState: {errors, isSubmitting},
   } = useForm<ILoginFormInputs>();
-  const {login, redirectToDashboard} = useAuth();
+  const {login, redirectToDashboard, getUserRole, user} = useAuth();
   const notify = useNotification();
+
+  // Track login state to know when to watch for user data
+  const [hasLoggedIn, setHasLoggedIn] = useState(false);
+
+  // Watch for user data changes after successful login
+  useEffect(() => {
+    // Only run this effect after a successful login
+    if (hasLoggedIn && user) {
+      console.info('LoginPage: User data updated after login:', user);
+
+      // Get the role directly from user object instead of getUserRole
+      const role = user.role;
+      console.info(`LoginPage: User role from user object: ${role}`);
+
+      // Only redirect if we have a valid role
+      if (role && role !== 'guest') {
+        console.info(`LoginPage: Valid role detected: ${role}, redirecting`);
+        redirectToDashboard();
+      } else {
+        console.warn('LoginPage: No valid role found in user object, using fallback redirect');
+        redirectToDashboard();
+      }
+    }
+  }, [user, hasLoggedIn, redirectToDashboard]);
 
   const handleLogin = async (data: ILoginFormInputs) => {
     try {
-      console.info('LoginPage: handleLogin: Login payload:', data); // Log the payload for debugging
+      console.info('LoginPage: handleLogin: Login payload:', data);
+
+      // Login and await the result
       await login(data.username, data.password);
-      console.info('LoginPage: handleLogin: Login successful, redirecting to dashboard');
-      redirectToDashboard();
+      console.info('LoginPage: handleLogin: Login successful');
+
+      // Set login state to trigger the effect above
+      setHasLoggedIn(true);
     } catch (error: unknown) {
       const apiError = error as IApiError;
       console.error(
@@ -47,14 +79,13 @@ const LoginPage: React.FC = () => {
             : 'Unknown error'
       );
 
-      // Use centralized error notification system instead of setError
       notify({
         title: 'Login Failed',
         message: 'response' in apiError
           ? apiError.response?.data?.detail || 'An error occurred during login'
           : 'An error occurred during login',
         severity: 'error',
-        duration: 5000 // Auto-dismiss after 5 seconds
+        duration: 5000
       });
     }
   };
@@ -63,6 +94,7 @@ const LoginPage: React.FC = () => {
     await handleLogin(data);
   };
 
+  // Render form component (unchanged)
   return (
     <Box sx={{maxWidth: 400, mx: 'auto', mt: 8, p: 3, border: '1px solid #ccc', borderRadius: 2}}>
       <Typography variant="h5" gutterBottom>

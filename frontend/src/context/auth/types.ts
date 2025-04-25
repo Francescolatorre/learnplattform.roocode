@@ -1,3 +1,5 @@
+export type TUserRole = 'guest' | 'student' | 'instructor' | 'admin';
+
 export interface AuthUser {
     id: string;
     username: string;
@@ -32,6 +34,7 @@ export enum AuthEventType {
     AUTH_SUCCESS = 'auth_success',
     ENROLLMENT_SUCCESS = 'enrollment_success',
     ENROLLMENT_FAILURE = 'enrollment_failure',
+    NAVIGATION = 'navigation',
 }
 
 export interface AuthEvent {
