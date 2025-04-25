@@ -149,7 +149,11 @@ module.exports = {
         'from.pathNot re of the not-to-dev-dep rule in the dependency-cruiser configuration',
       from: {
         path: '^(src)',
-        pathNot: '[.](?:spec|test)[.](?:js|mjs|cjs|jsx|ts|mts|cts|tsx)$'
+        pathNot: ['[.](?:spec|test)[.](?:js|mjs|cjs|jsx|ts|mts|cts|tsx)$',
+          '^src/vite-env\\.d\\.ts$',   // Add exception here
+          '^src/test-utils',            // Add more exceptions as needed
+          '^src/services/resources/mock.+\\.ts$' // Add exception for mock services
+        ]
       },
       to: {
         dependencyTypes: [
@@ -193,6 +197,17 @@ module.exports = {
         dependencyTypes: [
           'npm-peer'
         ]
+      }
+    },
+    {
+      name: 'no-components-to-pages',
+      severity: 'error',
+      comment: 'Components should not import anything from pages to keep layering clean.',
+      from: {
+        path: '^src/components'
+      },
+      to: {
+        path: '^src/pages'
       }
     }
   ],

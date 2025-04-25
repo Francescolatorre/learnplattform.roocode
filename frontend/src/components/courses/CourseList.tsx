@@ -21,7 +21,8 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import PeopleIcon from '@mui/icons-material/People';
 import SchoolIcon from '@mui/icons-material/School';
 
-import {ICourse} from '@/types';
+// Importiere den Typ direkt aus der Typdatei, um Casing-Probleme zu vermeiden
+import {ICourse} from '@/types/course';
 import {formatDateRelative} from '@/utils/dateUtils';
 
 // Custom type extension for course with student count
@@ -29,10 +30,11 @@ interface ICourseWithEnrollment extends ICourse {
   student_count?: number;
 }
 
-interface ICourseListProps {
+export interface ICourseListProps {
   courses: ICourseWithEnrollment[] | ICourse[];
   title?: string;
   showInstructorActions?: boolean;
+  onError?: (error: Error) => void; // Hinzugefügt für FilterableCourseList
 }
 
 /**
@@ -123,8 +125,12 @@ const CourseList: React.FC<ICourseListProps> = ({
                       color="text.primary"
                       sx={{display: 'inline', mr: 1}}
                     >
-                      {course.description?.substring(0, 150) || 'No description provided.'}
-                      {course.description && course.description.length > 150 ? '...' : ''}
+                      {/* Sicherstellen dass description definiert ist */}
+                      {course.description ?
+                        (course.description.length > 150
+                          ? `${course.description.substring(0, 150)}...`
+                          : course.description)
+                        : 'No description provided.'}
                     </Typography>
 
                     <Box sx={{mt: 1, display: 'flex', gap: 2}}>

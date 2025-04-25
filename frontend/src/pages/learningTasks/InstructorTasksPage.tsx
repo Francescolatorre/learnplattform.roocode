@@ -4,7 +4,7 @@ import {useParams, useNavigate} from 'react-router-dom';
 
 import {ILearningTask} from '@/types';
 import {useCourseTasks} from '@services/useCourseTasks';
-import {DataTable} from 'src/components/DataTable';
+import {DataTable} from 'src/components/shared';
 
 
 const InstructorTasksPage: React.FC = () => {

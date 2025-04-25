@@ -1,16 +1,13 @@
-import {Box, Grid, Typography, CircularProgress} from '@mui/material';
+import {Box, Typography, CircularProgress} from '@mui/material';
 import {useQuery} from '@tanstack/react-query';
 import React from 'react';
 
 import {
-  IDashboardCourseInfo,
   IDashboardResponse
 } from '@/types/progress';
-import ProgressOverview from '@components/ProgressOverview';
 import {useAuth} from '@context/auth/AuthContext';
-import CourseList from '@/components/courses/CourseList';
 import progressService from 'src/services/resources/progressService';
-import {ICourse, ICourseEnrollment, TCourseStatus} from '@/types';
+import {ICourseEnrollment} from '@/types';
 import {enrollmentService} from '@/services';
 
 const StudentDashboard: React.FC = () => {

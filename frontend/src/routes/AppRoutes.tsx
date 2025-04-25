@@ -1,40 +1,52 @@
-import React, {lazy} from 'react';
+import React from 'react';
 import {Routes, Route, Navigate} from 'react-router-dom';
 
-import {StudentCoursesPage} from '@/pages/courses/StudentCoursesPage';
-import EditCourse from '@/components/courses/EditCourse';
-import LoginPage from '@/pages/auth/LoginPage';
-import Dashboard from '@/pages/DashboardPage';
-import HomePage from '@/pages/HomePage';
-import StudentTasksPage from '@/pages/learningTasks/StudentTasksPage';
-import Profile from '@/pages/Profile';
 import ProtectedRoute from '@/routes/ProtectedRoute';
-import InstructorDashboard from '@/components/dashboards/InstructorDashboard';
 
-import AdminDashboard from '@/pages/admin/AdminDashboardPage';
+// Page imports with consistent naming (all end with "Page")
+import HomePage from '@/pages/HomePage';
+import LoginPage from '@/pages/auth/LoginPage';
+import DashboardPage from '@/pages/DashboardPage';
+import ProfilePage from '@/pages/ProfilePage';
+import RegisterFormPage from '@/pages/RegisterFormPage';
+
+// Student pages
+import {StudentCoursesPage} from '@/pages/courses/StudentCoursesPage';
+import StudentCourseDetailsPage from '@/pages/courses/StudentCourseDetailsPage';
+import StudentTasksPage from '@/pages/learningTasks/StudentTasksPage';
+import CourseProgressPage from '@/pages/courses/CourseProgressPage';
+
+// Instructor pages
+import InstructorDashboardPage from '@/pages/instructor/InstructorDashboardPage';
+import InstructorCoursesPage from '@/pages/instructor/InstructorCoursesPage';
+import EditCoursePage from '@/pages/courses/EditCoursePage';
+import InstructorCourseDetailPage from '@/pages/instructor/InstructorCourseDetailsPage';
+
+// Admin pages
+import AdminDashboardPage from '@/pages/admin/AdminDashboardPage';
 import AdminCoursesPage from '@/pages/admin/AdminCoursesPage';
 import AdminUsersPage from '@/pages/admin/AdminUsersPage';
 import AdminAnalyticsPage from '@/pages/admin/AdminAnalyticsPage';
 import AdminSettingsPage from '@/pages/admin/AdminSettingsPage';
 
-// Lazy-loaded components
-const CourseDetailsPage = lazy(() => import('@/pages/courses/StudentCourseDetailsPage'));
-const InstructorCourseDetailsPage = lazy(() => import('@/pages/courses/InstructorCourseDetailsPage'));
-
+/**
+ * Main Application Routes Component
+ * Defines all routes and their protection levels
+ */
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<LoginPage register={true} />} />
+      <Route path="/register" element={<RegisterFormPage />} />
 
       {/* Student Routes */}
       <Route
         path="/dashboard"
         element={
           <ProtectedRoute allowedRoles={['student']}>
-            <Dashboard />
+            <DashboardPage />
           </ProtectedRoute>
         }
       />
@@ -50,14 +62,14 @@ const AppRoutes: React.FC = () => {
         path="/courses/:courseId"
         element={
           <ProtectedRoute allowedRoles={['student']}>
-            <CourseDetailsPage />
+            <StudentCourseDetailsPage />
           </ProtectedRoute>
         }
       />
       <Route
         path="/tasks"
         element={
-          <ProtectedRoute allowedRoles={['student']}>
+          <ProtectedRoute allowedRoles={['student', 'instructor', 'admin']}>
             <StudentTasksPage />
           </ProtectedRoute>
         }
@@ -66,8 +78,7 @@ const AppRoutes: React.FC = () => {
         path="/profile"
         element={
           <ProtectedRoute allowedRoles={['student', 'instructor', 'admin']}>
-            {/* Profile page for all roles */}
-            <Profile />
+            <ProfilePage />
           </ProtectedRoute>
         }
       />
@@ -77,7 +88,7 @@ const AppRoutes: React.FC = () => {
         path="/instructor/dashboard"
         element={
           <ProtectedRoute allowedRoles={['instructor', 'admin']}>
-            <InstructorDashboard />
+            <InstructorDashboardPage />
           </ProtectedRoute>
         }
       />
@@ -85,7 +96,7 @@ const AppRoutes: React.FC = () => {
         path="/instructor/courses"
         element={
           <ProtectedRoute allowedRoles={['instructor', 'admin']}>
-            <AdminCoursesPage />
+            <InstructorCoursesPage />
           </ProtectedRoute>
         }
       />
@@ -93,7 +104,7 @@ const AppRoutes: React.FC = () => {
         path="/instructor/courses/new"
         element={
           <ProtectedRoute allowedRoles={['instructor', 'admin']}>
-            <EditCourse isNew={true} />
+            <EditCoursePage isNew={true} />
           </ProtectedRoute>
         }
       />
@@ -101,7 +112,7 @@ const AppRoutes: React.FC = () => {
         path="/instructor/courses/:courseId/edit"
         element={
           <ProtectedRoute allowedRoles={['instructor', 'admin']}>
-            <EditCourse />
+            <EditCoursePage />
           </ProtectedRoute>
         }
       />
@@ -109,17 +120,25 @@ const AppRoutes: React.FC = () => {
         path="/instructor/courses/:courseId"
         element={
           <ProtectedRoute allowedRoles={['instructor', 'admin']}>
-            <InstructorCourseDetailsPage />
+            <InstructorCourseDetailPage />
           </ProtectedRoute>
         }
       />
 
-      {/* Admin routes - CHECK THIS SECTION */}
+      {/* Admin routes */}
       <Route
         path="/admin/dashboard"
         element={
           <ProtectedRoute allowedRoles={['admin']}>
-            <AdminDashboard />
+            <AdminDashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/courses"
+        element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminCoursesPage />
           </ProtectedRoute>
         }
       />
@@ -144,6 +163,15 @@ const AppRoutes: React.FC = () => {
         element={
           <ProtectedRoute allowedRoles={['admin']}>
             <AdminSettingsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/progress"
+        element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <CourseProgressPage />
           </ProtectedRoute>
         }
       />

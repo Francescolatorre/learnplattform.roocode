@@ -101,18 +101,30 @@ export interface IDashboardCourseInfo {
 /**
  * Interface für die Dashboard-Antwort vom Server
  */
+// Dashboard related types
 export interface IDashboardResponse {
-    user_info: IDashboardUserInfo;
-    overall_stats: IDashboardOverallStats;
-    courses: IDashboardCourseInfo[];
-    recent_activities?: Array<{
-        id: number;
-        type: string;
-        description: string;
-        timestamp: string;
-        course_id?: number;
-        task_id?: number;
-    }>;
+    user_info: {
+        id: string;
+        username: string;
+        display_name?: string;
+        role: string;
+    };
+    overall_stats: {
+        courses_enrolled: number;
+        courses_completed: number;
+        overall_progress: number;
+        tasks_completed: number;
+        tasks_in_progress: number;
+        tasks_overdue: number;
+    };
+    courses: {
+        id: string;
+        title: string;
+        progress: number;
+        status: string;
+        enrolled_date: string;
+        last_activity_date?: string;
+    }[];
 }
 
 /**

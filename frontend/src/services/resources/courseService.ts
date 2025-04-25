@@ -1,5 +1,5 @@
 import {IUserProgress} from '@/types/progress';
-import {IStudentProgressSummary} from '@/types/analyticsTypes';
+import {IStudentProgressSummary} from '@/types';
 
 import {ApiService} from '@/services/api/apiService';
 import {ICourse, TCourseStatus} from '@/types/course';

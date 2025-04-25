@@ -11,11 +11,11 @@ const customPaths = {
   '@constants': resolve(__dirname, './src/constants'),
   '@context': resolve(__dirname, './src/context'),
   '@hooks': resolve(__dirname, './src/hooks'),
+  '@pages': resolve(__dirname, './src/pages'),
   '@routes': resolve(__dirname, './src/routes'),
   '@services': resolve(__dirname, './src/services'),
   '@store': resolve(__dirname, './src/store'),
   '@styles': resolve(__dirname, './src/styles'),
-  '@types': resolve(__dirname, './src/types'),
   '@utils': resolve(__dirname, './src/utils'),
 };
 

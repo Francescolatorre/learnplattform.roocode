@@ -2,7 +2,7 @@ import {Box, CircularProgress, Typography} from '@mui/material';
 import {useQuery} from '@tanstack/react-query';
 
 
-import FilterableCourseList from '@components/FilterableCourseList';
+import FilterableCourseList from '@/components/courses/FilterableCourseList';
 import courseService from '@services/resources/courseService';
 import {ICourse, IPaginatedResponse} from 'src/types/';
 

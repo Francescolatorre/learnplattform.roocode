@@ -6,7 +6,7 @@ import {
   IGradingData,
   ITaskProgressUpdateData,
   ITaskSubmissionData
-} from '@/types/analyticsTypes';
+} from '@/types';
 import {
   IUserProgress,
   ICourse,
@@ -14,7 +14,7 @@ import {
   IPaginatedResponse,
   IDashboardResponse,
   ITaskProgress
-} from 'src/types';
+} from '@/types';
 
 
 import {API_CONFIG} from '../api/apiConfig';

@@ -17,7 +17,7 @@ import EnrollmentStatusIndicator from './EnrollmentStatusIndicator';
 /**
  * Interface for CourseCard component props
  */
-interface ICourseCardProps {
+interface CourseCardProps {
   /**
    * Course data to display in the card
    */
@@ -46,7 +46,7 @@ interface ICourseCardProps {
  *
  * @returns A card component displaying course information
  */
-const CourseCard: React.FC<ICourseCardProps> = ({course, isLoading = false, isInstructorView = false}) => {
+const CourseCard: React.FC<CourseCardProps> = ({course, isLoading = false, isInstructorView = false}) => {
   const navigate = useNavigate();
 
   if (isLoading) {

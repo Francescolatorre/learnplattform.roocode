@@ -1,6 +1,6 @@
 // src/types/common/taskts
 
-import {IUser} from '@/types/user';
+import {IUser} from '@/types/userTypes';
 
 
 export type TTaskStatus = 'not_started' | 'in_progress' | 'completed' | 'graded' | 'pending';
@@ -89,14 +89,19 @@ export interface IQuizHistory {
 
 // Aufgaben-bezogene Typen
 export interface ILearningTask {
-    readonly id: number;
+    readonly id: string;
     course: number;
     title: string;
+    course_id: string;
     description: string;
     order: number;
     created_at: string;
     updated_at: string;
     is_published: boolean;
+    points?: number;
+    due_date?: string;
+    status: 'draft' | 'published' | 'archived';
+
 }
 
 export interface ITaskCreationData {

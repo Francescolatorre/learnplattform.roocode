@@ -1,7 +1,7 @@
 import {Box} from '@mui/material';
 import React from 'react';
 
-import FilterableCourseList from 'src/components/FilterableCourseList';
+import FilterableCourseList from '@/components/courses/FilterableCourseList';
 
 const StudentCoursesPage: React.FC = () => {
   return (

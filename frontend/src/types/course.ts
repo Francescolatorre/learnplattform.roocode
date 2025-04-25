@@ -1,4 +1,4 @@
-import {IUser} from './user';
+import {IUser} from '@/types/userTypes';
 
 export type TCourseStatus = 'draft' | 'published' | 'archived';
 
@@ -25,6 +25,10 @@ export interface ICourse {
     created_at?: string;
     updated_at?: string;
     status: TCourseStatus;
+    learning_objectives?: string;
+    prerequisites?: string;
+    visibility?: 'public' | 'private';
+    version?: number;
 
     // Enrollment related fields
     student_count?: number;

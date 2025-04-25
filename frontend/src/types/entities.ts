@@ -1,12 +1,11 @@
 // src/types/common/entities.ts
 
 import {ICourse} from './course';
-import {IUser} from './user';
-
+import {IUser} from './userTypes';
 
 // Basistypen
 export type TCompletionStatus = 'active' | 'completed' | 'dropped';
-export type TQuizCompletionStatus = 'passed' | 'failed' | 'in_progress';
+export type TQuizCompletionStatus = 'completed' | 'incomplete'
 
 
 
@@ -28,6 +27,7 @@ export interface ICourseEnrollment {
 // Quiz-bezogene Typen
 export interface IQuizOption {
   readonly id: number;
+  question: number;
   text: string;
   is_correct: boolean;
   order: number;
@@ -37,9 +37,9 @@ export interface IQuizQuestion {
   readonly id: number;
   quiz: string;
   text: string;
-  explanation: string;
-  points: number;
-  order: number;
+  explanation?: string;
+  points?: number;
+  order?: number;
   readonly options: IQuizOption[];
 }
 
@@ -48,14 +48,14 @@ export interface IQuizTask {
   course: number;
   title: string;
   description: string;
-  order: number;
-  is_published: boolean;
+  order?: number;
+  is_published?: boolean;
   readonly created_at: string;
   readonly updated_at: string;
-  time_limit_minutes: number;
-  pass_threshold: number;
-  max_attempts: number;
-  randomize_questions: boolean;
+  time_limit_minutes?: number;
+  pass_threshold?: number;
+  max_attempts?: number;
+  randomize_questions?: boolean;
   readonly questions: IQuizQuestion[];
 }
 

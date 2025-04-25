@@ -17,7 +17,7 @@ import {Link as RouterLink} from 'react-router-dom';
 import {IUserProgress} from '@/types';
 import {IProgressResponse} from '@/types/progress';
 import {useAuth} from '@context/auth/AuthContext';
-import ProgressIndicator from '@components/ProgressIndicator';
+import ProgressIndicator from '@/components/shared/ProgressIndicator';
 import progressService from '@services/resources/progressService';
 import {enrollmentService} from '@services/resources/enrollmentService';
 import {ICourseEnrollment} from '@/types';

@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface IUserProfileProps {
+interface UserProfileProps {
   user: {
     display_name: string;
     username: string;
@@ -10,7 +10,7 @@ interface IUserProfileProps {
   };
 }
 
-const UserProfile: React.FC<IUserProfileProps> = ({user}) => {
+const UserProfile: React.FC<UserProfileProps> = ({user}) => {
   return (
     <div>
       <h1>{user.display_name || user.username}</h1>

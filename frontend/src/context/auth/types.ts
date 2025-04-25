@@ -1,6 +1,6 @@
 export type TUserRole = 'guest' | 'student' | 'instructor' | 'admin';
 
-export interface AuthUser {
+export interface IAuthUser {
     id: string;
     username: string;
     role?: string; // user role, e.g. 'student', 'instructor', 'admin'
@@ -37,7 +37,7 @@ export enum AuthEventType {
     NAVIGATION = 'navigation',
 }
 
-export interface AuthEvent {
+export interface IAuthEvent {
     type: AuthEventType;
     payload?: IAuthEventPayload;
 }

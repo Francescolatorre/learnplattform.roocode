@@ -1,28 +1,13 @@
-import {
-  Box,
-  Typography,
-  TextField,
-  CircularProgress,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-  Grid,
-  SelectChangeEvent,
-  Pagination,
-} from '@mui/material';
+import {Box, Typography, TextField, CircularProgress, MenuItem, Select, FormControl, InputLabel, Grid, SelectChangeEvent, Pagination} from '@mui/material';
 import React, {useState, useMemo, useEffect, useCallback} from 'react';
 
 import {ICourse, TCourseStatus} from '@/types/course';
 import {useDebounce} from '@utils/useDebounce';
 
-import {courseService, CourseFilterOptions} from '../../services/resources/courseService';
+import {courseService, CourseFilterOptions} from '@services/resources/courseService';
+
 import CourseList from './CourseList';
 
-// Define proper interface for options parameter
-interface IFilterOptions extends CourseFilterOptions {
-  [key: string]: unknown;
-}
 
 interface FilterableCourseListProps {
   initialCourses?: ICourse[];
@@ -58,12 +43,12 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
   const [totalCount, setTotalCount] = useState<number>(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [status, setStatus] = useState<TCourseStatus | ''>('');
-  const [creator] = useState<number | null>(null); // Used in loadCourses
+  const [creator] = useState<number | null>(null);
   const [page, setPage] = useState(1);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
-  const loadCourses = useCallback(async (options?: IFilterOptions) => {
+  const loadCourses = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -74,8 +59,8 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
       };
 
       if (debouncedSearchTerm) filterOptions.search = debouncedSearchTerm;
-      if (status) filterOptions.status = status;
-      if (creator) filterOptions.creator = creator;  // Use creator variable
+      if (status) filterOptions.status = status as TCourseStatus;
+      if (creator) filterOptions.creator = creator;
 
       console.info('Fetching courses with options:', filterOptions);
 
@@ -136,13 +121,13 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [page, pageSize, debouncedSearchTerm, status, creator]);
+  }, [debouncedSearchTerm, status, creator, page, pageSize]); // Add all dependencies
 
   useEffect(() => {
     if (!clientSideFiltering && (!initialCourses || initialCourses.length === 0)) {
       loadCourses();
     }
-  }, [clientSideFiltering, initialCourses, debouncedSearchTerm, status, page]);
+  }, [clientSideFiltering, initialCourses, loadCourses]); // Now loadCourses is properly memoized
 
   useEffect(() => {
     if (initialCourses) {
@@ -155,10 +140,6 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
       onCoursesLoaded(courses);
     }
   }, [courses, onCoursesLoaded]);
-
-  useEffect(() => {
-    loadCourses();
-  }, [loadCourses]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);

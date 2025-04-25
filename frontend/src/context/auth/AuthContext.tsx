@@ -13,137 +13,209 @@
  * @module AuthContext
  */
 
-import React, {createContext, useContext, useState, useEffect, useCallback} from 'react';
-
-import authService from '../../services/auth/authService';
-
-import {authEventService} from './AuthEventService';
-import {AuthContextProps, AuthEventType, AuthUser, TUserRole} from './types';
+import React, {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 
+import authService from '@/services/auth/authService';
+import {IUser, TUserRole} from '@/types/userTypes';
+import {AUTH_CONFIG, ROUTE_CONFIG} from '@/config/appConfig';
+
 /**
- * Default authentication context value
- * Provides a type-safe default value for the context when used outside of a provider
+ * AuthEvent types for tracking authentication-related events
  */
-const AuthContext = createContext<AuthContextProps>({
-    user: null,                      // Current authenticated user or null if not authenticated
-    isAuthenticated: false,          // Whether a user is currently authenticated
-    isRestoring: false,              // Whether auth state is currently being restored from storage
-    login: async () => { },          // Function to authenticate a user
-    logout: async () => { },         // Function to log out the current user
-    getUserRole: () => 'guest',      // Function to get the current user's role
-    redirectToDashboard: () => { },  // Function to redirect to the appropriate dashboard
-    setError: () => { },             // Function to set authentication errors
+export enum AuthEventType {
+    LOGIN = 'login',
+    LOGOUT = 'logout',
+    REGISTER = 'register',
+    NAVIGATION = 'navigation',
+    TOKEN_REFRESH = 'token_refresh',
+    ERROR = 'error',
+}
+
+/**
+ * AuthEvent interface for structured authentication event data
+ */
+export interface IAuthEvent {
+    type: AuthEventType;
+    timestamp?: string;
+    payload?: Record<string, any>;
+}
+
+/**
+ * Auth context interface defining available methods and properties
+ */
+interface IAuthContextProps {
+    user: IUser | null;
+    isAuthenticated: boolean;
+    isRestoring: boolean;
+    error: string | null;
+    login: (username: string, password: string) => Promise<void>;
+    logout: () => void;
+    register: (username: string, email: string, password: string) => Promise<void>;
+    getUserRole: () => TUserRole;
+    redirectToDashboard: (options?: {path?: string; replace?: boolean}) => void;
+}
+
+// Create the auth context with a default value
+const AuthContext = createContext<IAuthContextProps>({
+    user: null,
+    isAuthenticated: false,
+    isRestoring: true,
+    error: null,
+    login: async () => { },
+    logout: () => { },
+    register: async () => { },
+    getUserRole: () => 'guest',
+    redirectToDashboard: () => { },
 });
 
+/**
+ * Simple event service for publishing auth-related events
+ * This can be extended to integrate with analytics or monitoring systems
+ */
+class AuthEventService {
+    publish(event: IAuthEvent): void {
+        const eventWithTimestamp = {
+            ...event,
+            timestamp: new Date().toISOString(),
+        };
+        console.info('Auth event:', eventWithTimestamp);
+
+        // Here you could send events to an analytics service
+        // analyticsService.track(eventWithTimestamp);
+    }
+}
+
+const authEventService = new AuthEventService();
+
+/**
+ * AuthProvider component that wraps the application and provides authentication context
+ */
 export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
-    const [user, setUser] = useState<AuthUser | null>(null);
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-    const [authTokens, setAuthTokens] = useState<{access: string; refresh: string} | null>(null);
-    const [isRestoring, setIsRestoring] = useState<boolean>(true);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const navigate = useNavigate(); // Assuming you are using react-router-dom for navigation
+    const [user, setUser] = useState<IUser | null>(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isRestoring, setIsRestoring] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
-    // Initialize authentication state from localStorage on mount
+    // Restore authentication state from localStorage
     useEffect(() => {
-        // Subscribe to Auth-Events
-        const unsubscribe = authEventService.subscribe((event) => {
-            switch (event.type) {
-                case AuthEventType.AUTH_ERROR:
-                    setUser(null);
-                    setIsAuthenticated(false);
-                    setAuthTokens(null);
-                    localStorage.removeItem('accessToken');
-                    localStorage.removeItem('refreshToken');
-                    break;
-                // Handle more events if needed...
-            }
-        });
+        const restoreAuth = async () => {
+            try {
+                const storedUser = localStorage.getItem(AUTH_CONFIG.userStorageKey);
+                const token = localStorage.getItem(AUTH_CONFIG.tokenStorageKey);
 
-        // Restore tokens and user from localStorage
-        const accessToken = localStorage.getItem('accessToken');
-        const refreshToken = localStorage.getItem('refreshToken');
-        if (accessToken && refreshToken) {
-            setAuthTokens({access: accessToken, refresh: refreshToken});
-            // Fetch user profile with access token
-            authService.getUserProfile(accessToken)
-                .then(profile => {
-                    // Map UserProfile to AuthUser (convert id to string)
-                    const mappedUser = {...profile, id: String(profile.id)};
-                    setUser(mappedUser);
-                    setIsAuthenticated(true);
-                })
-                .catch(() => {
-                    setUser(null);
-                    setIsAuthenticated(false);
-                    setAuthTokens(null);
-                    localStorage.removeItem('accessToken');
-                    localStorage.removeItem('refreshToken');
-                })
-                .finally(() => {
-                    setIsRestoring(false);
+                if (storedUser && token) {
+                    // Validate token with backend
+                    const isValid = await authService.validateToken();
+
+                    if (isValid) {
+                        setUser(JSON.parse(storedUser));
+                        setIsAuthenticated(true);
+                        authEventService.publish({
+                            type: AuthEventType.TOKEN_REFRESH,
+                            payload: {message: 'Authentication restored from localStorage'}
+                        });
+                    } else {
+                        // Token is invalid, clear local storage
+                        localStorage.removeItem(AUTH_CONFIG.userStorageKey);
+                        localStorage.removeItem(AUTH_CONFIG.tokenStorageKey);
+                        localStorage.removeItem(AUTH_CONFIG.refreshTokenStorageKey);
+                        setUser(null);
+                        setIsAuthenticated(false);
+                    }
+                }
+            } catch (err) {
+                console.error('Error restoring authentication:', err);
+                setUser(null);
+                setIsAuthenticated(false);
+                authEventService.publish({
+                    type: AuthEventType.ERROR,
+                    payload: {message: 'Error restoring authentication', error: err}
                 });
-        } else {
-            setIsRestoring(false);
-        }
+            } finally {
+                setIsRestoring(false);
+            }
+        };
 
-        // Cleanup on unmount
-        return () => unsubscribe();
+        restoreAuth();
     }, []);
 
-    // Refactored login to use authService and persist tokens/user
-    const login = async (username: string, password: string) => {
+    // Login function
+    const login = useCallback(async (username: string, password: string) => {
         try {
-            // Authenticate with backend
-            const {access, refresh} = await authService.login(username, password);
-            // Store tokens in localStorage
-            localStorage.setItem('accessToken', access);
-            localStorage.setItem('refreshToken', refresh);
-            setAuthTokens({access, refresh});
-
-            // Fetch user profile
-            const profile = await authService.getUserProfile(access);
-            // Map UserProfile to AuthUser (convert id to string)
-            const mappedUser = {...profile, id: String(profile.id)};
-            setUser(mappedUser);
+            setError(null);
+            const userData = await authService.login(username, password);
+            setUser(userData);
             setIsAuthenticated(true);
-
-            // Publish event
             authEventService.publish({
                 type: AuthEventType.LOGIN,
-                payload: profile
+                payload: {
+                    userId: userData.id,
+                    username: userData.username,
+                    role: userData.role
+                }
             });
-        } catch (error) {
-            setUser(null);
+        } catch (err: any) {
+            setError('Login failed: ' + (err.message || 'Unknown error'));
             setIsAuthenticated(false);
-            setAuthTokens(null);
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
-            setErrorMessage('Login failed');
-            console.error('Login failed:', error);
-            throw error;
+            authEventService.publish({
+                type: AuthEventType.ERROR,
+                payload: {
+                    message: 'Login failed',
+                    error: err.message || 'Unknown error'
+                }
+            });
+            throw err;
         }
-    };
+    }, []);
 
-    const logout = async () => {
-        // Clear tokens and user state
+    // Register function
+    const register = useCallback(async (username: string, email: string, password: string) => {
+        try {
+            setError(null);
+            const userData = await authService.register(username, email, password);
+            setUser(userData);
+            setIsAuthenticated(true);
+            authEventService.publish({
+                type: AuthEventType.REGISTER,
+                payload: {
+                    userId: userData.id,
+                    username: userData.username,
+                    email: userData.email
+                }
+            });
+        } catch (err: any) {
+            setError('Registration failed: ' + (err.message || 'Unknown error'));
+            authEventService.publish({
+                type: AuthEventType.ERROR,
+                payload: {
+                    message: 'Registration failed',
+                    error: err.message || 'Unknown error'
+                }
+            });
+            throw err;
+        }
+    }, []);
+
+    // Logout function
+    const logout = useCallback(() => {
+        authService.logout();
         setUser(null);
         setIsAuthenticated(false);
-        setAuthTokens(null);
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
+        setError(null);
+        authEventService.publish({
+            type: AuthEventType.LOGOUT
+        });
+        navigate(ROUTE_CONFIG.loginPath);
+    }, [navigate]);
 
-        // Publish event
-        authEventService.publish({type: AuthEventType.LOGOUT});
-    };
-
+    // Get user role function
     const getUserRole = useCallback((): TUserRole => {
-        // If no user is logged in, return 'guest'
         if (!user) {
             return 'guest';
         }
 
-        // Check if role property exists on user object and is a valid role
         if (user.role &&
             (user.role === 'student' ||
                 user.role === 'instructor' ||
@@ -151,28 +223,17 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
             return user.role;
         }
 
-        // Default fallback if user exists but has invalid/missing role
         console.warn('User exists but has invalid or missing role:', user);
         return 'guest';
     }, [user]);
 
-    interface IRedirectOptions {
-        path?: string;
-        replace?: boolean;
-    }
-
+    // Redirect to dashboard based on role
     const redirectToDashboard = useCallback((options?: {path?: string; replace?: boolean}) => {
         const role = getUserRole();
         console.info(`AuthContext | User role: ${role}`);
 
-        let defaultPath = '/dashboard';
-
-        // Determine default path based on user role
-        if (role === 'instructor') {
-            defaultPath = '/instructor/dashboard';
-        } else if (role === 'admin') {
-            defaultPath = '/admin/dashboard';
-        }
+        // Get dashboard path based on role from centralized config
+        const defaultPath = ROUTE_CONFIG.dashboardPaths[role] || ROUTE_CONFIG.defaultRedirect;
 
         // Use provided path if specified, otherwise use role-based default
         const redirectPath = options?.path || defaultPath;
@@ -187,9 +248,9 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
             navigate(redirectPath);
         }
 
-        // Publish navigation event for tracking
+        // Publish navigation event
         authEventService.publish({
-            type: AuthEventType.NAVIGATION,  // Changed from LOGIN to more appropriate NAVIGATION
+            type: AuthEventType.NAVIGATION,
             payload: {
                 message: `Redirected to ${redirectPath}`,
                 path: redirectPath,
@@ -199,36 +260,49 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         });
     }, [navigate, user, getUserRole]);
 
-    const setError = (errorMsg: string) => {
-        setErrorMessage(errorMsg);
-        console.error("Auth error:", errorMsg); // Add usage to avoid unused variable
-    };
-
-    const refreshToken = useCallback(async () => {
-        if (authTokens?.refresh) {
-            try {
-                // Implementation using authTokens.refresh
-                console.log("Using refresh token:", authTokens.refresh);
-                // Actual token refresh logic
-            } catch (err) {
-                setError("Token refresh failed");
-            }
-        }
-    }, [authTokens]);
-
-    const value: AuthContextProps = {
+    // Memoize the context value to prevent unnecessary re-renders
+    const contextValue = useMemo(() => ({
         user,
         isAuthenticated,
         isRestoring,
+        error,
         login,
         logout,
+        register,
         getUserRole,
         redirectToDashboard,
-        setError,
-    };
+    }), [
+        user,
+        isAuthenticated,
+        isRestoring,
+        error,
+        login,
+        logout,
+        register,
+        getUserRole,
+        redirectToDashboard
+    ]);
 
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    return (
+        <AuthContext.Provider value={contextValue}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
-// Hook für den einfachen Zugriff auf den Auth-Kontext
-export const useAuth = () => useContext(AuthContext);
+/**
+ * Custom hook to use the auth context
+ * @returns The auth context value
+ * @throws Error if used outside of AuthProvider
+ */
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+
+    return context;
+};
+
+export default AuthContext;

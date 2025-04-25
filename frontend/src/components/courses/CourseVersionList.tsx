@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ICourseVersion} from 'src/types/course';
+import {ICourseVersion} from '@/types/course';
 
 interface CourseVersionListProps {
   versions: ICourseVersion[];

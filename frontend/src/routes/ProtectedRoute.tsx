@@ -1,41 +1,71 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Navigate, useLocation} from 'react-router-dom';
 
-import {useAuth} from '@context/auth/AuthContext';
+import {useAuth} from '@/context/auth/AuthContext';
+import {TUserRole} from '@/types';
 
 interface IProtectedRouteProps {
   children: React.ReactNode;
-  allowedRoles?: string[];
+  allowedRoles?: TUserRole[];
 }
 
-const ProtectedRoute: React.FC<IProtectedRouteProps> = ({children, allowedRoles = []}) => {
-  const {user, isAuthenticated, isRestoring} = useAuth();
+/**
+ * ProtectedRoute Component
+ *
+ * This component handles route protection based on authentication status and user roles.
+ * It redirects unauthenticated users to the login page and checks role-based permissions.
+ *
+ * @param children - The components to render if the user is authenticated and authorized
+ * @param allowedRoles - Optional array of roles that are allowed to access this route
+ */
+const ProtectedRoute: React.FC<IProtectedRouteProps> = ({
+  children,
+  allowedRoles = []
+}) => {
+  const {isAuthenticated, getUserRole} = useAuth();
+  const userRole = getUserRole();
   const location = useLocation();
 
-  console.debug('ProtectedRoute:', {
+  // Log debugging information
+  console.info('ProtectedRoute:', {
     isAuthenticated,
-    userRole: user?.role,
+    userRole,
     allowedRoles,
-    path: location.pathname,
+    path: location.pathname
   });
-  if (isRestoring) {
-    // Show a loading spinner or placeholder while auth state is restoring
-    return <div data-testid="protected-route-loading">Loading...</div>;
-  }
 
+  // Effect to handle role-based access logging
+  useEffect(() => {
+    if (isAuthenticated && allowedRoles.length > 0) {
+      const hasAccess = allowedRoles.includes(userRole as TUserRole);
+      if (!hasAccess) {
+        console.warn(
+          `Access denied: User with role "${userRole}" attempted to access route "${location.pathname}" ` +
+          `which requires one of these roles: [${allowedRoles.join(', ')}]`
+        );
+      }
+    }
+  }, [isAuthenticated, userRole, allowedRoles, location.pathname]);
+
+  // Redirect to login if not authenticated
   if (!isAuthenticated) {
-    return <Navigate to="/login" state={{from: location.pathname}} replace />;
+    // Save the current location to redirect back after login
+    return <Navigate to="/login" state={{from: location}} replace />;
   }
 
-  // Allow access if no roles specified or if user role matches
-  const hasRequiredRole =
-    allowedRoles.length === 0 || (user?.role && allowedRoles.includes(user.role));
-
-  if (!hasRequiredRole) {
-    console.debug('Access denied: Role not allowed');
-    return <Navigate to="/unauthorized" replace />;
+  // If allowedRoles is provided and not empty, check if user has required role
+  if (allowedRoles.length > 0 && !allowedRoles.includes(userRole as TUserRole)) {
+    // Redirect to appropriate dashboard based on role
+    if (userRole === 'admin') {
+      return <Navigate to="/admin/dashboard" replace />;
+    } else if (userRole === 'instructor') {
+      return <Navigate to="/instructor/dashboard" replace />;
+    } else {
+      return <Navigate to="/dashboard" replace />;
+    }
   }
 
+  // If authenticated and authorized, render the children
   return <>{children}</>;
 };
 
