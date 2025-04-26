@@ -146,8 +146,19 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         try {
             setError(null);
             const userData = await authService.login(username, password);
+            
+            // Store user data in localStorage
+            localStorage.setItem(AUTH_CONFIG.userStorageKey, JSON.stringify(userData));
+            
+            // Store tokens for authentication
+            localStorage.setItem(AUTH_CONFIG.tokenStorageKey, userData.access);
+            localStorage.setItem(AUTH_CONFIG.refreshTokenStorageKey, userData.refresh);
+            
+            // Update state
             setUser(userData);
             setIsAuthenticated(true);
+            
+            // Publish login event
             authEventService.publish({
                 type: AuthEventType.LOGIN,
                 payload: {
@@ -200,14 +211,46 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
 
     // Logout function
     const logout = useCallback(() => {
-        authService.logout();
-        setUser(null);
-        setIsAuthenticated(false);
-        setError(null);
-        authEventService.publish({
-            type: AuthEventType.LOGOUT
-        });
-        navigate(ROUTE_CONFIG.loginPath);
+        try {
+            // Get tokens from localStorage before removing them
+            const refreshToken = localStorage.getItem(AUTH_CONFIG.refreshTokenStorageKey) || '';
+            const accessToken = localStorage.getItem(AUTH_CONFIG.tokenStorageKey) || '';
+            
+            // Call API to invalidate token if available
+            if (refreshToken && accessToken) {
+                authService.logout(refreshToken, accessToken).catch(err => {
+                    console.warn('Logout API call failed:', err);
+                    // Continue with local logout even if API call fails
+                });
+            }
+            
+            // Clear localStorage
+            localStorage.removeItem(AUTH_CONFIG.userStorageKey);
+            localStorage.removeItem(AUTH_CONFIG.tokenStorageKey);
+            localStorage.removeItem(AUTH_CONFIG.refreshTokenStorageKey);
+            
+            // Update state
+            setUser(null);
+            setIsAuthenticated(false);
+            setError(null);
+            
+            // Publish logout event
+            authEventService.publish({
+                type: AuthEventType.LOGOUT
+            });
+            
+            // Navigate to login page
+            navigate(ROUTE_CONFIG.loginPath);
+        } catch (error) {
+            console.error('Error during logout:', error);
+            // Ensure user is logged out locally even if there's an error
+            localStorage.removeItem(AUTH_CONFIG.userStorageKey);
+            localStorage.removeItem(AUTH_CONFIG.tokenStorageKey);
+            localStorage.removeItem(AUTH_CONFIG.refreshTokenStorageKey);
+            setUser(null);
+            setIsAuthenticated(false);
+            navigate(ROUTE_CONFIG.loginPath);
+        }
     }, [navigate]);
 
     // Get user role function
