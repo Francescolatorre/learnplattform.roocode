@@ -10,8 +10,10 @@ export * from './course';
 export * from './task';
 export * from './entities';
 export * from './gradingTypes';
-export * from './userTypes';
+export * from './analyticsTypes';
+export * from './progress';
 export * from './paginatedResponse';
+export * from './authTypes';
 
 
 

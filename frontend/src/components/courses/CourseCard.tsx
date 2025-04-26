@@ -112,9 +112,14 @@ const CourseCard: React.FC<CourseCardProps> = ({course, isLoading = false, isIns
         </Typography>
 
         <Typography variant="body2" color="text.secondary">
-          {course.description?.length > 120
-            ? `${course.description.substring(0, 120)}...`
-            : course.description}
+          {/* Beschreibung mit sicherer Längenprüfung */}
+          {course.description ? (
+            course.description.length > 120
+              ? `${course.description.substring(0, 120)}...`
+              : course.description
+          ) : (
+            "Keine Beschreibung verfügbar"
+          )}
         </Typography>
       </CardContent>
 

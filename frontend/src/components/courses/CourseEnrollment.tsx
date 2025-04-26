@@ -7,6 +7,7 @@ import {
   Chip,
   Alert,
   CircularProgress,
+  Paper,
 } from '@mui/material';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import React from 'react';
@@ -129,10 +130,16 @@ const CourseHeader: React.FC<{course: ICourse}> = ({course}) => (
   </Typography>
 );
 
-const CourseDescription: React.FC<{description: string}> = ({description}) => (
-  <Typography variant="body1" color="textSecondary" paragraph>
-    {description}
-  </Typography>
+// Anpassung des Types für optionale description
+const CourseDescription: React.FC<{description?: string}> = ({description}) => (
+  <Paper sx={{p: 3, mb: 4}}>
+    <Typography variant="h6" gutterBottom>
+      Course Description
+    </Typography>
+    <Typography variant="body1">
+      {description || 'No description available'}
+    </Typography>
+  </Paper>
 );
 
 const CourseStatusTags: React.FC<{course: ICourse}> = ({course}) => (

@@ -50,6 +50,7 @@ const EnrollmentStatusIndicator: React.FC<IEnrollmentStatusIndicatorProps> = ({
     showNotEnrolled = true,
 }) => {
     const theme = useTheme();
+    const isDarkMode = theme.palette.mode === 'dark';
 
     if (!isEnrolled && !showNotEnrolled) {
         return null;
@@ -93,8 +94,11 @@ const EnrollmentStatusIndicator: React.FC<IEnrollmentStatusIndicatorProps> = ({
                 color={color}
                 icon={icon}
                 sx={{
-                    fontWeight: 'medium',
-                    fontSize: '0.75rem',
+                    fontWeight: 'bold',
+                    backgroundColor: isDarkMode
+                        ? theme.palette[color === 'default' ? 'grey' : color]?.light || theme.palette.grey[300]
+                        : theme.palette[color === 'default' ? 'grey' : color]?.dark || theme.palette.grey[700],
+                    color: '#fff',
                 }}
             />
         </Tooltip>
@@ -104,9 +108,9 @@ const EnrollmentStatusIndicator: React.FC<IEnrollmentStatusIndicatorProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 gap: 1,
-                background: theme.palette.mode === 'light'
-                    ? theme.palette[color === 'default' ? 'grey' : color].light
-                    : theme.palette[color === 'default' ? 'grey' : color].dark,
+                backgroundColor: isDarkMode
+                    ? theme.palette[color === 'default' ? 'grey' : color]?.light || theme.palette.grey[300]
+                    : theme.palette[color === 'default' ? 'grey' : color]?.dark || theme.palette.grey[700],
                 p: 1,
                 borderRadius: 1,
                 width: 'fit-content',

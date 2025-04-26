@@ -29,23 +29,6 @@ export interface IAuthState {
 }
 
 /**
- * Login request payload
- */
-export interface ILoginRequest {
-    username: string;
-    password: string;
-}
-
-/**
- * Login response from API
- */
-export interface ILoginResponse {
-    access: string;
-    refresh: string;
-    user: IUser;
-}
-
-/**
  * Register request payload
  */
 export interface IRegisterRequest {

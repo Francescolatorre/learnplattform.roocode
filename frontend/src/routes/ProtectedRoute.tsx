@@ -22,7 +22,7 @@ const ProtectedRoute: React.FC<IProtectedRouteProps> = ({
   children,
   allowedRoles = []
 }) => {
-  const {isAuthenticated, getUserRole} = useAuth();
+  const {isAuthenticated, getUserRole, isRestoring} = useAuth();
   const userRole = getUserRole();
   const location = useLocation();
 
@@ -46,6 +46,11 @@ const ProtectedRoute: React.FC<IProtectedRouteProps> = ({
       }
     }
   }, [isAuthenticated, userRole, allowedRoles, location.pathname]);
+
+  // Show loading state while restoring authentication
+  if (isRestoring) {
+    return <div data-testid="protected-route-loading">Loading authentication status...</div>;
+  }
 
   // Redirect to login if not authenticated
   if (!isAuthenticated) {

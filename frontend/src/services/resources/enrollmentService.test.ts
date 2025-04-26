@@ -9,6 +9,34 @@ import {enrollmentService} from './enrollmentService';
 // Import the real API_CONFIG
 // Import the types from your entities file
 
+// Mock localStorage
+const localStorageMock = (() => {
+    let store: Record<string, string> = {};
+    return {
+        getItem: vi.fn((key: string) => store[key] || null),
+        setItem: vi.fn((key: string, value: string) => {
+            store[key] = value.toString();
+        }),
+        removeItem: vi.fn((key: string) => {
+            delete store[key];
+        }),
+        clear: vi.fn(() => {
+            store = {};
+        }),
+    };
+})();
+Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+
+// Mock the auth service import
+vi.mock('@services/auth/authService', () => {
+    return {
+        default: {
+            getUserProfile: vi.fn().mockResolvedValue({ id: 104, username: 'testuser' }),
+        },
+        __esModule: true,
+    };
+});
+
 // Now we mock the ApiService module more accurately
 vi.mock('../api/apiService', () => {
     // Create the mock functions
@@ -30,6 +58,7 @@ vi.mock('../api/apiService', () => {
         delete = mockDelete;
         patch = vi.fn();
         setAuthToken = vi.fn();
+        setHeaders = vi.fn();
     }
 
     // Return the MockApiService class and a singleton instance
@@ -74,6 +103,9 @@ describe('enrollmentService', () => {
 
         // Clear all mocks before each test
         vi.clearAllMocks();
+
+        // Set up localStorage mock with a token
+        localStorageMock.setItem('accessToken', 'fake-token-123');
     });
 
     it('getAll calls apiService.get with correct endpoint and returns enrollments', async () => {
@@ -157,7 +189,15 @@ describe('enrollmentService', () => {
         mockPost.mockResolvedValueOnce(enrollResponse);
         const result = await enrollmentService.enrollInCourse(202);
 
-        expect(mockPost).toHaveBeenCalledWith(API_CONFIG.endpoints.enrollments.create, {course: 202});
+        // Verify the correct endpoint and data were used
+        expect(mockPost).toHaveBeenCalledWith(
+            API_CONFIG.endpoints.enrollments.create,
+            expect.objectContaining({
+                course: 202,
+                user: 104,  // This comes from our mocked getUserProfile
+                status: 'active'
+            })
+        );
         expect(result).toEqual(enrollResponse);
     });
 

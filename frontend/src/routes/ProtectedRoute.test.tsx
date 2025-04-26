@@ -42,6 +42,7 @@ describe("ProtectedRoute with isRestoring logic", () => {
             isAuthenticated: false,
             isRestoring: true,
             user: null,
+            getUserRole: vi.fn().mockReturnValue('user')
         });
         renderWithAuthContext();
         expect(screen.getByTestId("protected-route-loading")).toBeInTheDocument();
@@ -54,6 +55,7 @@ describe("ProtectedRoute with isRestoring logic", () => {
             isAuthenticated: true,
             isRestoring: false,
             user: {id: "1", username: "student"},
+            getUserRole: vi.fn().mockReturnValue('user')
         });
         renderWithAuthContext();
         expect(screen.getByTestId("dashboard-content")).toBeInTheDocument();
@@ -65,6 +67,7 @@ describe("ProtectedRoute with isRestoring logic", () => {
             isAuthenticated: false,
             isRestoring: false,
             user: null,
+            getUserRole: vi.fn().mockReturnValue(null)
         });
         renderWithAuthContext();
         await waitFor(() => expect(screen.getByText("Login Page")).toBeInTheDocument());
@@ -76,6 +79,7 @@ describe("ProtectedRoute with isRestoring logic", () => {
             isAuthenticated: false,
             isRestoring: true,
             user: null,
+            getUserRole: vi.fn().mockReturnValue(null)
         });
         renderWithAuthContext();
         expect(screen.getByTestId("protected-route-loading")).toBeInTheDocument();
@@ -89,6 +93,7 @@ describe("ProtectedRoute with isRestoring logic", () => {
             isAuthenticated: false,
             isRestoring: true,
             user: null,
+            getUserRole: vi.fn().mockReturnValue(null)
         });
 
         const {rerender} = renderWithAuthContext();
@@ -99,6 +104,7 @@ describe("ProtectedRoute with isRestoring logic", () => {
             isAuthenticated: true,
             isRestoring: false,
             user: {id: "1", username: "student"},
+            getUserRole: vi.fn().mockReturnValue('user')
         });
 
         // Rerender with the same component structure as before
