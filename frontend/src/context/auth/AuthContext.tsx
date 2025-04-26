@@ -146,18 +146,18 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         try {
             setError(null);
             const userData = await authService.login(username, password);
-            
+
             // Store user data in localStorage
             localStorage.setItem(AUTH_CONFIG.userStorageKey, JSON.stringify(userData));
-            
+
             // Store tokens for authentication
             localStorage.setItem(AUTH_CONFIG.tokenStorageKey, userData.access);
             localStorage.setItem(AUTH_CONFIG.refreshTokenStorageKey, userData.refresh);
-            
+
             // Update state
             setUser(userData);
             setIsAuthenticated(true);
-            
+
             // Publish login event
             authEventService.publish({
                 type: AuthEventType.LOGIN,
@@ -215,7 +215,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
             // Get tokens from localStorage before removing them
             const refreshToken = localStorage.getItem(AUTH_CONFIG.refreshTokenStorageKey) || '';
             const accessToken = localStorage.getItem(AUTH_CONFIG.tokenStorageKey) || '';
-            
+
             // Call API to invalidate token if available
             if (refreshToken && accessToken) {
                 authService.logout(refreshToken, accessToken).catch(err => {
@@ -223,22 +223,22 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
                     // Continue with local logout even if API call fails
                 });
             }
-            
+
             // Clear localStorage
             localStorage.removeItem(AUTH_CONFIG.userStorageKey);
             localStorage.removeItem(AUTH_CONFIG.tokenStorageKey);
             localStorage.removeItem(AUTH_CONFIG.refreshTokenStorageKey);
-            
+
             // Update state
             setUser(null);
             setIsAuthenticated(false);
             setError(null);
-            
+
             // Publish logout event
             authEventService.publish({
                 type: AuthEventType.LOGOUT
             });
-            
+
             // Navigate to login page
             navigate(ROUTE_CONFIG.loginPath);
         } catch (error) {

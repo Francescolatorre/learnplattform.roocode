@@ -47,23 +47,23 @@ const authService = {
       if (!response.data.access || !response.data.refresh) {
         throw new Error('Login failed: Malformed response from server.');
       }
-      
+
       // Store tokens for later use
       const { access, refresh } = response.data;
       localStorage.setItem('access_token', access);
       localStorage.setItem('refresh_token', refresh);
-      
+
       // Step 2: Fetch user profile with the new access token
       const profileResponse = await apiClient.get('/users/profile/', {
         headers: {
           Authorization: `Bearer ${access}`,
         },
       });
-      
+
       if (!profileResponse || !profileResponse.data) {
         throw new Error('Failed to fetch user profile after login');
       }
-      
+
       // Step 3: Combine the data into a user object with role
       const userData: IUser = {
         id: profileResponse.data.id.toString(),
@@ -72,7 +72,7 @@ const authService = {
         role: profileResponse.data.role || 'student', // Default to student if no role
         display_name: profileResponse.data.display_name
       };
-      
+
       // Return the complete user object
       return {
         ...userData,
@@ -184,7 +184,7 @@ const authService = {
   async validateToken(): Promise<boolean> {
     const accessToken = localStorage.getItem('access_token');
     if (!accessToken) return false;
-    
+
     try {
       await apiClient.get('/auth/validate-token/', {
         headers: {
