@@ -102,23 +102,48 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
     useEffect(() => {
         const restoreAuth = async () => {
             try {
-                const storedUser = localStorage.getItem(AUTH_CONFIG.userStorageKey);
-                const token = localStorage.getItem(AUTH_CONFIG.tokenStorageKey);
+                const accessToken = localStorage.getItem(AUTH_CONFIG.tokenStorageKey);
+                const refreshToken = localStorage.getItem(AUTH_CONFIG.refreshTokenStorageKey);
 
-                if (storedUser && token) {
-                    // Validate token with backend
-                    const isValid = await authService.validateToken();
+                if (accessToken) {
+                    try {
+                        // SECURITY IMPROVEMENT: Validate token and fetch fresh user data from backend
+                        // instead of using stored user data
+                        const isValid = await authService.validateToken();
 
-                    if (isValid) {
-                        setUser(JSON.parse(storedUser));
-                        setIsAuthenticated(true);
-                        authEventService.publish({
-                            type: AuthEventType.TOKEN_REFRESH,
-                            payload: {message: 'Authentication restored from localStorage'}
-                        });
-                    } else {
-                        // Token is invalid, clear local storage
-                        localStorage.removeItem(AUTH_CONFIG.userStorageKey);
+                        if (isValid) {
+                            // Fetch the user profile from the backend
+                            const userProfile = await authService.getUserProfile(accessToken);
+
+                            // Create proper user object from profile data
+                            const userData: IUser = {
+                                id: userProfile.id.toString(),
+                                username: userProfile.username,
+                                email: userProfile.email,
+                                role: userProfile.role,
+                                display_name: userProfile.display_name,
+                                // Include tokens for API calls but not persisted to localStorage
+                                access: accessToken,
+                                refresh: refreshToken || ''
+                            };
+
+                            setUser(userData);
+                            setIsAuthenticated(true);
+
+                            authEventService.publish({
+                                type: AuthEventType.TOKEN_REFRESH,
+                                payload: {message: 'Authentication restored from token validation'}
+                            });
+                        } else {
+                            // Token is invalid, clear localStorage
+                            localStorage.removeItem(AUTH_CONFIG.tokenStorageKey);
+                            localStorage.removeItem(AUTH_CONFIG.refreshTokenStorageKey);
+                            setUser(null);
+                            setIsAuthenticated(false);
+                        }
+                    } catch (error) {
+                        // Error validating token or fetching user profile
+                        console.error('Error validating authentication:', error);
                         localStorage.removeItem(AUTH_CONFIG.tokenStorageKey);
                         localStorage.removeItem(AUTH_CONFIG.refreshTokenStorageKey);
                         setUser(null);
@@ -147,14 +172,11 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
             setError(null);
             const userData = await authService.login(username, password);
 
-            // Store user data in localStorage
-            localStorage.setItem(AUTH_CONFIG.userStorageKey, JSON.stringify(userData));
-
-            // Store tokens for authentication
+            // SECURITY IMPROVEMENT: Only store tokens in localStorage, not the full user object
             localStorage.setItem(AUTH_CONFIG.tokenStorageKey, userData.access);
             localStorage.setItem(AUTH_CONFIG.refreshTokenStorageKey, userData.refresh);
 
-            // Update state
+            // Store user data in memory only (React state)
             setUser(userData);
             setIsAuthenticated(true);
 

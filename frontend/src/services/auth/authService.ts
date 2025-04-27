@@ -186,6 +186,7 @@ const authService = {
     if (!accessToken) return false;
 
     try {
+      // Call the validate-token endpoint to verify token on the server side
       await apiClient.get('/auth/validate-token/', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
