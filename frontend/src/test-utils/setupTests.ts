@@ -1,5 +1,5 @@
 // src/test-utils/setupTests.ts
-import { vi } from 'vitest';
+import {vi} from 'vitest';
 import '@testing-library/jest-dom'; // Hinzugefügt für toBeInTheDocument() Unterstützung
 
 // Axios Mocking
@@ -43,13 +43,13 @@ const localStorageMock = (() => {
     }),
   };
 })();
-Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+Object.defineProperty(window, 'localStorage', {value: localStorageMock});
 
 // Auth Kontext Mock
 vi.mock('@context/auth/AuthContext', () => ({
   useAuth: () => ({
     isAuthenticated: true,
-    user: { id: '1', username: 'testuser', role: 'user' },
+    user: {id: '1', username: 'testuser', role: 'user'},
     login: vi.fn(),
     logout: vi.fn(),
     getUserRole: vi.fn().mockReturnValue('user'), // Diese Funktion fehlte

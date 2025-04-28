@@ -27,7 +27,7 @@ export const API_CONFIG = {
     },
     courses: {
       list: '/api/v1/courses/',
-      create: '/api/v1/courses/',
+      create: '/api/v1/courses/', // Ensure this has a trailing slash
       details: (courseId: string | number): string => `/api/v1/courses/${courseId}/`,
       update: (courseId: string | number): string => `/api/v1/courses/${courseId}/`,
       delete: (courseId: string | number): string => `/api/v1/courses/${courseId}/`,
@@ -35,7 +35,7 @@ export const API_CONFIG = {
       unenroll: (courseId: string | number): string => `/api/v1/courses/${courseId}/unenroll/`, // Added
       updateStatus: (courseId: string | number): string => `/api/v1/courses/${courseId}/status/`, // Added
       progress: (courseId: string | number): string => `/api/v1/courses/${courseId}/progress/`, // Added
-      instructorCourses: '/api/v1/instructor/courses/',
+      instructorCourses: '/api/v1/courses/instructor/courses/', // Fixed to match backend URL format
       courseDetails: (courseId: string | number): string => `/api/v1/courses/${courseId}/details/`,
       studentProgress: (courseId: string | number): string => `/api/v1/courses/${courseId}/student-progress/`,
       studentProgressDetail: (courseId: string | number, userId: string | number): string =>

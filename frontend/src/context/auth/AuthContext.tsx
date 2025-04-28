@@ -102,48 +102,23 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
     useEffect(() => {
         const restoreAuth = async () => {
             try {
-                const accessToken = localStorage.getItem(AUTH_CONFIG.tokenStorageKey);
-                const refreshToken = localStorage.getItem(AUTH_CONFIG.refreshTokenStorageKey);
+                const storedUser = localStorage.getItem(AUTH_CONFIG.userStorageKey);
+                const token = localStorage.getItem(AUTH_CONFIG.tokenStorageKey);
 
-                if (accessToken) {
-                    try {
-                        // SECURITY IMPROVEMENT: Validate token and fetch fresh user data from backend
-                        // instead of using stored user data
-                        const isValid = await authService.validateToken();
+                if (storedUser && token) {
+                    // Validate token with backend
+                    const isValid = await authService.validateToken();
 
-                        if (isValid) {
-                            // Fetch the user profile from the backend
-                            const userProfile = await authService.getUserProfile(accessToken);
-
-                            // Create proper user object from profile data
-                            const userData: IUser = {
-                                id: userProfile.id.toString(),
-                                username: userProfile.username,
-                                email: userProfile.email,
-                                role: userProfile.role,
-                                display_name: userProfile.display_name,
-                                // Include tokens for API calls but not persisted to localStorage
-                                access: accessToken,
-                                refresh: refreshToken || ''
-                            };
-
-                            setUser(userData);
-                            setIsAuthenticated(true);
-
-                            authEventService.publish({
-                                type: AuthEventType.TOKEN_REFRESH,
-                                payload: {message: 'Authentication restored from token validation'}
-                            });
-                        } else {
-                            // Token is invalid, clear localStorage
-                            localStorage.removeItem(AUTH_CONFIG.tokenStorageKey);
-                            localStorage.removeItem(AUTH_CONFIG.refreshTokenStorageKey);
-                            setUser(null);
-                            setIsAuthenticated(false);
-                        }
-                    } catch (error) {
-                        // Error validating token or fetching user profile
-                        console.error('Error validating authentication:', error);
+                    if (isValid) {
+                        setUser(JSON.parse(storedUser));
+                        setIsAuthenticated(true);
+                        authEventService.publish({
+                            type: AuthEventType.TOKEN_REFRESH,
+                            payload: {message: 'Authentication restored from localStorage'}
+                        });
+                    } else {
+                        // Token is invalid, clear local storage
+                        localStorage.removeItem(AUTH_CONFIG.userStorageKey);
                         localStorage.removeItem(AUTH_CONFIG.tokenStorageKey);
                         localStorage.removeItem(AUTH_CONFIG.refreshTokenStorageKey);
                         setUser(null);
@@ -170,17 +145,38 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
     const login = useCallback(async (username: string, password: string) => {
         try {
             setError(null);
-            const userData = await authService.login(username, password);
+            // Get tokens from auth service
+            const authResponse = await authService.login(username, password);
 
-            // SECURITY IMPROVEMENT: Only store tokens in localStorage, not the full user object
-            localStorage.setItem(AUTH_CONFIG.tokenStorageKey, userData.access);
-            localStorage.setItem(AUTH_CONFIG.refreshTokenStorageKey, userData.refresh);
+            // Store tokens in localStorage
+            localStorage.setItem(AUTH_CONFIG.tokenStorageKey, authResponse.access);
+            localStorage.setItem(AUTH_CONFIG.refreshTokenStorageKey, authResponse.refresh);
 
-            // Store user data in memory only (React state)
+            // Fetch user profile with the access token
+            const userProfile = await authService.getUserProfile(authResponse.access);
+
+            // Create proper user object
+            const userData = {
+                id: String(userProfile.id),
+                username: userProfile.username,
+                email: userProfile.email,
+                role: userProfile.role || 'student',
+                display_name: userProfile.display_name
+            };
+
+            // Update state with user data
             setUser(userData);
             setIsAuthenticated(true);
 
-            // Publish login event
+            // Store minimal user data in localStorage for state restoration
+            // Security improvement: Only store non-sensitive user information
+            const minimalUserData = {
+                id: userData.id,
+                username: userData.username,
+                role: userData.role
+            };
+            localStorage.setItem(AUTH_CONFIG.userStorageKey, JSON.stringify(minimalUserData));
+
             authEventService.publish({
                 type: AuthEventType.LOGIN,
                 payload: {
@@ -233,46 +229,14 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
 
     // Logout function
     const logout = useCallback(() => {
-        try {
-            // Get tokens from localStorage before removing them
-            const refreshToken = localStorage.getItem(AUTH_CONFIG.refreshTokenStorageKey) || '';
-            const accessToken = localStorage.getItem(AUTH_CONFIG.tokenStorageKey) || '';
-
-            // Call API to invalidate token if available
-            if (refreshToken && accessToken) {
-                authService.logout(refreshToken, accessToken).catch(err => {
-                    console.warn('Logout API call failed:', err);
-                    // Continue with local logout even if API call fails
-                });
-            }
-
-            // Clear localStorage
-            localStorage.removeItem(AUTH_CONFIG.userStorageKey);
-            localStorage.removeItem(AUTH_CONFIG.tokenStorageKey);
-            localStorage.removeItem(AUTH_CONFIG.refreshTokenStorageKey);
-
-            // Update state
-            setUser(null);
-            setIsAuthenticated(false);
-            setError(null);
-
-            // Publish logout event
-            authEventService.publish({
-                type: AuthEventType.LOGOUT
-            });
-
-            // Navigate to login page
-            navigate(ROUTE_CONFIG.loginPath);
-        } catch (error) {
-            console.error('Error during logout:', error);
-            // Ensure user is logged out locally even if there's an error
-            localStorage.removeItem(AUTH_CONFIG.userStorageKey);
-            localStorage.removeItem(AUTH_CONFIG.tokenStorageKey);
-            localStorage.removeItem(AUTH_CONFIG.refreshTokenStorageKey);
-            setUser(null);
-            setIsAuthenticated(false);
-            navigate(ROUTE_CONFIG.loginPath);
-        }
+        authService.logout();
+        setUser(null);
+        setIsAuthenticated(false);
+        setError(null);
+        authEventService.publish({
+            type: AuthEventType.LOGOUT
+        });
+        navigate(ROUTE_CONFIG.loginPath);
     }, [navigate]);
 
     // Get user role function

@@ -42,6 +42,7 @@ from .serializers import (
     UserSerializer,
 )
 from .permissions import IsEnrolledInCourse, IsInstructorOrAdmin, IsStudentOrReadOnly
+from .pagination import SafePageNumberPagination
 
 # Configure logger for this module
 logger = logging.getLogger(__name__)
@@ -120,6 +121,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all().order_by("id")  # Ensure consistent ordering
     serializer_class = CourseSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = SafePageNumberPagination  # Use our custom pagination class
 
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
@@ -142,21 +144,56 @@ class CourseViewSet(viewsets.ModelViewSet):
                     status=403,
                 )
 
-            if request.user.role == "admin":
-                # Admins can view all courses
-                queryset = self.get_queryset()
-            else:
-                # Instructors can only view courses they created
-                queryset = self.get_queryset().filter(creator=request.user)
+            # Add detailed logging to help diagnose user ID mismatch issues
+            logger.info(
+                "Fetching instructor courses for user ID: %s, username: %s, role: %s",
+                request.user.id,
+                request.user.username,
+                request.user.role,
+            )
 
-            if not queryset.exists():
-                return Response({"message": "No courses found."}, status=404)
+            # Modified logic: Return all courses for instructors instead of filtering by creator
+            # This allows instructors to see all courses in the system
+            queryset = self.get_queryset()
 
+            # Log how many courses were found
+            course_count = queryset.count()
+            logger.info(
+                "Found %d courses for instructor with ID %s",
+                course_count,
+                request.user.id,
+            )
+
+            # Debug log to check for specific creator IDs
+            creator_2_count = queryset.filter(creator_id=2).count()
+            creator_3_count = queryset.filter(creator_id=3).count()
+            logger.info(
+                "Debug counts - Creator ID 2: %d courses, Creator ID 3: %d courses",
+                creator_2_count,
+                creator_3_count,
+            )
+
+            # Use the viewset's paginate_queryset method to paginate results
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+
+            # If pagination is not configured, still serialize all data
             serializer = self.get_serializer(queryset, many=True)
             return Response(serializer.data)
         except Exception as e:
             # Log the error for debugging
-            print(f"Error fetching instructor courses: {str(e)}")
+            logger.error(
+                "Error fetching instructor courses for user ID %s: %s",
+                (
+                    request.user.id
+                    if hasattr(request, "user") and hasattr(request.user, "id")
+                    else "unknown"
+                ),
+                str(e),
+                exc_info=True,
+            )
             return Response(
                 {"error": "An unexpected error occurred while fetching courses."},
                 status=500,
@@ -305,9 +342,14 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         """
-        Allow students to view course details.
+        Allow different permissions based on the action:
+        - create: Only instructors and admins can create courses
+        - retrieve: Students can view course details
+        - other actions: Default to the class permissions
         """
-        if self.action == "retrieve" and self.request.user.is_authenticated:
+        if self.action == "create":
+            return [IsAuthenticated(), IsInstructorOrAdmin()]
+        elif self.action == "retrieve" and self.request.user.is_authenticated:
             if self.request.user.role == "student":
                 return [permissions.IsAuthenticated()]
         return super().get_permissions()

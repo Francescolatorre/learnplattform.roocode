@@ -16,7 +16,6 @@ import React, {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 
 import {useAuth} from '@context/auth/AuthContext';
-// Update import path to match the actual directory structure
 import PasswordStrengthIndicator from '@components/shared/PasswordStrengthIndicator';
 
 import {validatePassword, type PasswordStrength} from '../utils/passwordValidation';

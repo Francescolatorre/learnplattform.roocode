@@ -21,6 +21,7 @@ import {ICourse} from '@/types/course';
 
 interface IEditCourseProps {
   isNew?: boolean;
+  isInstructorView?: boolean;
 }
 
 interface ICourseFormData {
@@ -33,10 +34,11 @@ interface ICourseFormData {
 }
 
 /**
- * EditCourse component for creating or editing courses
+ * Unified EditCourse component for creating or editing courses
  * Supports both new course creation and existing course editing
+ * Works for both admin and instructor user roles
  */
-const EditCoursePage: React.FC<IEditCourseProps> = ({isNew = false}) => {
+const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, isInstructorView = false}) => {
   const {courseId} = useParams<{courseId: string}>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -97,7 +99,17 @@ const EditCoursePage: React.FC<IEditCourseProps> = ({isNew = false}) => {
   const mutation = useMutation({
     mutationFn: (data: Partial<ICourse>) => {
       if (isNew) {
-        return courseService.createCourse(data);
+        // Include additional fields needed by the backend when creating a new course
+        const enhancedData: Partial<ICourse> = {
+          ...data,
+          status: data.is_published ? 'published' : 'draft',
+          visibility: 'public',
+          // Add creator ID if available from user context
+          ...(user?.id && {creator: Number(user.id)})
+        };
+
+        console.debug('Creating course with enhanced data:', enhancedData);
+        return courseService.createCourse(enhancedData);
       } else {
         return courseService.updateCourse(courseId as string, data);
       }
@@ -106,6 +118,8 @@ const EditCoursePage: React.FC<IEditCourseProps> = ({isNew = false}) => {
       // Invalidate queries to refetch course data
       queryClient.invalidateQueries({queryKey: ['courses']});
       queryClient.invalidateQueries({queryKey: ['course', courseId]});
+      // Also invalidate instructor courses to ensure the dashboard is updated
+      queryClient.invalidateQueries({queryKey: ['instructorCourses']});
 
       // Show success notification
       notify(
@@ -113,17 +127,36 @@ const EditCoursePage: React.FC<IEditCourseProps> = ({isNew = false}) => {
         'success'
       );
 
-      // Navigate to appropriate page
+      // Navigate to appropriate page based on user role/view
+      const basePath = isInstructorView ? '/instructor/courses/' : '/courses/';
       if (isNew) {
-        navigate(`/instructor/courses/${data.id}`);
+        navigate(`${basePath}${data.id}`);
       } else {
-        navigate(`/instructor/courses/${courseId}`);
+        navigate(`${basePath}${courseId}`);
       }
     },
     onError: (error: any) => {
-      const errorMessage = error.response?.data?.detail ||
-        error.message ||
-        'Failed to save course';
+      console.error('Course mutation error:', error);
+
+      let errorMessage = 'Failed to save course';
+
+      // Extract error details from different possible error formats
+      if (error.response?.data) {
+        // Handle Django REST Framework detailed error format
+        if (typeof error.response.data === 'object') {
+          const errors = Object.entries(error.response.data)
+            .map(([field, msgs]) => `${field}: ${Array.isArray(msgs) ? msgs.join(', ') : msgs}`)
+            .join('; ');
+          errorMessage = `Validation error: ${errors}`;
+        } else if (error.response.data.detail) {
+          errorMessage = error.response.data.detail;
+        } else if (typeof error.response.data === 'string') {
+          errorMessage = error.response.data;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
       notify(errorMessage, 'error');
     }
   });
@@ -141,8 +174,11 @@ const EditCoursePage: React.FC<IEditCourseProps> = ({isNew = false}) => {
     );
   }
 
+  // Determine container size based on view mode
+  const containerMaxWidth = isInstructorView ? "sm" : "md";
+
   return (
-    <Container maxWidth="md">
+    <Container maxWidth={containerMaxWidth as "sm" | "md"}>
       <Paper sx={{p: 4, mt: 3}}>
         <Typography variant="h5" gutterBottom>
           {isNew ? 'Create New Course' : 'Edit Course'}
@@ -160,6 +196,7 @@ const EditCoursePage: React.FC<IEditCourseProps> = ({isNew = false}) => {
             error={!!errors.title}
             helperText={errors.title?.message}
             disabled={mutation.isPending}
+            inputProps={{'data-testid': 'course-title-input'}}
           />
 
           <TextField
@@ -176,43 +213,54 @@ const EditCoursePage: React.FC<IEditCourseProps> = ({isNew = false}) => {
             error={!!errors.description}
             helperText={errors.description?.message}
             disabled={mutation.isPending}
+            inputProps={{'data-testid': 'course-description-input'}}
           />
 
-          <TextField
-            {...register('image_url')}
-            label="Course Image URL"
-            fullWidth
-            margin="normal"
-            error={!!errors.image_url}
-            helperText={errors.image_url?.message}
-            disabled={mutation.isPending}
-          />
+          {/* Show additional fields only in the full view (not instructor simplified view) */}
+          {!isInstructorView && (
+            <>
+              <TextField
+                {...register('image_url')}
+                label="Course Image URL"
+                fullWidth
+                margin="normal"
+                error={!!errors.image_url}
+                helperText={errors.image_url?.message}
+                disabled={mutation.isPending}
+                inputProps={{'data-testid': 'course-image-url-input'}}
+              />
 
-          <Box sx={{display: 'flex', gap: 2, mt: 2}}>
-            <TextField
-              {...register('category')}
-              label="Category"
-              fullWidth
-              margin="normal"
-              error={!!errors.category}
-              helperText={errors.category?.message}
-              disabled={mutation.isPending}
-            />
+              <Box sx={{display: 'flex', gap: 2, mt: 2}}>
+                <TextField
+                  {...register('category')}
+                  label="Category"
+                  fullWidth
+                  margin="normal"
+                  error={!!errors.category}
+                  helperText={errors.category?.message}
+                  disabled={mutation.isPending}
+                  inputProps={{'data-testid': 'course-category-input'}}
+                />
 
-            <TextField
-              {...register('difficulty_level')}
-              label="Difficulty Level"
-              fullWidth
-              margin="normal"
-              select
-              SelectProps={{native: true}}
-              disabled={mutation.isPending}
-            >
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
-            </TextField>
-          </Box>
+                <TextField
+                  {...register('difficulty_level')}
+                  label="Difficulty Level"
+                  fullWidth
+                  margin="normal"
+                  select
+                  SelectProps={{
+                    native: true,
+                    inputProps: {'data-testid': 'course-difficulty-select'}
+                  }}
+                  disabled={mutation.isPending}
+                >
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                </TextField>
+              </Box>
+            </>
+          )}
 
           <Controller
             name="is_published"
@@ -224,6 +272,7 @@ const EditCoursePage: React.FC<IEditCourseProps> = ({isNew = false}) => {
                     checked={field.value}
                     onChange={field.onChange}
                     disabled={mutation.isPending}
+                    inputProps={{'data-testid': 'course-publish-switch'}}
                   />
                 }
                 label="Publish Course"
@@ -236,6 +285,7 @@ const EditCoursePage: React.FC<IEditCourseProps> = ({isNew = false}) => {
               variant="outlined"
               onClick={() => navigate(-1)}
               disabled={mutation.isPending}
+              data-testid="course-cancel-button"
             >
               Cancel
             </Button>
@@ -245,14 +295,15 @@ const EditCoursePage: React.FC<IEditCourseProps> = ({isNew = false}) => {
               color="primary"
               disabled={mutation.isPending || !isValid}
               startIcon={mutation.isPending ? <CircularProgress size={20} /> : null}
+              data-testid="course-submit-button"
             >
               {isNew ? 'Create Course' : 'Save Changes'}
             </Button>
           </Box>
         </form>
       </Paper>
-    </Container>
+    </Container >
   );
 };
 
-export default EditCoursePage;
+export default InstructorEditCoursePage;

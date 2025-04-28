@@ -15,14 +15,14 @@ test.describe('Authentication', () => {
       TEST_USERS.lead_instructor.username_or_email,
       TEST_USERS.lead_instructor.password
     );
-    // login() already waits for /dashboard
-    expect(page.url()).toContain('/dashboard');
+    // login() already waits for /instructor/dashboard
+    expect(page.url()).toContain('/instructor/dashboard');
   });
 
   test('admin user can login and access dashboard', async ({page}) => {
     await login(page, TEST_USERS.admin.username_or_email, TEST_USERS.admin.password);
-    // login() already waits for /dashboard
-    expect(page.url()).toContain('/dashboard');
+    // login() already waits for /instructor/dashboard
+    expect(page.url()).toContain('/instructor/dashboard');
   });
 
   test('shows loading state during login', async ({page}) => {
@@ -81,8 +81,8 @@ test.describe('Authentication', () => {
       TEST_USERS.lead_instructor.username_or_email,
       TEST_USERS.lead_instructor.password
     );
-    // login() already waits for /dashboard
-    expect(page.url()).toContain('/dashboard');
+    // login() already waits for the appropriate dashboard path
+    expect(page.url()).toContain('/instructor/dashboard');
   });
 
   // Duplicate of "displays error with invalid credentials" above; removed for clarity.

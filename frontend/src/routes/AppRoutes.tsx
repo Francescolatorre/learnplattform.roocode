@@ -18,9 +18,9 @@ import CourseProgressPage from '@/pages/courses/CourseProgressPage';
 
 // Instructor pages
 import InstructorDashboardPage from '@/pages/instructor/InstructorDashboardPage';
-import InstructorCoursesPage from '@/pages/instructor/InstructorCoursesPage';
-import EditCoursePage from '@/pages/courses/EditCoursePage';
-import InstructorCourseDetailPage from '@/pages/instructor/InstructorCourseDetailsPage';
+import InstructorCoursesPage from '@/pages/courses/InstructorCoursesPage';
+import InstructorEditCoursePage from '@/pages/courses/InstructorEditCoursePage';
+import InstructorCourseDetailPage from '@/pages/courses/InstructorCourseDetailsPage';
 
 // Admin pages
 import AdminDashboardPage from '@/pages/admin/AdminDashboardPage';
@@ -104,7 +104,7 @@ const AppRoutes: React.FC = () => {
         path="/instructor/courses/new"
         element={
           <ProtectedRoute allowedRoles={['instructor', 'admin']}>
-            <EditCoursePage isNew={true} />
+            <InstructorEditCoursePage isNew={true} />
           </ProtectedRoute>
         }
       />
@@ -112,7 +112,7 @@ const AppRoutes: React.FC = () => {
         path="/instructor/courses/:courseId/edit"
         element={
           <ProtectedRoute allowedRoles={['instructor', 'admin']}>
-            <EditCoursePage />
+            <InstructorEditCoursePage />
           </ProtectedRoute>
         }
       />

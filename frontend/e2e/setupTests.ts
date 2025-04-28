@@ -49,8 +49,14 @@ export const login = async (page: Page, username: string, password: string): Pro
         }
     }
 
-    // Wait for successful navigation to dashboard
-    await page.waitForURL('/dashboard', {timeout: 10000});
+    // Wait for successful navigation to the appropriate dashboard based on user role
+    // Different user roles go to different dashboard routes
+    if (username === TEST_USERS.lead_instructor.username_or_email || username === TEST_USERS.admin.username_or_email) {
+        await page.waitForURL('**/instructor/dashboard', {timeout: 10000});
+    } else {
+        await page.waitForURL('**/dashboard', {timeout: 10000});
+    }
+
     return {
         access: 'mockAccessToken',
         refresh: 'mockRefreshToken',
@@ -90,7 +96,12 @@ export class UserSession {
             });
         });
 
-        await this.page.goto('/dashboard');
+        // Navigate to the appropriate dashboard based on the role
+        if (role === 'instructor' || role === 'admin') {
+            await this.page.goto('/instructor/dashboard');
+        } else {
+            await this.page.goto('/dashboard');
+        }
     }
 
     async logout(): Promise<void> {

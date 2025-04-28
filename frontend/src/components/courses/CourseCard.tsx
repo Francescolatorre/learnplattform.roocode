@@ -67,7 +67,13 @@ const CourseCard: React.FC<CourseCardProps> = ({course, isLoading = false, isIns
   }
 
   const handleViewCourse = () => {
-    navigate(`/courses/${course.id}`);
+    if (isInstructorView) {
+      // Navigate to instructor course detail view
+      navigate(`/instructor/courses/${course.id}`);
+    } else {
+      // Navigate to student course detail view
+      navigate(`/courses/${course.id}`);
+    }
   };
 
   return (

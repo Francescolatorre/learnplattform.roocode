@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { IUser } from '@/types/userTypes';
 
 const apiClient = axios.create({
   baseURL: 'http://localhost:8000/', // Ensure this matches the backend API base URL
@@ -37,52 +36,15 @@ interface UserProfile {
 }
 
 const authService = {
-  async login(username: string, password: string): Promise<IUser> {
-    try {
-      // Step 1: Get auth tokens
-      const response = await apiClient.post('/auth/login/', {username, password});
-      if (!response || typeof response !== 'object' || !('data' in response) || !response.data) {
-        throw new Error('Login failed: No response data received from server.');
-      }
-      if (!response.data.access || !response.data.refresh) {
-        throw new Error('Login failed: Malformed response from server.');
-      }
-
-      // Store tokens for later use
-      const { access, refresh } = response.data;
-      localStorage.setItem('access_token', access);
-      localStorage.setItem('refresh_token', refresh);
-
-      // Step 2: Fetch user profile with the new access token
-      const profileResponse = await apiClient.get('/users/profile/', {
-        headers: {
-          Authorization: `Bearer ${access}`,
-        },
-      });
-
-      if (!profileResponse || !profileResponse.data) {
-        throw new Error('Failed to fetch user profile after login');
-      }
-
-      // Step 3: Combine the data into a user object with role
-      const userData: IUser = {
-        id: profileResponse.data.id.toString(),
-        username: profileResponse.data.username,
-        email: profileResponse.data.email,
-        role: profileResponse.data.role || 'student', // Default to student if no role
-        display_name: profileResponse.data.display_name
-      };
-
-      // Return the complete user object
-      return {
-        ...userData,
-        access,
-        refresh
-      };
-    } catch (error) {
-      console.error('Login process failed:', error);
-      throw error;
+  async login(username: string, password: string): Promise<{access: string; refresh: string}> {
+    const response = await apiClient.post('/auth/login/', {username, password}); // Added trailing slash to handle APPEND_SLASH setting
+    if (!response || typeof response !== 'object' || !('data' in response) || !response.data) {
+      throw new Error('Login failed: No response data received from server.');
     }
+    if (!response.data.access || !response.data.refresh) {
+      throw new Error('Login failed: Malformed response from server.');
+    }
+    return response.data;
   },
 
   async logout(refreshToken: string, accessToken: string): Promise<void> {
@@ -128,6 +90,36 @@ const authService = {
         console.error('Failed to refresh token:', error);
       }
       throw error;
+    }
+  },
+
+  /**
+   * Validates the current token against the server to ensure it's still valid
+   * @returns Promise<boolean> True if token is valid, false otherwise
+   */
+  async validateToken(): Promise<boolean> {
+    try {
+      const token = localStorage.getItem('accessToken');
+
+      if (!token) {
+        console.warn('validateToken: No token found in localStorage');
+        return false;
+      }
+
+      const response = await apiClient.post(
+        '/auth/validate-token/',
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return response.status === 200;
+    } catch (error) {
+      console.error('Token validation failed:', error);
+      return false;
     }
   },
 
@@ -177,25 +169,6 @@ const authService = {
     } catch (error) {
       console.error('Failed to fetch user profile:', error);
       throw error; // Re-throw the error for the caller to handle
-    }
-  },
-
-  // Add a validation method to check token validity
-  async validateToken(): Promise<boolean> {
-    const accessToken = localStorage.getItem('access_token');
-    if (!accessToken) return false;
-
-    try {
-      // Call the validate-token endpoint to verify token on the server side
-      await apiClient.get('/auth/validate-token/', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      return true;
-    } catch (error) {
-      console.error('Token validation failed:', error);
-      return false;
     }
   },
 };
