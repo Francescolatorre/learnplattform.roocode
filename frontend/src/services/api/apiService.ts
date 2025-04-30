@@ -3,14 +3,23 @@ import {AxiosInstance, AxiosRequestConfig} from 'axios';
 import axiosInstance from './axiosConfig';
 import {API_CONFIG} from './apiConfig';
 
+export interface IApiService<T = unknown> {
+  setAxiosInstance(instance: AxiosInstance): void;
+  get<R = T>(url: string, config?: AxiosRequestConfig): Promise<R>;
+  post<R = T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R>;
+  put<R = T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R>;
+  delete<R = T>(url: string, config?: AxiosRequestConfig): Promise<R>;
+  patch<R = T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R>;
+}
+
 /**
  * Generic API Service
  *
  * Provides type-safe methods for API operations
  * Uses the centralized axios instance with auth interceptors
  */
-export class ApiService<T = unknown> {
-  protected api: AxiosInstance;
+export class ApiService<T = unknown> implements IApiService<T> {
+  protected axiosInstance: AxiosInstance;
 
   /**
    * Creates a new ApiService instance
@@ -18,7 +27,7 @@ export class ApiService<T = unknown> {
    */
   constructor(config: AxiosRequestConfig = API_CONFIG) {
     // Use the shared axiosInstance with interceptors instead of creating a new instance
-    this.api = axiosInstance;
+    this.axiosInstance = axiosInstance;
 
     // Apply any custom configurations if needed
     if (config.baseURL && config.baseURL !== API_CONFIG.baseURL) {
@@ -31,9 +40,9 @@ export class ApiService<T = unknown> {
    * @param url The endpoint URL
    * @returns Promise resolving to the response data
    */
-  async get(url: string): Promise<T> {
+  async get<R = T>(url: string, config?: AxiosRequestConfig): Promise<R> {
     try {
-      const response = await this.api.get<T>(url);
+      const response = await this.axiosInstance.get<R>(url, config);
       if (!response || typeof response.data === 'undefined') {
         const status = response?.status ?? 'unknown';
         throw new Error(`GET request to ${url} did not return data (status: ${status})`);
@@ -50,9 +59,9 @@ export class ApiService<T = unknown> {
    * @param url
    * @param data
    */
-  async post<U = unknown>(url: string, data: U): Promise<T> {
+  async post<R = T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
     try {
-      const response = await this.api.post<T>(url, data);
+      const response = await this.axiosInstance.post<R>(url, data, config);
       if (!response || typeof response.data === 'undefined') {
         const status = response?.status ?? 'unknown';
         throw new Error(`POST request to ${url} did not return data (status: ${status})`);
@@ -65,13 +74,27 @@ export class ApiService<T = unknown> {
   }
 
   /**
+   * Sets a custom axios instance for this ApiService.
+   * This is useful for testing or when you need a different configuration.
+   * * @param instance The custom axios instance to use
+   *  * @example
+   * ```typescript
+   * const customAxiosInstance = axios.create({ baseURL: 'https://api.example.com' });
+   * const apiService = new ApiService();
+   * apiService.setAxiosInstance(customAxiosInstance);
+   *
+   * **/
+  public setAxiosInstance(instance: AxiosInstance): void {
+    this.axiosInstance = instance;
+  }
+  /**
    *
    * @param url
    * @param data
    */
-  async put<U = unknown>(url: string, data: U): Promise<T> {
+  async put<R = T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
     try {
-      const response = await this.api.put<T>(url, data);
+      const response = await this.axiosInstance.put<R>(url, data, config);
       if (!response || typeof response.data === 'undefined') {
         const status = response?.status ?? 'unknown';
         throw new Error(`PUT request to ${url} did not return data (status: ${status})`);
@@ -87,9 +110,9 @@ export class ApiService<T = unknown> {
    *
    * @param url
    */
-  async delete(url: string): Promise<T> {
+  async delete<R = T>(url: string, config?: AxiosRequestConfig): Promise<R> {
     try {
-      const response = await this.api.delete<T>(url);
+      const response = await this.axiosInstance.delete<R>(url, config);
       if (!response || typeof response.data === 'undefined') {
         const status = response?.status ?? 'unknown';
         throw new Error(`DELETE request to ${url} did not return data (status: ${status})`);
@@ -106,9 +129,9 @@ export class ApiService<T = unknown> {
    * @param url
    * @param data
    */
-  async patch<U = unknown>(url: string, data: U): Promise<T> {
+  async patch<R = T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<R> {
     try {
-      const response = await this.api.patch<T>(url, data);
+      const response = await this.axiosInstance.patch<R>(url, data, config);
       if (!response || typeof response.data === 'undefined') {
         const status = response?.status ?? 'unknown';
         throw new Error(`PATCH request to ${url} did not return data (status: ${status})`);
@@ -125,7 +148,7 @@ export class ApiService<T = unknown> {
    * @param token The authentication token
    */
   setAuthToken(token: string) {
-    this.api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    this.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   }
 }
 

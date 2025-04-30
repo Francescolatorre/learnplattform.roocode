@@ -1,57 +1,75 @@
 import {describe, it, expect, beforeAll, afterAll} from 'vitest';
-
 import {TCourseStatus} from '@/types/';
-
 import authService from '../auth/authService';
-
 import courseService from './courseService';
 import progressService from './progressService';
-
-
-const TEST_USERS = {
-    student: {
-        username: 'student',
-        password: 'student123',
-    },
-};
+import {TEST_USERS} from '@/test-utils/setupIntegrationTests';
 
 describe('progressService Integration', () => {
     let accessToken: string;
-    let createdCourseId: number;
+    let createdCourseId: string;
     let userId: number;
 
     beforeAll(async () => {
-        const loginData = await authService.login(TEST_USERS.student.username, TEST_USERS.student.password);
-        accessToken = loginData.access;
-        // Set Authorization header for all ApiService instances used by progressService
-        progressService['apiUserProgress'].setAuthToken(accessToken);
-        progressService['apiUserProgressArr'].setAuthToken(accessToken);
-        //progressService['apiTaskProgress'].setAuthToken(accessToken);
-        //progressService['apiTaskProgressArr'].setAuthToken(accessToken);
-        progressService['apiQuizAttemptArr'].setAuthToken(accessToken);
-        progressService['apiAny'].setAuthToken(accessToken);
-        progressService['apiCourse'].setAuthToken(accessToken);
-        // Set Authorization header for all ApiService instances used by courseService
-        courseService['apiCourse'].setAuthToken(accessToken);
-        courseService['apiCourses'].setAuthToken(accessToken);
-        courseService['apiVoid'].setAuthToken(accessToken);
-        courseService['apiAny'].setAuthToken(accessToken);
-        // Fetch user profile to get userId
-        const userProfile = await authService.getUserProfile(accessToken);
-        userId = userProfile.id;
-        // Create a course for testing
-        const courseData = {
-            title: 'Integration Test Progress Course',
-            description: 'Created by integration test for progressService',
-            version: 1,
-            status: 'published' as TCourseStatus,
-            visibility: 'public' as const,
-            learning_objectives: 'Test objectives',
-            prerequisites: 'None',
-            creator: userId,
-        };
-        const created = await courseService.createCourse(courseData);
-        createdCourseId = created.id;
+        try {
+            // Use instructor account for tests that require course creation permissions
+            const loginData = await authService.login(TEST_USERS.lead_instructor.username, TEST_USERS.lead_instructor.password);
+            accessToken = loginData.access;
+
+            // Set Authorization header for all ApiService instances
+            progressService['apiUserProgress'].setAuthToken(accessToken);
+            progressService['apiUserProgressArr'].setAuthToken(accessToken);
+            progressService['apiQuizAttemptArr'].setAuthToken(accessToken);
+            progressService['apiAny'].setAuthToken(accessToken);
+            progressService['apiCourse'].setAuthToken(accessToken);
+
+            courseService['apiCourse'].setAuthToken(accessToken);
+            courseService['apiCourses'].setAuthToken(accessToken);
+            courseService['apiVoid'].setAuthToken(accessToken);
+            courseService['apiAny'].setAuthToken(accessToken);
+
+            // Fetch user profile to get userId
+            const userProfile = await authService.getUserProfile(accessToken);
+            userId = userProfile.id;
+        } catch (error) {
+            console.error('Instructor login failed, falling back to student:', error);
+            // Fall back to student if instructor login fails
+            const loginData = await authService.login(TEST_USERS.student.username, TEST_USERS.student.password);
+            accessToken = loginData.access;
+
+            progressService['apiUserProgress'].setAuthToken(accessToken);
+            progressService['apiUserProgressArr'].setAuthToken(accessToken);
+            progressService['apiQuizAttemptArr'].setAuthToken(accessToken);
+            progressService['apiAny'].setAuthToken(accessToken);
+            progressService['apiCourse'].setAuthToken(accessToken);
+
+            courseService['apiCourse'].setAuthToken(accessToken);
+            courseService['apiCourses'].setAuthToken(accessToken);
+            courseService['apiVoid'].setAuthToken(accessToken);
+            courseService['apiAny'].setAuthToken(accessToken);
+
+            const userProfile = await authService.getUserProfile(accessToken);
+            userId = userProfile.id;
+        }
+
+        try {
+            // Create a course for testing
+            const courseData = {
+                title: 'Integration Test Progress Course',
+                description: 'Created by integration test for progressService',
+                version: 1,
+                status: 'published' as TCourseStatus,
+                visibility: 'public' as const,
+                learning_objectives: 'Test objectives',
+                prerequisites: 'None',
+                creator: userId,
+            };
+            const createdCourse = await courseService.createCourse(courseData);
+            createdCourseId = createdCourse.id;
+        } catch (error) {
+            console.error('Failed to create test course:', error);
+            throw error;
+        }
     });
 
     afterAll(async () => {
@@ -66,6 +84,7 @@ describe('progressService Integration', () => {
         expect(details).toHaveProperty('id', createdCourseId);
         expect(details).toHaveProperty('title', 'Integration Test Progress Course');
     });
+
     it('fetchCourseDetails throws error for non-existent course', async () => {
         const nonExistentId = 99999999;
         try {
@@ -75,6 +94,68 @@ describe('progressService Integration', () => {
             expect(
                 /not found/i.test(error.message) || /status code 404/i.test(error.message)
             ).toBe(true);
+        }
+    });
+
+    it('getUserEnrollmentStatus returns user enrollment status for a course', async () => {
+        const enrollmentStatus = await progressService.getUserEnrollmentStatus(String(createdCourseId));
+        expect(enrollmentStatus).toHaveProperty('enrolled');
+        expect(enrollmentStatus).toHaveProperty('enrollmentDate');
+        expect(typeof enrollmentStatus.enrolled).toBe('boolean');
+    });
+
+    it('getUserProgress returns correct progress structure for a course', async () => {
+        const progress = await progressService.getUserProgress(String(createdCourseId));
+        expect(progress).toHaveProperty('courseId', String(createdCourseId));
+        expect(progress).toHaveProperty('userId');
+        expect(progress).toHaveProperty('completedTasks');
+        expect(progress).toHaveProperty('overallProgress');
+        expect(typeof progress.overallProgress).toBe('number');
+        expect(progress.overallProgress).toBeGreaterThanOrEqual(0);
+        expect(progress.overallProgress).toBeLessThanOrEqual(100);
+    });
+
+    it('enrollUserInCourse successfully enrolls user in a course', async () => {
+        try {
+            // First ensure user is not enrolled
+            await progressService.unenrollFromCourse(String(createdCourseId));
+
+            // Then enroll
+            const result = await progressService.enrollUserInCourse(String(createdCourseId));
+            expect(result).toHaveProperty('success', true);
+
+            // Verify enrollment
+            const status = await progressService.getUserEnrollmentStatus(String(createdCourseId));
+            expect(status.enrolled).toBe(true);
+        } catch (error) {
+            console.error('Test failed:', error);
+            throw error;
+        }
+    });
+
+    it('unenrollFromCourse successfully unenrolls user from a course', async () => {
+        // First ensure user is enrolled
+        await progressService.enrollUserInCourse(String(createdCourseId));
+
+        // Then unenroll
+        const result = await progressService.unenrollFromCourse(String(createdCourseId));
+        expect(result).toHaveProperty('success', true);
+
+        // Verify unenrollment
+        const status = await progressService.getUserEnrollmentStatus(String(createdCourseId));
+        expect(status.enrolled).toBe(false);
+    });
+
+    it('getQuizAttempts returns quiz attempts for a specific quiz', async () => {
+        // This test assumes there's a quiz ID available or can be mocked
+        const quizId = '1'; // Use a mock or actual quiz ID
+        const attempts = await progressService.getQuizAttempts(quizId);
+
+        expect(Array.isArray(attempts)).toBe(true);
+        if (attempts.length > 0) {
+            expect(attempts[0]).toHaveProperty('quizId');
+            expect(attempts[0]).toHaveProperty('score');
+            expect(attempts[0]).toHaveProperty('completedAt');
         }
     });
 

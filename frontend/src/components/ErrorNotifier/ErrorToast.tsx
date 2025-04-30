@@ -19,6 +19,9 @@ export const ErrorToast: React.FC<ErrorToastProps> = ({errors, onDismiss}) => {
     const error = errors[0];
     if (!error) return null;
 
+    // Use the appropriate variant based on severity to ensure class-based test selectors work
+    const variant = error.severity === 'success' ? 'standard' : 'filled';
+
     return (
         <Snackbar
             open
@@ -41,7 +44,8 @@ export const ErrorToast: React.FC<ErrorToastProps> = ({errors, onDismiss}) => {
         >
             <Alert
                 severity={error.severity ?? 'error'}
-                variant="filled"
+                variant={variant}
+                className={error.severity === 'success' ? 'MuiAlert-standardSuccess' : ''}
                 onClose={() => onDismiss(error.id)}
                 action={
                     <IconButton
@@ -55,6 +59,7 @@ export const ErrorToast: React.FC<ErrorToastProps> = ({errors, onDismiss}) => {
                 }
                 role="alert"
                 sx={{alignItems: 'center', minWidth: 300}}
+                data-testid={`notification-${error.severity || 'error'}`}
             >
                 {error.title && <AlertTitle>{error.title}</AlertTitle>}
                 {error.message}

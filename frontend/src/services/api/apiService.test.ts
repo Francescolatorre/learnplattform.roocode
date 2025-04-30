@@ -43,7 +43,7 @@ describe('ApiService', () => {
     it('calls get and returns data', async () => {
         vi.mocked(axiosInstance.get).mockResolvedValueOnce({data: 'test-data'});
         const result = await apiService.get('/test');
-        expect(axiosInstance.get).toHaveBeenCalledWith('/test');
+        expect(axiosInstance.get).toHaveBeenCalledWith('/test', undefined);
         expect(result).toBe('test-data');
     });
 
@@ -57,7 +57,7 @@ describe('ApiService', () => {
     it('calls post and returns data', async () => {
         vi.mocked(axiosInstance.post).mockResolvedValueOnce({data: 'post-data'});
         const result = await apiService.post('/test', {foo: 'bar'});
-        expect(axiosInstance.post).toHaveBeenCalledWith('/test', {foo: 'bar'});
+        expect(axiosInstance.post).toHaveBeenCalledWith('/test', {foo: 'bar'}, undefined);
         expect(result).toBe('post-data');
     });
 
@@ -71,7 +71,7 @@ describe('ApiService', () => {
     it('calls put and returns data', async () => {
         vi.mocked(axiosInstance.put).mockResolvedValueOnce({data: 'put-data'});
         const result = await apiService.put('/test', {foo: 'bar'});
-        expect(axiosInstance.put).toHaveBeenCalledWith('/test', {foo: 'bar'});
+        expect(axiosInstance.put).toHaveBeenCalledWith('/test', {foo: 'bar'}, undefined);
         expect(result).toBe('put-data');
     });
 
@@ -85,7 +85,7 @@ describe('ApiService', () => {
     it('calls delete and returns data', async () => {
         vi.mocked(axiosInstance.delete).mockResolvedValueOnce({data: 'delete-data'});
         const result = await apiService.delete('/test');
-        expect(axiosInstance.delete).toHaveBeenCalledWith('/test');
+        expect(axiosInstance.delete).toHaveBeenCalledWith('/test', undefined);
         expect(result).toBe('delete-data');
     });
 
@@ -99,7 +99,7 @@ describe('ApiService', () => {
     it('calls patch and returns data', async () => {
         vi.mocked(axiosInstance.patch).mockResolvedValueOnce({data: 'patch-data'});
         const result = await apiService.patch('/test', {foo: 'bar'});
-        expect(axiosInstance.patch).toHaveBeenCalledWith('/test', {foo: 'bar'});
+        expect(axiosInstance.patch).toHaveBeenCalledWith('/test', {foo: 'bar'}, undefined);
         expect(result).toBe('patch-data');
     });
 

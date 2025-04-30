@@ -8,10 +8,9 @@ vi.mock("@context/auth/AuthContext", () => ({
 import {describe, it, expect} from 'vitest';
 
 import {useAuth} from "@context/auth/AuthContext";
+import {ErrorProvider} from "@/components/ErrorNotifier/ErrorProvider";
 
 import ProtectedRoute from "./ProtectedRoute";
-
-
 
 describe("ProtectedRoute with isRestoring logic", () => {
     beforeEach(() => {
@@ -20,19 +19,21 @@ describe("ProtectedRoute with isRestoring logic", () => {
 
     const renderWithAuthContext = (initialRoute = "/dashboard") => {
         return render(
-            <MemoryRouter initialEntries={[initialRoute]}>
-                <Routes>
-                    <Route
-                        path="/dashboard"
-                        element={
-                            <ProtectedRoute>
-                                <div data-testid="dashboard-content">Dashboard Content</div>
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route path="/login" element={<div>Login Page</div>} />
-                </Routes>
-            </MemoryRouter>
+            <ErrorProvider>
+                <MemoryRouter initialEntries={[initialRoute]}>
+                    <Routes>
+                        <Route
+                            path="/dashboard"
+                            element={
+                                <ProtectedRoute>
+                                    <div data-testid="dashboard-content">Dashboard Content</div>
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route path="/login" element={<div>Login Page</div>} />
+                    </Routes>
+                </MemoryRouter>
+            </ErrorProvider>
         );
     };
 
@@ -109,19 +110,21 @@ describe("ProtectedRoute with isRestoring logic", () => {
 
         // Rerender with the same component structure as before
         rerender(
-            <MemoryRouter initialEntries={["/dashboard"]}>
-                <Routes>
-                    <Route
-                        path="/dashboard"
-                        element={
-                            <ProtectedRoute>
-                                <div data-testid="dashboard-content">Dashboard Content</div>
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route path="/login" element={<div>Login Page</div>} />
-                </Routes>
-            </MemoryRouter>
+            <ErrorProvider>
+                <MemoryRouter initialEntries={["/dashboard"]}>
+                    <Routes>
+                        <Route
+                            path="/dashboard"
+                            element={
+                                <ProtectedRoute>
+                                    <div data-testid="dashboard-content">Dashboard Content</div>
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route path="/login" element={<div>Login Page</div>} />
+                    </Routes>
+                </MemoryRouter>
+            </ErrorProvider>
         );
 
         await waitFor(() => expect(screen.getByTestId("dashboard-content")).toBeInTheDocument());

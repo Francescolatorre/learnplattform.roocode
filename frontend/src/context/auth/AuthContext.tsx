@@ -6,8 +6,8 @@
  *
  * Features:
  * - JWT token-based authentication with access and refresh tokens
- * - Automatic token persistence in localStorage
- * - User profile restoration on page reload
+ * - Security-focused: Tokens stored in localStorage, user data kept in memory only
+ * - User profile restoration on page reload via token validation
  * - Authentication event publishing for app-wide auth state changes
  *
  * @module AuthContext
@@ -98,35 +98,85 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
-    // Restore authentication state from localStorage
+    // Enhanced authentication state restoration
     useEffect(() => {
         const restoreAuth = async () => {
             try {
-                const storedUser = localStorage.getItem(AUTH_CONFIG.userStorageKey);
+                console.info('AuthContext: Restoring authentication state');
+                setIsRestoring(true);
+
+                // Check for tokens in localStorage
                 const token = localStorage.getItem(AUTH_CONFIG.tokenStorageKey);
+                const refreshToken = localStorage.getItem(AUTH_CONFIG.refreshTokenStorageKey);
 
-                if (storedUser && token) {
-                    // Validate token with backend
-                    const isValid = await authService.validateToken();
+                // If we don't have any tokens, we can't restore auth
+                if (!token && !refreshToken) {
+                    console.info('AuthContext: No tokens found, skipping restoration');
+                    setUser(null);
+                    setIsAuthenticated(false);
+                    setIsRestoring(false);
+                    return;
+                }
 
-                    if (isValid) {
-                        setUser(JSON.parse(storedUser));
+                // If we only have a refresh token but no access token, try to get a new access token
+                if (refreshToken && !token) {
+                    try {
+                        console.info('AuthContext: Only refresh token found, attempting to get new access token');
+                        await authService.refreshToken();
+                        // If successful, the token will be in localStorage now
+                    } catch (refreshError) {
+                        console.error('AuthContext: Failed to refresh token during restoration', refreshError);
+                        setUser(null);
+                        setIsAuthenticated(false);
+                        setIsRestoring(false);
+                        return;
+                    }
+                }
+
+                // Validate the access token (whether original or newly refreshed)
+                const isValid = await authService.validateToken();
+
+                if (isValid) {
+                    console.info('AuthContext: Token validated successfully');
+                    try {
+                        // Fetch current user profile using the valid token
+                        const validToken = localStorage.getItem(AUTH_CONFIG.tokenStorageKey);
+                        const userProfile = await authService.getUserProfile(validToken || undefined);
+
+                        // Create user object from profile data
+                        const userData = {
+                            id: String(userProfile.id),
+                            username: userProfile.username,
+                            email: userProfile.email,
+                            role: userProfile.role || 'student',
+                            display_name: userProfile.display_name
+                        };
+
+                        console.info('AuthContext: User profile fetched successfully', {username: userData.username, role: userData.role});
+
+                        // Update state with user data (kept only in memory)
+                        setUser(userData);
                         setIsAuthenticated(true);
+
                         authEventService.publish({
                             type: AuthEventType.TOKEN_REFRESH,
-                            payload: {message: 'Authentication restored from localStorage'}
+                            payload: {message: 'Authentication restored from token', userId: userData.id}
                         });
-                    } else {
-                        // Token is invalid, clear local storage
-                        localStorage.removeItem(AUTH_CONFIG.userStorageKey);
-                        localStorage.removeItem(AUTH_CONFIG.tokenStorageKey);
-                        localStorage.removeItem(AUTH_CONFIG.refreshTokenStorageKey);
+                    } catch (profileError) {
+                        console.error('AuthContext: Failed to fetch user profile during restoration', profileError);
                         setUser(null);
                         setIsAuthenticated(false);
                     }
+                } else {
+                    console.warn('AuthContext: Token validation failed');
+                    // Token is invalid and refresh attempt failed, clear all auth data
+                    localStorage.removeItem(AUTH_CONFIG.tokenStorageKey);
+                    localStorage.removeItem(AUTH_CONFIG.refreshTokenStorageKey);
+                    setUser(null);
+                    setIsAuthenticated(false);
                 }
             } catch (err) {
-                console.error('Error restoring authentication:', err);
+                console.error('AuthContext: Error restoring authentication', err);
                 setUser(null);
                 setIsAuthenticated(false);
                 authEventService.publish({
@@ -148,7 +198,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
             // Get tokens from auth service
             const authResponse = await authService.login(username, password);
 
-            // Store tokens in localStorage
+            // Store ONLY tokens in localStorage
             localStorage.setItem(AUTH_CONFIG.tokenStorageKey, authResponse.access);
             localStorage.setItem(AUTH_CONFIG.refreshTokenStorageKey, authResponse.refresh);
 
@@ -164,18 +214,12 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
                 display_name: userProfile.display_name
             };
 
-            // Update state with user data
+            // Update state with user data (kept only in memory)
             setUser(userData);
             setIsAuthenticated(true);
 
-            // Store minimal user data in localStorage for state restoration
-            // Security improvement: Only store non-sensitive user information
-            const minimalUserData = {
-                id: userData.id,
-                username: userData.username,
-                role: userData.role
-            };
-            localStorage.setItem(AUTH_CONFIG.userStorageKey, JSON.stringify(minimalUserData));
+            // No longer storing user data in localStorage
+            // Only tokens are persisted
 
             authEventService.publish({
                 type: AuthEventType.LOGIN,
@@ -233,6 +277,10 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         setUser(null);
         setIsAuthenticated(false);
         setError(null);
+        // Clear tokens from localStorage
+        localStorage.removeItem(AUTH_CONFIG.tokenStorageKey);
+        localStorage.removeItem(AUTH_CONFIG.refreshTokenStorageKey);
+
         authEventService.publish({
             type: AuthEventType.LOGOUT
         });

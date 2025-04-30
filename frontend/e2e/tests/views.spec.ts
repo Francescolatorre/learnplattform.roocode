@@ -1,6 +1,6 @@
 import {test, expect} from '@playwright/test';
 
-import {login, TEST_USERS, waitForGlobalLoadingToDisappear} from './setupTests'; // Import the login helper function and TEST_USERS
+import {login, TEST_USERS, waitForGlobalLoadingToDisappear} from '../setupTests'; // Import the login helper function and TEST_USERS
 
 test.describe('Frontend Views', () => {
   test('Dashboard view renders correctly', async ({page}) => {

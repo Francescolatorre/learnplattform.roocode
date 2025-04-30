@@ -13,13 +13,12 @@ import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import React from 'react';
 import {useNavigate} from 'react-router-dom';
 
-
+import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import {ICourse} from '@/types/course';
 import {TCompletionStatus} from '@/types/entities';
 import {useAuth} from '@context/auth/AuthContext';
 import {courseService} from '@services/resources/courseService';
 import enrollmentService from '@services/resources/enrollmentService';
-
 
 interface ICourseEnrollmentProps {
   courseId: string;
@@ -130,15 +129,21 @@ const CourseHeader: React.FC<{course: ICourse}> = ({course}) => (
   </Typography>
 );
 
-// Anpassung des Types für optionale description
+// Adding support for Markdown rendering in course descriptions
 const CourseDescription: React.FC<{description?: string}> = ({description}) => (
   <Paper sx={{p: 3, mb: 4}}>
     <Typography variant="h6" gutterBottom>
       Course Description
     </Typography>
-    <Typography variant="body1">
-      {description || 'No description available'}
-    </Typography>
+    {description ? (
+      <Box>
+        <MarkdownRenderer content={description} />
+      </Box>
+    ) : (
+      <Typography variant="body1">
+        No description available
+      </Typography>
+    )}
   </Paper>
 );
 

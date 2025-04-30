@@ -21,6 +21,8 @@ import InstructorDashboardPage from '@/pages/instructor/InstructorDashboardPage'
 import InstructorCoursesPage from '@/pages/courses/InstructorCoursesPage';
 import InstructorEditCoursePage from '@/pages/courses/InstructorEditCoursePage';
 import InstructorCourseDetailPage from '@/pages/courses/InstructorCourseDetailsPage';
+import InstructorTasksPage from '@/pages/learningTasks/InstructorTasksPage';
+import CourseLearningTasksPage from '@/pages/learningTasks/CourseLearningTasksPage';
 
 // Admin pages
 import AdminDashboardPage from '@/pages/admin/AdminDashboardPage';
@@ -61,7 +63,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/courses/:courseId"
         element={
-          <ProtectedRoute allowedRoles={['student']}>
+          <ProtectedRoute allowedRoles={['student', 'instructor']}>
             <StudentCourseDetailsPage />
           </ProtectedRoute>
         }
@@ -121,6 +123,23 @@ const AppRoutes: React.FC = () => {
         element={
           <ProtectedRoute allowedRoles={['instructor', 'admin']}>
             <InstructorCourseDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      {/* Task Management Routes */}
+      <Route
+        path="/instructor/courses/:courseId/tasks"
+        element={
+          <ProtectedRoute allowedRoles={['instructor', 'admin']}>
+            <InstructorTasksPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/instructor/courses/:courseId/tasks/:taskId/edit"
+        element={
+          <ProtectedRoute allowedRoles={['instructor', 'admin']}>
+            <CourseLearningTasksPage />
           </ProtectedRoute>
         }
       />

@@ -1,6 +1,19 @@
 // src/test-utils/setupTests.ts
 import {vi} from 'vitest';
-import '@testing-library/jest-dom'; // Hinzugefügt für toBeInTheDocument() Unterstützung
+import '@testing-library/jest-dom'; // Removed for Vitest compatibility
+import React from 'react';
+
+// Mock for MarkdownRenderer component
+vi.mock('@/components/common/MarkdownRenderer', () => ({
+  __esModule: true,
+  default: vi.fn(({content}) => {
+    return React.createElement('div', {
+      className: 'markdown-content',
+      'data-testid': 'markdown-content',
+      dangerouslySetInnerHTML: {__html: content || ''}
+    });
+  })
+}));
 
 // Axios Mocking
 const mockAxiosInstance = {

@@ -3,6 +3,7 @@ import {Navigate, useLocation} from 'react-router-dom';
 
 import {useAuth} from '@/context/auth/AuthContext';
 import {TUserRole} from '@/types';
+import {useNotification} from '@/components/ErrorNotifier/useErrorNotifier';
 
 interface IProtectedRouteProps {
   children: React.ReactNode;
@@ -25,10 +26,12 @@ const ProtectedRoute: React.FC<IProtectedRouteProps> = ({
   const {isAuthenticated, getUserRole, isRestoring} = useAuth();
   const userRole = getUserRole();
   const location = useLocation();
+  const notify = useNotification();
 
   // Log debugging information
   console.info('ProtectedRoute:', {
     isAuthenticated,
+    isRestoring,
     userRole,
     allowedRoles,
     path: location.pathname
@@ -48,18 +51,45 @@ const ProtectedRoute: React.FC<IProtectedRouteProps> = ({
   }, [isAuthenticated, userRole, allowedRoles, location.pathname]);
 
   // Show loading state while restoring authentication
+  // This is crucial to prevent premature navigation to login
   if (isRestoring) {
-    return <div data-testid="protected-route-loading">Loading authentication status...</div>;
+    return (
+      <div
+        data-testid="protected-route-loading"
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh'
+        }}
+      >
+        <div>
+          <p>Loading authentication status...</p>
+          <p>Please wait while we verify your session...</p>
+        </div>
+      </div>
+    );
   }
 
-  // Redirect to login if not authenticated
+  // Redirect to login if not authenticated and restoration is complete
   if (!isAuthenticated) {
+    console.info('User not authenticated, redirecting to login', {
+      currentPath: location.pathname
+    });
     // Save the current location to redirect back after login
     return <Navigate to="/login" state={{from: location}} replace />;
   }
 
   // If allowedRoles is provided and not empty, check if user has required role
   if (allowedRoles.length > 0 && !allowedRoles.includes(userRole as TUserRole)) {
+    console.info('User does not have required role, redirecting to appropriate dashboard', {
+      userRole,
+      requiredRoles: allowedRoles,
+      currentPath: location.pathname
+    });
+    notify("You don't have permission to access this page. Redirecting to dashboard.", 'error');
+
+
     // Redirect to appropriate dashboard based on role
     if (userRole === 'admin') {
       return <Navigate to="/admin/dashboard" replace />;

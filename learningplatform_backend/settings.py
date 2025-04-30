@@ -93,6 +93,7 @@ INSTALLED_APPS = [
     "corsheaders",  # Add CORS headers app
     "learningplatform_backend",  # Ensure this app is listed
     "core"  # Ensure the core app is listed here
+    "utils",  # Ensure the utils app is listed here
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

@@ -41,6 +41,7 @@ export interface IProgressAnalytics {
  * Student progress summary interface for student dashboard
  */
 export interface IStudentProgressSummary {
+    progress: number;
     user_info: {
         id: string;
         username: string;

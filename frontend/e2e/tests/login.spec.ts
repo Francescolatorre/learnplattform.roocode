@@ -1,6 +1,6 @@
 import {test, expect} from '@playwright/test';
 
-import {TEST_USERS, waitForGlobalLoadingToDisappear} from './setupTests';
+import {TEST_USERS, waitForGlobalLoadingToDisappear} from '../setupTests';
 
 test.describe('Login Functionality', () => {
   test('should log in successfully with valid credentials', async ({page}) => {

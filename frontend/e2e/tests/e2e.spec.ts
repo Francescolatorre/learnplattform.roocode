@@ -1,6 +1,6 @@
 import {test, expect, request} from '@playwright/test';
 
-import {TEST_USERS} from './setupTests';
+import {TEST_USERS} from '../setupTests';
 
 /**
  * Base API URL

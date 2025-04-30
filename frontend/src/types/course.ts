@@ -16,9 +16,13 @@ export interface ICourseVersion {
 
 // Kurs-bezogene Typen
 export interface ICourse {
+    category: string;
+    difficulty_level: string;
     id: string;
     title: string;
     description?: string;
+    description_html?: string;
+    description_markdown?: string;
     image_url?: string;
     instructor_id?: string;
     instructor_name?: string;
@@ -29,6 +33,8 @@ export interface ICourse {
     prerequisites?: string;
     visibility?: 'public' | 'private';
     version?: number;
+    is_published?: boolean;
+    is_archived?: boolean;
 
     // Enrollment related fields
     student_count?: number;

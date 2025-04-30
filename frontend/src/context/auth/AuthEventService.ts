@@ -1,6 +1,6 @@
-import {AuthEvent} from './types';
+import {IAuthEvent} from './types';
 
-type Listener = (event: AuthEvent) => void;
+type Listener = (event: IAuthEvent) => void;
 
 class AuthEventService {
     private listeners: Listener[] = [];
@@ -14,7 +14,7 @@ class AuthEventService {
         };
     }
 
-    public publish(event: AuthEvent): void {
+    public publish(event: IAuthEvent): void {
         this.listeners.forEach(listener => listener(event));
     }
 }

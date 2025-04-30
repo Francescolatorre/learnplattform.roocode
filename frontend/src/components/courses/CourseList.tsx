@@ -1,4 +1,6 @@
-import React from 'react';
+import Button from '@mui/material/Button'; // Import the Button component
+import React, {useState} from 'react';
+import TaskCreation from '../taskCreation/TaskCreation'; // Import the TaskCreation component
 import {
   List,
   ListItem,
@@ -24,6 +26,7 @@ import SchoolIcon from '@mui/icons-material/School';
 // Importiere den Typ direkt aus der Typdatei, um Casing-Probleme zu vermeiden
 import {ICourse} from '@/types/course';
 import {formatDateRelative} from '@/utils/dateUtils';
+import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 
 // Custom type extension for course with student count
 interface ICourseWithEnrollment extends ICourse {
@@ -49,6 +52,15 @@ const CourseList: React.FC<ICourseListProps> = ({
   title,
   showInstructorActions = false
 }) => {
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
   // Get status color based on course status
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -57,6 +69,16 @@ const CourseList: React.FC<ICourseListProps> = ({
       case 'archived': return 'error';
       default: return 'default';
     }
+  };
+
+  // Get a description preview
+  const getDescriptionPreview = (course: ICourse) => {
+    if (!course.description) {
+      return "No description provided.";
+    }
+    return course.description.length > 150
+      ? `${course.description.substring(0, 150)}...`
+      : course.description;
   };
 
   if (!courses.length) {
@@ -75,6 +97,10 @@ const CourseList: React.FC<ICourseListProps> = ({
         </Typography>
       )}
 
+      <Button variant="contained" onClick={handleOpenModal}>
+        Add Task
+      </Button>
+      <TaskCreation open={isModalOpen} onClose={handleCloseModal} />
       <List sx={{width: '100%', bgcolor: 'background.paper'}}>
         {courses.map((course, index) => (
           <React.Fragment key={course.id}>
@@ -95,7 +121,12 @@ const CourseList: React.FC<ICourseListProps> = ({
               <ListItemText
                 primary={
                   <Box sx={{display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1}}>
-                    <Typography variant="subtitle1" component="span">
+                    <Typography
+                      variant="subtitle1"
+                      component="span"
+                      data-testid={`course-title-${course.id}`}
+                      className="course-title"
+                    >
                       {course.title}
                     </Typography>
                     <Chip
@@ -119,19 +150,29 @@ const CourseList: React.FC<ICourseListProps> = ({
                 }
                 secondary={
                   <React.Fragment>
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      color="text.primary"
-                      sx={{display: 'inline', mr: 1}}
-                    >
-                      {/* Sicherstellen dass description definiert ist */}
-                      {course.description ?
-                        (course.description.length > 150
-                          ? `${course.description.substring(0, 150)}...`
-                          : course.description)
-                        : 'No description provided.'}
-                    </Typography>
+                    {/* Use Markdown renderer for course descriptions if HTML version is available */}
+                    {course.description_html ? (
+                      <Box sx={{
+                        maxHeight: '150px',
+                        overflow: 'hidden',
+                        '& img': {display: 'none'},
+                        '& h1,h2,h3': {fontSize: '1rem'}
+                      }}>
+                        <MarkdownRenderer
+                          content={getDescriptionPreview(course)}
+                          isPreview={true}
+                        />
+                      </Box>
+                    ) : (
+                      <Typography
+                        component="span"
+                        variant="body2"
+                        color="text.primary"
+                        sx={{display: 'inline', mr: 1}}
+                      >
+                        {getDescriptionPreview(course)}
+                      </Typography>
+                    )}
 
                     <Box sx={{mt: 1, display: 'flex', gap: 2}}>
                       {course.created_at && (

@@ -1,8 +1,8 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import {render, screen, fireEvent} from '@testing-library/react';
 import CourseCard from './CourseCard';
-import { describe, it, expect, vi } from 'vitest';
-import { BrowserRouter } from 'react-router-dom';
+import {describe, it, expect, vi} from 'vitest';
+import {BrowserRouter} from 'react-router-dom';
 
 // Mock react-router-dom's useNavigate
 const mockedNavigate = vi.fn();
@@ -46,7 +46,7 @@ describe('CourseCard Component', () => {
   });
 
   it('handles missing image by showing placeholder', () => {
-    const courseWithoutImage = { ...mockCourse, image_url: null };
+    const courseWithoutImage = {...mockCourse, image_url: null};
     render(
       <BrowserRouter>
         <CourseCard course={courseWithoutImage} />
@@ -57,19 +57,19 @@ describe('CourseCard Component', () => {
   });
 
   it('handles null description by showing default text', () => {
-    const courseWithoutDescription = { ...mockCourse, description: null };
+    const courseWithoutDescription = {...mockCourse, description: null};
     render(
       <BrowserRouter>
         <CourseCard course={courseWithoutDescription} />
       </BrowserRouter>
     );
 
-    expect(screen.getByText('Keine Beschreibung verfügbar')).toBeInTheDocument();
+    expect(screen.getByText('No description available')).toBeInTheDocument();
   });
 
   it('truncates long descriptions', () => {
     const longDesc = 'A'.repeat(150); // Creates a string longer than 120 chars
-    const courseWithLongDesc = { ...mockCourse, description: longDesc };
+    const courseWithLongDesc = {...mockCourse, description: longDesc};
 
     render(
       <BrowserRouter>
@@ -82,7 +82,7 @@ describe('CourseCard Component', () => {
   });
 
   it('shows loading skeleton when isLoading is true', () => {
-    const { container } = render(
+    const {container} = render(
       <BrowserRouter>
         <CourseCard course={mockCourse} isLoading={true} />
       </BrowserRouter>
@@ -105,7 +105,7 @@ describe('CourseCard Component', () => {
   });
 
   it('shows Continue Learning button for enrolled courses', () => {
-    const enrolledCourse = { ...mockCourse, isEnrolled: true };
+    const enrolledCourse = {...mockCourse, isEnrolled: true};
     render(
       <BrowserRouter>
         <CourseCard course={enrolledCourse} />

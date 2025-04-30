@@ -1,429 +1,267 @@
 # GitHub Copilot Custom Instructions for Learning Platform (Full Stack)
 
+---
+
+## Goal
+
+**Assist in generating backend and frontend code aligned with project architecture, terminology, workflows, and best practices, while ensuring vertical integration and validation through tests.**
+
+---
+
 ## Project Overview
 
-I'm developing a comprehensive Learning Platform with a Django-based backend and a React-based frontend. The platform enables course management, student progress tracking, and interactive assessments with different user roles (student, instructor, admin).
+I'm developing a comprehensive Learning Platform featuring:
 
-> **IMPORTANT TERMINOLOGY CLARIFICATION:**
-> In this project, we differentiate between two types of "tasks":
->
-> 1. **LearningTasks** - The actual learning assignments in the platform that students complete
-> 2. **DevTasks** - The development work items stored in `memory_bank/tasks/`
-> Please maintain this distinction in all suggestions and code generation.
+- Django-based backend
+- React-based frontend
+- Course management
+- Student progress tracking
+- Interactive assessments
+- Multiple user roles (student, instructor, admin)
+
+---
+
+## Important Terminology
+
+In this project, "task" can mean two distinct things:
+
+- **LearningTask**: Student-facing assignments completed within the platform.
+- **DevTask**: Development work items tracked under `memory_bank/tasks/`.
+
+> Always maintain this distinction across all suggestions and code generation.
+
+---
 
 ## Tech Stack
 
-### Backend Tech Stack
+### Backend
 
-- **Folder**: The backend code resides in the `learningplatform_backend` directory.
-- **Framework**: Django 4.2.9 with Django REST Framework
-- **Authentication**: JWT authentication (djangorestframework-simplejwt)
-- **Database**: SQLite (development)
+- **Folder**: `learningplatform_backend/`
+- **Framework**: Django 4.2.9 + Django REST Framework (DRF)
+- **Authentication**: JWT (djangorestframework-simplejwt)
+- **Database**: SQLite (for development)
 - **Testing**: pytest, pytest-django
 - **Code Quality**: pylint, black
-- **Logging**: Use lazy % formatting in logging
-- **API Documentation**: drf-yasg for Swagger documentation
+- **Logging**: Use lazy `%` formatting
+- **API Documentation**: drf-yasg (Swagger/OpenAPI)
 
-### Frontend Tech Stack
+### Frontend
 
-- **Framework**: React 18 with TypeScript
+- **Framework**: React 18 + TypeScript
 - **UI Components**: Material UI
-- **Routing**: React Router with v7_startTransition future flag enabled
+- **Routing**: React Router v7 (`v7_startTransition` future flag enabled)
 - **State Management**: Zustand (client state), React Query (server state)
 - **API Requests**: Axios
 - **Build Tool**: Vite
 
-## Architecture Overview
+### Development Client
+
+- Use `;` to separate multiple commands (e.g., `cd project; npm start`) instead of `&&`.
+
+---
 
 ## Backend Structure Overview
 
-- Core app handles user authentication, course management, and progress tracking
-- REST API endpoints with proper permission classes
-- Custom middleware for logging (RequestLoggingMiddleware, AuthLoggingMiddleware)
-- **Domain Models**: User, Course, LearningTask (student learning assignments), QuizTask, TaskProgress, CourseEnrollment
+- Core app handles authentication, course management, and tracking
+- REST API organized with ViewSets and proper permission classes
+- Custom middleware for logging:
+  - `RequestLoggingMiddleware`
+  - `AuthLoggingMiddleware`
+- **Domain Models**:
+  - `User`, `Course`, `LearningTask`, `QuizTask`, `TaskProgress`, `CourseEnrollment`
 
-### API Routing Structure Overview
+---
+
+## API Routing Overview
 
 - **Base URL**: `localhost:8000/`
 - **Authentication Endpoints**:
-  - `POST /auth/login/`: User login
-  - `POST /auth/logout/`: User logout
-  - `POST /auth/register/`: User registration
-  - `POST /auth/token/refresh/`: Refresh JWT token
-  - `GET /auth/validate-token/`: Validate JWT token
+  - `POST /auth/login/` (public)
+  - `POST /auth/logout/` (auth required)
+  - `POST /auth/register/` (public)
+  - `POST /auth/token/refresh/`
+  - `GET /auth/validate-token/`
 - **User Endpoints**:
-  - `GET /users/profile/`: Get user profile
+  - `GET /users/profile/`
 - **Health Check**:
-  - `GET /health/`: System health check
-- **API Documentation**:
-  - `/swagger/`: Swagger UI for API documentation
-  - `/swagger/?format=openapi`: OpenAPI specification
-- **API follows standard RESTful conventions** for resource endpoints
+  - `GET /health/`
+- **API Docs**:
+  - `/swagger/`
+  - `/swagger/?format=openapi`
 
-### Frontend Structure Overview
+> APIs follow RESTful standards with JWT protection where appropriate.
 
-- **Component Organization**: Feature-based structure with shared components in `/components/common` and feature-specific components in `/features/*`
-- **TypeScript Usage**: Strict type safety with interfaces prefixed by `I` (e.g., `IUserProps`)
-- **UI Framework**: Material UI with a centralized theme configuration for consistent styling
-- **Routing**: React Router v7 with `v7_startTransition` future flag enabled for smoother navigation
+---
+
+## Frontend Structure Overview
+
+- **Component Organization**:
+  - `/components/common/` (shared UI elements)
+  - `/features/*` (feature-specific components)
+- **TypeScript**:
+  - Use strict typing
+  - Interfaces prefixed with `I` (e.g., `IUserProps`)
 - **State Management**:
-  - **Client State**: Zustand for lightweight and scalable state management
-  - **Server State**: React Query for efficient data fetching, caching, and synchronization
-- **API Integration**: Centralized API service layer using Axios with interceptors for authentication and error handling
-- **Build Tool**: Vite for fast builds and optimized development experience
-- **Testing**: React Testing Library for unit tests and Playwright for end-to-end testing
-- **Code Formatting**: 2-space indentation, camelCase for variables/functions, PascalCase for components/interfaces
-- **Path Aliases**: Use path aliases (e.g., `@components/*`, `@features/*`) for cleaner imports
-- **Error Handling**: Centralized error boundaries and informative user feedback mechanisms
-- **Performance Optimization**: Lazy loading for routes and components, React Query caching, and memoization where applicable
+  - Zustand for client state
+  - React Query for server state
+- **API Layer**:
+  - Centralized API service using Axios with interceptors
+- **Testing**:
+  - React Testing Library for units
+  - Playwright for end-to-end tests
+- **Other**:
+  - Vite for builds
+  - Material UI theme configuration
+  - 2-space indentation, camelCase, PascalCase
 
-## Folder Structure Overview
+---
 
-The project follows a well-defined folder structure to ensure maintainability and scalability. Below is the recommended structure:
+## Memory Bank Folder Structure
 
-### Backend Folder Structure
-
-- `apps/`: Contains Django apps (e.g., `auth`, `courses`, `tasks`)
-- `config/`: Django project settings and configuration files
-- `tests/`: Backend test cases
-- `utils/`: Shared utility functions and helpers
-- `logs/`: Log files for debugging and monitoring
-- `static/`: Static files (e.g., CSS, JS)
-- `media/`: Uploaded media files
-
-### Frontend Folder Structure
-
-- `src/`: Main source folder
-  - `components/`: Reusable UI components
-    - `common/`: Shared components (e.g., `DataTable`, `StatusChip`)
-    - `layout/`: Layout components (e.g., `MainLayout`)
-  - `features/`: Feature-specific components and logic
-    - `auth/`: Authentication-related components and hooks
-    - `courses/`: Course management components
-    - `dashboard/`: Dashboard and analytics components
-    - `learningTasks/`: Learning task-related components
-  - `hooks/`: Custom React hooks
-  - `services/`: API service layer
-    - `api/`: Centralized API logic
-  - `store/`: Zustand state management stores
-  - `theme/`: Material UI theme configuration
-  - `types/`: TypeScript type definitions
-  - `utils/`: Shared utility functions
-  - `routes/`: Application routing configuration
-  - `tests/`: Frontend test cases
-- `public/`: Static assets (e.g., `index.html`, images)
-
-### Memory Bank Folder Structure
-
-- `tasks/`: **DevTasks** (development work items)
+- `tasks/`: DevTasks (development work items)
 - `ADRs/`: Architecture Decision Records
 - `Documentation/`: Project documentation
-- `activeContext.md`: Tracks current development work
+- `activeContext.md`: Tracks current development focus
 - `progress.md`: Tracks overall project progress
 
-### Additional Notes on Folder Structure
+---
 
-- Follow this structure for new features or modules.
-- Reference existing patterns in `memory_bank/ADRs/` for architectural guidance.
+## Development Principles
 
-## Frontend Development Standards Overview
+### Vertical Integration First
 
-- **Component Design**:
-  - Prefer functional components with hooks over class components
-  - Separate UI logic from business logic
-  - Use reusable shared components for common UI patterns (e.g., `DataTable`, `StatusChip`, `ProgressIndicator`)
-- **Forms**:
-  - Use Material UI form components with validation via libraries like `react-hook-form` or `yup`
-  - Provide clear error messages and feedback for invalid inputs
-- **Routing**:
-  - Use `ProtectedRoute` and `RoleBasedRoute` components for access control
-  - Organize routes in a centralized `routes.tsx` file for maintainability
-- **State Management**:
-  - Use Zustand for lightweight client-side state
-  - Use React Query hooks (e.g., `useQuery`, `useMutation`) for server-side state
-  - Avoid direct Axios calls in components; use dedicated hooks or services
-- **Styling**:
-  - Use Material UI's `sx` prop or styled components for custom styles
-  - Maintain a consistent theme using Material UI's `ThemeProvider`
-- **Testing**:
-  - Write unit tests for components with Vitest
-  - Use Playwright for testing critical user flows
-  - Mock API calls in tests to ensure isolation and reliability
-- **Error Handling**:
-  - Implement centralized error boundaries for catching runtime errors
-  - Use React Query's `onError` callbacks for API error handling
-  - Display user-friendly error messages in the UI
+- Always implement features as **vertical slices**.
+- A vertical slice should touch:
+  - Database models (backend)
+  - API endpoints
+  - Service layers (frontend/backend)
+  - UI components
+- Avoid completing isolated backend or frontend pieces without wiring them together early.
 
-## Governance Model Overview
+### Test-Driven Validation
 
-### Task Structure & Documentation Overview
+- **Every change must be validated through tests**.
+- Backend:
+  - Unit and integration tests using pytest
+- Frontend:
+  - Unit and integration tests with Vitest
+  - test:unit for unit tests
+  - test:integration for integration tests with real backend
+  - End-to-end tests with Playwright
+- Include positive, negative, and edge case testing where appropriate.
+- Changes are only considered complete when corresponding tests pass.
 
-- All **DevTasks** (development work items) are stored in the `memory_bank/tasks/` directory
-- ADRs (Architecture Decision Records) are stored in `memory_bank/ADRs/`
-- Project documentation is maintained in `memory_bank/Documentation/`
-- All **DevTasks** should follow a structured format:
-  - Clear description of purpose and objectives
-  - Specific, measurable requirements
-  - Validation criteria for completion
-  - Dependencies and related tasks
-  - Expected outcomes
+---
 
-### Development Workflow Overview
+## Governance Model
 
-- Follow the **DevTask** lifecycle: DRAFT → VALIDATED → TODO → IN_PROGRESS → DONE
-- Implement validation checks before considering **DevTasks** complete
-- Document ADRs (Architecture Decision Records) for significant decisions
-- Maintain consistency between implementation and documented requirements
-- Create comprehensive test coverage for new functionality
-- Use `memory_bank/activeContext.md` for tracking current development work
-- Use `memory_bank/progress.md` for overall project progress tracking
+- **DevTasks** must:
+  - Follow a clear lifecycle: DRAFT → VALIDATED → TODO → IN_PROGRESS → DONE
+  - Have structured documentation: description, requirements, validation criteria, dependencies
+- **ADRs** must:
+  - Document significant technical decisions.
+- **Progress Tracking**:
+  - Use `memory_bank/activeContext.md` for active focus.
+  - Use `memory_bank/progress.md` for project overview.
 
-### Code Organization Standards Overview
+---
 
-- Group related functionality in appropriate modules/services
-- Follow single responsibility principle for components and services
-- Document public APIs and complex logic with clear comments
-- Use a standardized folder structure for new features
-- Maintain clear separation between UI components and business logic
+## Git Commit Standards
 
-### Git Commit Standards Overview
+- Format: `[DEVTASK-ID] [STATUS] [SUMMARY]`
+  - Example: `TASK-API-001 IN_PROGRESS Implement auth endpoints`
+- Keep commits focused and descriptive.
+- Include validation information in commit messages when appropriate.
 
-- Format: `[DEVTASK-ID] [STATUS] [SUMMARY]` (e.g., "TASK-API-001 IN_PROGRESS Implement auth endpoints")
-- Include validation status and explanation
-- Keep commits focused on single logical changes
-- Use descriptive messages that explain WHY changes were made
+---
 
-## Key Features Overview
+## Backend Coding Standards
 
-- Course management with versioning capabilities
-- User progress tracking across courses and tasks
-- Quiz system with questions, options, and attempts tracking
-- Detailed analytics for student performance
-- Role-based access control (student, instructor, admin)
-- Comprehensive logging system tracking API requests, authentication, and errors
+- Follow PEP 8 and Black formatting
+- Use Django class-based views (ViewSets preferred)
+- Apply proper permission_classes
+- Use model relationships efficiently (ForeignKey, ManyToMany)
+- Optimize database queries with select_related and prefetch_related
+- Log using lazy `%` formatting
+- Add detailed docstrings for public classes and methods
 
-## Coding Preferences Overview
+---
 
-### Backend Coding Preferences
+## Frontend Coding Standards
 
-- Follow PEP 8 styling with Black formatting
-- Use Django's class-based views (ViewSets and APIView classes) where appropriate
-- Implement proper permissions and authentication checks
-- Log important events using the custom logging infrastructure
-- Include detailed docstrings for classes and methods
-- Use Django's model relationships appropriately (ForeignKey, ManyToMany)
-- Handle errors gracefully with appropriate status codes and messages
+- Prefer functional components with hooks
+- Use strict TypeScript interfaces (prefix with `I`)
+- No `any` unless absolutely necessary
+- Centralize error handling and API logic
+- Use Material UI theming consistently
+- Optimize performance with lazy loading, memoization
+- Organize routes in a centralized file
 
-### Django-Specific Best Practices Overview
-
-- Prefer ModelViewSets for standard CRUD operations with additional custom actions
-- Use model manager methods for complex database queries instead of putting query logic in views
-- Apply select_related() and prefetch_related() consistently to avoid N+1 query problems
-- Use F() and Q() objects for database-level operations and complex filtering
-- Implement permission_classes at the view level, not just globally in settings
-- Use serializer_class and get_serializer_class() for dynamic serializer selection
-- Implement pagination, filtering, and ordering using DRF's built-in tools
-- Use Django signals (pre_save, post_save) for model lifecycle management
-- Apply Django's transaction.atomic() for operations that require database integrity
-
-## Django Model Design Overview
-
-- **Learning Platform Domain Models** (student-facing application entities):
-  - `User`: Authentication and user roles
-  - `Course`: Educational content container
-  - `LearningTask`: Student assignments within courses
-  - `QuizTask`: Specialized learning assignments with questions
-  - `TaskProgress`: Tracks student completion of learning assignments
-  - `CourseEnrollment`: Links students to courses
-- Use abstract base classes for shared model attributes and behaviors
-- Implement custom model managers for reusable query logic
-- Apply appropriate model inheritance patterns (Abstract, Multi-table)
-- Define proper constraints, indexes, and unique_together in Meta classes
-- Use model methods for operations on the instance level
-- Implement clean() method for model-level validation
-
-### Frontend Coding Preferences Overview
-
-- Prefer functional components with hooks over class components
-- Use TypeScript interfaces for props and state (prefix with 'I', e.g., `IUserProps`)
-- Avoid `any` types where possible
-- Format code with 2-space indentation
-- Use named exports for components
-- Use camelCase for variables and functions, PascalCase for components and interfaces
-- Use Material UI theme configuration for consistent styling
-
-## API Integration Overview
-
-- Backend implements RESTful endpoints with proper permission checks
-- Frontend uses the `ApiService` class or hooks like `useApiResource` and `useCourseData`
-- Components and pages shall not use Axios directly
-- Include authentication tokens via Axios interceptors
-- Handle loading, error, and success states consistently
-- **Harmonizing Services**:
-  - Centralize API logic in a dedicated service layer (e.g., `services/api/apiService.ts`)
-  - Use consistent naming conventions for service methods (e.g., `fetchCourses`, `createTask`)
-  - Implement reusable hooks (e.g., `useApiResource`) for common API patterns
-  - Ensure all services follow the same error-handling and logging strategy
-  - Use TypeScript interfaces to define request and response schemas for all services
-  - Document service methods with clear descriptions of their purpose and usage
-
-## Authentication & Authorization Overview
-
-- Backend: JWT token authentication with refresh mechanics
-- Frontend: Use the `useAuth` hook for authentication functionality
-- Implement role-based access control using `withAuth` HOC or `RoleBasedRoute` component
-- Check user roles before displaying role-specific UI elements or allowing access
-
-## Common Project Tasks Overview
-
-### Backend Tasks Overview
-
-- Implementing API endpoints for course and task management
-- Adding analytics features for tracking student progress
-- Extending the permission system for role-based access
-- Optimizing database queries for performance
-- Adding tests for new features
-- Troubleshooting network connectivity issues between client and server
-
-### Django-Specific Tasks Overview
-
-- Creating custom API endpoints via @action decorator on ViewSets
-- Implementing nested serializers for complex data structures
-- Customizing the Django admin interface for better content management
-- Setting up proper filter backends with filterset_fields and search_fields
-- Implementing DRF's throttling mechanism for rate limiting
-- Extending the JWT authentication system with custom claims
-- Creating custom model fields and validators for domain-specific data
-- Using get_serializer_context() to pass additional data to serializers
-
-### API Routing and Viewsets Overview
-
-- Use Django REST Framework's DefaultRouter for registering ViewSets
-- Implement custom actions with `@action` decorator for non-CRUD operations
-- Follow RESTful URL patterns: `/api/v1/resources/`, `/api/v1/resources/{id}/`
-- Group related endpoints using router.register() with appropriate prefixes
-- Use namespacing for URL patterns to avoid conflicts
-- Implement versioning through URL prefixing (e.g., `/api/v1/`, `/api/v2/`)
-
-### Frontend Tasks Overview
-
-- Creating new components with proper props interface, error handling, and loading states
-- Implementing forms with validation and error feedback
-- Using shared UI components like `DataTable`, `StatusChip`, and `ProgressIndicator`
-- Handling data fetching and state management
-- Configuring React Router with v7_startTransition future flag to prevent warnings
+---
 
 ## Testing Overview
 
-- **Backend**: Use `pytest` and `pytest-django` for unit and integration tests.
-- **Frontend**: Use `Vitest` for unit tests and `Playwright` for end-to-end testing.
+### Backend
 
-### Testing Architecture Rules Overview
+- pytest + pytest-django
+- Model factories (factory_boy)
+- API tests using django.test.Client
 
-- **Global Mocks**:
-  - Use a centralized `setupTests.ts` file to define global mocks and reusable test utilities.
-  - Mock services like `authService` and `apiService` globally to ensure consistency across tests.
-  - Mock `react-router-dom`'s `useNavigate` globally and export it for use in tests.
+### Frontend
 
-- **Reusable Helpers**:
-  - Define reusable helpers like `login` for common test flows (e.g., user login) in `setupTests.ts`.
-  - Ensure helpers return consistent mock data that aligns with the application's API responses.
+- Vitest for unit tests
+- Playwright for end-to-end tests
+- Centralize global mocks in `setupTests.ts`
+- Isolate tests and avoid direct API calls
 
-- **LocalStorage Mocking**:
-  - Mock `localStorage` globally in `setupTests.ts` to isolate tests from browser-specific behavior.
-  - Clear `localStorage` before each test to ensure a clean state.
+---
 
-- **Vitest Integration**:
-  - Use `vi.fn()` for mocking functions and `vi.mock()` for mocking modules.
-  - Use `beforeEach` and `afterEach` hooks to reset mocks and clean up test states.
-  - Ensure all mocks are properly reset to avoid test contamination.
+## Special Requirements
 
-- **Playwright Integration**:
-  - Use Playwright for end-to-end testing of critical user flows.
-  - Ensure Playwright tests are compatible with Vite's development server.
-  - Use Playwright's `Page` type for reusable helpers like `login`.
-  - Include explicit return types and handle navigation properly in Playwright helpers.
+- Solve WSL networking issues for backend testing
+- Ensure course enrollment and progress tracking efficiency
+- Optimize API queries to avoid N+1 problems
+- Provide informative error messages throughout the UI
+- Use path aliases for cleaner imports
+- Enable React Router v7 `startTransition` to avoid warnings
 
-- **Test Isolation**:
-  - Avoid direct API calls in tests; use mocked services or helpers instead.
-  - Ensure each test is isolated and does not depend on the state of other tests.
+---
 
-- **Error Handling**:
-  - Test error scenarios by mocking service failures (e.g., rejected promises).
-  - Verify that error messages and fallback UI are displayed correctly.
+## Preferred Solution Style
 
-- **Consistency**:
-  - Ensure mock data and responses are consistent with the application's API schema.
-  - Use the same mock data structure across unit and integration tests.
+- Write clear, maintainable code with useful comments
+- Reuse existing architectural patterns from ADRs and DevTasks
+- Always consider security, scalability, and performance
+- Document service methods and public APIs
+- Validate all functionality through tests before finalizing
+- Maintain clear distinction between LearningTasks and DevTasks
 
-- **Documentation**:
-  - Document all reusable helpers and global mocks in `setupTests.ts` for maintainability.
-  - Include comments explaining the purpose of each mock and helper.
+---
 
-- **Testing Tools**:
-  - Use `Vitest` for unit tests and `Playwright` for end-to-end tests.
-  - Ensure tests are written to cover both success and failure scenarios.
+## Quality Standards
 
-### Django Testing Specifics Overview
-
-- Use pytest fixtures for reusable test components
-- Implement model factories with factory_boy
-- Use django.test.Client for API endpoint testing
-- Mock external services when needed
-- Test permissions for different user roles
-- Use django.test.TestCase for database-driven tests
-- Implement separate test databases for integration tests
-
-## Special Requirements & Challenges Overview
-
-### Backend Challenges Overview
-
-- WSL networking issues when accessing the server from Windows host
-- Efficient querying for analytics endpoints
-- Properly structured logging for debugging
-- Managing course enrollment and progress tracking efficiently
-- Always include proper error handling
-- Ensure database queries are optimized (minimize N+1 query issues)
-
-### Django-Specific Challenges Overview
-
-- Configuring drf-yasg for comprehensive API documentation
-- Setting up proper permission handling for public vs authenticated endpoints
-- Implementing efficient analytics queries with Django ORM optimizations
-- Managing models with complex relationships in DRF serializers
-- Using proper pagination for large datasets
-- Handling file uploads and serving media files
-- Implementing proper exception handling with DRF's exception_handler
-- Configuring Django settings properly for different environments
-- Using Django's caching framework for performance optimization
-
-### Frontend Challenges Overview
-
-- Improve type safety throughout the application
-- Reduce code duplication by extending shared components
-- Enhance error handling with more informative user feedback
-- Improve performance with better data fetching and caching strategies
-- Use path aliases (e.g., `@components/*`, `@features/*`) for imports
-- Fix React Router warnings by enabling the v7_startTransition future flag in the router configuration
-
-## Preferred Solution Style Overview
-
-- Clear, well-documented code with helpful comments
-- Reuse existing patterns from the codebase where appropriate
-- Consider both security and performance implications
-- Include tests for new functionality
-- Follow established project conventions for both backend and frontend
-- Use built-in framework features where possible rather than reinventing solutions
-- Reference existing patterns from similar **DevTasks** in `memory_bank/tasks/`
-- Review relevant ADRs in `memory_bank/ADRs/` for architectural guidance before implementation
-- Maintain clear distinction between learning platform entities (`LearningTask`) and development work items (`DevTask`)
-
-## Quality Standards Overview
-
-- Provide comprehensive error handling for edge cases
-- Document public APIs and complex logic
+- Comprehensive error handling
+- Full documentation for APIs and complex logic
 - Create reusable, maintainable components
-- Implement proper validation both client-side and server-side
-- Follow SOLID principles where appropriate
-- Consider accessibility in UI implementations
+- Apply validation on both frontend and backend
+- Follow SOLID principles where applicable
+- Include accessibility considerations (ARIA, keyboard navigation)
 - Optimize critical performance paths
+
+## Additional Frontend TypeScript Rules
+
+- Define TypeScript types/interfaces for all API responses and requests.
+- Prefer `enum` types for constant sets like user roles and statuses.
+- Provide default values when destructuring props.
+- Assume `strict` mode is active (no implicit `any` allowed).
+- Use Error Boundaries for UI components handling server data.
+
+## Additional Backend Django Rules
+
+- Optimize relational database queries with `select_related` and `prefetch_related`.
+- Use custom exceptions for domain-specific errors.
+- Centralize validation inside DRF serializers.
+- Wrap multi-step database operations with `@transaction.atomic`.
+- Specify `ordering` and human-friendly names in Django model `Meta` classes.
+- Use environment-specific settings files.
+- Handle file uploads securely via `upload_to` settings.

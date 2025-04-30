@@ -1,6 +1,6 @@
 import {test, expect} from '@playwright/test';
 
-import {login, TEST_USERS} from './setupTests'; // Adjusted the path to correctly locate the setupTests file
+import {login, TEST_USERS} from '../setupTests'; // Adjusted the path to correctly locate the setupTests file
 
 
 
@@ -22,7 +22,7 @@ test.describe('Authentication', () => {
   test('admin user can login and access dashboard', async ({page}) => {
     await login(page, TEST_USERS.admin.username_or_email, TEST_USERS.admin.password);
     // login() already waits for /instructor/dashboard
-    expect(page.url()).toContain('/instructor/dashboard');
+    expect(page.url()).toContain('/admin/dashboard');
   });
 
   test('shows loading state during login', async ({page}) => {

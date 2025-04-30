@@ -1,15 +1,10 @@
+import {IUser} from 'src/types/userTypes';
+
 export type TUserRole = 'guest' | 'student' | 'instructor' | 'admin';
 
-export interface IAuthUser {
-    id: string;
-    username: string;
-    role?: string; // user role, e.g. 'student', 'instructor', 'admin'
-    display_name?: string;
-    // weitere Benutzerfelder
-}
 
 export interface AuthContextProps {
-    user: AuthUser | null;
+    user: IUser | null;
     isAuthenticated: boolean;
     isRestoring: boolean; // true while authentication state is being restored
     login: (username: string, password: string) => Promise<void>;
@@ -20,11 +15,7 @@ export interface AuthContextProps {
     // weitere Methoden
 }
 
-export interface AuthInterceptorProps {
-    onAuthFailure: () => void;
-    onRefreshToken: () => Promise<string>;
-    // weitere Props
-}
+
 
 export enum AuthEventType {
     LOGIN = 'login',
@@ -35,6 +26,7 @@ export enum AuthEventType {
     ENROLLMENT_SUCCESS = 'enrollment_success',
     ENROLLMENT_FAILURE = 'enrollment_failure',
     NAVIGATION = 'navigation',
+    SESSION_EXPIRED = 'session_expired',
 }
 
 export interface IAuthEvent {
@@ -44,7 +36,7 @@ export interface IAuthEvent {
 
 // Define specific payload interface
 export interface IAuthEventPayload {
-    user?: AuthUser;
+    user?: IUser;
     error?: IAuthContextError;
     token?: string;
     message?: string;

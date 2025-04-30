@@ -1,18 +1,9 @@
-import {describe, it, expect} from 'vitest';
-
+import {describe, it, expect, beforeAll} from 'vitest';
 import {TCourseStatus} from '@/types/course';
-
 import authService from '../auth/authService';
-
 import courseService from './courseService';
 import {enrollmentService} from './enrollmentService';
-
-const TEST_USERS = {
-    student: {
-        username: 'student',
-        password: 'student123',
-    },
-};
+import {TEST_USERS} from '@/test-utils/setupIntegrationTests';
 
 describe('enrollmentService Integration', () => {
     let accessToken: string;
@@ -20,33 +11,57 @@ describe('enrollmentService Integration', () => {
     let testCourseId: number;
 
     beforeAll(async () => {
-        const loginData = await authService.login(TEST_USERS.student.username, TEST_USERS.student.password);
-        accessToken = loginData.access;
-        // Set Authorization header for all ApiService instances used by enrollmentService
-        enrollmentService['apiEnrollments'].setAuthToken(accessToken);
-        enrollmentService['apiEnrollment'].setAuthToken(accessToken);
-        enrollmentService['apiVoid'].setAuthToken(accessToken);
-        // Fetch user profile to get userId
-        const userProfile = await authService.getUserProfile(accessToken);
-        userId = userProfile.id;
-        // Create a new course for enrollment
-        const courseData = {
-            title: 'Enrollment Test Course',
-            description: 'Created by enrollmentService integration test',
-            version: 1,
-            status: 'published' as TCourseStatus,
-            visibility: 'public' as const,
-            learning_objectives: 'Test objectives',
-            prerequisites: 'None',
-            creator: userId,
-        };
-        // Use courseService to create the course
-        courseService['apiCourse'].setAuthToken(accessToken);
-        courseService['apiCourses'].setAuthToken(accessToken);
-        courseService['apiVoid'].setAuthToken(accessToken);
-        courseService['apiAny'].setAuthToken(accessToken);
-        const createdCourse = await courseService.createCourse(courseData);
-        testCourseId = createdCourse.id;
+        try {
+            // Use instructor account for course creation
+            const loginData = await authService.login(TEST_USERS.lead_instructor.username, TEST_USERS.lead_instructor.password);
+            accessToken = loginData.access;
+            // Set Authorization header for all ApiService instances
+            enrollmentService['apiEnrollments'].setAuthToken(accessToken);
+            enrollmentService['apiEnrollment'].setAuthToken(accessToken);
+            enrollmentService['apiVoid'].setAuthToken(accessToken);
+            courseService['apiCourse'].setAuthToken(accessToken);
+            courseService['apiCourses'].setAuthToken(accessToken);
+            courseService['apiVoid'].setAuthToken(accessToken);
+            courseService['apiAny'].setAuthToken(accessToken);
+
+            // Fetch user profile to get userId
+            const userProfile = await authService.getUserProfile(accessToken);
+            userId = userProfile.id;
+        } catch (error) {
+            console.error('Instructor login failed, falling back to student:', error);
+            // Fall back to student if instructor login fails
+            const loginData = await authService.login(TEST_USERS.student.username, TEST_USERS.student.password);
+            accessToken = loginData.access;
+            enrollmentService['apiEnrollments'].setAuthToken(accessToken);
+            enrollmentService['apiEnrollment'].setAuthToken(accessToken);
+            enrollmentService['apiVoid'].setAuthToken(accessToken);
+            courseService['apiCourse'].setAuthToken(accessToken);
+            courseService['apiCourses'].setAuthToken(accessToken);
+            courseService['apiVoid'].setAuthToken(accessToken);
+            courseService['apiAny'].setAuthToken(accessToken);
+            const userProfile = await authService.getUserProfile(accessToken);
+            userId = userProfile.id;
+        }
+
+        try {
+            // Create a new course for enrollment
+            const courseData = {
+                title: 'Enrollment Test Course',
+                description: 'Created by enrollmentService integration test',
+                version: 1,
+                status: 'published' as TCourseStatus,
+                visibility: 'public' as const,
+                learning_objectives: 'Test objectives',
+                prerequisites: 'None',
+                creator: userId,
+            };
+
+            const createdCourse = await courseService.createCourse(courseData);
+            testCourseId = createdCourse.id;
+        } catch (error) {
+            console.error('Failed to create test course:', error);
+            throw error;
+        }
     });
 
     it('fetchUserEnrollments returns enrollments', async () => {

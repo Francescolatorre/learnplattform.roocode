@@ -14,6 +14,7 @@ import React from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 
 import {useNotification} from '@/components/ErrorNotifier/useErrorNotifier';
+import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import {ICourse} from '@/types/course';
 import {useAuth} from '@context/auth/AuthContext';
 import {courseService} from '@services/resources/courseService';
@@ -140,9 +141,16 @@ const StudentCourseDetailsPage: React.FC = () => {
 
         <Divider sx={{my: 2}} />
 
-        <Typography variant="body1" paragraph>
-          {courseDetails.description}
-        </Typography>
+        {/* Use the MarkdownRenderer component for the description */}
+        <Box sx={{my: 2}}>
+          {courseDetails.description_html ? (
+            <MarkdownRenderer content={courseDetails.description} />
+          ) : (
+            <Typography variant="body1" paragraph>
+              {courseDetails.description}
+            </Typography>
+          )}
+        </Box>
 
         {!canViewTasks && (
           <Box sx={{mt: 2, mb: 2}}>

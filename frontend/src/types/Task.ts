@@ -1,15 +1,55 @@
-// src/types/common/taskts
+// src/types/common/tasks.ts
 
 import {IUser} from '@/types/userTypes';
 
-
+/**
+ * Aufgabenstatus-Typ
+ */
 export type TTaskStatus = 'not_started' | 'in_progress' | 'completed' | 'graded' | 'pending';
 
+/**
+ * Interface für Lernaufgaben
+ */
+export interface ILearningTask {
+    readonly id: string;
+    course: number;
+    course_id: string;
+    title: string;
+    description: string;
+    description_html?: string;
+    order: number;
+    created_at: string;
+    updated_at: string;
+    is_published: boolean;
+    points?: number;
+    due_date?: string;
+    status: 'draft' | 'published' | 'archived';
+}
 
 /**
- * Interface für Aufgabenfortschritt eines Studenten
+ * Interface für Aufgabenerstellungsdaten
+ * Teilmenge von ILearningTask für die Erstellung neuer Aufgaben
  */
-export interface ITaskProgress {
+export interface ITaskCreationData {
+    readonly id?: string; // Optional bei der Erstellung, wird vom Server generiert
+    title: string;
+    description: string;
+    description_html?: string;
+    course?: number;
+    course_id?: string;
+    order?: number;
+    is_published?: boolean;
+    status?: 'draft' | 'published' | 'archived';
+    points?: number;
+    due_date?: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
+/**
+ * Basis-Interface für Aufgabenfortschritt eines Studenten
+ */
+export interface IBaseTaskProgress {
     id: number;
     user: number;
     task: number;
@@ -18,10 +58,15 @@ export interface ITaskProgress {
     completion_date?: string | null;
     user_details?: IUser;
     task_details?: ILearningTask;
+}
 
-    // Erweiterte Felder für UI-Komponenten
-    taskId?: number; // Geändert von string zu number für Typkonsistenz
-    moduleId?: number; // Geändert von string zu number für Typkonsistenz
+/**
+ * Erweiterte Version für TaskProgress mit UI-spezifischen Feldern
+ */
+export interface ITaskProgress extends IBaseTaskProgress {
+    // UI-spezifische Felder
+    taskId?: number;
+    moduleId?: number;
     title?: string;
     description?: string;
     taskType?: string;
@@ -41,7 +86,6 @@ export interface ITaskProgressUpdateData {
     status?: TTaskStatus;
     time_spent?: string | null;
     completion_date?: string | null;
-    // Weitere relevante Felder
 }
 
 /**
@@ -50,21 +94,6 @@ export interface ITaskProgressUpdateData {
 export interface ITaskSubmissionData {
     content: string;
     attachments?: string[];
-    // Weitere relevante Felder
-}
-
-/**
- * Interface für Aufgabenerstellungsdaten
- */
-export interface ITaskCreationData {
-    readonly id: number;
-    title: string;
-    description: string;
-    course?: number;
-    order?: number;
-    is_published?: boolean;
-    created_at?: string;
-    updated_at?: string;
 }
 
 /**
@@ -87,63 +116,5 @@ export interface IQuizHistory {
     }>;
 }
 
-// Aufgaben-bezogene Typen
-export interface ILearningTask {
-    readonly id: string;
-    course: number;
-    title: string;
-    course_id: string;
-    description: string;
-    order: number;
-    created_at: string;
-    updated_at: string;
-    is_published: boolean;
-    points?: number;
-    due_date?: string;
-    status: 'draft' | 'published' | 'archived';
-
-}
-
-export interface ITaskCreationData {
-    readonly id: number;
-    title: string;
-    description: string;
-    course?: number;
-    order?: number;
-    is_published?: boolean;
-    created_at?: string;
-    updated_at?: string;
-}
-
-export interface IBaseTaskProgress {
-    id: number;
-    user: number;
-    task: number;
-    status: TTaskStatus;
-    time_spent: string | null;
-    completion_date?: string | null;
-    user_details?: IUser;
-    task_details?: ILearningTask;
-}
-
-// Erweiterte Version für TaskProgress mit I-Präfix
-export interface ITaskProgress extends IBaseTaskProgress {
-    // Zusätzliche UI-spezifische Felder
-    taskId?: number;
-    moduleId?: number;
-    title?: string;
-    description?: string;
-    taskType?: string;
-    dueDate?: string;
-    score?: number | null;
-    maxScore?: number;
-    attempts?: number;
-    maxAttempts?: number;
-    submissionDate?: string;
-    timeSpent?: number | null;
-}
-
-// Exportiere beide, um Abwärtskompatibilität zu gewährleisten
+// Exportiere ITaskProgressBase für Abwärtskompatibilität
 export type ITaskProgressBase = IBaseTaskProgress;
-
-

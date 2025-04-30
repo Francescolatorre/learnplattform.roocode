@@ -5,6 +5,8 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
+from utils.markdown_utils import markdown_to_safe_html
+
 
 # User = get_user_model()
 
@@ -67,6 +69,11 @@ class Course(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(default=timezone.now)
 
+    @property
+    def description_html(self):
+
+        return markdown_to_safe_html(self.description)
+
     def __str__(self):
         return self.title
 
@@ -120,6 +127,11 @@ class LearningTask(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=False)
+
+    @property
+    def description_html(self):
+        """Returns the HTML rendered version of the markdown description."""
+        return markdown_to_safe_html(self.description)
 
     class Meta:
         ordering = ["course", "order"]

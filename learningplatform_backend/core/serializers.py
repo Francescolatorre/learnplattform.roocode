@@ -80,6 +80,7 @@ class CourseSerializer(serializers.ModelSerializer):
     isEnrolled = serializers.SerializerMethodField()
     isCompleted = serializers.SerializerMethodField()
     creator_details = UserSerializer(source="creator", read_only=True)
+    description_html = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
@@ -87,6 +88,7 @@ class CourseSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "description",
+            "description_html",
             "version",
             "status",
             "visibility",
@@ -99,7 +101,13 @@ class CourseSerializer(serializers.ModelSerializer):
             "isEnrolled",
             "isCompleted",
         ]
-        read_only_fields = ["id", "created_at", "updated_at", "creator_details"]
+        read_only_fields = [
+            "id",
+            "created_at",
+            "updated_at",
+            "creator_details",
+            "description_html",
+        ]
 
     def get_isEnrolled(self, obj):
         request = self.context.get("request")
@@ -127,6 +135,10 @@ class CourseSerializer(serializers.ModelSerializer):
         ).count()
 
         return total_tasks == completed_tasks
+
+    def get_description_html(self, obj):
+        """Return HTML-rendered markdown content"""
+        return obj.description_html
 
 
 class CourseVersionSerializer(serializers.ModelSerializer):
@@ -166,6 +178,8 @@ class StatusTransitionSerializer(serializers.ModelSerializer):
 
 
 class LearningTaskSerializer(serializers.ModelSerializer):
+    description_html = serializers.SerializerMethodField()
+
     class Meta:
         model = LearningTask
         fields = [
@@ -173,12 +187,17 @@ class LearningTaskSerializer(serializers.ModelSerializer):
             "course",
             "title",
             "description",
+            "description_html",
             "order",
             "is_published",
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["id", "created_at", "updated_at"]
+        read_only_fields = ["id", "created_at", "updated_at", "description_html"]
+
+    def get_description_html(self, obj):
+        """Return HTML-rendered markdown content"""
+        return obj.description_html
 
 
 class QuizOptionSerializer(serializers.ModelSerializer):

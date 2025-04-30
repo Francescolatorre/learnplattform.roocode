@@ -135,12 +135,107 @@ class LearningTaskService {
   async getByCourseId(courseId: string): Promise<ILearningTask[]> {
     try {
       const response = await this.apiTasksResults.get(API_CONFIG.endpoints.tasks.byCourse(courseId));
-      if (!response || !Array.isArray(response.results)) {
-        throw new LearningTaskServiceError('No tasks found or invalid response structure');
+
+      // Prüfen, ob response direkt ein Array ist
+      if (Array.isArray(response)) {
+        return response;
       }
-      return response.results;
+
+      // Oder prüfen, ob es eine results-Eigenschaft hat
+      if (response && response.results && Array.isArray(response.results)) {
+        return response.results;
+      }
+
+      // Wenn keines von beiden zutrifft
+      throw new LearningTaskServiceError('Invalid API response format');
     } catch (error) {
       logger.error('Error fetching tasks by course ID:', error);
+      throw error;
+    }
+  }
+
+  /**
+ * Fetch all learning tasks for a specific course with a large page size to get all results.
+ * @param courseId The ID of the course.
+ * @returns Promise resolving to an array of all LearningTask objects for the course.
+ */
+  async getAllTasksByCourseId(courseId: string): Promise<ILearningTask[]> {
+    try {
+      // Parameter für große Ergebnismenge setzen
+      const params = {
+        course: courseId,
+        page_size: '999', // Hoher Wert für maximale Ergebnisse pro Seite
+        page: '1'         // Erste Seite abfragen
+      };
+
+      const queryString = new URLSearchParams(params).toString();
+      const endpoint = `${API_CONFIG.endpoints.tasks.list}?${queryString}`;
+
+      logger.debug('Fetching all tasks for course with params:', params);
+
+      const response = await this.apiTasksResults.get(endpoint);
+
+      // Behandelt sowohl Arrays als auch paginierte Antworten
+      if (Array.isArray(response)) {
+        return response;
+      } else if (response && response.results && Array.isArray(response.results)) {
+        return response.results;
+      }
+
+      throw new LearningTaskServiceError('Invalid API response format');
+    } catch (error) {
+      logger.error('Error fetching all tasks by course ID:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Alternativer Fallback-Ansatz: Iterativer Abruf aller Seiten, falls große page_size nicht funktioniert
+   */
+  async getAllTasksByCourseIdPaginated(courseId: string, pageSize: number = 50): Promise<ILearningTask[]> {
+    try {
+      let allTasks: ILearningTask[] = [];
+      let currentPage = 1;
+      let hasMorePages = true;
+
+      while (hasMorePages) {
+        const params = {
+          course: courseId,
+          page_size: pageSize.toString(),
+          page: currentPage.toString()
+        };
+
+        const queryString = new URLSearchParams(params).toString();
+        const endpoint = `${API_CONFIG.endpoints.tasks.list}?${queryString}`;
+
+        logger.debug(`Fetching page ${currentPage} of tasks for course ${courseId}`);
+
+        const response = await this.apiTasksResults.get(endpoint);
+
+        let pageTasks: ILearningTask[] = [];
+        if (Array.isArray(response)) {
+          pageTasks = response;
+          hasMorePages = false; // Wenn ein direktes Array zurückgegeben wird, gibt es keine weitere Seite
+        } else if (response && response.results && Array.isArray(response.results)) {
+          pageTasks = response.results;
+          hasMorePages = !!response.next; // Prüfen, ob es eine nächste Seite gibt
+        } else {
+          throw new LearningTaskServiceError('Invalid API response format');
+        }
+
+        allTasks = [...allTasks, ...pageTasks];
+
+        // Wenn keine oder leere Ergebnisse zurückkommen, Schleife beenden
+        if (pageTasks.length === 0) {
+          hasMorePages = false;
+        }
+
+        currentPage++;
+      }
+
+      return allTasks;
+    } catch (error) {
+      logger.error('Error fetching all tasks by course ID with pagination:', error);
       throw error;
     }
   }

@@ -1,4 +1,3 @@
-
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -30,6 +29,7 @@ import {Navigate} from 'react-router-dom';
 import {useNavigate, useParams} from 'react-router-dom';
 
 import {useNotification} from '@/components/ErrorNotifier/useErrorNotifier';
+import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import {ILearningTask} from '@/types/task';
 import {useAuth} from '@context/auth/AuthContext';
 import CourseService from '@services/resources/courseService';
@@ -38,9 +38,6 @@ import LearningTaskService, {
   updateTask as updateLearningTask,
   createTask as createLearningTask,
 } from '@services/resources/learningTaskService';
-
-
-
 
 // Create or Edit Task dialog props
 interface ITaskDialogProps {
@@ -106,8 +103,8 @@ const TaskDialog: React.FC<ITaskDialogProps> = ({open, onClose, onSave, task, is
             margin="normal"
             multiline
             rows={4}
-            inputProps={{maxLength: 500}}
-            helperText="Description of the task (max 500 characters)"
+            inputProps={{maxLength: 1500}}
+            helperText="Description of the task. Supports Markdown formatting (max 1500 characters)"
           />
 
           <FormControl fullWidth margin="normal">
@@ -351,9 +348,15 @@ const CourseLearningTasksPage: React.FC = () => {
                     }
                     secondary={
                       <React.Fragment>
-                        <Typography variant="body2" color="text.primary" sx={{mb: 1, mt: 1}}>
-                          {task.description}
-                        </Typography>
+                        {task.description_html ? (
+                          <Box sx={{my: 1}}>
+                            <MarkdownRenderer content={task.description} />
+                          </Box>
+                        ) : (
+                          <Typography variant="body2" color="text.primary" sx={{mb: 1, mt: 1}}>
+                            {task.description}
+                          </Typography>
+                        )}
                         <Typography variant="caption" color="text.secondary">
                           Last updated: {new Date(task.updated_at).toLocaleDateString()}
                         </Typography>

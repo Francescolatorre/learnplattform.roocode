@@ -12,6 +12,7 @@ import {
 import {useNavigate, Link as RouterLink} from 'react-router-dom';
 
 import {ICourse} from '@/types/course';
+import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import EnrollmentStatusIndicator from './EnrollmentStatusIndicator';
 
 /**
@@ -76,6 +77,16 @@ const CourseCard: React.FC<CourseCardProps> = ({course, isLoading = false, isIns
     }
   };
 
+  // Process description to create preview
+  const getDescriptionPreview = () => {
+    if (!course.description) {
+      return "No description available";
+    }
+    return course.description.length > 120
+      ? `${course.description.substring(0, 120)}...`
+      : course.description;
+  };
+
   return (
     <Card sx={{height: '100%', display: 'flex', flexDirection: 'column'}}>
       {course.image_url ? (
@@ -117,16 +128,18 @@ const CourseCard: React.FC<CourseCardProps> = ({course, isLoading = false, isIns
           {course.instructor_name && `Instructor: ${course.instructor_name}`}
         </Typography>
 
-        <Typography variant="body2" color="text.secondary">
-          {/* Beschreibung mit sicherer Längenprüfung */}
-          {course.description ? (
-            course.description.length > 120
-              ? `${course.description.substring(0, 120)}...`
-              : course.description
+        {/* Description with Markdown support */}
+        <Box sx={{maxHeight: '120px', overflow: 'hidden'}}>
+          {course.description_html ? (
+            <Box sx={{'& img': {display: 'none'}, '& h1,h2,h3': {fontSize: '1rem'}}}>
+              <MarkdownRenderer content={getDescriptionPreview()} />
+            </Box>
           ) : (
-            "Keine Beschreibung verfügbar"
+            <Typography variant="body2" color="text.secondary">
+              {getDescriptionPreview()}
+            </Typography>
           )}
-        </Typography>
+        </Box>
       </CardContent>
 
       <CardActions>

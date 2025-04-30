@@ -1,19 +1,9 @@
-import {describe, it, expect} from 'vitest';
-
+import {describe, it, expect, beforeAll, afterAll} from 'vitest';
 import {ICourse} from '@/types/course';
-
 import authService from '../auth/authService';
-
 import courseService from './courseService';
 import learningTaskService from './learningTaskService';
-
-
-const TEST_USERS = {
-    student: {
-        username: 'student',
-        password: 'student123',
-    }
-};
+import {TEST_USERS} from '@/test-utils/setupIntegrationTests';
 
 describe('learningTaskService Integration', () => {
     let accessToken: string;
@@ -22,43 +12,62 @@ describe('learningTaskService Integration', () => {
     let userId: number;
 
     beforeAll(async () => {
-        const loginData = await authService.login(TEST_USERS.student.username, TEST_USERS.student.password);
-        accessToken = loginData.access;
-        // Set Authorization header for all ApiService instances used by learningTaskService
-        learningTaskService.setAuthToken(accessToken);
-        // Set Authorization header for all ApiService instances used by courseService
-        courseService['apiCourse'].setAuthToken(accessToken);
-        courseService['apiCourses'].setAuthToken(accessToken);
-        courseService['apiVoid'].setAuthToken(accessToken);
-        courseService['apiAny'].setAuthToken(accessToken);
+        try {
+            // Use instructor account for tests that require course creation permissions
+            const loginData = await authService.login(TEST_USERS.lead_instructor.username, TEST_USERS.lead_instructor.password);
+            accessToken = loginData.access;
+            // Set Authorization header for all ApiService instances used
+            learningTaskService.setAuthToken(accessToken);
+            courseService['apiCourse'].setAuthToken(accessToken);
+            courseService['apiCourses'].setAuthToken(accessToken);
+            courseService['apiVoid'].setAuthToken(accessToken);
+            courseService['apiAny'].setAuthToken(accessToken);
 
-        // Fetch user profile to get userId
-        const userProfile = await authService.getUserProfile(accessToken);
-        userId = userProfile.id;
+            // Fetch user profile to get userId
+            const userProfile = await authService.getUserProfile(accessToken);
+            userId = userProfile.id;
+        } catch (error) {
+            console.error('Instructor login failed, falling back to student:', error);
+            // Fall back to student if instructor fails
+            const loginData = await authService.login(TEST_USERS.student.username, TEST_USERS.student.password);
+            accessToken = loginData.access;
+            learningTaskService.setAuthToken(accessToken);
+            courseService['apiCourse'].setAuthToken(accessToken);
+            courseService['apiCourses'].setAuthToken(accessToken);
+            courseService['apiVoid'].setAuthToken(accessToken);
+            courseService['apiAny'].setAuthToken(accessToken);
+            const userProfile = await authService.getUserProfile(accessToken);
+            userId = userProfile.id;
+        }
 
         // Create a course for testing
-        const courseData: Partial<ICourse> = {
-            title: 'Integration Test Course for LearningTask',
-            description: 'Created by integration test for learningTaskService',
-            version: 1,
-            status: "published",
-            visibility: 'public',
-            learning_objectives: 'Test objectives',
-            prerequisites: 'None',
-            creator: userId,
-        };
-        const createdCourse = await courseService.createCourse(courseData);
-        createdCourseId = createdCourse.id;
+        try {
+            const courseData: Partial<ICourse> = {
+                title: 'Integration Test Course for LearningTask',
+                description: 'Created by integration test for learningTaskService',
+                version: 1,
+                status: "published",
+                visibility: 'public',
+                learning_objectives: 'Test objectives',
+                prerequisites: 'None',
+                creator: userId,
+            };
+            const createdCourse = await courseService.createCourse(courseData);
+            createdCourseId = createdCourse.id;
 
-        // Create a base task for tests that require an existing task
-        const baseTaskData = {
-            id: 0,
-            title: 'Base Integration Test Task',
-            description: 'Base task for integration test',
-            course: createdCourseId,
-        };
-        const baseTask = await learningTaskService.create(baseTaskData);
-        baseTaskId = baseTask.id;
+            // Create a base task for tests that require an existing task
+            const baseTaskData = {
+                id: 0,
+                title: 'Base Integration Test Task',
+                description: 'Base task for integration test',
+                course: createdCourseId,
+            };
+            const baseTask = await learningTaskService.create(baseTaskData);
+            baseTaskId = baseTask.id;
+        } catch (error) {
+            console.error('Setup failed:', error);
+            throw error;
+        }
     });
 
     afterAll(async () => {

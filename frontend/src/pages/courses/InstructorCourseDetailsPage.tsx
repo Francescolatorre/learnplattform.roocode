@@ -1,197 +1,377 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect} from 'react';
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Typography,
+  Box,
+  Paper,
+  Container,
+  List,
+  ListItem,
+  ListItemText,
+  Grid,
+  Chip,
+  Divider,
+  CircularProgress,
+  Alert
+} from '@mui/material';
 import {useParams, Link} from 'react-router-dom';
-import {Typography} from '@mui/material';
 
 import {ICourse} from '@/types/course';
 import {ILearningTask} from '@/types/task';
-import {IStudentProgressSummary} from '@/types/gradingTypes';
 import {courseService} from '@/services/resources/courseService';
-import progressService from '@/services/resources/progressService';
-import learningTaskService from '@/services/resources/learningTaskService';
+import learningTaskService, {updateTask} from '@/services/resources/learningTaskService';
+import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
+import InfoCard from '@/components/shared/InfoCard';
+import TaskCreation from '@/components/taskCreation/TaskCreation';
+import {useNotification} from '@components/ErrorNotifier/useErrorNotifier';
 
-// Simple styles for the page
-const styles = {
-  container: {padding: '20px'},
-  header: {marginBottom: '20px'},
-  title: {fontSize: '24px', fontWeight: 'bold'},
-  infoSection: {display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px'},
-  tasksSection: {marginTop: '20px'},
-  tasksTitle: {fontSize: '20px', fontWeight: 'bold'},
-  progressSection: {marginTop: '20px'},
-  infoCard: {border: '1px solid #ccc', borderRadius: '5px', padding: '10px', marginBottom: '10px'},
-  infoTitle: {fontSize: '18px', fontWeight: 'bold'},
-  infoContent: {fontSize: '14px'},
-};
-
+// Hauptkomponente
 const InstructorCourseDetailPage: React.FC = () => {
-  const {courseId} = useParams<{courseId: string}>();
-  const [course, setCourse] = useState<ICourse | null>(null); // Add course state
-  const [tasks, setTasks] = useState<ILearningTask[]>([]);
-  const [studentsProgress, setStudentsProgress] = useState<IStudentProgressSummary[]>([]); // Replace with students progress
-  const [isLoading, setIsLoading] = useState<boolean>(true); // Add loading state
-  const [error, setError] = useState<string | null>(null); // Add error state
+  // State for task creation modal
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  // Fetch course details
+  // State for task details modal
+  const [selectedTask, setSelectedTask] = useState<ILearningTask | null>(null);
+  const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState<boolean>(false);
+
+  // State for task edit modal
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [taskToEdit, setTaskToEdit] = useState<ILearningTask | null>(null);
+
+  const notify = useNotification();
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  // Handle opening task details modal
+  const handleOpenTaskDetails = (task: ILearningTask) => {
+    setSelectedTask(task);
+    setIsTaskDetailsModalOpen(true);
+  };
+
+  // Handle closing task details modal
+  const handleCloseTaskDetails = () => {
+    setIsTaskDetailsModalOpen(false);
+    setSelectedTask(null);
+  };
+
+  // Handle opening edit task modal
+  const handleOpenEditModal = (task: ILearningTask) => {
+    setTaskToEdit(task);
+    setIsEditModalOpen(true);
+    // Close the details modal if it's open
+    setIsTaskDetailsModalOpen(false);
+  };
+
+  // Handle closing edit task modal
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setTaskToEdit(null);
+  };
+
+  // Handle saving edited task
+  const handleSaveTask = async (updatedTask: Partial<ILearningTask>) => {
+    try {
+      if (!updatedTask.id) {
+        notify('Task ID is missing', 'error');
+        return;
+      }
+
+      const savedTask = await updateTask(String(updatedTask.id), updatedTask);
+
+      // Update the tasks list with the saved task
+      setTasks(tasks.map(task => task.id === savedTask.id ? savedTask : task));
+
+      notify('Task updated successfully', 'success');
+      handleCloseEditModal();
+    } catch (err) {
+      console.error('Failed to update task:', err);
+      notify(err instanceof Error ? err.message : 'Failed to update task', 'error');
+    }
+  };
+
+  const {courseId} = useParams<{courseId: string}>();
+  const [course, setCourse] = useState<ICourse | null>(null);
+  const [tasks, setTasks] = useState<ILearningTask[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     if (!courseId) return;
 
     const fetchCourseDetails = async () => {
       try {
         setIsLoading(true);
-        const courseData = await courseService.getCourseDetails(courseId);
-        setCourse(courseData);
+        const courseResult = await courseService.getCourseDetails(courseId);
+        setCourse(courseResult);
+
+        const tasksResponse = await learningTaskService.getAllTasksByCourseId(courseId);
+        setTasks(tasksResponse.sort((a, b) => a.order - b.order));
+
+        setIsLoading(false);
       } catch (err) {
         console.error('Failed to fetch course details:', err);
-        setError('Failed to fetch course details');
+        setError(err instanceof Error ? err.message : 'Unknown error');
+        setIsLoading(false);
       }
     };
 
     fetchCourseDetails();
   }, [courseId]);
 
-  // Use separate useEffect to fetch tasks only after course is loaded
-  useEffect(() => {
-    if (!courseId || !course) return;
-
-    const fetchTasks = async () => {
-      try {
-        const tasksData = await learningTaskService.getAll({course: courseId});
-        setTasks(tasksData);
-      } catch (err) {
-        console.error('Failed to fetch tasks:', err);
-        // Don't set error since we at least have course data
-      }
-    };
-
-    fetchTasks();
-  }, [courseId, course]);
-
-  // Fetch students progress for this course
-  const fetchStudentsProgress = useCallback(async () => {
-    if (!courseId) return;
-
-    try {
-      const progressData = await progressService.fetchAllStudentsProgress(courseId);
-      setStudentsProgress(progressData);
-      setIsLoading(false);
-    } catch (err) {
-      console.error('Failed to fetch students progress:', err);
-      setIsLoading(false);
-      // Continue to show UI even if progress fetch fails
-    }
-  }, [courseId]);
-
-  // Call fetchStudentsProgress after course is loaded
-  useEffect(() => {
-    if (course) {
-      fetchStudentsProgress();
-    }
-  }, [course, fetchStudentsProgress]);
 
   if (isLoading) {
-    return <div>Loading course details...</div>;
+    return (
+      <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (error || !course) {
-    return <div>Error: {error || 'Course not found'}</div>;
+    return (
+      <Alert severity="error" sx={{mt: 2}}>
+        Error: {error || 'Course not found'}
+      </Alert>
+    );
   }
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h1 style={styles.title}>{course.title}</h1>
-        <p>{course.description}</p>
-        <Link to={`/instructor/courses/${courseId}/edit`}>Edit Course</Link>
-      </div>
+    <Container maxWidth="lg">
+      <Paper elevation={2} sx={{p: 3, mt: 3, mb: 3}}>
+        {/* Header Section */}
+        <Box sx={{mb: 3}}>
+          <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2}}>
+            <Typography variant="h4" component="h1" sx={{fontWeight: 'bold'}}>
+              {course.title}
+            </Typography>
+            <Button
+              component={Link}
+              to={`/instructor/courses/${courseId}/edit`}
+              variant="contained"
+              color="primary"
+              size="medium"
+              sx={{ml: 2}}
+            >
+              Edit Course
+            </Button>
+          </Box>
 
-      {studentsProgress.length > 0 && (
-        <StudentsProgressSummary studentsProgress={studentsProgress} />
-      )}
+          {/* Course Description */}
+          {course.description_html ? (
+            <Box sx={{my: 2}}>
+              <MarkdownRenderer content={course.description || ''} />
+            </Box>
+          ) : (
+            <Typography variant="body1" paragraph>
+              {course.description}
+            </Typography>
+          )}
+        </Box>
 
-      {course && (
-        <div style={styles.infoSection}>
-          <InfoCard title="Created By">
-            {course.instructor_name || 'Unknown'}
-          </InfoCard>
-
-          <InfoCard title="Status">{course.status || 'Not specified'}</InfoCard>
-
-          <InfoCard title="Prerequisites">
-            {Array.isArray(course.prerequisites)
-              ? course.prerequisites.join(', ')
-              : course.prerequisites || 'None'}
-          </InfoCard>
-
-          <InfoCard title="Learning Objectives">
-            {Array.isArray(course.learning_objectives)
-              ? course.learning_objectives.join(', ')
-              : course.learning_objectives || 'No learning objectives specified'}
-          </InfoCard>
-        </div>
-      )}
-
-      <div style={styles.tasksSection}>
-        <h2 style={styles.tasksTitle}>Course Tasks</h2>
-        {tasks.length > 0 ? (
-          <TasksList tasks={tasks} />
-        ) : (
-          <Typography variant="body1">No tasks available for this course.</Typography>
+        {/* Course Info Section */}
+        {course && (
+          <Grid container spacing={2} sx={{mb: 4}}>
+            <Grid item xs={12} sm={6} md={3}>
+              <InfoCard title="Created By">
+                {course.instructor_name || 'Unknown'}
+              </InfoCard>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <InfoCard title="Status">
+                {course.status || 'Not specified'}
+              </InfoCard>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <InfoCard title="Prerequisites">
+                {Array.isArray(course.prerequisites)
+                  ? course.prerequisites.join(', ')
+                  : course.prerequisites || 'None'}
+              </InfoCard>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <InfoCard title="Learning Objectives">
+                {Array.isArray(course.learning_objectives)
+                  ? course.learning_objectives.join(', ')
+                  : course.learning_objectives || 'No learning objectives specified'}
+              </InfoCard>
+            </Grid>
+          </Grid>
         )}
-      </div>
-    </div>
-  );
-};
 
-// Move component definitions outside of the main component
-interface IStudentsProgressSummaryProps {
-  studentsProgress: IStudentProgressSummary[];
-}
+        {/* Tasks Section */}
+        <Box sx={{mt: 4}}>
+          <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2}}>
+            <Typography variant="h5" component="h2">
+              Course Tasks
+            </Typography>
+            <Button
+              data-testid="button-create-task"
+              variant="contained"
+              color="primary"
+              onClick={handleOpenModal}
+              size="small"
+            >
+              Create Task
+            </Button>
+          </Box>
+          <Divider sx={{mb: 2}} />
 
-const StudentsProgressSummary: React.FC<IStudentsProgressSummaryProps> = ({studentsProgress}) => {
-  const averageProgress = studentsProgress.length > 0
-    ? studentsProgress.reduce(
-      // Use progress property instead of completion_rate
-      (acc, student) => acc + ((student.progress || 0) / 100), 0
-    ) / studentsProgress.length * 100
-    : 0;
+          {tasks.length > 0 ? (
+            <List disablePadding>
+              {tasks.map(task => (
+                <ListItem
+                  key={task.id}
+                  sx={{
+                    mb: 2,
+                    p: 2,
+                    borderRadius: 1,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    cursor: 'pointer',
+                    '&:hover': {
+                      bgcolor: 'action.hover'
+                    }
+                  }}
+                  onClick={() => handleOpenTaskDetails(task)}
+                >
+                  <ListItemText
+                    primary={
+                      <Typography variant="h6" gutterBottom>
+                        {task.title}
+                      </Typography>
+                    }
+                    secondary={
+                      <>
+                        <Typography variant="body2" color="text.secondary" sx={{mb: 1}}>
+                          {task.description && task.description.length > 100
+                            ? `${task.description.substring(0, 100)}...`
+                            : task.description}
+                        </Typography>
+                        <Box sx={{mt: 1, display: 'flex', gap: 1, flexWrap: 'wrap'}}>
+                          <Chip
+                            size="small"
+                            label={`Order: ${task.order}`}
+                            color="default"
+                            variant="outlined"
+                          />
+                          <Chip
+                            size="small"
+                            label={task.is_published ? 'Published' : 'Draft'}
+                            color={task.is_published ? 'success' : 'default'}
+                            variant="outlined"
+                          />
+                        </Box>
+                      </>
+                    }
+                  />
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <Paper elevation={0} variant="outlined" sx={{p: 3, textAlign: 'center'}}>
+              <Typography variant="body1" color="text.secondary">
+                No tasks available for this course.
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleOpenModal}
+                sx={{mt: 2}}
+              >
+                Create Your First Task
+              </Button>
+            </Paper>
+          )}
+        </Box>
+      </Paper>
 
-  return (
-    <div style={styles.progressSection}>
-      <h2>Students Progress</h2>
-      <p>Total Students: {studentsProgress.length}</p>
-      <p>Average Progress: {averageProgress.toFixed(1)}%</p>
-      {/* Add more student analytics here */}
-    </div>
-  );
-};
+      {/* TaskCreation modal for creating new tasks */}
+      <TaskCreation
+        open={isModalOpen}
+        onClose={handleCloseModal}
+        courseId={courseId}
+      />
 
-interface TasksListProps {
-  tasks: ILearningTask[];
-}
+      {/* TaskCreation modal for editing existing tasks */}
+      <TaskCreation
+        open={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        courseId={courseId}
+        task={taskToEdit || {}}
+        isEditing={true}
+        onSave={handleSaveTask}
+      />
 
-const TasksList: React.FC<TasksListProps> = ({tasks}) => {
-  return (
-    <ul>
-      {tasks.map(task => (
-        <li key={task.id}>
-          <strong>{task.title}</strong> - {task.description}
-        </li>
-      ))}
-    </ul>
-  );
-};
+      {/* Task Details Modal */}
+      <Dialog
+        open={isTaskDetailsModalOpen}
+        onClose={handleCloseTaskDetails}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>
+          {selectedTask?.title || 'Task Details'}
+        </DialogTitle>
+        <DialogContent dividers>
+          {selectedTask && (
+            <Box>
+              {/* Task Description */}
+              {selectedTask.description_html ? (
+                <Box sx={{my: 2}}>
+                  <MarkdownRenderer content={selectedTask.description || ''} />
+                </Box>
+              ) : (
+                <Typography variant="body1" paragraph>
+                  {selectedTask.description}
+                </Typography>
+              )}
 
-interface InfoCardProps {
-  title: string;
-  children: React.ReactNode;
-}
-
-const InfoCard: React.FC<InfoCardProps> = ({title, children}) => {
-  return (
-    <div style={styles.infoCard}>
-      <div style={styles.infoTitle}>{title}</div>
-      <div style={styles.infoContent}>{children}</div>
-    </div>
+              {/* Task Metadata */}
+              <Box sx={{mt: 4}}>
+                <Typography variant="subtitle2" color="text.secondary">
+                  <strong>Order:</strong> {selectedTask.order}
+                </Typography>
+                <Typography variant="subtitle2" color="text.secondary">
+                  <strong>Published:</strong> {selectedTask.is_published ? 'Yes' : 'No'}
+                </Typography>
+                {selectedTask.created_at && (
+                  <Typography variant="subtitle2" color="text.secondary">
+                    <strong>Created At:</strong> {new Date(selectedTask.created_at).toLocaleString()}
+                  </Typography>
+                )}
+                {selectedTask.updated_at && (
+                  <Typography variant="subtitle2" color="text.secondary">
+                    <strong>Updated At:</strong> {new Date(selectedTask.updated_at).toLocaleString()}
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseTaskDetails}>Close</Button>
+          {selectedTask && (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => handleOpenEditModal(selectedTask)}
+            >
+              Edit Task
+            </Button>
+          )}
+        </DialogActions>
+      </Dialog>
+    </Container>
   );
 };
 

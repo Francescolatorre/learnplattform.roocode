@@ -1,66 +1,68 @@
+//src/context/auth/authinerceptor.tsx
+
 import React, {useEffect} from 'react';
+import {AxiosInstance} from 'axios';
+import {authEventService} from './AuthEventService';
+import {AuthEventType} from './types';
+import axiosInstance from '../../services/api/axiosConfig';
+import {AUTH_CONFIG} from '../../config/appConfig';
+import {useAuth} from './AuthContext';
+
+// Extend Window interface to include apiClient
+declare global {
+    interface Window {
+        apiClient: AxiosInstance;
+    }
+}
+
+export interface IAuthInterceptorProps {
+    onAuthFailure?: () => void;
+    onRefreshToken: () => Promise<string | null>;
+    getAccessToken: () => string | null;
+}
 
 /**
- * These imports are temporarily commented out but will be needed
- * for the upcoming session expiration handling feature
+ * Component that listens for authentication events and provides auth interceptor functionality
+ * Works with the centralized axiosInstance that already has interceptors
  */
-// import {authEventService} from './AuthEventService';
-// import {AuthEventType} from './AuthEventService';
-
-import {AuthInterceptorProps} from './types';
-
-// Keine Abhängigkeit mehr zu AuthContext!
-export const AuthInterceptor: React.FC<AuthInterceptorProps> = ({
+export const AuthInterceptor: React.FC<IAuthInterceptorProps> = ({
     onAuthFailure,
-    onRefreshToken
+    onRefreshToken,
+    getAccessToken
 }) => {
+    const {logout} = useAuth();
+
+    // Subscribe to auth events
     useEffect(() => {
-        // Setup API-Interceptors (z.B. mit axios)
-        const setupInterceptors = () => {
-            // Beispiel mit axios:
-            // axios.interceptors.response.use(
-            //   (response) => response,
-            //   async (error) => {
-            //     if (error.response?.status === 401) {
-            //       try {
-            //         const newToken = await onRefreshToken();
-            //         if (newToken) {
-            //           // Token zur ursprünglichen Anfrage hinzufügen und wiederholen
-            //           error.config.headers.Authorization = `Bearer ${newToken}`;
-            //           return axios(error.config);
-            //         }
-            //       } catch (refreshError) {
-            //         authEventService.publish({ type: AuthEventType.AUTH_ERROR });
-            //         onAuthFailure();
-            //       }
-            //     }
-            //     return Promise.reject(error);
-            //   }
-            // );
+        // Make API client available globally for debugging
+        window.apiClient = axiosInstance;
+
+        // Subscribe to auth events to handle authentication failures
+        const unsubscribe = authEventService.subscribe((event) => {
+            if (event.type === AuthEventType.AUTH_ERROR) {
+                console.log('AuthInterceptor: Handling auth error event');
+                if (onAuthFailure) {
+                    onAuthFailure();
+                } else {
+                    // Default behavior: logout the user
+                    logout();
+                }
+            }
+        });
+
+        return () => {
+            // Clean up the subscription when the component unmounts
+            unsubscribe();
         };
+    }, [onAuthFailure, logout]);
 
-        setupInterceptors();
-    }, [onAuthFailure, onRefreshToken]);
-
-    // Der Interceptor rendert nichts, er fügt nur Logik hinzu
     return null;
 };
 
-// Remove unused imports or comment them for future use
-// import { ... } from '...';
-// import {authEventService} from './AuthEventService';
-// import {AuthEventType} from './AuthEventService';
-
-// Add commented explanation why imports are kept but not used
-// These imports will be used in a future implementation for session expiration handling
-// import {authEventService} from './AuthEventService';
-// import {AuthEventType} from './AuthEventService';
-
-// Either use these imports or remove them
-// import { authEventService, AuthEventType } from './AuthEventService';
-
-// If they're needed later, keep them but mark them for future use
-// Will be used in future implementation
-// const authEventCallback = () => {
-//   authEventService.emit(AuthEventType.SESSION_EXPIRED);
-// };
+/**
+ * Returns the API base URL from environment variables
+ */
+export const getApiBaseUrl = (): string => {
+    // Using Vite's import.meta.env instead of process.env
+    return import.meta.env.VITE_API_URL || '/api';
+};
