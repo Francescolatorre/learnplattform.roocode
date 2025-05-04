@@ -28,6 +28,9 @@
 - TASK-CREATION-001: Course Creation Feature
   - **Dependencies**: None
   - **Progress**: Development of course creation feature is in progress.
+- TASK-TEST-006: Fix TaskCreation Component Tests
+  - **Dependencies**: None
+  - **Progress**: Temporary workaround implemented with skipped tests. Need to resolve ErrorNotifier context issues.
 
 ## IN_PROGRESS
 

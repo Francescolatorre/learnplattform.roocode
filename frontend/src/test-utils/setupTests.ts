@@ -69,7 +69,9 @@ vi.mock('@context/auth/AuthContext', () => ({
   }),
 }));
 
+// Note: ErrorNotifier mocks have been removed to allow tests to use the actual implementation
+
 // Expose mocks for tests
 Object.assign(globalThis, {mockAxios, mockAxiosInstance});
 
-console.log('🧪 Unit test setup loaded (axios mocked)');
+console.log('🧪 Unit test setup loaded (axios mocked, ErrorNotifier using actual implementation)');

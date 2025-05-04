@@ -7,9 +7,6 @@ import {IUser} from './userTypes';
 export type TCompletionStatus = 'active' | 'completed' | 'dropped';
 export type TQuizCompletionStatus = 'completed' | 'incomplete'
 
-
-
-
 // Enrollment-Typen
 export interface ICourseEnrollment {
   readonly id: number;
@@ -23,6 +20,26 @@ export interface ICourseEnrollment {
   progress_percentage?: string;
 }
 
+/**
+ * Interface representing an enrollment status response
+ */
+export interface IEnrollmentStatus {
+  enrolled: boolean;
+  enrollmentDate: string | null;
+  enrollmentId: string | number | null;
+}
+
+/**
+ * Interface representing an enrollment response from the API
+ */
+export interface IEnrollmentResponse {
+  success: boolean;
+  message: string;
+  courseId: string;
+  status?: string;
+  enrollmentId?: string | number;
+  enrollmentDate?: string;
+}
 
 // Quiz-bezogene Typen
 export interface IQuizOption {

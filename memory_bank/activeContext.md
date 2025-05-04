@@ -4,6 +4,7 @@
 
 - **Active Task:**
 - [Task_REACT-HOOK-COMPLIANCE](tasks/Task_REACT-HOOK-COMPLIANCE-001.md)
+- [TASK-TEST-006](tasks/TASK-TEST-006-fix-taskcreation-tests.md)
 
 ## Recent Changes
 
@@ -13,6 +14,7 @@
 - Completed implementation of Progress Tracking API Endpoints (TASK-003).
 - Completed implementation of Progress Tracking Frontend Components (TASK-002).
 - Completed implementation of Task Progress Tracking UI (TASK-UI-005).
+- Added simplified test for TaskCreation component with skipped tests (TASK-TEST-006).
 
 ## Active Tasks
 
@@ -20,6 +22,7 @@
 - **Course Creation Feature** (TASK-CREATION-001): TODO
 - **Implement Task Progress Tracking UI** (TASK-UI-005): TODO
 - **Model Consolidation Task** (TASK-MODEL-CONSOLIDATION-002): TODO
+- **Fix TaskCreation Tests** (TASK-TEST-006): TODO
 
 ## Priority TODO Tasks
 

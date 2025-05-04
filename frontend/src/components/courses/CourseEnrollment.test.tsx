@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi } from 'vitest';
+import {render, screen, fireEvent, waitFor} from '@testing-library/react';
+import {vi} from 'vitest';
 import CourseEnrollment from './CourseEnrollment';
 
 // Mock required hooks and services
@@ -22,7 +22,7 @@ vi.mock('react-router-dom', async () => {
 
 vi.mock('@context/auth/AuthContext', () => ({
   useAuth: () => ({
-    user: { id: '1', username: 'testuser' },
+    user: {id: '1', username: 'testuser'},
   }),
 }));
 
@@ -37,17 +37,19 @@ vi.mock('@services/resources/enrollmentService', () => ({
   default: {
     fetchUserEnrollments: vi.fn(),
     create: vi.fn(),
+    findByFilter: vi.fn(),
+    unenrollFromCourseById: vi.fn(),
   },
 }));
 
-import { useQuery, useMutation } from '@tanstack/react-query';
+import {useQuery, useMutation} from '@tanstack/react-query';
 
 describe('CourseEnrollment Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
     // Default mock implementation for useQuery and useMutation
-    (useQuery as any).mockImplementation(({ queryKey }) => {
+    (useQuery as any).mockImplementation(({queryKey}) => {
       // Mock for course data
       if (queryKey[0] === 'course') {
         return {
@@ -71,7 +73,7 @@ describe('CourseEnrollment Component', () => {
         };
       }
 
-      return { data: null, isLoading: false, error: null };
+      return {data: null, isLoading: false, error: null};
     });
 
     (useMutation as any).mockImplementation(() => ({
@@ -118,7 +120,7 @@ describe('CourseEnrollment Component', () => {
   });
 
   it('shows success message and view tasks button when user is enrolled', () => {
-    (useQuery as any).mockImplementation(({ queryKey }) => {
+    (useQuery as any).mockImplementation(({queryKey}) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -134,22 +136,23 @@ describe('CourseEnrollment Component', () => {
 
       if (queryKey[0] === 'enrollment') {
         return {
-          data: { status: 'active' }, // User is enrolled
+          data: {status: 'active'}, // User is enrolled
           isLoading: false,
         };
       }
 
-      return { data: null, isLoading: false };
+      return {data: null, isLoading: false};
     });
 
     render(<CourseEnrollment courseId="1" />);
 
-    expect(screen.getByText(/You are already enrolled in this course/i)).toBeInTheDocument();
+    // Updated to match the new text in the component
+    expect(screen.getByText(/You are currently enrolled in this course/i)).toBeInTheDocument();
     expect(screen.getByText('View Course Tasks')).toBeInTheDocument();
   });
 
   it('shows different message when enrollment status is completed', () => {
-    (useQuery as any).mockImplementation(({ queryKey }) => {
+    (useQuery as any).mockImplementation(({queryKey}) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -165,23 +168,22 @@ describe('CourseEnrollment Component', () => {
 
       if (queryKey[0] === 'enrollment') {
         return {
-          data: { status: 'completed' },
+          data: {status: 'completed'},
           isLoading: false,
         };
       }
-      return { data: null, isLoading: false };
+      return {data: null, isLoading: false};
     });
 
     render(<CourseEnrollment courseId="1" />);
 
-    // Die Texte sind innerhalb eines einzigen Alert-Elements
+    // Updated to match the new text in the component
     const alertElement = screen.getByRole('alert');
-    expect(alertElement).toHaveTextContent(/You are already enrolled in this course/i);
     expect(alertElement).toHaveTextContent(/You have completed this course/i);
   });
 
   it('shows different message when enrollment status is dropped', () => {
-    (useQuery as any).mockImplementation(({ queryKey }) => {
+    (useQuery as any).mockImplementation(({queryKey}) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -197,23 +199,22 @@ describe('CourseEnrollment Component', () => {
 
       if (queryKey[0] === 'enrollment') {
         return {
-          data: { status: 'dropped' },
+          data: {status: 'dropped'},
           isLoading: false,
         };
       }
-      return { data: null, isLoading: false };
+      return {data: null, isLoading: false};
     });
 
     render(<CourseEnrollment courseId="1" />);
 
-    // Die Texte sind innerhalb eines einzigen Alert-Elements
+    // Updated to match the new text in the component
     const alertElement = screen.getByRole('alert');
-    expect(alertElement).toHaveTextContent(/You are already enrolled in this course/i);
-    expect(alertElement).toHaveTextContent(/You have dropped this course/i);
+    expect(alertElement).toHaveTextContent(/You were previously enrolled in this course but have dropped it/i);
   });
 
   it('shows warning when course is not published', () => {
-    (useQuery as any).mockImplementation(({ queryKey }) => {
+    (useQuery as any).mockImplementation(({queryKey}) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -226,7 +227,7 @@ describe('CourseEnrollment Component', () => {
           isLoading: false,
         };
       }
-      return { data: null, isLoading: false };
+      return {data: null, isLoading: false};
     });
 
     render(<CourseEnrollment courseId="1" />);
@@ -272,5 +273,344 @@ describe('CourseEnrollment Component', () => {
     render(<CourseEnrollment courseId="1" />);
 
     expect(screen.getByText(/Enrolling.../i)).toBeInTheDocument();
+  });
+
+  // Unenroll functionality tests
+  it('shows unenroll button when user is actively enrolled', () => {
+    // Mock the enrollment status as active
+    (useQuery as any).mockImplementation(({queryKey}) => {
+      if (queryKey[0] === 'course') {
+        return {
+          data: {
+            id: '1',
+            title: 'Test Course',
+            description: 'Test Description',
+            status: 'published',
+            visibility: 'public',
+          },
+          isLoading: false,
+        };
+      }
+
+      if (queryKey[0] === 'enrollment') {
+        return {
+          data: {status: 'active'}, // User is enrolled
+          isLoading: false,
+        };
+      }
+
+      return {data: null, isLoading: false};
+    });
+
+    render(<CourseEnrollment courseId="1" />);
+
+    expect(screen.getByText('Unenroll')).toBeInTheDocument();
+  });
+
+  it('does not show unenroll button when enrollment status is "completed"', () => {
+    // Mock the enrollment status as completed
+    (useQuery as any).mockImplementation(({queryKey}) => {
+      if (queryKey[0] === 'course') {
+        return {
+          data: {
+            id: '1',
+            title: 'Test Course',
+            description: 'Test Description',
+            status: 'published',
+            visibility: 'public',
+          },
+          isLoading: false,
+        };
+      }
+
+      if (queryKey[0] === 'enrollment') {
+        return {
+          data: {status: 'completed'}, // User completed the course
+          isLoading: false,
+        };
+      }
+
+      return {data: null, isLoading: false};
+    });
+
+    render(<CourseEnrollment courseId="1" />);
+
+    expect(screen.queryByText('Unenroll')).not.toBeInTheDocument();
+  });
+
+  it('does not show unenroll button when enrollment status is "dropped"', () => {
+    // Mock the enrollment status as dropped
+    (useQuery as any).mockImplementation(({queryKey}) => {
+      if (queryKey[0] === 'course') {
+        return {
+          data: {
+            id: '1',
+            title: 'Test Course',
+            description: 'Test Description',
+            status: 'published',
+            visibility: 'public',
+          },
+          isLoading: false,
+        };
+      }
+
+      if (queryKey[0] === 'enrollment') {
+        return {
+          data: {status: 'dropped'}, // User already dropped the course
+          isLoading: false,
+        };
+      }
+
+      return {data: null, isLoading: false};
+    });
+
+    render(<CourseEnrollment courseId="1" />);
+
+    expect(screen.queryByText('Unenroll')).not.toBeInTheDocument();
+  });
+
+  it('shows unenroll confirmation dialog when unenroll button is clicked', () => {
+    // Mock the enrollment status as active
+    (useQuery as any).mockImplementation(({queryKey}) => {
+      if (queryKey[0] === 'course') {
+        return {
+          data: {
+            id: '1',
+            title: 'Test Course',
+            description: 'Test Description',
+            status: 'published',
+            visibility: 'public',
+          },
+          isLoading: false,
+        };
+      }
+
+      if (queryKey[0] === 'enrollment') {
+        return {
+          data: {status: 'active'}, // User is enrolled
+          isLoading: false,
+        };
+      }
+
+      return {data: null, isLoading: false};
+    });
+
+    render(<CourseEnrollment courseId="1" />);
+
+    // Click the unenroll button
+    const unenrollButton = screen.getByText('Unenroll');
+    fireEvent.click(unenrollButton);
+
+    // Verify the confirmation dialog appears
+    expect(screen.getByText('Confirm Unenrollment')).toBeInTheDocument();
+    expect(screen.getByText(/Are you sure you want to unenroll from/)).toBeInTheDocument();
+  });
+
+  it('calls unenrollment mutation when confirmation is confirmed', () => {
+    // Mock the enrollment status as active
+    (useQuery as any).mockImplementation(({queryKey}) => {
+      if (queryKey[0] === 'course') {
+        return {
+          data: {
+            id: '1',
+            title: 'Test Course',
+            description: 'Test Description',
+            status: 'published',
+            visibility: 'public',
+          },
+          isLoading: false,
+        };
+      }
+
+      if (queryKey[0] === 'enrollment') {
+        return {
+          data: {status: 'active'}, // User is enrolled
+          isLoading: false,
+        };
+      }
+
+      return {data: null, isLoading: false};
+    });
+
+    // Set up the unenroll mutation mock
+    const mockUnenrollMutate = vi.fn();
+    (useMutation as any).mockImplementation(({mutationFn}) => {
+      // Create different mock objects based on the mutation function
+      if (mutationFn && String(mutationFn).includes('unenroll')) {
+        return {
+          mutate: mockUnenrollMutate,
+          isSuccess: false,
+          isPending: false,
+        };
+      }
+      return {
+        mutate: vi.fn(),
+        isSuccess: false,
+        isPending: false,
+      };
+    });
+
+    render(<CourseEnrollment courseId="1" />);
+
+    // Click the unenroll button to open the dialog
+    const unenrollButton = screen.getByText('Unenroll');
+    fireEvent.click(unenrollButton);
+
+    // Find the confirm button in the dialog and click it
+    // Use a more specific query to find the button in the dialog
+    const confirmButton = screen.getAllByRole('button').find(
+      button => button.textContent === 'Unenroll' &&
+        button.className.includes('MuiButton-containedError')
+    );
+
+    expect(confirmButton).toBeDefined();
+    if (confirmButton) {
+      fireEvent.click(confirmButton);
+      // Verify that the unenroll mutation was called
+      expect(mockUnenrollMutate).toHaveBeenCalled();
+    }
+  });
+
+  it('closes the dialog when cancel button is clicked', () => {
+    // Mock the enrollment status as active
+    (useQuery as any).mockImplementation(({queryKey}) => {
+      if (queryKey[0] === 'course') {
+        return {
+          data: {
+            id: '1',
+            title: 'Test Course',
+            description: 'Test Description',
+            status: 'published',
+            visibility: 'public',
+          },
+          isLoading: false,
+        };
+      }
+
+      if (queryKey[0] === 'enrollment') {
+        return {
+          data: {status: 'active'}, // User is enrolled
+          isLoading: false,
+        };
+      }
+
+      return {data: null, isLoading: false};
+    });
+
+    render(<CourseEnrollment courseId="1" />);
+
+    // Click the unenroll button to open the dialog
+    const unenrollButton = screen.getByText('Unenroll');
+    fireEvent.click(unenrollButton);
+
+    // Verify dialog is open
+    expect(screen.getByText('Confirm Unenrollment')).toBeInTheDocument();
+
+    // Click the cancel button
+    const cancelButton = screen.getByText('Cancel');
+    fireEvent.click(cancelButton);
+
+    // Verify dialog is closed (this is an approximation since we can't really test MUI Dialog's open state directly)
+    waitFor(() => {
+      expect(screen.queryByText('Confirm Unenrollment')).not.toBeInTheDocument();
+    });
+  });
+
+  it('shows a success message after successful unenrollment', () => {
+    // Mock the enrollment status as active
+    (useQuery as any).mockImplementation(({queryKey}) => {
+      if (queryKey[0] === 'course') {
+        return {
+          data: {
+            id: '1',
+            title: 'Test Course',
+            description: 'Test Description',
+            status: 'published',
+            visibility: 'public',
+          },
+          isLoading: false,
+        };
+      }
+
+      if (queryKey[0] === 'enrollment') {
+        return {
+          data: {status: 'active'}, // User is enrolled
+          isLoading: false,
+        };
+      }
+
+      return {data: null, isLoading: false};
+    });
+
+    // Mock successful unenrollment
+    (useMutation as any).mockImplementation(({mutationFn}) => {
+      // Return different mock based on the mutation function
+      if (mutationFn && String(mutationFn).includes('unenroll')) {
+        return {
+          mutate: vi.fn(),
+          isSuccess: true, // Unenrollment succeeded
+          isPending: false,
+        };
+      }
+      return {
+        mutate: vi.fn(),
+        isSuccess: false,
+        isPending: false,
+      };
+    });
+
+    render(<CourseEnrollment courseId="1" />);
+
+    // Verify success message is shown
+    expect(screen.getByText('You have successfully unenrolled from this course.')).toBeInTheDocument();
+  });
+
+  it('shows loading state during unenrollment process', () => {
+    // Mock the enrollment status as active
+    (useQuery as any).mockImplementation(({queryKey}) => {
+      if (queryKey[0] === 'course') {
+        return {
+          data: {
+            id: '1',
+            title: 'Test Course',
+            description: 'Test Description',
+            status: 'published',
+            visibility: 'public',
+          },
+          isLoading: false,
+        };
+      }
+
+      if (queryKey[0] === 'enrollment') {
+        return {
+          data: {status: 'active'}, // User is enrolled
+          isLoading: false,
+        };
+      }
+
+      return {data: null, isLoading: false};
+    });
+
+    // Mock unenrollment in progress
+    (useMutation as any).mockImplementation(({mutationFn}) => {
+      // Return different mock based on the mutation function
+      if (mutationFn && String(mutationFn).includes('unenroll')) {
+        return {
+          mutate: vi.fn(),
+          isSuccess: false,
+          isPending: true, // Unenrollment in progress
+        };
+      }
+      return {
+        mutate: vi.fn(),
+        isSuccess: false,
+        isPending: false,
+      };
+    });
+
+    render(<CourseEnrollment courseId="1" />);
+
+    // Look for "Unenrolling..." text directly
+    expect(screen.getByText('Unenrolling...')).toBeInTheDocument();
   });
 });

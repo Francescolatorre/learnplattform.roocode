@@ -8,9 +8,14 @@ import {
   Alert,
   CircularProgress,
   Paper,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from '@mui/material';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
-import React from 'react';
+import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
@@ -24,14 +29,16 @@ interface ICourseEnrollmentProps {
   courseId: string;
 }
 
-interface EnrollmentResponse {
+interface IEnrollmentStatusResponse {
   status: TCompletionStatus;
+  enrollmentId?: number;
 }
 
 const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const {user} = useAuth();
+  const [unenrollDialogOpen, setUnenrollDialogOpen] = useState(false);
 
   // Fetch course data
   const {
@@ -47,13 +54,20 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
   // Fetch enrollment status
   const {data: enrollment, isLoading: enrollmentLoading} = useQuery({
     queryKey: ['enrollment', courseId, user?.id],
-    queryFn: async (): Promise<EnrollmentResponse | null> => {
+    queryFn: async (): Promise<IEnrollmentStatusResponse | null> => {
       if (!user?.id) {
         throw new Error('User ID is required');
       }
-      const enrollments = await enrollmentService.fetchUserEnrollments();
+      // Use userScoped parameter to automatically filter by current user
+      const enrollments = await enrollmentService.findByFilter(
+        {course: Number(courseId)},
+        {userScoped: true}
+      );
       const enrollment = enrollments.find(e => e.course === Number(courseId));
-      return enrollment ? {status: enrollment.status} : null;
+      return enrollment ? {
+        status: enrollment.status,
+        enrollmentId: enrollment.id
+      } : null;
     },
     enabled: Boolean(courseId) && Boolean(user?.id),
   });
@@ -75,6 +89,19 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
     },
   });
 
+  // Handle unenrollment mutation
+  const unenrollMutation = useMutation({
+    mutationFn: () => enrollmentService.unenrollFromCourseById(Number(courseId)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['enrollment', courseId]});
+      setUnenrollDialogOpen(false);
+    },
+    onError: error => {
+      console.error('Unenrollment failed:', error);
+      // Add error handling logic here
+    },
+  });
+
   if (courseLoading || enrollmentLoading) {
     return <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200}}><CircularProgress /></Box>;
   }
@@ -91,6 +118,18 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
     enrollMutation.mutate();
   };
 
+  const handleUnenroll = () => {
+    setUnenrollDialogOpen(true);
+  };
+
+  const confirmUnenroll = () => {
+    unenrollMutation.mutate();
+  };
+
+  const cancelUnenroll = () => {
+    setUnenrollDialogOpen(false);
+  };
+
   const handleViewTasks = () => {
     navigate(`/courses/${courseId}/tasks`);
   };
@@ -100,6 +139,12 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
       {enrollMutation.isSuccess && (
         <Alert severity="success" sx={{mb: 3}}>
           You have successfully enrolled in this course!
+        </Alert>
+      )}
+
+      {unenrollMutation.isSuccess && (
+        <Alert severity="info" sx={{mb: 3}}>
+          You have successfully unenrolled from this course.
         </Alert>
       )}
 
@@ -113,11 +158,42 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
             enrollmentStatus={enrollment?.status}
             isPublished={course.status === 'published'}
             onEnroll={handleEnroll}
+            onUnenroll={handleUnenroll}
             onViewTasks={handleViewTasks}
             isEnrolling={enrollMutation.isPending}
+            isUnenrolling={unenrollMutation.isPending}
           />
         </CardContent>
       </Card>
+
+      {/* Unenroll Confirmation Dialog */}
+      <Dialog
+        open={unenrollDialogOpen}
+        onClose={cancelUnenroll}
+        aria-labelledby="unenroll-dialog-title"
+        aria-describedby="unenroll-dialog-description"
+      >
+        <DialogTitle id="unenroll-dialog-title">Confirm Unenrollment</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="unenroll-dialog-description">
+            Are you sure you want to unenroll from "{course.title}"? This action will remove you from the course.
+            Your progress may be preserved if you re-enroll later.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancelUnenroll} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={confirmUnenroll}
+            color="error"
+            variant="contained"
+            disabled={unenrollMutation.isPending}
+          >
+            {unenrollMutation.isPending ? 'Processing...' : 'Unenroll'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
@@ -158,24 +234,44 @@ interface IEnrollmentActionsProps {
   enrollmentStatus: TCompletionStatus | undefined;
   isPublished: boolean;
   onEnroll: () => void;
+  onUnenroll: () => void;
   onViewTasks: () => void;
   isEnrolling: boolean;
+  isUnenrolling: boolean;
 }
 
 const EnrollmentActions: React.FC<IEnrollmentActionsProps> = ({
   enrollmentStatus,
   isPublished,
   onEnroll,
+  onUnenroll,
   onViewTasks,
   isEnrolling,
+  isUnenrolling,
 }) => {
   if (enrollmentStatus) {
     return (
       <Box sx={{mt: 2}}>
         <EnrollmentStatusAlert status={enrollmentStatus} />
-        <Button variant="contained" color="primary" sx={{mt: 2}} onClick={onViewTasks}>
-          View Course Tasks
-        </Button>
+        <Box sx={{display: 'flex', gap: 2, mt: 2}}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={onViewTasks}
+          >
+            View Course Tasks
+          </Button>
+          {enrollmentStatus === 'active' && (
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={onUnenroll}
+              disabled={isUnenrolling}
+            >
+              {isUnenrolling ? 'Unenrolling...' : 'Unenroll'}
+            </Button>
+          )}
+        </Box>
       </Box>
     );
   }
@@ -202,11 +298,10 @@ const EnrollmentActions: React.FC<IEnrollmentActionsProps> = ({
 };
 
 const EnrollmentStatusAlert: React.FC<{status: TCompletionStatus}> = ({status}) => (
-  <Alert severity="info">
-    You are already enrolled in this course.
-    {status === 'active' && ' Your enrollment is active.'}
-    {status === 'completed' && ' You have completed this course.'}
-    {status === 'dropped' && ' You have dropped this course.'}
+  <Alert severity={status === 'dropped' ? 'warning' : 'info'}>
+    {status === 'active' && 'You are currently enrolled in this course.'}
+    {status === 'completed' && 'You have completed this course.'}
+    {status === 'dropped' && 'You were previously enrolled in this course but have dropped it.'}
   </Alert>
 );
 

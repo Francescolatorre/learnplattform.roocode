@@ -2,9 +2,19 @@ import {ICourseEnrollment} from '@/types/entities';
 import {API_CONFIG} from 'src/services/api/apiConfig';
 import {ApiService} from 'src/services/api/apiService';
 import {IPaginatedResponse} from 'src/types/paginatedResponse';
-import {useAuth} from '@context/auth/AuthContext'; // Import at the top level of your file
 import {authEventService} from '@context/auth/AuthEventService';
 import {AuthEventType} from '@context/auth/types';
+
+/**
+ * Interface for enrollment response data
+ */
+export interface IEnrollmentResponse {
+  success: boolean;
+  message: string;
+  courseId: string;
+  status: string;
+  enrollmentId?: number;
+}
 
 /**
  * Service for managing course enrollments, including CRUD operations, user enrollments, and course-specific queries.
@@ -25,6 +35,9 @@ class EnrollmentService {
 
   /** @private API service instance for paginated enrollment results */
   private apiEnrollmentsPaginatedResults = new ApiService<IPaginatedResponse<ICourseEnrollment>>();
+
+  /** @private API service instance for handling various response types */
+  private apiAny = new ApiService<unknown>();
 
   /** @private Cache for user profiles */
   private userProfileCache: Record<string, any> = {};
@@ -185,6 +198,62 @@ class EnrollmentService {
   }
 
   /**
+   * Unenroll from a course by course ID
+   * First tries the direct unenroll endpoint, then falls back to finding and deleting
+   * the enrollment record
+   *
+   * @param courseId The course ID to unenroll from
+   * @returns Response with status of the unenrollment operation
+   */
+  async unenrollFromCourseById(courseId: number | string): Promise<IEnrollmentResponse> {
+    try {
+      // Try direct unenroll endpoint
+      try {
+        const response = await this.apiAny.post(API_CONFIG.endpoints.courses.unenroll(courseId), {});
+        console.log(`Successfully unenrolled from course ${courseId} using unenroll endpoint`);
+
+        return {
+          ...response,
+          courseId: String(courseId),
+          status: 'dropped'
+        };
+      } catch (error) {
+        console.log(`Unenroll endpoint failed for course ${courseId}, falling back to enrollment deletion`);
+
+        // Fallback: find enrollment for this course and delete it
+        const userEnrollments = await this.findByFilter({course: courseId});
+
+        // Check if there's an active enrollment to delete
+        if (!userEnrollments || userEnrollments.length === 0) {
+          // Changed behavior: Instead of throwing, return a "not enrolled" success response
+          return {
+            success: true,
+            message: 'You are not enrolled in this course',
+            courseId: String(courseId),
+            status: 'not_enrolled'
+          };
+        }
+
+        const enrollment = userEnrollments[0];
+
+        // Delete the enrollment
+        await this.apiVoid.delete(API_CONFIG.endpoints.enrollments.delete(enrollment.id));
+
+        return {
+          success: true,
+          message: 'Successfully unenrolled from course',
+          courseId: String(courseId),
+          status: 'dropped',
+          enrollmentId: enrollment.id
+        };
+      }
+    } catch (error) {
+      console.error(`Unhandled error during unenrollment from course ${courseId}`, error);
+      throw new Error(`Failed to complete unenrollment operation: ${(error as Error).message}`);
+    }
+  }
+
+  /**
    * Fetch all enrollments for a specific course.
    * @param {string | number} courseId - Course ID.
    * @returns {Promise<ICourseEnrollment[]>} Promise resolving to an array of Enrollment objects for the specified course.
@@ -195,30 +264,36 @@ class EnrollmentService {
   }
 
   /**
-   * Find enrollments by filter.
-   * @param {Record<string, unknown>} filter - Key-value filter object to filter enrollments.
-   * @returns {Promise<ICourseEnrollment[]>} Promise resolving to an array of filtered Enrollment objects.
-   * @throws {Error} If the API request fails.
-   * @example
-   * // Find all enrollments for active courses
-   * const activeEnrollments = await enrollmentService.findByFilter({ status: 'active' });
+   * Find enrollments by filter criteria
+   *
+   * @param filter An object with filter criteria
+   * @returns Array of enrollments matching the filter
    */
   async findByFilter(filter: Record<string, unknown>): Promise<ICourseEnrollment[]> {
-    // For filter, we append as query params
-    const params = new URLSearchParams(
-      Object.entries(filter).reduce<Record<string, string>>((acc, [key, value]) => {
-        acc[key] = String(value);
-        return acc;
-      }, {})
-    ).toString();
+    try {
+      const queryParams = Object.entries(filter)
+        .map(([key, value]) => `${key}=${value}`)
+        .join('&');
 
-    const url = params
-      ? `${API_CONFIG.endpoints.enrollments.list}?${params}`
-      : API_CONFIG.endpoints.enrollments.list;
+      const endpoint = queryParams
+        ? `${API_CONFIG.endpoints.enrollments.list}?${queryParams}`
+        : API_CONFIG.endpoints.enrollments.list;
 
-    // The API returns a paginated response
-    const response = await this.apiEnrollmentsPaginatedResults.get(url);
-    return response.results;
+      const response = await this.apiAny.get(endpoint);
+
+      // Handle different API response formats - some return direct arrays, some have a results property
+      if (response && Array.isArray(response)) {
+        return response;
+      } else if (response && response.results && Array.isArray(response.results)) {
+        return response.results;
+      } else {
+        console.warn('Unexpected response format from enrollment API:', response);
+        return [];
+      }
+    } catch (error) {
+      console.error('Error finding enrollments by filter:', error);
+      throw error;
+    }
   }
 
   /**
@@ -229,11 +304,11 @@ class EnrollmentService {
    * @returns {void}
    */
   setAuthHeader(token: string): void {
-    const authHeader = {Authorization: `Bearer ${token}`};
-    this.apiEnrollments.setHeaders(authHeader);
-    this.apiEnrollment.setHeaders(authHeader);
-    this.apiVoid.setHeaders(authHeader);
-    this.apiEnrollmentsPaginatedResults.setHeaders(authHeader);
+    this.apiEnrollments.setAuthToken(token);
+    this.apiEnrollment.setAuthToken(token);
+    this.apiVoid.setAuthToken(token);
+    this.apiEnrollmentsPaginatedResults.setAuthToken(token);
+    this.apiAny.setAuthToken(token);
   }
 }
 

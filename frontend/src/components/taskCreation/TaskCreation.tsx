@@ -12,6 +12,7 @@ interface TaskCreationProps {
     task?: Partial<ILearningTask>;
     isEditing?: boolean;
     onSave?: (task: Partial<ILearningTask>) => void;
+    notificationService?: (message: string, severity?: 'error' | 'success' | 'info' | 'warning') => void;
 }
 
 const TaskCreation: React.FC<TaskCreationProps> = ({
@@ -20,7 +21,8 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
     courseId,
     task = {},
     isEditing = false,
-    onSave
+    onSave,
+    notificationService
 }) => {
     const [formData, setFormData] = useState<Partial<ILearningTask>>({
         title: '',
@@ -29,7 +31,11 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
         ...task
     });
     const [error, setError] = useState('');
-    const notify = useNotification();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Use injected notification service or the hook
+    const defaultNotify = useNotification();
+    const notify = notificationService || defaultNotify;
 
     // Update form data when the task prop changes (for editing)
     useEffect(() => {
@@ -67,16 +73,23 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
     };
 
     const handleSubmit = async () => {
+        // Prevent multiple submissions
+        if (isSubmitting) return;
+
         // Validate form
         if (!formData.title || !formData.description) {
             setError('Title and description are required.');
             return;
         }
 
+        setIsSubmitting(true);
+        setError('');
+
         try {
             // If onSave is provided, use it (this handles both create and update)
             if (onSave) {
-                onSave(formData);
+                await onSave(formData);
+                resetForm();
             } else {
                 // Otherwise use the direct API approach
                 if (!courseId) {
@@ -85,6 +98,8 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
 
                 const taskData = {
                     ...formData,
+                    title: formData.title || '',
+                    description: formData.description || '',
                     course: Number(courseId)
                 };
 
@@ -104,6 +119,8 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
             const errorMessage = err instanceof Error ? err.message : 'Failed to save task. Please try again.';
             setError(errorMessage);
             notify(errorMessage, 'error');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -114,6 +131,11 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
             is_published: false
         });
         setError('');
+        onClose();  // Make sure this gets called only once
+    };
+
+    // Handle cancel separately from resetForm to avoid potential issues
+    const handleCancel = () => {
         onClose();
     };
 
@@ -160,8 +182,12 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
                 </Box>
             </DialogContent>
             <DialogActions>
-                <Button onClick={resetForm}>Cancel</Button>
-                <Button variant="contained" onClick={handleSubmit}>
+                <Button onClick={handleCancel} disabled={isSubmitting}>Cancel</Button>
+                <Button
+                    variant="contained"
+                    onClick={handleSubmit}
+                    disabled={isSubmitting}
+                >
                     {isEditing ? 'Save Changes' : 'Create Task'}
                 </Button>
             </DialogActions>

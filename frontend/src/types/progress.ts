@@ -150,6 +150,43 @@ export interface IProgressResponse {
 }
 
 /**
+ * Interface for enrollment status response
+ * Used to determine if a user is enrolled in a course
+ */
+export interface IEnrollmentStatus {
+    enrolled: boolean;
+    enrollmentDate: string | null;
+    enrollmentId: number | null;
+}
+
+/**
+ * Interface for enrollment/unenrollment API responses
+ */
+export interface IEnrollmentResponse {
+    success: boolean;
+    message?: string;
+    enrollmentId?: number;
+    courseId?: string;
+    userId?: string;
+    status?: string;
+    enrollmentDate?: string;
+}
+
+/**
+ * Interface for detailed user progress in a course
+ */
+export interface IUserProgressDetails {
+    courseId: string;
+    userId: string;
+    completedTasks: string[];
+    overallProgress: number;
+    lastActivity?: string;
+    startDate?: string;
+    estimatedCompletionDate?: string;
+    taskStatuses?: Record<string, string>;
+}
+
+/**
  * Typ-Aliasdefinitionen für Abwärtskompatibilität
  */
 export type ICourseProgress = IDetailedCourseProgress;

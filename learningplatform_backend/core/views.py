@@ -340,6 +340,64 @@ class CourseViewSet(viewsets.ModelViewSet):
             status=status.HTTP_201_CREATED,
         )
 
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="unenroll",
+        permission_classes=[IsAuthenticated],
+    )
+    def unenroll(self, request, pk=None):
+        """
+        Unenroll the current user from a course by setting enrollment status to 'dropped'.
+        """
+        course = self.get_object()
+        user = request.user
+
+        try:
+            # Find the enrollment record
+            enrollment = CourseEnrollment.objects.get(user=user, course=course)
+
+            # Update the enrollment status to 'dropped'
+            enrollment.status = "dropped"
+            enrollment.save()
+
+            logger.info("User %s unenrolled from course %s", user.id, course.id)
+
+            return Response(
+                {
+                    "success": True,
+                    "message": "Successfully unenrolled from the course.",
+                    "courseId": str(course.id),
+                    "status": "unenrolled",
+                },
+                status=status.HTTP_200_OK,
+            )
+        except CourseEnrollment.DoesNotExist:
+            logger.warning(
+                "User %s attempted to unenroll from course %s but no enrollment exists",
+                user.id,
+                course.id,
+            )
+            return Response(
+                {"success": False, "detail": "You are not enrolled in this course."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            logger.error(
+                "Error unenrolling user %s from course %s: %s",
+                user.id,
+                course.id,
+                str(e),
+                exc_info=True,
+            )
+            return Response(
+                {
+                    "success": False,
+                    "detail": "An error occurred while unenrolling from the course.",
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
     def get_permissions(self):
         """
         Allow different permissions based on the action:
