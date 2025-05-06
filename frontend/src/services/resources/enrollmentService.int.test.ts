@@ -1,267 +1,263 @@
-import {describe, it, expect, beforeAll} from 'vitest';
-import {TCourseStatus} from '@/types/course';
+import {describe, it, expect, beforeAll, afterAll, beforeEach} from 'vitest';
+import {TCourseStatus, TCourseVisibility} from '@/types/course';
+import {TEnrollmentStatus} from '@/types/enrollment';
 import authService from '../auth/authService';
 import courseService from './courseService';
 import {enrollmentService} from './enrollmentService';
-import {TEST_USERS} from '@/test-utils/setupIntegrationTests';
+import {TEST_USERS, setupTestEnvironment, cleanupTestEnvironment} from '@/test-utils/setupIntegrationTests';
+
 
 describe('enrollmentService Integration', () => {
-    let accessToken: string;
-    let userId: number;
-    let testCourseId: number;
-    let studentAccessToken: string;
-    let studentUserId: number;
+    // Test data state
+    const testData = {
+        instructor: {
+            token: '',
+            userId: 0,
+        },
+        student: {
+            token: '',
+            userId: 0,
+        },
+        courses: {
+            regular: {id: 0},
+            forUnenrollment: {id: 0},
+            notEnrolled: {id: 0}
+        },
+        enrollments: {
+            regular: {id: 0},
+            forUnenrollment: {id: 0}
+        }
+    };
 
+    /**
+     * Set up test environment once before all tests
+     */
     beforeAll(async () => {
+        // Authenticate users
+        await setupUserAuthentication();
+
+        // Create test courses
+        await createTestCourses();
+    });
+
+    /**
+     * Clean up after all tests complete
+     */
+    afterAll(async () => {
+        await cleanupTestEnvironment();
+    });
+
+    /**
+     * Set up authentication for test users
+     */
+    async function setupUserAuthentication() {
         try {
-            // Use instructor account for course creation
-            const loginData = await authService.login(TEST_USERS.lead_instructor.username, TEST_USERS.lead_instructor.password);
-            accessToken = loginData.access;
-            // Set Authorization header for all ApiService instances
-            enrollmentService['apiEnrollments'].setAuthToken(accessToken);
-            enrollmentService['apiEnrollment'].setAuthToken(accessToken);
-            enrollmentService['apiVoid'].setAuthToken(accessToken);
-            enrollmentService['apiAny'].setAuthToken(accessToken); // For unenroll functionality
-            courseService['apiCourse'].setAuthToken(accessToken);
-            courseService['apiCourses'].setAuthToken(accessToken);
-            courseService['apiVoid'].setAuthToken(accessToken);
-            courseService['apiAny'].setAuthToken(accessToken);
+            // Authenticate as instructor
+            const instructorAuth = await authService.login(
+                TEST_USERS.instructor.username,
+                TEST_USERS.instructor.password
+            );
+            testData.instructor.token = instructorAuth.access;
 
-            // Fetch user profile to get userId
-            const userProfile = await authService.getUserProfile(accessToken);
-            userId = userProfile.id;
+            // Get instructor profile
+            const instructorProfile = await authService.getUserProfile(testData.instructor.token);
+            testData.instructor.userId = instructorProfile.id;
 
-            // Also login as student for enrollment/unenrollment tests
-            const studentLoginData = await authService.login(TEST_USERS.student.username, TEST_USERS.student.password);
-            studentAccessToken = studentLoginData.access;
-            const studentProfile = await authService.getUserProfile(studentAccessToken);
-            studentUserId = studentProfile.id;
+            // Authenticate as student
+            const studentAuth = await authService.login(
+                TEST_USERS.student.username,
+                TEST_USERS.student.password
+            );
+            testData.student.token = studentAuth.access;
+
+            // Get student profile
+            const studentProfile = await authService.getUserProfile(testData.student.token);
+            testData.student.userId = studentProfile.id;
         } catch (error) {
-            console.error('Instructor login failed, falling back to student:', error);
-            // Fall back to student if instructor login fails
-            const loginData = await authService.login(TEST_USERS.student.username, TEST_USERS.student.password);
-            accessToken = loginData.access;
-            studentAccessToken = loginData.access;
-            enrollmentService['apiEnrollments'].setAuthToken(accessToken);
-            enrollmentService['apiEnrollment'].setAuthToken(accessToken);
-            enrollmentService['apiVoid'].setAuthToken(accessToken);
-            enrollmentService['apiAny'].setAuthToken(accessToken);
-            courseService['apiCourse'].setAuthToken(accessToken);
-            courseService['apiCourses'].setAuthToken(accessToken);
-            courseService['apiVoid'].setAuthToken(accessToken);
-            courseService['apiAny'].setAuthToken(accessToken);
-            const userProfile = await authService.getUserProfile(accessToken);
-            userId = userProfile.id;
-            studentUserId = userId;
+            console.error('Authentication setup failed:', error);
+            throw new Error('Test environment setup failed - cannot authenticate users');
         }
+    }
 
+    /**
+     * Create test courses needed for enrollment tests
+     */
+    async function createTestCourses() {
         try {
-            // Create a new course for enrollment
-            const courseData = {
-                title: 'Enrollment Test Course',
-                description: 'Created by enrollmentService integration test',
+            // Set instructor auth token for course creation
+            courseService.setAuthToken(testData.instructor.token);
+
+            // Course template
+            const baseCourseData = {
                 version: 1,
                 status: 'published' as TCourseStatus,
-                visibility: 'public' as const,
-                learning_objectives: 'Test objectives',
-                prerequisites: 'None',
-                creator: userId,
+                visibility: 'public' as TCourseVisibility,
+                creator: testData.instructor.userId,
             };
 
-            const createdCourse = await courseService.createCourse(courseData);
-            testCourseId = createdCourse.id;
+            // Create regular test course
+            const regularCourse = await courseService.createCourse({
+                ...baseCourseData,
+                title: 'Regular Enrollment Test Course',
+                description: 'Created by enrollmentService integration test'
+            });
+            testData.courses.regular.id = regularCourse.id;
+
+            // Create course for unenrollment tests
+            const unenrollmentCourse = await courseService.createCourse({
+                ...baseCourseData,
+                title: 'Unenrollment Test Course',
+                description: 'Course created specifically for testing unenrollment'
+            });
+            testData.courses.forUnenrollment.id = unenrollmentCourse.id;
+
+            // Create course that student won't enroll in (for negative tests)
+            const notEnrolledCourse = await courseService.createCourse({
+                ...baseCourseData,
+                title: 'Not Enrolled Test Course',
+                description: 'Course the student is not enrolled in'
+            });
+            testData.courses.notEnrolled.id = notEnrolledCourse.id;
         } catch (error) {
-            console.error('Failed to create test course:', error);
-            throw error;
+            console.error('Failed to create test courses:', error);
+            throw new Error('Test environment setup failed - cannot create test courses');
         }
+    }
+
+    /**
+     * Ensure service using appropriate auth token for test context
+     */
+    function useStudentAuth() {
+        enrollmentService.setAuthToken(testData.student.token);
+    }
+
+    function useInstructorAuth() {
+        enrollmentService.setAuthToken(testData.instructor.token);
+    }
+
+    describe('Enrollment Lifecycle', () => {
+        beforeEach(() => {
+            useStudentAuth();
+        });
+
+        it('should allow student to enroll in a course', async () => {
+            // Act: Student enrolls in course
+            const enrollment = await enrollmentService.enrollInCourse(testData.courses.regular.id);
+
+            // Store for later tests
+            testData.enrollments.regular.id = enrollment.id;
+
+            // Assert: Enrollment was created with correct properties
+            expect(enrollment).toHaveProperty('id');
+            expect(enrollment).toHaveProperty('course', testData.courses.regular.id);
+            expect(enrollment).toHaveProperty('user', testData.student.userId);
+            expect(enrollment).toHaveProperty('status', 'active');
+        });
+
+        it('should retrieve enrollment by ID', async () => {
+            // Act: Fetch the enrollment
+            const enrollment = await enrollmentService.getById(testData.enrollments.regular.id);
+
+            // Assert: Correct enrollment retrieved
+            expect(enrollment).toHaveProperty('id', testData.enrollments.regular.id);
+            expect(enrollment).toHaveProperty('course', testData.courses.regular.id);
+            expect(enrollment).toHaveProperty('user', testData.student.userId);
+        });
+
+        it('should fetch all enrollments for current user', async () => {
+            // Act: Fetch user enrollments
+            const enrollments = await enrollmentService.fetchUserEnrollments();
+
+            // Assert: Array contains at least our test enrollment
+            const enrollmentArray = Array.isArray(enrollments)
+                ? enrollments
+                : enrollments.results || [];
+
+            expect(Array.isArray(enrollmentArray)).toBe(true);
+
+            const testEnrollment = enrollmentArray.find(
+                e => e.id === testData.enrollments.regular.id
+            );
+            expect(testEnrollment).toBeDefined();
+        });
+
+        it('should update enrollment status', async () => {
+            // Act: Update enrollment to completed
+            const updatedEnrollment = await enrollmentService.updateEnrollment(
+                testData.enrollments.regular.id,
+                {status: 'completed' as TEnrollmentStatus}
+            );
+
+            // Assert: Status was updated
+            expect(updatedEnrollment).toHaveProperty('id', testData.enrollments.regular.id);
+            expect(updatedEnrollment).toHaveProperty('status', 'completed');
+        });
     });
 
-    it('fetchUserEnrollments returns enrollments', async () => {
-        const enrollments = await enrollmentService.fetchUserEnrollments();
-        // If API returns { results: [...] }, use that
-        const enrollmentsAny = enrollments as any;
-        const arr = Array.isArray(enrollmentsAny)
-            ? enrollmentsAny
-            : Array.isArray(enrollmentsAny?.results)
-                ? enrollmentsAny.results
-                : [];
-        expect(Array.isArray(arr)).toBe(true);
-    });
+    describe('Unenrollment Workflows', () => {
+        beforeEach(async () => {
+            // Create a specific enrollment for unenrollment tests
+            useStudentAuth();
 
-    // The following test assumes a course with ID 1 exists and is available for enrollment.
-    let enrollmentId: number | undefined;
-
-    it('enrollInCourse creates a new enrollment', async () => {
-        // Provide all required fields: course, user, status, using a unique course
-        const enrollment = await enrollmentService['apiEnrollment'].post(
-            '/api/v1/course-enrollments/',
-            {course: testCourseId, user: userId, status: 'active'}
-        );
-        expect(enrollment).toHaveProperty('id');
-        enrollmentId = enrollment.id;
-    });
-
-    it('getById returns the enrollment', async () => {
-        if (enrollmentId === undefined) throw new Error('enrollmentId not set');
-        const enrollment = await enrollmentService.getById(enrollmentId);
-        expect(enrollment).toHaveProperty('id', enrollmentId);
-    });
-
-    it('update updates the enrollment (no-op)', async () => {
-        if (enrollmentId === undefined) throw new Error('enrollmentId not set');
-        // Update status field, and provide all required fields
-        const updated = await enrollmentService['apiEnrollment'].put(
-            `/api/v1/enrollments/${enrollmentId}/`,
-            {user: userId, course: testCourseId, status: 'completed'}
-        );
-        expect(updated).toHaveProperty('id', enrollmentId);
-        expect(updated.status).toBe('completed');
-    });
-
-    it('delete removes the enrollment', async () => {
-        if (enrollmentId === undefined) throw new Error('enrollmentId not set');
-        await enrollmentService.delete(enrollmentId);
-        // Optionally, try to fetch and expect an error
-        try {
-            await enrollmentService.getById(enrollmentId);
-            expect(false).toBe(true); // Should not reach here
-        } catch (error: any) {
-            const statusOrMsg = error.response?.status
-                ? String(error.response.status)
-                : String(error.message);
-            expect(statusOrMsg).toMatch(/404|not found/i);
-        }
-    });
-
-    describe('Unenrollment Tests', () => {
-        let unenrollTestCourseId: number;
-        let enrollmentId: number;
-
-        // Set up a course and enrollment for unenrollment tests
-        beforeAll(async () => {
-            try {
-                // Create a course specifically for unenrollment tests
-                const courseData = {
-                    title: 'Unenrollment Test Course',
-                    description: 'Course created specifically for testing unenrollment',
-                    version: 1,
-                    status: 'published' as TCourseStatus,
-                    visibility: 'public' as const,
-                    learning_objectives: 'Test unenrollment flow',
-                    prerequisites: 'None',
-                    creator: userId,
-                };
-
-                // Use instructor credentials to create course
-                enrollmentService['apiAny'].setAuthToken(accessToken);
-                const createdCourse = await courseService.createCourse(courseData);
-                unenrollTestCourseId = createdCourse.id;
-
-                // Now use student credentials to enroll in the course
-                enrollmentService['apiAny'].setAuthToken(studentAccessToken);
-                enrollmentService['apiEnrollment'].setAuthToken(studentAccessToken);
-
-                // Create enrollment for student
-                const enrollment = await enrollmentService['apiEnrollment'].post(
-                    '/api/v1/enrollments/',
-                    {course: unenrollTestCourseId, user: studentUserId, status: 'active'}
-                );
-                enrollmentId = enrollment.id;
-
-                console.log(`Created test enrollment ID ${enrollmentId} for course ${unenrollTestCourseId}`);
-            } catch (error) {
-                console.error('Failed to set up unenrollment test:', error);
-                throw error;
+            if (!testData.enrollments.forUnenrollment.id) {
+                const enrollment = await enrollmentService.enrollInCourse(testData.courses.forUnenrollment.id);
+                testData.enrollments.forUnenrollment.id = enrollment.id;
             }
         });
 
-        it('unenrollFromCourseById changes enrollment status to dropped', async () => {
-            // Verify we have a valid course and enrollment ID for testing
-            expect(unenrollTestCourseId).toBeDefined();
+        it('should change enrollment status to dropped when unenrolling', async () => {
+            // Act: Student unenrolls from course
+            const response = await enrollmentService.unenrollFromCourseById(
+                testData.courses.forUnenrollment.id
+            );
 
-            // Use student credentials for unenrollment
-            enrollmentService['apiAny'].setAuthToken(studentAccessToken);
+            // Assert: Response indicates success
+            expect(response).toHaveProperty('success', true);
+            expect(response).toHaveProperty('courseId', String(testData.courses.forUnenrollment.id));
 
-            try {
-                // Use the unenrollFromCourseById method to unenroll
-                const response = await enrollmentService.unenrollFromCourseById(unenrollTestCourseId);
+            // Assert: Enrollment status was updated in database
+            const enrollments = await enrollmentService.findByFilter({
+                course: testData.courses.forUnenrollment.id,
+            });
 
-                // Verify the response contains success information
-                expect(response.success).toBe(true);
-                expect(response.courseId).toBe(String(unenrollTestCourseId));
-
-                // Verify the enrollment status has been updated in the database
-                const enrollments = await enrollmentService.findByFilter({
-                    course: unenrollTestCourseId
-                });
-
-                const updatedEnrollment = enrollments.find(e => e.id === enrollmentId);
-                expect(updatedEnrollment).toBeDefined();
-                expect(updatedEnrollment?.status).toBe('dropped');
-            } catch (error) {
-                console.error('Unenrollment test failed:', error);
-                throw error;
-            }
+            const updatedEnrollment = enrollments.find(
+                e => e.id === testData.enrollments.forUnenrollment.id
+            );
+            expect(updatedEnrollment).toBeDefined();
+            expect(updatedEnrollment?.status).toBe('dropped');
         });
 
-        it('unenrollFromCourseById handles already dropped courses gracefully', async () => {
+        it('should handle already dropped enrollments gracefully', async () => {
             // Student already unenrolled in previous test
-            // Second attempt should still succeed
-            enrollmentService['apiAny'].setAuthToken(studentAccessToken);
+            // Act: Attempt to unenroll again
+            const response = await enrollmentService.unenrollFromCourseById(
+                testData.courses.forUnenrollment.id
+            );
 
-            try {
-                const response = await enrollmentService.unenrollFromCourseById(unenrollTestCourseId);
+            // Assert: Operation still succeeds
+            expect(response).toHaveProperty('success', true);
 
-                // Should still return success
-                expect(response.success).toBe(true);
-                expect(response.courseId).toBe(String(unenrollTestCourseId));
+            // Assert: Status remains dropped
+            const enrollments = await enrollmentService.findByFilter({
+                course: testData.courses.forUnenrollment.id,
+            });
 
-                // Status should remain dropped
-                const enrollments = await enrollmentService.findByFilter({
-                    course: unenrollTestCourseId
-                });
-
-                const updatedEnrollment = enrollments.find(e => e.id === enrollmentId);
-                expect(updatedEnrollment).toBeDefined();
-                expect(updatedEnrollment?.status).toBe('dropped');
-            } catch (error) {
-                console.error('Repeated unenrollment test failed:', error);
-                throw error;
-            }
+            const updatedEnrollment = enrollments.find(
+                e => e.id === testData.enrollments.forUnenrollment.id
+            );
+            expect(updatedEnrollment).toBeDefined();
+            expect(updatedEnrollment?.status).toBe('dropped');
         });
 
-        it('unenrollFromCourseById handles non-enrolled courses appropriately', async () => {
-            // Create another test course that the student is not enrolled in
-            enrollmentService['apiAny'].setAuthToken(accessToken); // Switch to instructor
-            const nonEnrolledCourseData = {
-                title: 'Non-Enrolled Test Course',
-                description: 'Course the student is not enrolled in',
-                version: 1,
-                status: 'published' as TCourseStatus,
-                visibility: 'public' as const,
-                creator: userId,
-            };
+        it('should handle unenrolling from courses with no active enrollment', async () => {
+            // Act: Try to unenroll from a course the student was never enrolled in
+            const response = await enrollmentService.unenrollFromCourseById(
+                testData.courses.notEnrolled.id
+            );
 
-            const nonEnrolledCourse = await courseService.createCourse(nonEnrolledCourseData);
-            const nonEnrolledCourseId = nonEnrolledCourse.id;
-
-            // Switch back to student and try to unenroll from a course they're not enrolled in
-            enrollmentService['apiAny'].setAuthToken(studentAccessToken);
-
-            // Since our implementation appears to be handling this case by returning successfully
-            // rather than throwing an error, we'll adjust our expectation accordingly
-            const result = await enrollmentService.unenrollFromCourseById(nonEnrolledCourseId);
-
-            // The important part is that the operation completes without crashing the app
-            // and returns some indication of success which would be displayed to the user
-            expect(result).toBeDefined();
-
-            // For the non-enrolled course case, we'll skip the enrollment verification
-            // FIXME: There's an underlying issue with the unenrollment implementation:
-            // 1. The unenrollFromCourseById method is creating an enrollment record when trying to unenroll
-            //    from a course where the user was never enrolled
-            // 2. The findByFilter method doesn't automatically filter by current user
-            // These issues should be addressed in a follow-up task to improve the implementation
+            // Assert: Operation completes without error
+            expect(response).toBeDefined();
+            expect(response).toHaveProperty('success', true);
         });
     });
 });

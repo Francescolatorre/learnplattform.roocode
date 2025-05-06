@@ -1,5 +1,15 @@
 from django.contrib import admin
-from .models import Course, LearningTask, QuizTask, CourseEnrollment
+from .models import (
+    Course,
+    LearningTask,
+    QuizTask,
+    CourseEnrollment,
+    QuizOption,
+    QuizQuestion,
+    QuizAttempt,
+    QuizResponse,
+    TaskProgress,
+)
 
 
 @admin.register(Course)
@@ -28,3 +38,44 @@ class CourseEnrollmentAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "course", "status", "enrollment_date")
     search_fields = ("user__username", "course__title")
     list_filter = ("status",)
+
+
+class QuizOptionInline(admin.TabularInline):
+    model = QuizOption
+    extra = 1
+
+
+@admin.register(QuizQuestion)
+class QuizQuestionAdmin(admin.ModelAdmin):
+    list_display = ("id", "quiz", "text", "points")
+    search_fields = ("quiz__title", "text")
+    list_filter = ("quiz", "points")
+    inlines = [QuizOptionInline]
+
+
+@admin.register(QuizOption)
+class QuizOptionAdmin(admin.ModelAdmin):
+    list_display = ("id", "question", "text", "is_correct")
+    search_fields = ("question__text", "text")
+    list_filter = ("question", "is_correct")
+
+
+@admin.register(QuizAttempt)
+class QuizAttemptAdmin(admin.ModelAdmin):
+    list_display = ("id", "user", "quiz", "score", "completion_status", "attempt_date")
+    search_fields = ("user__username", "quiz__title")
+    list_filter = ("completion_status", "attempt_date")
+
+
+@admin.register(QuizResponse)
+class QuizResponseAdmin(admin.ModelAdmin):
+    list_display = ("id", "attempt", "question", "selected_option", "is_correct")
+    search_fields = ("attempt__user__username", "question__text")
+    list_filter = ("is_correct",)
+
+
+@admin.register(TaskProgress)
+class TaskProgressAdmin(admin.ModelAdmin):
+    list_display = ("id", "user", "task", "status", "completion_date")
+    search_fields = ("user__username", "task__title")
+    list_filter = ("status", "completion_date")

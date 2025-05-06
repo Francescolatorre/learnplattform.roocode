@@ -532,6 +532,67 @@ class CourseEnrollmentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    @action(detail=False, methods=["post"], url_path="unenroll/(?P<course_id>[^/.]+)")
+    def unenroll(self, request, course_id=None):
+        """
+        Unenroll the current user from a course by updating the existing enrollment record.
+
+        Instead of deleting the enrollment or creating a new one, this endpoint updates
+        the status of the existing enrollment to "dropped", maintaining data integrity
+        and enrollment history while respecting the unique constraint on (user, course) pairs.
+        """
+        try:
+            # Find the existing enrollment
+            try:
+                enrollment = CourseEnrollment.objects.get(
+                    user=request.user, course_id=course_id
+                )
+            except CourseEnrollment.DoesNotExist:
+                return Response(
+                    {
+                        "success": False,
+                        "message": "You are not enrolled in this course",
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # If already dropped, just return success
+            if enrollment.status == "dropped":
+                return Response(
+                    {
+                        "success": True,
+                        "status": "unenrolled",
+                        "message": "You were already unenrolled from this course",
+                        "enrollmentId": enrollment.id,
+                    }
+                )
+
+            # Update the status to dropped instead of creating a new record
+            enrollment.status = "dropped"
+            enrollment.save()
+
+            logger.info(
+                "User %s (ID: %s) unenrolled from course %s",
+                request.user.username,
+                request.user.id,
+                course_id,
+            )
+
+            return Response(
+                {
+                    "success": True,
+                    "status": "unenrolled",
+                    "message": "Successfully unenrolled from course",
+                    "enrollmentId": enrollment.id,
+                }
+            )
+        except Exception as e:
+            logger.error("Error during unenrollment: %s", str(e))
+            return Response(
+                {"success": False, "message": f"Unenrollment failed: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
 
 class TaskProgressViewSet(viewsets.ModelViewSet):
     """

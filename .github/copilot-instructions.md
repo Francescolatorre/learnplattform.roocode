@@ -213,6 +213,8 @@ In this project, "task" can mean two distinct things:
 - Playwright for end-to-end tests
 - Centralize global mocks in `setupTests.ts`
 - Isolate tests and avoid direct API calls
+- whenever possible use data-testid to identify ui elements.
+- Add data-testid informatoin the the ui elements if missing
 
 ---
 

@@ -377,6 +377,28 @@ class CourseService {
   }
 
   /**
+   * Explicitly sets the authentication token for all API service instances
+   * This is primarily used for testing scenarios where localStorage isn't available
+   * @param token JWT auth token to use for API requests
+   */
+  setAuthToken(token: string): void {
+    if (!token) {
+      console.warn('CourseService: Attempted to set empty auth token');
+      return;
+    }
+
+    // Set auth token on all API service instances
+    this.apiCourse.setAuthToken(token);
+    this.apiCourses.setAuthToken(token);
+    this.apiVoid.setAuthToken(token);
+    this.apiAny.setAuthToken(token);
+    this.apiTaskProgressArray.setAuthToken(token);
+    this.apiLearningTasks.setAuthToken(token);
+
+    console.debug('CourseService: Auth tokens explicitly set on all API service instances');
+  }
+
+  /**
    * Ensures all API service instances have the auth token set
    * This helps prevent auth issues when tokens are refreshed
    */

@@ -169,16 +169,21 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
         onClose={cancelUnenroll}
         aria-labelledby="unenroll-dialog-title"
         aria-describedby="unenroll-dialog-description"
+        data-testid="unenroll-confirmation-dialog"
       >
-        <DialogTitle id="unenroll-dialog-title">Confirm Unenrollment</DialogTitle>
+        <DialogTitle id="unenroll-dialog-title" data-testid="unenroll-dialog-title">Confirm Unenrollment</DialogTitle>
         <DialogContent>
-          <DialogContentText id="unenroll-dialog-description">
+          <DialogContentText id="unenroll-dialog-description" data-testid="unenroll-dialog-description">
             Are you sure you want to unenroll from "{course.title}"? This action will remove you from the course.
             Your progress may be preserved if you re-enroll later.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={cancelUnenroll} color="primary">
+          <Button
+            onClick={cancelUnenroll}
+            color="primary"
+            data-testid="cancel-unenroll"
+          >
             Cancel
           </Button>
           <Button
@@ -186,6 +191,7 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
             color="error"
             variant="contained"
             disabled={unenrollMutation.isPending}
+            data-testid="confirm-unenroll"
           >
             {unenrollMutation.isPending ? 'Processing...' : 'Unenroll'}
           </Button>
@@ -255,6 +261,7 @@ const EnrollmentActions: React.FC<IEnrollmentActionsProps> = ({
             variant="contained"
             color="primary"
             onClick={onViewTasks}
+            data-testid="view-tasks-button"
           >
             View Course Tasks
           </Button>
@@ -264,6 +271,7 @@ const EnrollmentActions: React.FC<IEnrollmentActionsProps> = ({
               color="error"
               onClick={onUnenroll}
               disabled={isUnenrolling}
+              data-testid="unenroll-button"
             >
               {isUnenrolling ? 'Unenrolling...' : 'Unenroll'}
             </Button>
@@ -281,6 +289,7 @@ const EnrollmentActions: React.FC<IEnrollmentActionsProps> = ({
         disabled={isEnrolling || !isPublished}
         onClick={onEnroll}
         sx={{mt: 2}}
+        data-testid="enroll-button"
       >
         {isEnrolling ? 'Enrolling...' : 'Enroll in Course'}
       </Button>
@@ -295,7 +304,7 @@ const EnrollmentActions: React.FC<IEnrollmentActionsProps> = ({
 };
 
 const EnrollmentStatusAlert: React.FC<{status: TCompletionStatus}> = ({status}) => (
-  <Alert severity={status === 'dropped' ? 'warning' : 'info'}>
+  <Alert severity={status === 'dropped' ? 'warning' : 'info'} data-testid="enrollment-status">
     {status === 'active' && 'You are currently enrolled in this course.'}
     {status === 'completed' && 'You have completed this course.'}
     {status === 'dropped' && 'You were previously enrolled in this course but have dropped it.'}

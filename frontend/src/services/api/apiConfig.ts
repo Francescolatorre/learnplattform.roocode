@@ -83,6 +83,14 @@ export const API_CONFIG = {
       legacyUpdate: (enrollmentId: string | number): string => `/api/v1/course-enrollments/${enrollmentId}/`,
       legacyDelete: (enrollmentId: string | number): string => `/api/v1/course-enrollments/${enrollmentId}/`,
     },
+    courseEnrollments: {
+      list: '/api/v1/course-enrollments/',
+      details: (enrollmentId: string | number): string => `/api/v1/course-enrollments/${enrollmentId}/`,
+      create: '/api/v1/course-enrollments/',
+      update: (enrollmentId: string | number): string => `/api/v1/course-enrollments/${enrollmentId}/`,
+      delete: (enrollmentId: string | number): string => `/api/v1/course-enrollments/${enrollmentId}/`,
+      unenroll: (courseId: string | number): string => `/api/v1/course-enrollments/unenroll/${courseId}/`,
+    },
     taskProgress: {
       list: '/api/v1/task-progress/',
       create: '/api/v1/task-progress/',

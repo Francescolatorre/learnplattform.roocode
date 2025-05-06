@@ -470,7 +470,7 @@ test.describe('Student Course Enrollment and Unenrollment Flow', () => {
         }
     });
 
-    test.skip('should be able to unenroll from a course via the unenroll button', async ({page}) => {
+    test('should be able to unenroll from a course via the unenroll button', async ({page}) => {
         // Get the test course ID and title from previous tests
         const storedCourseId = await page.evaluate(() => {
             return window.localStorage.getItem('e2e_test_course_id');
@@ -775,7 +775,7 @@ test.describe('Student Course Enrollment and Unenrollment Flow', () => {
         }
     });
 
-    test.skip('should be able to cancel unenrollment via the cancel button', async ({page}) => {
+    test('should be able to cancel unenrollment via the cancel button', async ({page}) => {
         // Get the test course ID and title from previous tests
         const storedCourseId = await page.evaluate(() => {
             return window.localStorage.getItem('e2e_test_course_id');
@@ -998,7 +998,7 @@ test.describe('Student Course Enrollment and Unenrollment Flow', () => {
         }
     });
 
-    test.skip('e2e full flow: enroll, verify, unenroll, verify', async ({page}) => {
+    test('e2e full flow: enroll, verify, unenroll, verify', async ({page}) => {
         // Navigate to courses page
         const coursesPage = new StudentCoursesPage(page);
         await coursesPage.navigateTo();

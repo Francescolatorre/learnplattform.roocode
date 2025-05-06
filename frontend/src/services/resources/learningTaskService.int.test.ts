@@ -14,7 +14,7 @@ describe('learningTaskService Integration', () => {
     beforeAll(async () => {
         try {
             // Use instructor account for tests that require course creation permissions
-            const loginData = await authService.login(TEST_USERS.lead_instructor.username, TEST_USERS.lead_instructor.password);
+            const loginData = await authService.login(TEST_USERS.instructor.username, TEST_USERS.instructor.password);
             accessToken = loginData.access;
             // Set Authorization header for all ApiService instances used
             learningTaskService.setAuthToken(accessToken);

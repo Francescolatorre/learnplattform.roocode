@@ -120,7 +120,7 @@ const StudentCourseDetailsPage: React.FC = () => {
    * On success, invalidates the courseDetails query and shows success message
    */
   const unenrollMutation = useMutation({
-    mutationFn: () => enrollmentService.unenrollFromCourse(courseId!),
+    mutationFn: () => enrollmentService.unenrollFromCourseById(courseId!),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['courseDetails', courseId],

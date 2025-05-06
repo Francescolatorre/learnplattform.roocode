@@ -38,19 +38,21 @@ export class CourseDetailPage extends BasePage {
     readonly unenrollButtonSelectors = [
         '[data-testid="unenroll-button"]',
         // Fallback selector if data-testid attribute is not available
-        'button:has-text("Unenroll")'
+        'button:has-text("Unenroll"):not([aria-labelledby="unenroll-dialog-title"]):not([data-testid="confirm-unenroll"])'
     ];
 
     readonly confirmUnenrollButtonSelectors = [
-        'button:has-text("Unenroll")',
-        '.MuiDialogActions-root button[color="error"]',
-        '[data-testid="confirm-unenroll"]'
+        '[data-testid="confirm-unenroll"]',
+        // Fallback selectors if data-testid attribute is not available
+        '[aria-labelledby="unenroll-dialog-title"] button:has-text("Unenroll")',
+        '.MuiDialogActions-root button[color="error"]'
     ];
 
     readonly cancelUnenrollButtonSelectors = [
-        'button:has-text("Cancel")',
-        '.MuiDialogActions-root button:not([color="error"])',
-        '[data-testid="cancel-unenroll"]'
+        '[data-testid="cancel-unenroll"]',
+        // Fallback selectors if data-testid attribute is not available
+        '[aria-labelledby="unenroll-dialog-title"] button:has-text("Cancel")',
+        '.MuiDialogActions-root button:not([color="error"])'
     ];
 
     readonly enrollmentStatusSelectors = [
@@ -368,12 +370,9 @@ export class CourseDetailPage extends BasePage {
                     await unenrollButton.click();
                     console.log('Clicked unenroll button');
 
-                    // Wait for confirmation dialog
-                    const dialogVisible = await this.page.locator('.MuiDialog-root, [role="dialog"]').isVisible({timeout: 3000});
-                    if (!dialogVisible) {
-                        console.warn('Unenroll confirmation dialog not displayed');
-                        return false;
-                    }
+                    // Wait for confirmation dialog - use a more specific selector to avoid strict mode violations
+                    // Use aria-labelledby attribute which is more specific to the dialog content
+                    await this.page.waitForSelector('[aria-labelledby="unenroll-dialog-title"]', {state: 'visible', timeout: 3000});
 
                     // Find and click the confirmation button
                     for (const selector of this.confirmUnenrollButtonSelectors) {
@@ -417,12 +416,9 @@ export class CourseDetailPage extends BasePage {
                     await unenrollButton.click();
                     console.log('Clicked unenroll button');
 
-                    // Wait for confirmation dialog
-                    const dialogVisible = await this.page.locator('.MuiDialog-root, [role="dialog"]').isVisible({timeout: 3000});
-                    if (!dialogVisible) {
-                        console.warn('Unenroll confirmation dialog not displayed');
-                        return false;
-                    }
+                    // Wait for confirmation dialog - use a more specific selector to avoid strict mode violations
+                    // Use aria-labelledby attribute which is more specific to the dialog content
+                    await this.page.waitForSelector('[aria-labelledby="unenroll-dialog-title"]', {state: 'visible', timeout: 3000});
 
                     // Find and click the cancel button
                     for (const selector of this.cancelUnenrollButtonSelectors) {
@@ -433,7 +429,7 @@ export class CourseDetailPage extends BasePage {
                             console.log('Canceled unenrollment');
 
                             // Wait for dialog to disappear
-                            await this.page.waitForSelector('.MuiDialog-root, [role="dialog"]', {state: 'hidden', timeout: 3000})
+                            await this.page.waitForSelector('[aria-labelledby="unenroll-dialog-title"]', {state: 'hidden', timeout: 3000})
                                 .catch(e => console.log('Dialog might still be visible:', e));
 
                             // Should still be enrolled
