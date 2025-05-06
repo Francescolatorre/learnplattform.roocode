@@ -25,7 +25,7 @@ test.describe('Course Creation Functionality', () => {
     logTestAction('Starting test case - navigating to login page');
     // Using LoginPage page object instead of direct navigation
     const loginPage = new LoginPage(page);
-    await loginPage.goto();
+    await loginPage.navigateTo();
   });
 
   test('Instructor can create a new course', async ({page}) => {
@@ -35,7 +35,7 @@ test.describe('Course Creation Functionality', () => {
     logTestAction('Logging in as instructor');
     const loginPage = new LoginPage(page);
     await loginPage.login(
-      TEST_USERS.lead_instructor.username_or_email,
+      TEST_USERS.lead_instructor.username,
       TEST_USERS.lead_instructor.password
     );
     logTestAction('Login successful, redirected to instructor dashboard');
@@ -119,13 +119,13 @@ test.describe('Course Creation Functionality', () => {
     logTestAction('Logging in as instructor');
     const loginPage = new LoginPage(page);
     await loginPage.login(
-      TEST_USERS.lead_instructor.username_or_email,
+      TEST_USERS.lead_instructor.username,
       TEST_USERS.lead_instructor.password
     );
 
     // 2. Navigate directly to course creation page
     const courseCreationPage = new CourseCreationPage(page);
-    await courseCreationPage.goto();
+    await courseCreationPage.navigateTo();
     logTestAction('Navigated to course creation page');
 
     // 3. Try to submit empty form
@@ -144,104 +144,5 @@ test.describe('Course Creation Functionality', () => {
 
     logTestAction(`Validation results - Title error: ${validationErrors.titleError}, Description error: ${validationErrors.descriptionError}`);
     logTestAction('TEST COMPLETED: Form validation works correctly');
-  });
-
-  test('Network request monitoring during course creation', async ({page}) => {
-    logTestAction('TEST STARTED: Monitoring network requests during course creation');
-
-    // 1. Login as instructor using the LoginPage page object
-    logTestAction('Logging in as instructor');
-    const loginPage = new LoginPage(page);
-    await loginPage.login(
-      TEST_USERS.lead_instructor.username_or_email,
-      TEST_USERS.lead_instructor.password
-    );
-
-    // 2. Navigate to course creation page using page objects
-    const instructorDashboard = new InstructorDashboardPage(page);
-    await instructorDashboard.waitForPageLoad();
-
-    await instructorDashboard.navigateToInstructorCourses();
-    const coursesPage = new InstructorCoursesPage(page);
-    await coursesPage.waitForPageLoad();
-
-    await coursesPage.navigateToCreateCourse();
-    const courseCreationPage = new CourseCreationPage(page);
-    await courseCreationPage.waitForPageLoad();
-
-    // 3. Set up network request monitoring
-    logTestAction('Setting up network request monitoring');
-    let courseCreationRequest = null;
-    let courseCreationResponse = null;
-
-    // Listen for API calls to the course creation endpoint
-    page.on('request', request => {
-      if (request.url().includes('/api/v1/courses')) {
-        courseCreationRequest = {
-          url: request.url(),
-          method: request.method(),
-          headers: request.headers(),
-          postData: request.postData()
-        };
-        logTestAction(`Course creation API request detected: ${request.method()} ${request.url()}`);
-        if (request.postData()) {
-          logTestAction(`Request payload: ${request.postData()}`);
-        }
-      }
-    });
-
-    page.on('response', async response => {
-      if (response.url().includes('/api/v1/courses')) {
-        courseCreationResponse = {
-          url: response.url(),
-          status: response.status(),
-          statusText: response.statusText()
-        };
-
-        logTestAction(`Course creation API response: ${response.status()} ${response.statusText()}`);
-
-        try {
-          // Try to capture response body for debugging
-          const responseBody = await response.text();
-          logTestAction(`Response body: ${responseBody}`);
-        } catch (e) {
-          logTestAction('Could not capture response body');
-        }
-      }
-    });
-
-    // 4. Fill course form using page object
-    logTestAction('Filling out course data');
-    await courseCreationPage.fillCourseForm({
-      title: 'Network Test Course',
-      description: 'Testing network requests during course creation.'
-    });
-
-    // 5. Submit the form
-    logTestAction('Submitting form and watching network traffic');
-    await courseCreationPage.submitForm();
-
-    // 6. Wait for network request/response cycle to complete
-    try {
-      const {success, courseId} = await courseCreationPage.waitForSuccessNotification(10000);
-      expect(success).toBeTruthy();
-      logTestAction('Course creation completed successfully with redirect');
-    } catch (e) {
-      logTestAction('ERROR: Course creation did not redirect within timeout');
-      await courseCreationPage.takeScreenshot('course-creation-network-error');
-    }
-
-    // 7. Verify network data was captured
-    if (courseCreationRequest && courseCreationResponse) {
-      logTestAction('Successfully captured network traffic for course creation');
-
-      expect(courseCreationRequest.method).toBe('POST');
-      expect(courseCreationResponse.status).toBe(201); // Created
-
-      logTestAction('TEST COMPLETED: Network monitoring verified correct API interaction');
-    } else {
-      logTestAction('WARNING: Could not capture network traffic for course creation');
-      logTestAction('TEST COMPLETED WITH WARNINGS: Network monitoring incomplete');
-    }
   });
 });

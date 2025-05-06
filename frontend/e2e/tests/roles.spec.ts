@@ -11,7 +11,6 @@ test.describe('User Roles and Permissions', () => {
 
   test('Student role can access student views', async ({page}) => {
     await userSession.loginAs('student');
-    await page.goto('/dashboard');
     await waitForGlobalLoadingToDisappear(page);
     await expect(page.locator('h4:has-text("Dashboard")')).toBeVisible();
     await expect(page.locator('li:has-text("Courses")')).toBeVisible();

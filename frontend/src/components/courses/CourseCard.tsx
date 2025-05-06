@@ -89,61 +89,77 @@ const CourseCard: React.FC<CourseCardProps> = ({course, isLoading = false, isIns
 
   return (
     <Card sx={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-      {course.image_url ? (
-        <CardMedia
-          component="img"
-          height="140"
-          image={course.image_url}
-          alt={course.title}
-        />
-      ) : (
-        <Box
-          sx={{
-            height: 140,
-            backgroundColor: 'grey.300',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Typography variant="body2" color="text.secondary">
-            No image available
-          </Typography>
-        </Box>
-      )}
-
-      <CardContent sx={{flexGrow: 1}}>
-        <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1}}>
-          <Typography gutterBottom variant="h6" component="h2" sx={{mb: 0}}>
-            {course.title}
-          </Typography>
-          <EnrollmentStatusIndicator
-            isEnrolled={!!course.isEnrolled}
-            compact={true}
-            isCompleted={!!course.isCompleted}
+      {/* Make the entire card clickable as a link to the course */}
+      <Box
+        onClick={handleViewCourse}
+        sx={{cursor: 'pointer'}}
+        data-testid={`course-card-${course.id}`}
+      >
+        {course.image_url ? (
+          <CardMedia
+            component="img"
+            height="140"
+            image={course.image_url}
+            alt={course.title}
           />
-        </Box>
-
-        <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>
-          {course.instructor_name && `Instructor: ${course.instructor_name}`}
-        </Typography>
-
-        {/* Description with Markdown support */}
-        <Box sx={{maxHeight: '120px', overflow: 'hidden'}}>
-          {course.description_html ? (
-            <Box sx={{'& img': {display: 'none'}, '& h1,h2,h3': {fontSize: '1rem'}}}>
-              <MarkdownRenderer content={getDescriptionPreview()} />
-            </Box>
-          ) : (
+        ) : (
+          <Box
+            sx={{
+              height: 140,
+              backgroundColor: 'grey.300',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             <Typography variant="body2" color="text.secondary">
-              {getDescriptionPreview()}
+              No image available
             </Typography>
-          )}
-        </Box>
-      </CardContent>
+          </Box>
+        )}
+
+        <CardContent sx={{flexGrow: 1}}>
+          <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1}}>
+            <Typography gutterBottom variant="h6" component="h2" sx={{mb: 0}}>
+              {course.title}
+            </Typography>
+            <EnrollmentStatusIndicator
+              isEnrolled={!!course.isEnrolled}
+              compact={true}
+              isCompleted={!!course.isCompleted}
+            />
+          </Box>
+
+          <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>
+            {course.instructor_name && `Instructor: ${course.instructor_name}`}
+          </Typography>
+
+          {/* Description with Markdown support */}
+          <Box sx={{maxHeight: '120px', overflow: 'hidden'}}>
+            {course.description_html ? (
+              <Box sx={{'& img': {display: 'none'}, '& h1,h2,h3': {fontSize: '1rem'}}}>
+                <MarkdownRenderer
+                  content={getDescriptionPreview()}
+                  component="span"
+                  isPreview={true}
+                />
+              </Box>
+            ) : (
+              <Typography variant="body2" color="text.secondary">
+                {getDescriptionPreview()}
+              </Typography>
+            )}
+          </Box>
+        </CardContent>
+      </Box>
 
       <CardActions>
-        <Button size="small" color="primary" onClick={handleViewCourse}>
+        <Button
+          size="small"
+          color="primary"
+          onClick={handleViewCourse}
+          data-testid="view-course-button"
+        >
           {course.isEnrolled ? 'Continue Learning' : 'View Course'}
         </Button>
       </CardActions>

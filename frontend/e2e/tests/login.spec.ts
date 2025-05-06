@@ -7,7 +7,7 @@ test.describe('Login Functionality', () => {
     await page.goto('/login');
 
     // Fill in the login form with credentials from the centralized configuration
-    await page.fill('input[data-testid="login-username-input"]', TEST_USERS.student.username_or_email);
+    await page.fill('input[data-testid="login-username-input"]', TEST_USERS.student.username);
     await page.fill('input[data-testid="login-password-input"]', TEST_USERS.student.password);
 
     // Submit the form
@@ -33,10 +33,19 @@ test.describe('Login Functionality', () => {
     // Submit the form
     await page.click('button[type="submit"]');
 
-    // Check for the centralized error notification
-    const errorNotification = await page.waitForSelector('.MuiAlert-standardError, .MuiSnackbar-root', {
+    // Check for the centralized error notification using multiple possible selectors
+    // to account for different implementation details
+    const errorNotification = await page.waitForSelector([
+      '[role="alert"]',
+      '[data-testid^="notification-error"]',
+      '.MuiAlert-standardError',
+      '.MuiAlert-filledError',
+      '.error-message',
+      '.MuiSnackbar-root .MuiAlert-root'
+    ].join(', '), {
       timeout: 5000
     });
+
     expect(await errorNotification.isVisible()).toBeTruthy();
 
     // Check the error message content

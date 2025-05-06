@@ -14,7 +14,7 @@ test.describe('Markdown Editor Component', () => {
         const loginPage = new LoginPage(page);
         await loginPage.navigateTo();
         await loginPage.login(
-            TEST_USERS.lead_instructor.username_or_email,
+            TEST_USERS.lead_instructor.username,
             TEST_USERS.lead_instructor.password
         );
 
@@ -64,7 +64,7 @@ test.describe('Markdown Editor Component', () => {
         const loginPage = new LoginPage(page);
         await loginPage.navigateTo();
         await loginPage.login(
-            TEST_USERS.lead_instructor.username_or_email,
+            TEST_USERS.lead_instructor.username,
             TEST_USERS.lead_instructor.password
         );
 

@@ -11,7 +11,7 @@ export async function loginAsStudent(page: Page): Promise<void> {
     try {
         // Use the predefined student user from setupTests.ts
         const studentUser = TEST_USERS.student;
-        await login(page, studentUser.username_or_email, studentUser.password);
+        await login(page, studentUser.username, studentUser.password);
         console.info('Successfully logged in as student');
     } catch (error) {
         console.error('Failed to login as student:', error);
@@ -29,7 +29,7 @@ export async function loginAsInstructor(page: Page): Promise<void> {
     try {
         // Use the predefined instructor user from setupTests.ts
         const instructorUser = TEST_USERS.lead_instructor;
-        await login(page, instructorUser.username_or_email, instructorUser.password);
+        await login(page, instructorUser.username, instructorUser.password);
         console.info('Successfully logged in as instructor');
     } catch (error) {
         console.error('Failed to login as instructor:', error);
@@ -47,7 +47,7 @@ export async function loginAsAdmin(page: Page): Promise<void> {
     try {
         // Use the predefined admin user from setupTests.ts
         const adminUser = TEST_USERS.admin;
-        await login(page, adminUser.username_or_email, adminUser.password);
+        await login(page, adminUser.username, adminUser.password);
         console.info('Successfully logged in as admin');
     } catch (error) {
         console.error('Failed to login as admin:', error);

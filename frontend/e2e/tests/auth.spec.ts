@@ -12,7 +12,7 @@ test.describe('Authentication', () => {
   test('lead instructor can login and access dashboard', async ({page}) => {
     await login(
       page,
-      TEST_USERS.lead_instructor.username_or_email,
+      TEST_USERS.lead_instructor.username,
       TEST_USERS.lead_instructor.password
     );
     // login() already waits for /instructor/dashboard
@@ -20,7 +20,7 @@ test.describe('Authentication', () => {
   });
 
   test('admin user can login and access dashboard', async ({page}) => {
-    await login(page, TEST_USERS.admin.username_or_email, TEST_USERS.admin.password);
+    await login(page, TEST_USERS.admin.username, TEST_USERS.admin.password);
     // login() already waits for /instructor/dashboard
     expect(page.url()).toContain('/admin/dashboard');
   });
@@ -28,7 +28,7 @@ test.describe('Authentication', () => {
   test('shows loading state during login', async ({page}) => {
     await page.fill(
       'input[data-testid="login-username-input"]',
-      TEST_USERS.lead_instructor.username_or_email
+      TEST_USERS.lead_instructor.username
     );
     await page.fill('input[data-testid="login-password-input"]', TEST_USERS.lead_instructor.password);
 
@@ -68,7 +68,7 @@ test.describe('Authentication', () => {
   test('token generation and storage', async ({page}) => {
     await login(
       page,
-      TEST_USERS.lead_instructor.username_or_email,
+      TEST_USERS.lead_instructor.username,
       TEST_USERS.lead_instructor.password
     );
 
@@ -78,7 +78,7 @@ test.describe('Authentication', () => {
   test('Valid login redirects to dashboard', async ({page}) => {
     await login(
       page,
-      TEST_USERS.lead_instructor.username_or_email,
+      TEST_USERS.lead_instructor.username,
       TEST_USERS.lead_instructor.password
     );
     // login() already waits for the appropriate dashboard path
@@ -90,7 +90,7 @@ test.describe('Authentication', () => {
   test('Token storage and refresh', async ({page}) => {
     await login(
       page,
-      TEST_USERS.lead_instructor.username_or_email,
+      TEST_USERS.lead_instructor.username,
       TEST_USERS.lead_instructor.password
     );
 

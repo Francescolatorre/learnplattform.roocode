@@ -1,3 +1,29 @@
+"""
+Django settings for learningplatform_backend project.
+This file contains all the configuration settings for the Learning Platform
+backend Django application, including:
+- Base directory and URL configurations
+- Static files handling
+- Debug and security settings
+- Database configuration (SQLite)
+- Logging setup with multiple handlers:
+    - Debug logs to file
+    - API activity logs to file
+    - Authentication logs to file
+    - Console warnings
+- Installed applications including:
+    - Django built-ins
+    - REST Framework with JWT authentication
+    - CORS handling
+    - Custom apps (core, utils)
+- Middleware configurations with custom logging middleware
+- CORS allowed origins for frontend and MCP server
+- REST Framework settings with JWT authentication
+- Custom user model configuration
+Note: This file is configured for development with DEBUG=True and should be
+modified for production deployment with appropriate security measures.
+"""
+
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -98,10 +124,10 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",iddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",e",
+    "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # Consolidated middlewareacking.XFrameOptionsMiddleware",
     "learningplatform_backend.middleware.middleware.RequestLoggingMiddleware",
@@ -109,16 +135,17 @@ MIDDLEWARE = [
 ]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Allow requests from the frontend
+    "http://localhost:8000",  # Allow requests from the MCP server
 ]
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",  # Use only JWT authentication
     ],
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.AllowAny",  # Allow unrestricted access by default
+        "rest_framework.permissions.IsAuthenticated",  # Require authentication for all endpoints
     ],
     "EXCEPTION_HANDLER": "learningplatform_backend.core.exception_handler.custom_exception_handler",
 }
 
 
-AUTH_USER_MODEL = 'core.User'  # Ensure this is correctly set
+AUTH_USER_MODEL = "core.User"  # Ensure this is correctly set

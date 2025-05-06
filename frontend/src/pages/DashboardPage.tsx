@@ -215,7 +215,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <Box sx={{p: 3}}>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" gutterBottom data-testid="dashboard-title">
         Student Dashboard
       </Typography>
       <Typography variant="subtitle1" color="text.secondary" gutterBottom>

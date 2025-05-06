@@ -21,9 +21,9 @@ test.describe('Learning Task Description Markdown Rendering', () => {
 
         // Login as instructor using page object
         const loginPage = new LoginPage(page);
-        await loginPage.goto();
+        await loginPage.navigateTo();
         await loginPage.login(
-            TEST_USERS.lead_instructor.username_or_email,
+            TEST_USERS.lead_instructor.username,
             TEST_USERS.lead_instructor.password
         );
 
@@ -68,9 +68,9 @@ test.describe('Learning Task Description Markdown Rendering', () => {
     test('instructor can create a learning task with markdown description', async ({page}) => {
         // Login as instructor using page object
         const loginPage = new LoginPage(page);
-        await loginPage.goto();
+        await loginPage.navigateTo();
         await loginPage.login(
-            TEST_USERS.lead_instructor.username_or_email,
+            TEST_USERS.lead_instructor.username,
             TEST_USERS.lead_instructor.password
         );
 
@@ -115,9 +115,9 @@ test.describe('Learning Task Description Markdown Rendering', () => {
     test('task list shows markdown preview correctly', async ({page}) => {
         // Login as instructor using page object
         const loginPage = new LoginPage(page);
-        await loginPage.goto();
+        await loginPage.navigateTo();
         await loginPage.login(
-            TEST_USERS.lead_instructor.username_or_email,
+            TEST_USERS.lead_instructor.username,
             TEST_USERS.lead_instructor.password
         );
 
@@ -135,9 +135,9 @@ test.describe('Learning Task Description Markdown Rendering', () => {
     test('student can view learning task with markdown description', async ({page}) => {
         // Login as student using page object
         const loginPage = new LoginPage(page);
-        await loginPage.goto();
+        await loginPage.navigateTo();
         await loginPage.login(
-            TEST_USERS.student.username_or_email,
+            TEST_USERS.student.username,
             TEST_USERS.student.password
         );
 
@@ -175,9 +175,9 @@ test.describe('Learning Task Description Markdown Rendering', () => {
     test('unsafe markdown content is sanitized', async ({page}) => {
         // Login as instructor using page object
         const loginPage = new LoginPage(page);
-        await loginPage.goto();
+        await loginPage.navigateTo();
         await loginPage.login(
-            TEST_USERS.lead_instructor.username_or_email,
+            TEST_USERS.lead_instructor.username,
             TEST_USERS.lead_instructor.password
         );
 

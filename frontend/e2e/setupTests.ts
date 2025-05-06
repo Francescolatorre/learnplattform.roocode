@@ -20,21 +20,120 @@ function getScreenshotPath(filename: string): string {
 // Centralized test configuration
 export const TEST_USERS = {
     lead_instructor: {
-        username_or_email: 'instructor',
+        username: 'instructor',
         password: 'instructor123',
         expectedRole: 'instructor',
     },
     admin: {
-        username_or_email: 'admin',
+        username: 'admin',
         password: 'adminpassword',
         expectedRole: 'admin',
     },
     student: {
-        username_or_email: 'student',
+        username: 'student',
         password: 'student123',
         expectedRole: 'student',
     },
 };
+
+/**
+ * Ensure test authentication is properly set before navigation
+ * This function checks for role chip in the UI as an indicator of authentication
+ * @param page Playwright Page object
+ * @param role Optional user role to authenticate as if not already authenticated
+ */
+export async function ensureAuthenticated(page: Page, role?: string): Promise<void> {
+    try {
+        console.log('Verifying authentication status before navigation...');
+
+        // Check if we have a non-guest role chip visible in the UI
+        const isAuthenticated = await isUserAuthenticated(page);
+
+        if (isAuthenticated) {
+            console.log('User appears to be authenticated (role chip detected)');
+            return;
+        } else {
+            console.log('No authentication detected (no role chip found)');
+
+            // If a role is provided, log in as that role
+            if (role) {
+                console.log(`Logging in as ${role}...`);
+                const session = new UserSession(page);
+                await session.loginAs(role);
+
+                // Verify authentication after login
+                const authVerified = await isUserAuthenticated(page);
+                if (!authVerified) {
+                    throw new Error(`Failed to verify authentication as ${role} after login`);
+                }
+                return;
+            } else {
+                throw new Error('Not authenticated and no role provided for login');
+            }
+        }
+    } catch (error) {
+        console.error('Error in ensureAuthenticated:', error);
+        await takeScreenshot(page, 'auth-verification-error');
+        throw error;
+    }
+}
+
+/**
+ * Check if the user is authenticated by looking for a non-guest role chip
+ * @param page Playwright Page object
+ * @returns boolean indicating if the user appears to be authenticated
+ */
+export async function isUserAuthenticated(page: Page): Promise<boolean> {
+    try {
+        // Take screenshot to help with debugging
+        await takeScreenshot(page, 'auth-check');
+
+        // Look for role chips in the UI - any role other than "guest" indicates authentication
+        const roleChipSelectors = [
+            // Role chips with specific roles
+            '[data-testid="role-chip"]:has-text("admin")',
+            '[data-testid="role-chip"]:has-text("instructor")',
+            '[data-testid="role-chip"]:has-text("student")',
+
+            // Role indicators in user menu or profile
+            '.user-role:not(:has-text("guest"))',
+            '.role-indicator:not(:has-text("guest"))',
+
+            // User name displays (typically only show when authenticated)
+            '.user-display-name',
+            '[data-testid="user-display-name"]',
+
+            // Account menu buttons (typically only visible when authenticated)
+            '[data-testid="account-menu-button"]',
+            '[aria-label="account of current user"]'
+        ];
+
+        // Check each selector - if any match, user is authenticated
+        for (const selector of roleChipSelectors) {
+            const isVisible = await page.locator(selector).isVisible().catch(() => false);
+            if (isVisible) {
+                console.log(`Authentication indicator found: ${selector}`);
+                return true;
+            }
+        }
+
+        // Check for logout button as alternative indicator of being authenticated
+        const logoutButtonVisible = await page.locator('button:has-text("Logout"), [data-testid="logout-button"]')
+            .isVisible()
+            .catch(() => false);
+
+        if (logoutButtonVisible) {
+            console.log('Authentication confirmed via logout button visibility');
+            return true;
+        }
+
+        console.log('No authentication indicators detected in UI');
+        return false;
+    } catch (error) {
+        console.error('Error checking authentication status:', error);
+        return false;
+    }
+}
 
 // Reusable login helper for Playwright tests
 export const login = async (page: Page, username: string, password: string): Promise<{access: string; refresh: string}> => {
@@ -53,7 +152,7 @@ export const login = async (page: Page, username: string, password: string): Pro
             , username);
     } catch (error) {
         console.error('Failed to find username input field');
-        await page.screenshot({path: getScreenshotPath(`login-username-not-found-${Date.now()}.png`)});
+        await page.screenshot({path: getScreenshotPath(`login-username-not-found-${Date.now()}.png`)});;
         throw error;
     }
 
@@ -67,7 +166,7 @@ export const login = async (page: Page, username: string, password: string): Pro
             , password);
     } catch (error) {
         console.error('Failed to find password input field');
-        await page.screenshot({path: getScreenshotPath(`login-password-not-found-${Date.now()}.png`)});
+        await page.screenshot({path: getScreenshotPath(`login-password-not-found-${Date.now()}.png`)});;
         throw error;
     }
 
@@ -85,7 +184,7 @@ export const login = async (page: Page, username: string, password: string): Pro
     }
     catch (error) {
         console.error('Failed to find login button');
-        await page.screenshot({path: getScreenshotPath(`login-button-not-found-${Date.now()}.png`)});
+        await page.screenshot({path: getScreenshotPath(`login-button-not-found-${Date.now()}.png`)});;
         throw error;
     }
 
@@ -107,7 +206,7 @@ export const login = async (page: Page, username: string, password: string): Pro
         if (await errorNotification.isVisible()) {
             const errorText = await errorNotification.textContent();
             console.error(`Login failed with message: ${errorText}`);
-            await page.screenshot({path: getScreenshotPath(`login-failed-error-${Date.now()}.png`)});
+            await page.screenshot({path: getScreenshotPath(`login-failed-error-${Date.now()}.png`)});;
             throw new Error(`Login failed: ${errorText}`);
         }
     } catch (err) {
@@ -124,6 +223,7 @@ export const login = async (page: Page, username: string, password: string): Pro
     // Wait for authenticated state using multiple indicators
     try {
         await Promise.race([
+
             // Option 1: Wait for URL change
             page.waitForURL(url => {
                 const patterns = ['/dashboard', '/instructor/dashboard', '/courses', '/admin', '/profile'];
@@ -153,11 +253,11 @@ export const login = async (page: Page, username: string, password: string): Pro
         ]);
 
         console.log('Authentication detected successfully');
-        await page.screenshot({path: getScreenshotPath(`login-success-${Date.now()}.png`)});
+        await page.screenshot({path: getScreenshotPath(`login-success-${Date.now()}.png`)});;
 
     } catch (error) {
         console.error('Failed to detect authenticated state', error);
-        await page.screenshot({path: getScreenshotPath(`login-auth-check-failed-${Date.now()}.png`)});
+        await page.screenshot({path: getScreenshotPath(`login-auth-check-failed-${Date.now()}.png`)});;
         throw new Error(`Login appeared to succeed but we couldn't detect authenticated state: ${error.message}`);
     }
 
@@ -192,10 +292,10 @@ export class UserSession {
                 break;
         }
 
-        console.log(`Logging in as ${role} with username: ${userData.username_or_email}`);
+        console.log(`Logging in as ${role} with username: ${userData.username}`);
 
         // Take a screenshot of current state
-        await this.page.screenshot({path: getScreenshotPath(`pre-login-${role}-${Date.now()}.png`)});
+        await this.page.screenshot({path: getScreenshotPath(`pre-login-${role}-${Date.now()}.png`)});;
 
         // Navigate to login page and ensure it's loaded
         await this.page.goto('/login');
@@ -235,7 +335,7 @@ export class UserSession {
         ], 'login button');
 
         // Fill in login form
-        await usernameInput.fill(userData.username_or_email);
+        await usernameInput.fill(userData.username);
         await passwordInput.fill(userData.password);
         console.log('Filled login form');
 
@@ -244,7 +344,7 @@ export class UserSession {
         console.log('Clicked login button');
 
         // Take screenshot right after clicking login
-        await this.page.screenshot({path: getScreenshotPath(`post-click-login-${role}-${Date.now()}.png`)});
+        await this.page.screenshot({path: getScreenshotPath(`post-click-login-${role}-${Date.now()}.png`)});;
 
         // Improved error detection - check for error messages
         const errorSelector = [
@@ -268,7 +368,7 @@ export class UserSession {
                 const errorText = await errorElement.textContent() || 'Unknown error';
                 errorFound = true;
                 console.error(`Login error detected: ${errorText}`);
-                await this.page.screenshot({path: getScreenshotPath(`login-error-${role}-${Date.now()}.png`)});
+                await this.page.screenshot({path: getScreenshotPath(`login-error-${role}-${Date.now()}.png`)});;
                 throw new Error(`Login failed: ${errorText}`);
             }
         } catch (err) {
@@ -307,8 +407,8 @@ export class UserSession {
                     '.avatar',
                     '.user-avatar',
                     'header .username',
-                    `text=Welcome ${userData.username_or_email}`,
-                    `text=Hello ${userData.username_or_email}`,
+                    `text=Welcome ${userData.username}`,
+                    `text=Hello ${userData.username}`,
                     'text=Dashboard',
                     'text=My Courses'
                 ].join(',');
@@ -322,12 +422,12 @@ export class UserSession {
             }
 
             // Take a verification screenshot of authenticated state
-            await this.page.screenshot({path: getScreenshotPath(`login-success-${role}-${Date.now()}.png`)});
+            await this.page.screenshot({path: getScreenshotPath(`login-success-${role}-${Date.now()}.png`)});;
             console.log('Authentication verified for', role);
 
         } catch (error) {
             console.error('Failed to verify authenticated state:', error);
-            await this.page.screenshot({path: getScreenshotPath(`login-verification-failed-${role}-${Date.now()}.png`)});
+            await this.page.screenshot({path: getScreenshotPath(`login-verification-failed-${role}-${Date.now()}.png`)});;
 
             // Log HTML content for debugging
             const htmlContent = await this.page.content();
@@ -350,7 +450,7 @@ export class UserSession {
         }
 
         console.error(`Could not find ${elementName} with any selector`);
-        await this.page.screenshot({path: getScreenshotPath(`element-not-found-${elementName}-${Date.now()}.png`)});
+        await this.page.screenshot({path: getScreenshotPath(`element-not-found-${elementName}-${Date.now()}.png`)});;
         throw new Error(`Could not find ${elementName} on the page`);
     }
 

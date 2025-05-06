@@ -17,6 +17,14 @@ export interface IEnrollmentResponse {
 }
 
 /**
+ * Interface for API responses that may return paginated results
+ */
+interface IPossiblyPaginatedResponse<T> {
+  results?: T[];
+  [key: string]: any;
+}
+
+/**
  * Service for managing course enrollments, including CRUD operations, user enrollments, and course-specific queries.
  * All methods are asynchronous, strictly typed, and use centralized API_CONFIG endpoints.
  *
@@ -209,11 +217,12 @@ class EnrollmentService {
     try {
       // Try direct unenroll endpoint
       try {
-        const response = await this.apiAny.post(API_CONFIG.endpoints.courses.unenroll(courseId), {});
+        const response = await this.apiAny.post(API_CONFIG.endpoints.courses.unenroll(courseId), {}) as Record<string, any>;
         console.log(`Successfully unenrolled from course ${courseId} using unenroll endpoint`);
 
         return {
-          ...response,
+          success: response.success || true,
+          message: response.message || 'Successfully unenrolled from course',
           courseId: String(courseId),
           status: 'dropped'
         };
@@ -279,12 +288,12 @@ class EnrollmentService {
         ? `${API_CONFIG.endpoints.enrollments.list}?${queryParams}`
         : API_CONFIG.endpoints.enrollments.list;
 
-      const response = await this.apiAny.get(endpoint);
+      const response = await this.apiAny.get(endpoint) as ICourseEnrollment[] | IPossiblyPaginatedResponse<ICourseEnrollment>;
 
       // Handle different API response formats - some return direct arrays, some have a results property
-      if (response && Array.isArray(response)) {
+      if (Array.isArray(response)) {
         return response;
-      } else if (response && response.results && Array.isArray(response.results)) {
+      } else if (response && 'results' in response && Array.isArray(response.results)) {
         return response.results;
       } else {
         console.warn('Unexpected response format from enrollment API:', response);

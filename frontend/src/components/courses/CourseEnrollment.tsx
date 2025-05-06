@@ -58,11 +58,8 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
       if (!user?.id) {
         throw new Error('User ID is required');
       }
-      // Use userScoped parameter to automatically filter by current user
-      const enrollments = await enrollmentService.findByFilter(
-        {course: Number(courseId)},
-        {userScoped: true}
-      );
+      // Find enrollments for this course
+      const enrollments = await enrollmentService.findByFilter({course: Number(courseId)});
       const enrollment = enrollments.find(e => e.course === Number(courseId));
       return enrollment ? {
         status: enrollment.status,

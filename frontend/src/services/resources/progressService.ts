@@ -506,14 +506,18 @@ class ProgressService {
         return [
           {
             id: '1',
-            quizId: quizId,
-            userId: '1',
-            startTime: new Date().toISOString(),
-            endTime: new Date().toISOString(),
+            quiz: quizId,
+            user: '1',
+            time_taken: 600, // seconds
+            start_time: new Date().toISOString(),
+            end_time: new Date().toISOString(),
             score: 80,
-            maxScore: 100,
-            status: 'completed'
-          } as IQuizAttempt
+            max_score: 100,
+            completion_status: 'completed',
+            answers: [],
+            feedback: '',
+            graded: true
+          } as unknown as IQuizAttempt
         ];
       }
 
@@ -577,7 +581,7 @@ export const getUserEnrollmentStatus = async (courseId: string): Promise<IEnroll
   progressService.getUserEnrollmentStatus(courseId);
 
 export const getUserProgress = async (courseId: string): Promise<IUserProgressDetails> =>
-  progressService.getUserProgress(courseId);
+  progressService.fetchStudentProgressByCourse(courseId);
 
 export const enrollUserInCourse = async (courseId: string): Promise<IEnrollmentResponse> =>
   progressService.enrollUserInCourse(courseId);

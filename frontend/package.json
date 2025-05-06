@@ -12,6 +12,8 @@
     "test:e2e": "playwright test --config=playwright.config.ts",
     "test:e2e:markdown": "playwright test e2e/tests/markdown/ --project=chromium --config=playwright.config.ts",
     "test:e2e:markdown:withreport": "playwright test e2e/tests/markdown/ --project=chromium --config=playwright.config.ts && start playwright-report/index.html",
+    "test:e2e:debug": "npx playwright test e2e/tests/course-enrollment-unenrollment.spec.ts --debug --headed --timeout 60000",
+    "test:e2e:debug:ui": "npx playwright test e2e/tests/course-enrollment-unenrollment.spec.ts --ui",
     "test:all": "npm run test:unit ; npm run test:integration ; npm run test:e2e",
     "test:coverage": "vitest run --coverage --mode=ci --passWithNoTests",
     "test:ci": "vitest run --coverage --mode=ci --passWithNoTests",

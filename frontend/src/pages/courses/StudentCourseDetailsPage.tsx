@@ -8,14 +8,21 @@ import {
   Box,
   Paper,
   Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@mui/material';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
-import React from 'react';
+import React, {useMemo, useState} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 
 import {useNotification} from '@/components/ErrorNotifier/useErrorNotifier';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import {ICourse} from '@/types/course';
+import {ILearningTask} from '@/types/task';
+import {IPaginatedResponse} from '@/types/paginatedResponse';
 import {useAuth} from '@context/auth/AuthContext';
 import {courseService} from '@services/resources/courseService';
 import {enrollmentService} from '@services/resources/enrollmentService';
@@ -38,9 +45,11 @@ const StudentCourseDetailsPage: React.FC = () => {
   const {isAuthenticated} = useAuth();
   const navigate = useNavigate();
   const notify = useNotification();
+  const [unenrollDialogOpen, setUnenrollDialogOpen] = useState(false);
 
   /**
    * Query to fetch course details by courseId
+   * Added staleTime to prevent excessive refetching
    */
   const {
     data: courseDetails,
@@ -51,7 +60,14 @@ const StudentCourseDetailsPage: React.FC = () => {
     queryFn: () => courseService.getCourseDetails(courseId!),
     enabled: !!courseId,
     retry: false,
+    staleTime: 60000, // 1 minute stale time to prevent excessive refetching
   });
+
+  // Memoize the canViewTasks value to prevent unnecessary re-renders
+  const canViewTasks = useMemo(() =>
+    isAuthenticated && !!courseDetails?.isEnrolled,
+    [isAuthenticated, courseDetails?.isEnrolled]
+  );
 
   /**
    * Query to fetch learning tasks associated with the course
@@ -61,11 +77,12 @@ const StudentCourseDetailsPage: React.FC = () => {
     data: learningTasks,
     isLoading: isTasksLoading,
     error: tasksError,
-  } = useQuery({
+  } = useQuery<IPaginatedResponse<ILearningTask>>({
     queryKey: ['learningTasks', courseId],
-    queryFn: () => courseService.getCourseTasks(courseId!), // Updated to use courseService
-    enabled: !!courseId && courseDetails?.isEnrolled,
+    queryFn: () => courseService.getCourseTasks(courseId!),
+    enabled: !!courseId && canViewTasks, // Use the memoized value
     retry: false,
+    staleTime: 60000, // 1 minute stale time to prevent excessive refetching
   });
 
   /**
@@ -89,16 +106,43 @@ const StudentCourseDetailsPage: React.FC = () => {
         duration: 6000,
       });
     },
-    onError: () => {
+    onError: (error) => {
       notify({
-        message: 'Failed to enroll in course. Please try again later.',
+        message: `Failed to enroll in course: ${error instanceof Error ? error.message : 'Unknown error'}`,
         severity: 'error',
         title: 'Enrollment Error',
       });
     },
   });
 
-  const canViewTasks = isAuthenticated && courseDetails?.isEnrolled;
+  /**
+   * Mutation to handle course unenrollment using enrollmentService
+   * On success, invalidates the courseDetails query and shows success message
+   */
+  const unenrollMutation = useMutation({
+    mutationFn: () => enrollmentService.unenrollFromCourse(courseId!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['courseDetails', courseId],
+      });
+      queryClient.invalidateQueries({queryKey: ['enrollments']});
+      queryClient.invalidateQueries({queryKey: ['courses', courseId]});
+
+      notify({
+        message: 'Successfully unenrolled from course!',
+        severity: 'success',
+        title: 'Unenrollment Success',
+        duration: 6000,
+      });
+    },
+    onError: (error) => {
+      notify({
+        message: `Failed to unenroll from course: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        severity: 'error',
+        title: 'Unenrollment Error',
+      });
+    },
+  });
 
   /**
    * Handles the enrollment button click
@@ -107,6 +151,31 @@ const StudentCourseDetailsPage: React.FC = () => {
    */
   const handleEnrollClick = () => {
     enrollMutation.mutate();
+  };
+
+  /**
+   * Handles the unenrollment button click
+   * Opens the confirmation dialog
+   */
+  const handleUnenrollClick = () => {
+    setUnenrollDialogOpen(true);
+  };
+
+  /**
+   * Confirms the unenrollment action
+   * Triggers the unenrollment mutation
+   */
+  const confirmUnenroll = () => {
+    unenrollMutation.mutate();
+    setUnenrollDialogOpen(false);
+  };
+
+  /**
+   * Cancels the unenrollment action
+   * Closes the confirmation dialog
+   */
+  const cancelUnenroll = () => {
+    setUnenrollDialogOpen(false);
   };
 
   // Modified render method to include status indicator
@@ -126,28 +195,32 @@ const StudentCourseDetailsPage: React.FC = () => {
     return <Typography variant="h6">Course not found.</Typography>;
   }
 
+  // Get the description content in the correct format for the MarkdownRenderer
+  const descriptionContent = courseDetails.description_html || courseDetails.description || "";
+
   return (
     <Box sx={{maxWidth: 1200, mx: 'auto', p: 2}}>
       <Paper sx={{p: 3, mb: 3}}>
         <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2}}>
-          <Typography variant="h3" gutterBottom>
+          <Typography variant="h3" gutterBottom data-testid="course-title">
             {courseDetails.title}
           </Typography>
           <EnrollmentStatusIndicator
             isEnrolled={!!courseDetails.isEnrolled}
             isCompleted={!!courseDetails.isCompleted}
+            data-testid="enrollment-status"
           />
         </Box>
 
         <Divider sx={{my: 2}} />
 
-        {/* Use the MarkdownRenderer component for the description */}
-        <Box sx={{my: 2}}>
-          {courseDetails.description_html ? (
-            <MarkdownRenderer content={courseDetails.description} />
+        {/* Use the MarkdownRenderer component for the description with proper content */}
+        <Box sx={{my: 2}} data-testid="course-description">
+          {descriptionContent ? (
+            <MarkdownRenderer content={descriptionContent} />
           ) : (
             <Typography variant="body1" paragraph>
-              {courseDetails.description}
+              No description available.
             </Typography>
           )}
         </Box>
@@ -161,14 +234,31 @@ const StudentCourseDetailsPage: React.FC = () => {
               disabled={enrollMutation.isPending}
               size="large"
               sx={{px: 4}}
+              data-testid="enroll-button"
             >
               {enrollMutation.isPending ? 'Enrolling...' : 'Enroll in Course'}
             </Button>
           </Box>
         )}
+
+        {canViewTasks && (
+          <Box sx={{mt: 2, mb: 2, display: 'flex', gap: 2}}>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={handleUnenrollClick}
+              disabled={unenrollMutation.isPending}
+              size="large"
+              sx={{px: 4}}
+              data-testid="unenroll-button"
+            >
+              {unenrollMutation.isPending ? 'Unenrolling...' : 'Unenroll from Course'}
+            </Button>
+          </Box>
+        )}
       </Paper>
 
-      {/* Rest of your existing UI... */}
+      {/* Learning tasks section with proper type checking */}
       {canViewTasks ? (
         <Paper sx={{p: 3}}>
           <Typography variant="h5" gutterBottom>
@@ -180,9 +270,9 @@ const StudentCourseDetailsPage: React.FC = () => {
             <Typography variant="body1" color="error">
               Failed to load learning tasks. Please try again later.
             </Typography>
-          ) : learningTasks?.results?.length > 0 ? (
+          ) : learningTasks?.results && learningTasks.results.length > 0 ? (
             <List>
-              {learningTasks!.results.map((task: {id: number; title: string}) => (
+              {learningTasks.results.map((task) => (
                 <ListItem key={task.id} divider>
                   <ListItemText primary={task.title} />
                   <Button
@@ -206,6 +296,30 @@ const StudentCourseDetailsPage: React.FC = () => {
           </Typography>
         </Paper>
       )}
+
+      {/* Unenrollment confirmation dialog with proper data-testid attributes */}
+      <Dialog
+        open={unenrollDialogOpen}
+        onClose={cancelUnenroll}
+        aria-labelledby="unenroll-dialog-title"
+        aria-describedby="unenroll-dialog-description"
+        data-testid="unenroll-confirmation-dialog"
+      >
+        <DialogTitle id="unenroll-dialog-title">Unenroll from Course</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="unenroll-dialog-description">
+            Are you sure you want to unenroll from this course? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancelUnenroll} color="primary" data-testid="cancel-unenroll-button">
+            Cancel
+          </Button>
+          <Button onClick={confirmUnenroll} color="secondary" data-testid="confirm-unenroll-button" autoFocus>
+            Unenroll
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

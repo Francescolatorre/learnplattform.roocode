@@ -370,12 +370,56 @@ export class CourseCreationPage extends BasePage {
       }
 
       // Try to find error message near the field
-      const parentElement = await fieldLocator.evaluateHandle(el => el.parentElement);
-      const errorInParent = await parentElement.asElement()?.locator('.Mui-error, .error-message, p[class*="error"]');
+      // Safely handle the parentElement and its locator
+      try {
+        const parentElement = await fieldLocator.evaluateHandle(el => el.parentElement);
+        const parentElementAsElement = parentElement.asElement();
 
-      if (errorInParent && await errorInParent.isVisible()) {
-        const text = await errorInParent.textContent();
-        if (text) return text.trim();
+        if (parentElementAsElement) {  // Only proceed if we have a valid element
+          // Look for error messages in the parent element
+          const errorSelectors = ['.Mui-error', '.error-message', 'p[class*="error"]', 'div[class*="error"]'];
+
+          for (const selector of errorSelectors) {
+            const errorElement = parentElementAsElement.locator(selector);
+            if (await errorElement.count() > 0 && await errorElement.isVisible()) {
+              const text = await errorElement.textContent();
+              if (text) return text.trim();
+            }
+          }
+
+          // Look for helper text
+          const helperText = parentElementAsElement.locator('.MuiFormHelperText-root');
+          if (await helperText.count() > 0 && await helperText.isVisible()) {
+            const text = await helperText.textContent();
+            if (text) return text.trim();
+          }
+        }
+      } catch (parentError) {
+        console.warn('Error accessing parent element:', parentError);
+      }
+
+      // Look for form field error message formats used in Material UI
+      const formFieldErrorSelectors = [
+        // Look in siblings after the input
+        `${fieldLocator}+.MuiFormHelperText-root`,
+        `${fieldLocator}~.error-message`,
+        `${fieldLocator}~p[class*="error"]`,
+
+        // Look for validation error near field label
+        `label[for="${fieldId}"]~.error-message`,
+        `.MuiFormLabel-root.Mui-error`
+      ];
+
+      for (const selector of formFieldErrorSelectors) {
+        try {
+          const errorElement = this.page.locator(selector);
+          if (await errorElement.count() > 0 && await errorElement.isVisible()) {
+            const text = await errorElement.textContent();
+            if (text) return text.trim();
+          }
+        } catch (err) {
+          // Ignore errors for individual selectors
+        }
       }
 
       return null;

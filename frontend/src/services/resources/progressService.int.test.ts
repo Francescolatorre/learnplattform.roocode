@@ -7,7 +7,7 @@ import {TEST_USERS} from '@/test-utils/setupIntegrationTests';
 
 describe('progressService Integration', () => {
     let accessToken: string;
-    let createdCourseId: string;
+    let createdCourseId: number;
     let userId: number;
 
     beforeAll(async () => {

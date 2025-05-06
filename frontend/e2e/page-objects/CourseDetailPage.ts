@@ -1,33 +1,44 @@
 // filepath: c:\DEVELOPMENT\projects\learnplatfom2\frontend\e2e\page-objects\CourseDetailPage.ts
 import {Page, Locator} from '@playwright/test';
 import {BasePage} from './BasePage';
+import {takeScreenshot} from '../setupTests';
 
 /**
  * Page object model for Course Detail view
  * Handles course enrollment and unenrollment operations
  */
 export class CourseDetailPage extends BasePage {
-    // Selectors for course content elements
+    // Selectors for course content elements - prioritizing data-testid attributes
     readonly courseTitleSelectors = [
+        '[data-testid="course-title"]',
+        '[data-testid="course-header-title"]',
+        // Fallback selectors if data-testid attributes are not available
         'h1.course-title',
         'h1:has-text("Course:")',
-        '[data-testid="course-title"]'
+        '.course-header h1, .course-header h2'
     ];
 
+    // Selectors for course descriptions with Markdown - prioritizing data-testid attributes
     readonly courseDescriptionSelectors = [
-        '.course-description',
         '[data-testid="course-description"]',
-        '.MuiPaper-root .MuiBox-root'
+        '[data-testid="course-content"]',
+        '[data-testid="markdown-content"]',
+        // Fallback selectors if data-testid attributes are not available
+        '.course-description',
+        '.course-description-container',
+        '.course-detail-description'
     ];
 
     readonly enrollButtonSelectors = [
-        'button:has-text("Enroll in Course")',
-        '[data-testid="enroll-button"]'
+        '[data-testid="enroll-button"]',
+        // Fallback selector if data-testid attribute is not available
+        'button:has-text("Enroll in Course")'
     ];
 
     readonly unenrollButtonSelectors = [
-        'button:has-text("Unenroll")',
-        '[data-testid="unenroll-button"]'
+        '[data-testid="unenroll-button"]',
+        // Fallback selector if data-testid attribute is not available
+        'button:has-text("Unenroll")'
     ];
 
     readonly confirmUnenrollButtonSelectors = [
@@ -57,6 +68,19 @@ export class CourseDetailPage extends BasePage {
         '[data-testid="course-status"]'
     ];
 
+    // Selektoren für spezifische Markdown-Elemente in der Kursbeschreibung
+    readonly markdownElementSelectors = {
+        headings: 'h1, h2, h3, h4, h5, h6',
+        paragraphs: 'p',
+        bold: 'strong, b',
+        italic: 'em, i',
+        lists: 'ul, ol, li',
+        links: 'a',
+        images: 'img',
+        blockquotes: 'blockquote',
+        code: 'code, pre'
+    };
+
     constructor(page: Page, courseId?: string) {
         // If no courseId is provided, we'll use a generic URL
         const url = courseId ? `/courses/${courseId}` : '/courses';
@@ -75,24 +99,40 @@ export class CourseDetailPage extends BasePage {
      */
     async isCourseDetailPageLoaded(): Promise<boolean> {
         try {
-            // Try to find the course title
+            // Try to find the course title - prioritizing data-testid selectors
             for (const selector of this.courseTitleSelectors) {
-                const titleElement = this.page.locator(selector);
-                const isVisible = await titleElement.isVisible({timeout: 2000});
-                if (isVisible) {
-                    console.log('Course detail page loaded: title found');
-                    return true;
+                try {
+                    const titleElement = this.page.locator(selector).first();
+                    const isVisible = await titleElement.isVisible({timeout: 2000}).catch(() => false);
+                    if (isVisible) {
+                        console.log(`Course detail page loaded: title found with selector "${selector}"`);
+                        return true;
+                    }
+                } catch (err) {
+                    // Continue to next selector
+                    console.log(`Selector "${selector}" failed, trying next`);
                 }
             }
 
             // If title not found, look for course description
             for (const selector of this.courseDescriptionSelectors) {
-                const descElement = this.page.locator(selector);
-                const isVisible = await descElement.isVisible({timeout: 1000});
-                if (isVisible) {
-                    console.log('Course detail page loaded: description found');
-                    return true;
+                try {
+                    const descElement = this.page.locator(selector).first();
+                    const isVisible = await descElement.isVisible({timeout: 1000}).catch(() => false);
+                    if (isVisible) {
+                        console.log(`Course detail page loaded: description found with selector "${selector}"`);
+                        return true;
+                    }
+                } catch (err) {
+                    // Continue to next selector
                 }
+            }
+
+            // Try to verify based on URL pattern
+            const currentUrl = this.page.url();
+            if (currentUrl.match(/\/courses\/\d+/)) {
+                console.log('Course detail page loaded: URL pattern matches /courses/{id}');
+                return true;
             }
 
             console.warn('Course detail page might not be fully loaded');
@@ -120,18 +160,110 @@ export class CourseDetailPage extends BasePage {
     }
 
     /**
-     * Get the course description
+     * Get the course description including rendered markdown
      */
     async getCourseDescription(): Promise<string> {
         for (const selector of this.courseDescriptionSelectors) {
-            const descElement = this.page.locator(selector);
-            const isVisible = await descElement.isVisible({timeout: 1000});
-            if (isVisible) {
-                const text = await descElement.textContent();
-                return text ? text.trim() : '';
+            try {
+                const descElement = this.page.locator(selector);
+                const isVisible = await descElement.isVisible({timeout: 1000});
+                if (isVisible) {
+                    const text = await descElement.textContent();
+                    return text ? text.trim() : '';
+                }
+            } catch (error) {
+                console.log(`Description selector ${selector} not found`);
+                // Continue trying other selectors
             }
         }
+        console.error('Could not find course description container');
+        await takeScreenshot(this.page, 'course-description-not-found');
         return '';
+    }
+
+    /**
+     * Überprüfen, ob der Kurs Markdown-formatierte Beschreibungsinhalte hat
+     */
+    async hasMarkdownDescription(): Promise<boolean> {
+        try {
+            // Zuerst den Beschreibungs-Container finden
+            let descriptionContainer: Locator | null = null;
+            for (const selector of this.courseDescriptionSelectors) {
+                const container = this.page.locator(selector);
+                if (await container.isVisible({timeout: 0}).catch(() => false)) {
+                    descriptionContainer = container;
+                    break;
+                }
+            }
+
+            if (!descriptionContainer) {
+                console.error('Could not find course description container');
+                return false;
+            }
+
+            // Prüfen auf Markdown-Elemente innerhalb des Containers
+            const markdownElements = [
+                'h1', 'h2', 'h3', 'h4', 'h5', 'h6', // Überschriften
+                'ul', 'ol', 'li',                   // Listen
+                'a[href]',                          // Links
+                'pre', 'code',                      // Code-Blöcke
+                'strong', 'em', 'b', 'i',           // Formatierung
+                'blockquote'                        // Zitate
+            ];
+
+            for (const element of markdownElements) {
+                const count = await descriptionContainer.locator(element).count();
+                if (count > 0) {
+                    console.log(`Markdown element found in course description: ${element}`);
+                    return true;
+                }
+            }
+
+            return false;
+        } catch (error) {
+            console.error('Error checking for markdown in course description:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Überprüfen, ob unsicherer Markdown-Inhalt sanitisiert wird
+     */
+    async isMaliciousContentSanitized(): Promise<boolean> {
+        try {
+            // Überprüfen des HTML-Inhalts für verschiedene Container
+            for (const selector of this.courseDescriptionSelectors) {
+                const container = this.page.locator(selector);
+                const isVisible = await container.isVisible({timeout: 1000}).catch(() => false);
+
+                if (isVisible) {
+                    const html = await container.innerHTML();
+
+                    // Prüfen, ob gefährliche Elemente vorhanden sind
+                    const hasScript = html.includes('<script>') || html.includes('</script>');
+                    const hasEventHandlers = html.includes('onerror=') || html.includes('onclick=');
+                    const hasJsLinks = html.includes('javascript:');
+                    const hasIframe = html.includes('<iframe') || html.includes('</iframe>');
+
+                    const isSanitized = !hasScript && !hasEventHandlers && !hasJsLinks && !hasIframe;
+                    console.log(`Sanitization check results: ${isSanitized ? 'Content is sanitized' : 'Unsanitized content found'}`);
+
+                    if (!isSanitized) {
+                        console.warn('Unsanitized content detected in course description');
+                        await this.takeScreenshot('unsanitized-content-found');
+                    }
+
+                    return isSanitized;
+                }
+            }
+
+            // Wenn kein Container gefunden wurde
+            console.warn("Could not find course description container to check for sanitization");
+            return false;
+        } catch (error) {
+            console.error('Error checking for sanitized content:', error);
+            return false;
+        }
     }
 
     /**

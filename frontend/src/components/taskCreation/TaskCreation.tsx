@@ -33,21 +33,32 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // Keep track of the dialog open state to prevent unnecessary form resets
+    const [previouslyOpen, setPreviouslyOpen] = useState(open);
+
     // Use injected notification service or the hook
     const defaultNotify = useNotification();
     const notify = notificationService || defaultNotify;
 
-    // Update form data when the task prop changes (for editing)
+    // Update form data when the dialog opens or task changes while dialog is open
     useEffect(() => {
-        if (task) {
-            setFormData({
-                title: '',
-                description: '',
-                is_published: false,
-                ...task
-            });
+        // Only update form when dialog opens or when task changes while dialog is open
+        if (open) {
+            if (!previouslyOpen || JSON.stringify(task) !== JSON.stringify(formData)) {
+                setFormData({
+                    title: '',
+                    description: '',
+                    is_published: false,
+                    ...task
+                });
+            }
         }
-    }, [task]);
+
+        // Track open state changes
+        if (previouslyOpen !== open) {
+            setPreviouslyOpen(open);
+        }
+    }, [open, previouslyOpen, task]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const {name, value} = e.target;

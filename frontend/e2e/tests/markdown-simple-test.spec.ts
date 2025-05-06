@@ -23,12 +23,12 @@ test.describe('Markdown Editor Basic Functionality', () => {
       // Step 1: Login as instructor using LoginPage page object
       console.log('Attempting to login as instructor');
       const loginPage = new LoginPage(page);
-      await loginPage.goto();
+      await loginPage.navigateTo();
 
       await takeScreenshot(page, 'login-page');
 
       await loginPage.login(
-        TEST_USERS.lead_instructor.username_or_email,
+        TEST_USERS.lead_instructor.username,
         TEST_USERS.lead_instructor.password
       );
       console.log('Successfully logged in, proceeding to course creation page');
@@ -150,16 +150,28 @@ test.describe('Markdown Editor Basic Functionality', () => {
     try {
       // Step 1: Login as instructor
       const loginPage = new LoginPage(page);
-      await loginPage.goto();
+      await loginPage.navigateTo();
       await loginPage.login(
-        TEST_USERS.lead_instructor.username_or_email,
+        TEST_USERS.lead_instructor.username,
         TEST_USERS.lead_instructor.password
       );
 
       // Navigate to course creation page where markdown editor is available
       console.log('Navigating to course creation page');
+
+      // Use the same navigation pattern as in the first test
+      const instructorDashboard = new InstructorDashboardPage(page);
+      await instructorDashboard.waitForPageLoad();
+
+      // Navigate to instructor courses
+      await instructorDashboard.navigateToInstructorCourses();
+      const coursesPage = new InstructorCoursesPage(page);
+      await coursesPage.waitForPageLoad();
+
+      // Navigate to course creation
+      await coursesPage.navigateToCreateCourse();
+
       const courseCreationPage = new CourseCreationPage(page);
-      await courseCreationPage.goto();
       await courseCreationPage.waitForPageLoad();
 
       // Step 2: Create markdown editor instance

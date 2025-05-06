@@ -18,7 +18,7 @@ export interface ICourseVersion {
 export interface ICourse {
     category: string;
     difficulty_level: string;
-    id: string;
+    id: number;
     title: string;
     description?: string;
     description_html?: string;

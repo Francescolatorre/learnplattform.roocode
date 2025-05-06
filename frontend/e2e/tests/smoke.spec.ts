@@ -22,7 +22,7 @@ test.describe('Smoke Tests', () => {
 
   test('Basic login attempt', async ({page}) => {
     // Use the login helper function and TEST_USERS configuration
-    await login(page, TEST_USERS.admin.username_or_email, TEST_USERS.admin.password);
+    await login(page, TEST_USERS.admin.username, TEST_USERS.admin.password);
 
     // Verify successful login
     await page.waitForURL('/profile', {timeout: 10000});

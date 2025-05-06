@@ -183,7 +183,7 @@ test.describe('API Authentication and Authorization', () => {
 
   test('Admin can authenticate and receive valid tokens', async () => {
     const tokens = await apiHelper.authenticate(
-      TEST_USERS.admin.username_or_email,
+      TEST_USERS.admin.username,
       TEST_USERS.admin.password
     );
 
@@ -196,7 +196,7 @@ test.describe('API Authentication and Authorization', () => {
 
   test('Admin can access courses list', async () => {
     await apiHelper.authenticate(
-      TEST_USERS.admin.username_or_email,
+      TEST_USERS.admin.username,
       TEST_USERS.admin.password
     );
 
@@ -214,7 +214,7 @@ test.describe('API Authentication and Authorization', () => {
 
   test('Instructor can access courses list', async () => {
     await apiHelper.authenticate(
-      TEST_USERS.lead_instructor.username_or_email,
+      TEST_USERS.lead_instructor.username,
       TEST_USERS.lead_instructor.password
     );
 
@@ -225,7 +225,7 @@ test.describe('API Authentication and Authorization', () => {
 
   test('Student can access courses list but cannot modify courses', async () => {
     await apiHelper.authenticate(
-      TEST_USERS.student.username_or_email,
+      TEST_USERS.student.username,
       TEST_USERS.student.password
     );
 
@@ -267,7 +267,7 @@ test.describe('API Authentication and Authorization', () => {
 
   test('Admin can create, update and delete tasks', async () => {
     await apiHelper.authenticate(
-      TEST_USERS.admin.username_or_email,
+      TEST_USERS.admin.username,
       TEST_USERS.admin.password
     );
 
@@ -337,7 +337,7 @@ test.describe('API Authentication and Authorization', () => {
 
   test('Instructor can create, update and delete tasks', async () => {
     await apiHelper.authenticate(
-      TEST_USERS.lead_instructor.username_or_email,
+      TEST_USERS.lead_instructor.username,
       TEST_USERS.lead_instructor.password
     );
 
@@ -408,7 +408,7 @@ test.describe('API Authentication and Authorization', () => {
   test('Token refresh works correctly', async () => {
     // Get initial tokens
     await apiHelper.authenticate(
-      TEST_USERS.admin.username_or_email,
+      TEST_USERS.admin.username,
       TEST_USERS.admin.password
     );
 

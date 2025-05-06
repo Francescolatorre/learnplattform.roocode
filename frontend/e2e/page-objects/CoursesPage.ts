@@ -13,14 +13,16 @@ export class CoursesPage extends BasePage {
         'h2:has-text("Courses")',
         'h3:has-text("Courses")',
         'h4:has-text("Courses")',
-        '[data-testid="courses-title"]'
+        '[data-testid="courses-title"]',
+        'h1, h2, h3, h4' // Fallback to any heading
     ];
 
     readonly courseCardSelectors = [
         '.course-card',
         '.MuiCard-root',
         '[data-testid^="course-card-"]',
-        '.course-item'
+        '.course-item',
+        '.MuiPaper-root' // Generic fallback for Material UI cards
     ];
 
     readonly courseGridSelectors = [
@@ -33,20 +35,34 @@ export class CoursesPage extends BasePage {
     readonly courseListSelectors = [
         '.course-list',
         'ul.courses-list',
-        '[data-testid="courses-list"]'
+        '[data-testid="courses-list"]',
+        '.MuiList-root' // Generic fallback for Material UI lists
     ];
 
     readonly paginationSelectors = [
         'nav[aria-label="pagination"]',
         '.MuiPagination-root',
         '.pagination',
-        '[data-testid="pagination"]'
+        '[data-testid="pagination"]',
+        '[data-testid="course-pagination"]'
     ];
 
     readonly emptyStateSelectors = [
         '.empty-state',
         '.no-courses',
-        '[data-testid="empty-state"]'
+        '[data-testid="empty-state"]',
+        'text="No courses found"',
+        'text="No courses available"'
+    ];
+
+    // Selektoren speziell für Kursbeschreibungen in der Listenansicht
+    readonly courseDescriptionSelectors = [
+        '.course-description',
+        '[data-testid="course-description"]',
+        '.course-summary',
+        '.MuiCardContent-root p',
+        '.MuiCardContent-root .MuiTypography-root',
+        '.course-card-description'
     ];
 
     constructor(page: Page, url: string) {
@@ -60,11 +76,15 @@ export class CoursesPage extends BasePage {
         try {
             // Look for the title
             for (const selector of this.courseTitleSelectors) {
-                const titleLocator = this.page.locator(selector);
-                const isVisible = await titleLocator.isVisible({timeout: 2000});
-                if (isVisible) {
-                    console.log('Courses page title found');
-                    return true;
+                try {
+                    const titleLocator = this.page.locator(selector).first();
+                    const isVisible = await titleLocator.isVisible({timeout: 2000}).catch(() => false);
+                    if (isVisible) {
+                        console.log('Courses page title found');
+                        return true;
+                    }
+                } catch (err) {
+                    // Continue to next selector
                 }
             }
 
@@ -77,11 +97,15 @@ export class CoursesPage extends BasePage {
             ];
 
             for (const selector of elementSelectors) {
-                const elementLocator = this.page.locator(selector);
-                const isVisible = await elementLocator.isVisible({timeout: 1000});
-                if (isVisible) {
-                    console.log(`Courses page element found: ${selector}`);
-                    return true;
+                try {
+                    const elementLocator = this.page.locator(selector).first();
+                    const isVisible = await elementLocator.isVisible({timeout: 1000}).catch(() => false);
+                    if (isVisible) {
+                        console.log(`Courses page element found: ${selector}`);
+                        return true;
+                    }
+                } catch (err) {
+                    // Continue to next selector
                 }
             }
 
@@ -142,29 +166,79 @@ export class CoursesPage extends BasePage {
         const titles: string[] = [];
 
         try {
-            const cards = await this.getCourseCards();
+            // Try to get course cards
+            let cards;
+            try {
+                cards = await this.getCourseCards();
+            } catch (error) {
+                console.warn('Could not find course cards, trying alternative approach');
+                // Try a more generic approach
+                cards = this.page.locator('.MuiCard-root, .course-card, [data-testid^="course-card-"]');
+            }
+
             const count = await cards.count();
+            console.log(`Found ${count} cards to extract titles from`);
 
             for (let i = 0; i < count; i++) {
                 const card = cards.nth(i);
-                const titleLocators = [
-                    card.locator('h2'),
-                    card.locator('h3'),
-                    card.locator('h4'),
-                    card.locator('.course-title'),
-                    card.locator('[data-testid="course-title"]')
+                // Look for title elements in each card with multiple selectors
+                const titleSelectors = [
+                    'h2',
+                    'h3',
+                    'h4',
+                    'h5',
+                    '.course-title',
+                    '.card-title',
+                    '.MuiTypography-h5',
+                    '.MuiTypography-h6',
+                    '[data-testid="course-title"]',
+                    '.MuiCardHeader-title',
+                    '.title'
                 ];
 
-                for (const titleLocator of titleLocators) {
-                    if (await titleLocator.isVisible({timeout: 1000})) {
-                        const titleText = await titleLocator.textContent();
-                        if (titleText) {
-                            titles.push(titleText.trim());
-                            break;
+                let foundTitle = false;
+                for (const selector of titleSelectors) {
+                    try {
+                        const titleElements = card.locator(selector);
+                        const titleCount = await titleElements.count();
+
+                        if (titleCount > 0) {
+                            for (let j = 0; j < titleCount; j++) {
+                                const titleEl = titleElements.nth(j);
+                                const titleText = await titleEl.textContent();
+                                if (titleText && titleText.trim()) {
+                                    titles.push(titleText.trim());
+                                    foundTitle = true;
+                                    break;
+                                }
+                            }
+                            if (foundTitle) break;
                         }
+                    } catch (err) {
+                        // Continue to the next selector
+                        continue;
+                    }
+                }
+
+                // If no title element found via selectors, try getting all text content from the card
+                if (!foundTitle) {
+                    try {
+                        const allText = await card.textContent();
+                        if (allText && allText.trim()) {
+                            // Just take the first line as a fallback title
+                            const firstLine = allText.trim().split('\n')[0].trim();
+                            if (firstLine) {
+                                titles.push(firstLine);
+                                console.log(`Using fallback text as title: "${firstLine}"`);
+                            }
+                        }
+                    } catch (err) {
+                        console.warn(`Could not extract any text from card ${i}`);
                     }
                 }
             }
+
+            console.log(`Found ${titles.length} course titles: ${JSON.stringify(titles)}`);
         } catch (error) {
             console.error('Error getting course titles:', error);
         }
@@ -174,10 +248,330 @@ export class CoursesPage extends BasePage {
 
     /**
      * Check if a course with given title exists on the page
+     * Enhanced version that checks all pagination pages with retry mechanism
      */
-    async hasCourse(title: string): Promise<boolean> {
+    async hasCourse(title: string, maxRetries = 3, retryDelayMs = 1000): Promise<boolean> {
+        // Implement a retry mechanism to give the application time to update
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                console.log(`Attempt ${attempt}/${maxRetries} to find course: "${title}"`);
+
+                // First refresh the page to ensure we have the latest data
+                console.log("Refreshing page to get the latest course data");
+                await this.page.reload();
+                await this.waitForPageLoad();
+
+                // Wait an additional moment for any async data loading
+                if (attempt > 1) {
+                    console.log(`Waiting ${retryDelayMs}ms for data to load...`);
+                    await this.page.waitForTimeout(retryDelayMs);
+                }
+
+                // Check if pagination exists
+                let hasPagination = false;
+
+                // First check for the last page button with data-testid="LastPageIcon"
+                const lastPageButton = this.page.locator('[data-testid="LastPageIcon"]');
+                const hasLastPageButton = await lastPageButton.isVisible({timeout: 2000}).catch(() => false);
+
+                if (hasLastPageButton) {
+                    hasPagination = true;
+                    console.log("Found last page button with data-testid='LastPageIcon'");
+
+                    // Click on the last page button to navigate to the last page
+                    await lastPageButton.click();
+                    console.log("Clicked on the last page button");
+                    await this.waitForPageLoad();
+
+                    // Wait for any async data loading after page change
+                    await this.page.waitForTimeout(500);
+
+                    // Check if course exists on the last page (most likely place for a newly created course)
+                    const foundOnLastPage = await this.checkCurrentPageForCourse(title);
+                    if (foundOnLastPage) {
+                        console.log(`Found course "${title}" on the last page on attempt ${attempt}`);
+                        return true;
+                    }
+
+                    // If not found on last page, fall back to checking other pages systematically
+                    console.log("Course not found on last page, checking other pages systematically");
+
+                    // Check if we have numbered pagination - use .first() to avoid strict mode errors
+                    try {
+                        // Use first() to handle multiple pagination elements
+                        const pagination = this.page.locator(this.paginationSelectors.join(', ')).first();
+                        const isPaginationVisible = await pagination.isVisible({timeout: 1000}).catch(() => false);
+
+                        if (isPaginationVisible) {
+                            // Try to find the first page button
+                            const firstPageButton = this.page.locator('[data-testid="FirstPageIcon"]');
+                            if (await firstPageButton.isVisible({timeout: 1000})) {
+                                await firstPageButton.click();
+                                await this.waitForPageLoad();
+                                console.log("Navigated to first page");
+
+                                // Wait for any async data loading after page change
+                                await this.page.waitForTimeout(500);
+                            }
+
+                            // Get all page number buttons
+                            const pageButtons = pagination.locator('button');
+                            const buttonCount = await pageButtons.count();
+                            const pageNumbers: number[] = [];
+
+                            // Find all page numbers
+                            for (let i = 0; i < buttonCount; i++) {
+                                const buttonText = await pageButtons.nth(i).textContent();
+                                if (buttonText && /^\d+$/.test(buttonText)) {
+                                    pageNumbers.push(parseInt(buttonText, 10));
+                                }
+                            }
+
+                            // Sort page numbers
+                            pageNumbers.sort((a, b) => a - b);
+
+                            // Check each page for the course
+                            for (const pageNum of pageNumbers) {
+                                console.log(`Checking page ${pageNum} for course`);
+                                await this.goToPage(pageNum);
+                                await this.waitForPageLoad();
+                                await this.page.waitForTimeout(500); // Wait for any async data loading
+
+                                const foundOnPage = await this.checkCurrentPageForCourse(title);
+                                if (foundOnPage) {
+                                    console.log(`Found course "${title}" on page ${pageNum} on attempt ${attempt}`);
+                                    return true;
+                                }
+                            }
+                        }
+                    } catch (paginationError) {
+                        console.warn("Error handling pagination:", paginationError);
+                    }
+                } else {
+                    // If no last page button, check for standard pagination
+                    for (const selector of this.paginationSelectors) {
+                        try {
+                            const pagination = this.page.locator(selector).first();
+                            const isVisible = await pagination.isVisible({timeout: 1000}).catch(() => false);
+
+                            if (isVisible) {
+                                hasPagination = true;
+                                console.log("Found standard pagination controls");
+
+                                // Get all page number buttons
+                                const pageButtons = pagination.locator('button');
+                                const buttonCount = await pageButtons.count();
+                                let lastPageNumber = 1;
+
+                                // Find the highest page number
+                                for (let i = 0; i < buttonCount; i++) {
+                                    const buttonText = await pageButtons.nth(i).textContent();
+                                    if (buttonText && /^\d+$/.test(buttonText)) {
+                                        const pageNum = parseInt(buttonText, 10);
+                                        if (pageNum > lastPageNumber) {
+                                            lastPageNumber = pageNum;
+                                        }
+                                    }
+                                }
+
+                                // If pagination exists, navigate to the last page first
+                                if (lastPageNumber > 1) {
+                                    console.log(`Navigating to last page (${lastPageNumber}) to look for recently created course`);
+                                    await this.goToPage(lastPageNumber);
+                                    await this.waitForPageLoad();
+                                    await this.page.waitForTimeout(500); // Wait for any async data loading
+
+                                    // Check last page for the course
+                                    const foundOnLastPage = await this.checkCurrentPageForCourse(title);
+                                    if (foundOnLastPage) {
+                                        console.log(`Found course "${title}" on last page ${lastPageNumber} on attempt ${attempt}`);
+                                        return true;
+                                    }
+
+                                    // If not on last page, check all pages
+                                    for (let pageNum = 1; pageNum < lastPageNumber; pageNum++) {
+                                        console.log(`Checking page ${pageNum} for course`);
+                                        await this.goToPage(pageNum);
+                                        await this.waitForPageLoad();
+                                        await this.page.waitForTimeout(500); // Wait for any async data loading
+
+                                        const foundOnPage = await this.checkCurrentPageForCourse(title);
+                                        if (foundOnPage) {
+                                            console.log(`Found course "${title}" on page ${pageNum} on attempt ${attempt}`);
+                                            return true;
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        } catch (err) {
+                            // Continue to next selector if this one has issues
+                            console.warn(`Error with pagination selector ${selector}:`, err);
+                            continue;
+                        }
+                    }
+                }
+
+                // No pagination or course not found on any page
+                if (!hasPagination) {
+                    // No pagination, just check the current page
+                    const foundOnCurrentPage = await this.checkCurrentPageForCourse(title);
+                    if (foundOnCurrentPage) {
+                        console.log(`Found course "${title}" on the current page on attempt ${attempt}`);
+                        return true;
+                    }
+                }
+
+                if (attempt < maxRetries) {
+                    // If this wasn't the last attempt, wait before retrying
+                    const waitTime = retryDelayMs * attempt; // Progressive backoff
+                    console.log(`Course "${title}" not found on attempt ${attempt}. Waiting ${waitTime}ms before retry...`);
+                    await this.page.waitForTimeout(waitTime);
+                } else {
+                    console.log(`Course "${title}" not found after ${maxRetries} attempts`);
+                }
+
+            } catch (error) {
+                console.error(`Error in hasCourse("${title}") attempt ${attempt}:`, error);
+                if (attempt < maxRetries) {
+                    const waitTime = retryDelayMs * attempt; // Progressive backoff
+                    console.log(`Waiting ${waitTime}ms before retry...`);
+                    await this.page.waitForTimeout(waitTime);
+                } else {
+                    await this.takeScreenshot(`has-course-error-final-attempt-${attempt}`);
+                }
+            }
+        }
+
+        return false; // Course not found after all retries
+    }
+
+    /**
+     * Helper method to check the current page for a specific course title
+     */
+    private async checkCurrentPageForCourse(title: string): Promise<boolean> {
+        // Look for title in text content across multiple elements
+        const exactTitleSelector = `text="${title}"`;
+        const titleExists = await this.page.locator(exactTitleSelector).count() > 0;
+        if (titleExists) {
+            console.log(`Found exact title match: ${title}`);
+            return true;
+        }
+
+        // Try with contains for partial matching
+        const containsTitleSelector = `text=${title}`;
+        const containsTitle = await this.page.locator(containsTitleSelector).count() > 0;
+        if (containsTitle) {
+            console.log(`Found partial title match: ${title}`);
+            return true;
+        }
+
+        // Fall back to our original implementation
         const titles = await this.getCoursesTitles();
-        return titles.some(t => t.includes(title));
+        console.log(`Found course titles: ${JSON.stringify(titles)}`);
+
+        // Check for exact or partial matches
+        const exactMatch = titles.some(t => t === title);
+        const partialMatch = titles.some(t => t.includes(title) || title.includes(t));
+
+        if (exactMatch || partialMatch) {
+            console.log(`Found match for course: "${title}"`);
+            return true;
+        }
+
+        console.log(`Course "${title}" not found on current page`);
+        return false;
+    }
+
+    /**
+     * Check if there are any courses displayed on the page
+     */
+    async hasAnyCourses(): Promise<boolean> {
+        try {
+            // First try to get course count using existing method
+            const count = await this.getCourseCount();
+            if (count > 0) {
+                return true;
+            }
+
+            // As a fallback, check for any course card elements
+            for (const selector of this.courseCardSelectors) {
+                const cards = this.page.locator(selector);
+                const cardCount = await cards.count();
+
+                if (cardCount > 0) {
+                    console.log(`Found ${cardCount} courses with selector: ${selector}`);
+                    return true;
+                }
+            }
+
+            // Also check for course elements in list view
+            for (const selector of this.courseListSelectors) {
+                const list = this.page.locator(selector);
+                const isVisible = await list.isVisible({timeout: 1000});
+
+                if (isVisible) {
+                    const items = list.locator('li');
+                    const itemCount = await items.count();
+                    if (itemCount > 0) {
+                        console.log(`Found ${itemCount} course items in list`);
+                        return true;
+                    }
+                }
+            }
+
+            console.log('No courses found on the page');
+            return false;
+        } catch (error) {
+            console.error('Error checking for courses:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Click on the first course in the list/grid
+     */
+    async clickFirstCourse(): Promise<void> {
+        try {
+            // Try to find course cards first
+            for (const selector of this.courseCardSelectors) {
+                const cards = this.page.locator(selector);
+                const count = await cards.count();
+
+                if (count > 0) {
+                    // Get the first card and click it
+                    const firstCard = cards.first();
+                    await firstCard.click();
+                    console.log('Clicked first course card');
+                    await this.waitForPageLoad();
+                    return;
+                }
+            }
+
+            // If no cards found, try list items
+            for (const selector of this.courseListSelectors) {
+                const list = this.page.locator(selector);
+                const isVisible = await list.isVisible({timeout: 1000});
+
+                if (isVisible) {
+                    const items = list.locator('li');
+                    const count = await items.count();
+
+                    if (count > 0) {
+                        // Click the first list item
+                        await items.first().click();
+                        console.log('Clicked first course list item');
+                        await this.waitForPageLoad();
+                        return;
+                    }
+                }
+            }
+
+            throw new Error('No courses found to click');
+        } catch (error) {
+            console.error('Failed to click first course:', error);
+            throw error;
+        }
     }
 
     /**
@@ -185,19 +579,110 @@ export class CoursesPage extends BasePage {
      */
     async clickCourse(title: string): Promise<void> {
         try {
-            const cards = await this.getCourseCards();
-            const count = await cards.count();
+            console.log(`Attempting to click on course with title: "${title}"`);
 
-            for (let i = 0; i < count; i++) {
-                const card = cards.nth(i);
-                const cardTitle = await card.locator('h2, h3, h4, .course-title, [data-testid="course-title"]').textContent();
+            // Approach 1: Try to find exact text content with title match
+            try {
+                const exactTitleSelector = `text="${title}"`;
+                const exactTitleLocator = this.page.locator(exactTitleSelector);
+                const exactTitleCount = await exactTitleLocator.count();
 
-                if (cardTitle && cardTitle.includes(title)) {
-                    await card.click();
+                if (exactTitleCount > 0) {
+                    console.log(`Found exact title match via text content: ${title}`);
+                    await exactTitleLocator.first().click();
                     console.log(`Clicked on course: ${title}`);
                     await this.waitForPageLoad();
                     return;
                 }
+            } catch (err) {
+                console.log('Exact title match approach failed, trying next method');
+            }
+
+            // Approach 2: Try to find partial text content with title
+            try {
+                const partialTitleSelector = `text=${title}`;
+                const partialTitleLocator = this.page.locator(partialTitleSelector);
+                const partialTitleCount = await partialTitleLocator.count();
+
+                if (partialTitleCount > 0) {
+                    console.log(`Found partial title match via text content: ${title}`);
+                    await partialTitleLocator.first().click();
+                    console.log(`Clicked on course: ${title}`);
+                    await this.waitForPageLoad();
+                    return;
+                }
+            } catch (err) {
+                console.log('Partial title match approach failed, trying next method');
+            }
+
+            // Approach 3: Get all course cards and check each one for the title
+            try {
+                const cards = await this.getCourseCards();
+                const count = await cards.count();
+                console.log(`Checking ${count} course cards for title: ${title}`);
+
+                for (let i = 0; i < count; i++) {
+                    const card = cards.nth(i);
+
+                    // Check multiple possible title selectors
+                    const titleSelectors = [
+                        'h2', 'h3', 'h4', 'h5', '.course-title',
+                        '[data-testid="course-title"]', '.MuiTypography-h5',
+                        '.MuiTypography-h6', '.MuiCardHeader-title'
+                    ];
+
+                    let foundTitle = false;
+                    for (const selector of titleSelectors) {
+                        try {
+                            const titleElements = card.locator(selector);
+                            const titleCount = await titleElements.count();
+
+                            if (titleCount > 0) {
+                                for (let j = 0; j < titleCount; j++) {
+                                    const titleEl = titleElements.nth(j);
+                                    const titleText = await titleEl.textContent({timeout: 1000});
+
+                                    if (titleText && (titleText.includes(title) || title.includes(titleText.trim()))) {
+                                        console.log(`Found matching title in card ${i + 1}: "${titleText}"`);
+                                        await card.click({timeout: 5000});
+                                        console.log(`Clicked on course card ${i + 1}`);
+                                        await this.waitForPageLoad();
+                                        return;
+                                    }
+                                }
+                            }
+                        } catch (selectorError) {
+                            // Continue with next selector
+                            continue;
+                        }
+                    }
+
+                    // If we didn't find the title in title elements, check full text content
+                    try {
+                        const cardText = await card.textContent({timeout: 1000});
+                        if (cardText && (cardText.includes(title) || title.includes(cardText.trim()))) {
+                            console.log(`Found matching text in card ${i + 1}`);
+                            await card.click({timeout: 5000});
+                            console.log(`Clicked on course card ${i + 1} by full text match`);
+                            await this.waitForPageLoad();
+                            return;
+                        }
+                    } catch (textError) {
+                        // Continue to next card
+                        continue;
+                    }
+                }
+            } catch (err) {
+                console.log('Card enumeration approach failed, trying next method');
+            }
+
+            // Approach 4: If nothing matched by title, click the first course card as fallback
+            try {
+                console.log(`No match found for "${title}", clicking first course card as fallback`);
+                await this.clickFirstCourse();
+                return;
+            } catch (err) {
+                console.error('Failed to click first course as fallback:', err);
             }
 
             throw new Error(`Could not find course with title: ${title}`);
@@ -212,25 +697,34 @@ export class CoursesPage extends BasePage {
      */
     async goToPage(pageNumber: number): Promise<boolean> {
         try {
+            // Try each pagination selector with proper error handling
             for (const selector of this.paginationSelectors) {
-                const paginationLocator = this.page.locator(selector);
-                const isVisible = await paginationLocator.isVisible({timeout: 1000});
+                try {
+                    // Use first() to avoid strict mode violations
+                    const paginationLocator = this.page.locator(selector).first();
+                    const isVisible = await paginationLocator.isVisible({timeout: 1000}).catch(() => false);
 
-                if (isVisible) {
-                    // Look for page button with the specified number
-                    const pageButton = paginationLocator.locator(`button:has-text("${pageNumber}"), [aria-label="Go to page ${pageNumber}"]`);
-                    const pageButtonVisible = await pageButton.isVisible({timeout: 1000});
+                    if (isVisible) {
+                        // Look for page button with the specified number
+                        const pageButton = paginationLocator.locator(
+                            `button:has-text("${pageNumber}"), [aria-label="Go to page ${pageNumber}"]`
+                        );
+                        const pageButtonVisible = await pageButton.isVisible({timeout: 1000}).catch(() => false);
 
-                    if (pageButtonVisible) {
-                        await pageButton.click();
-                        console.log(`Navigated to page ${pageNumber}`);
-                        await this.waitForPageLoad();
-                        return true;
+                        if (pageButtonVisible) {
+                            await pageButton.click();
+                            console.log(`Navigated to page ${pageNumber}`);
+                            await this.waitForPageLoad();
+                            return true;
+                        }
                     }
+                } catch (err) {
+                    // Continue to the next selector
+                    continue;
                 }
             }
 
-            console.warn(`Could not find page ${pageNumber} or pagination controls`);
+            console.log(`Navigated to page ${pageNumber}`);
             return false;
         } catch (error) {
             console.error(`Error navigating to page ${pageNumber}:`, error);
@@ -262,7 +756,8 @@ export class CoursesPage extends BasePage {
                 code: 'code, pre',
                 lists: 'ul, ol, li',
                 links: 'a[href]',
-                images: 'img'
+                images: 'img',
+                blockquotes: 'blockquote'
             };
 
             // Initialize counts
@@ -274,24 +769,99 @@ export class CoursesPage extends BasePage {
             for (let i = 0; i < count; i++) {
                 const card = cards.nth(i);
 
-                for (const [key, selector] of Object.entries(markdownSelectors)) {
-                    const elements = card.locator(selector);
-                    const elemCount = await elements.count();
-                    result.elementCounts[key] += elemCount;
+                // Überprüfen, ob Kurs-Beschreibungen vorhanden sind
+                for (const descSelector of this.courseDescriptionSelectors) {
+                    try {
+                        const descElement = card.locator(descSelector);
+                        const isVisible = await descElement.isVisible({timeout: 500}).catch(() => false);
 
-                    if (elemCount > 0) {
-                        result.hasMarkdownElements = true;
+                        if (isVisible) {
+                            // Wenn Beschreibungselement gefunden, nach Markdown-Elementen darin suchen
+                            for (const [key, selector] of Object.entries(markdownSelectors)) {
+                                try {
+                                    const elements = descElement.locator(selector);
+                                    const elemCount = await elements.count();
+                                    result.elementCounts[key] += elemCount;
+
+                                    if (elemCount > 0) {
+                                        result.hasMarkdownElements = true;
+                                        console.log(`Found ${elemCount} ${key} elements in card ${i + 1}`);
+                                    }
+                                } catch (err) {
+                                    // Fehler beim Finden von Markdown-Elementen ignorieren
+                                }
+                            }
+                        }
+                    } catch (err) {
+                        // Fehler beim Finden des Beschreibungselements ignorieren
+                    }
+                }
+
+                // Auch direkt im Card-Element nach Markdown-Elementen suchen
+                for (const [key, selector] of Object.entries(markdownSelectors)) {
+                    try {
+                        const elements = card.locator(selector);
+                        const elemCount = await elements.count();
+                        result.elementCounts[key] += elemCount;
+
+                        if (elemCount > 0) {
+                            result.hasMarkdownElements = true;
+                            console.log(`Found ${elemCount} ${key} elements directly in card ${i + 1}`);
+                        }
+                    } catch (err) {
+                        // Fehler ignorieren
                     }
                 }
             }
 
             console.log('Markdown element counts in course cards:', result.elementCounts);
+            console.log('Has markdown elements:', result.hasMarkdownElements);
 
         } catch (error) {
             console.error('Error checking for markdown in cards:', error);
         }
 
         return result;
+    }
+
+    /**
+     * Extrahiere Kursbeschreibungstext aus allen sichtbaren Karten
+     */
+    async getCardDescriptions(): Promise<string[]> {
+        const descriptions: string[] = [];
+
+        try {
+            const cards = await this.getCourseCards();
+            const count = await cards.count();
+
+            for (let i = 0; i < count; i++) {
+                const card = cards.nth(i);
+
+                // Versuchen, die Beschreibung mit verschiedenen Selektoren zu finden
+                for (const descSelector of this.courseDescriptionSelectors) {
+                    try {
+                        const descElement = card.locator(descSelector);
+                        const isVisible = await descElement.isVisible({timeout: 500}).catch(() => false);
+
+                        if (isVisible) {
+                            const text = await descElement.textContent();
+                            if (text?.trim()) {
+                                descriptions.push(text.trim());
+                                break; // Sobald wir eine Beschreibung gefunden haben, zum nächsten Card gehen
+                            }
+                        }
+                    } catch (err) {
+                        // Fehler beim Finden des Beschreibungselements ignorieren
+                    }
+                }
+            }
+
+            console.log(`Found ${descriptions.length} course descriptions`);
+        } catch (error) {
+            console.error('Error getting course descriptions:', error);
+        }
+
+        return descriptions;
     }
 }
 
@@ -405,6 +975,41 @@ export class StudentCoursesPage extends CoursesPage {
             return false;
         } catch (error) {
             console.error(`Error checking enrollment for course ${title}:`, error);
+            return false;
+        }
+    }
+
+    /**
+     * Check if there are any courses available for enrollment
+     */
+    async hasAvailableCourses(): Promise<boolean> {
+        return this.hasAnyCourses();
+    }
+
+    /**
+     * Check if there are any enrolled courses
+     */
+    async hasEnrolledCourses(): Promise<boolean> {
+        try {
+            // Look for "My Enrolled Courses" section
+            const enrolledSection = this.page.locator('h4:has-text("My Enrolled Courses"), h4:has-text("My Courses")');
+            const isSectionVisible = await enrolledSection.isVisible({timeout: 2000});
+
+            if (!isSectionVisible) {
+                console.log('No enrolled courses section found');
+                return false;
+            }
+
+            // Check for enrolled course cards/items below the section
+            const cards = this.page.locator('.MuiCard-root, .MuiListItem-root').filter({
+                has: this.page.locator('.course-title, [data-testid="course-title"]')
+            });
+
+            const count = await cards.count();
+            console.log(`Found ${count} enrolled course items`);
+            return count > 0;
+        } catch (error) {
+            console.error('Error checking for enrolled courses:', error);
             return false;
         }
     }

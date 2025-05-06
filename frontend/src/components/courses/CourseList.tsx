@@ -22,11 +22,13 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import PeopleIcon from '@mui/icons-material/People';
 import SchoolIcon from '@mui/icons-material/School';
+import AddIcon from '@mui/icons-material/Add';
 
 // Importiere den Typ direkt aus der Typdatei, um Casing-Probleme zu vermeiden
 import {ICourse} from '@/types/course';
 import {formatDateRelative} from '@/utils/dateUtils';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
+import {useAuth} from '@/context/auth/AuthContext';
 
 // Custom type extension for course with student count
 interface ICourseWithEnrollment extends ICourse {
@@ -53,6 +55,10 @@ const CourseList: React.FC<ICourseListProps> = ({
   showInstructorActions = false
 }) => {
   const [isModalOpen, setModalOpen] = useState(false);
+  const {user} = useAuth();
+
+  // Check if user has instructor or admin privileges
+  const canManageTasks = user?.role === 'instructor' || user?.role === 'admin';
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -61,6 +67,7 @@ const CourseList: React.FC<ICourseListProps> = ({
   const handleCloseModal = () => {
     setModalOpen(false);
   };
+
   // Get status color based on course status
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -91,16 +98,32 @@ const CourseList: React.FC<ICourseListProps> = ({
 
   return (
     <Box>
-      {title && (
-        <Typography variant="h6" component="h2" gutterBottom>
-          {title}
-        </Typography>
+      <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2}}>
+        {title && (
+          <Typography variant="h6" component="h2">
+            {title}
+          </Typography>
+        )}
+
+        {/* Only show Add Task button for instructors and admins */}
+        {canManageTasks && showInstructorActions && (
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={handleOpenModal}
+            size="small"
+          >
+            Add Task
+          </Button>
+        )}
+      </Box>
+
+      {/* Task creation dialog - only rendered if user has the right permissions */}
+      {canManageTasks && showInstructorActions && (
+        <TaskCreation open={isModalOpen} onClose={handleCloseModal} />
       )}
 
-      <Button variant="contained" onClick={handleOpenModal}>
-        Add Task
-      </Button>
-      <TaskCreation open={isModalOpen} onClose={handleCloseModal} />
       <List sx={{width: '100%', bgcolor: 'background.paper'}}>
         {courses.map((course, index) => (
           <React.Fragment key={course.id}>
@@ -161,6 +184,7 @@ const CourseList: React.FC<ICourseListProps> = ({
                         <MarkdownRenderer
                           content={getDescriptionPreview(course)}
                           isPreview={true}
+                          component="span" // Use span instead of div to avoid DOM nesting issues
                         />
                       </Box>
                     ) : (

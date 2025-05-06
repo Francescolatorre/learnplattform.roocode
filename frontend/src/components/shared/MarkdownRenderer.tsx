@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {forwardRef} from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeSanitize from 'rehype-sanitize';
 import rehypeHighlight from 'rehype-highlight';
@@ -28,17 +28,25 @@ interface IMarkdownRendererProps {
    * In preview mode, we'll use more compact styling and avoid DOM nesting issues
    */
   isPreview?: boolean;
+
+  /**
+   * Component to use for the root element
+   * Use 'span' when MarkdownRenderer is inside a <p> or other text element
+   * to prevent invalid DOM nesting
+   */
+  component?: React.ElementType;
 }
 
 /**
  * Renders markdown content with syntax highlighting and sanitization
  */
-const MarkdownRenderer: React.FC<IMarkdownRendererProps> = ({
+const MarkdownRenderer = forwardRef<HTMLElement, IMarkdownRendererProps>(({
   content,
   className,
   sx = {},
-  isPreview = false
-}) => {
+  isPreview = false,
+  component = 'div'
+}, ref) => {
   if (!content) {
     return null;
   }
@@ -78,6 +86,8 @@ const MarkdownRenderer: React.FC<IMarkdownRendererProps> = ({
 
   return (
     <Box
+      component={component}
+      ref={ref}
       className={`markdown-preview ${className || ''}`}
       sx={{
         '& code': {
@@ -143,6 +153,9 @@ const MarkdownRenderer: React.FC<IMarkdownRendererProps> = ({
       </ReactMarkdown>
     </Box>
   );
-};
+});
+
+// Display name for DevTools
+MarkdownRenderer.displayName = 'MarkdownRenderer';
 
 export default MarkdownRenderer;

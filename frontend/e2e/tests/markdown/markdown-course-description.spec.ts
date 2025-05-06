@@ -17,7 +17,7 @@ test.describe('Course Description Markdown Rendering', () => {
         const loginPage = new LoginPage(page);
         await loginPage.navigateTo();
         await loginPage.login(
-            TEST_USERS.lead_instructor.username_or_email,
+            TEST_USERS.lead_instructor.username,
             TEST_USERS.lead_instructor.password
         );
 
@@ -88,7 +88,7 @@ test.describe('Course Description Markdown Rendering', () => {
         const loginPage = new LoginPage(page);
         await loginPage.navigateTo();
         await loginPage.login(
-            TEST_USERS.lead_instructor.username_or_email,
+            TEST_USERS.lead_instructor.username,
             TEST_USERS.lead_instructor.password
         );
 
@@ -118,7 +118,7 @@ test.describe('Course Description Markdown Rendering', () => {
         const loginPage = new LoginPage(page);
         await loginPage.navigateTo();
         await loginPage.login(
-            TEST_USERS.student.username_or_email,
+            TEST_USERS.student.username,
             TEST_USERS.student.password
         );
 
