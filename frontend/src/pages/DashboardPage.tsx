@@ -1,3 +1,4 @@
+
 import {
   Box,
   Typography,
@@ -7,21 +8,19 @@ import {
   Alert,
   Card,
   CardContent,
-  Divider,
   Button
 } from '@mui/material';
 import {useQuery} from '@tanstack/react-query';
 import React, {useEffect} from 'react';
 import {Link as RouterLink} from 'react-router-dom';
 
-import {IUserProgress} from '@/types';
+import {ICourseProgress} from '@/types';
 import {IProgressResponse} from '@/types/progress';
 import {useAuth} from '@context/auth/AuthContext';
-import ProgressIndicator from '@/components/shared/ProgressIndicator';
 import progressService from '@services/resources/progressService';
 import {enrollmentService} from '@services/resources/enrollmentService';
 import {ICourseEnrollment} from '@/types';
-import {IPaginatedResponse} from '@/types/paginatedResponse';
+import DashboardCourseCard from '@/components/DashboardCourseCard';
 
 /**
  * Student Dashboard Page
@@ -49,15 +48,13 @@ const Dashboard: React.FC = () => {
     }
     try {
       console.info('Fetching user progress for user ID:', user.id);
-
-      // Use progressService instead of directly calling apiService
       const response = await progressService.fetchStudentProgressByUser(user.id);
       console.info('User progress response:', response);
 
       // Handle the well-structured response that includes user_info, overall_stats, and courses
       if (response && typeof response === 'object' && 'courses' in response) {
         // This is already the expected structure
-        return response as IProgressResponse;
+        return response as unknown as IProgressResponse;
       }
 
       // If we get an array of progress items, adapt it to our expected format
@@ -102,9 +99,9 @@ const Dashboard: React.FC = () => {
   /**
    * Calculate average completion percentage across courses
    */
-  const calculateAverageCompletion = (courses: IUserProgress[]): number => {
+  const calculateAverageCompletion = (courses: ICourseProgress[]): number => {
     if (!courses.length) return 0;
-    const sum = courses.reduce((acc, course) => acc + (course.percentage || 0), 0);
+    const sum = courses.reduce((acc, course) => acc + (course.completion_percentage || 0), 0);
     return Math.round(sum / courses.length);
   };
 
@@ -224,14 +221,14 @@ const Dashboard: React.FC = () => {
 
       {/* Overall Statistics Card */}
       <Paper elevation={2} sx={{p: 3, mt: 3}}>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="h5" gutterBottom data-testid="learning-overview">
           Learning Overview
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
             <Card variant="outlined" sx={{height: '100%'}}>
               <CardContent>
-                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                <Typography variant="subtitle2" color="text.secondary" gutterBottom data-testid="enrolled-courses">
                   Enrolled Courses
                 </Typography>
                 <Typography variant="h4">{stats?.courses_enrolled || 0}</Typography>
@@ -301,11 +298,11 @@ const Dashboard: React.FC = () => {
           <Grid container spacing={3}>
             {progressData.map((progress, idx) => {
               // Get course title from enrollment data or fallback to progress data
-              const courseId = progress.course_id || progress.id;
+              const courseId = progress.studentId;
               const courseTitle =
                 courseTitleMap[courseId] ||
-                progress.label ||
-                progress.course_name ||
+                progress.studentId.toString() ||
+                progress.course_title ||
                 `Course ${idx + 1}`;
 
               return (
@@ -316,46 +313,17 @@ const Dashboard: React.FC = () => {
                   md={4}
                   key={progress.id !== undefined ? progress.id : `progress-${idx}`}
                 >
-                  <Paper
-                    elevation={2}
-                    sx={{p: 2, height: '100%', display: 'flex', flexDirection: 'column'}}
-                  >
-                    <Typography variant="h6" gutterBottom align="center">
-                      {courseTitle}
-                    </Typography>
+                  <DashboardCourseCard
+                    courseTitle={courseTitle}
+                    progress={{
+                      percentage: progress.averageScore || 0,
+                      completed_tasks: progress.completedTasks || 0,
+                      total_tasks: progress.totalTasks || 0,
+                      last_activity: progress.recentActivity[0]?.timestamp || undefined,
+                    }}
+                    courseId={courseId.toString()}
+                  />
 
-                    <Box sx={{display: 'flex', justifyContent: 'center', my: 2}}>
-                      <ProgressIndicator
-                        value={progress.percentage || 0}
-                        label={`${progress.percentage || 0}% Complete`}
-                        size={120}
-                      />
-                    </Box>
-
-                    <Divider sx={{my: 1}} />
-
-                    <Box sx={{pt: 1}}>
-                      <Typography variant="body2" color="text.secondary">
-                        <strong>Tasks Completed:</strong> {progress.completed_tasks || 0}/{progress.total_tasks || 0}
-                      </Typography>
-                      {progress.last_activity && (
-                        <Typography variant="body2" color="text.secondary">
-                          <strong>Last Activity:</strong> {new Date(progress.last_activity).toLocaleDateString()}
-                        </Typography>
-                      )}
-                    </Box>
-
-                    <Box sx={{mt: 'auto', pt: 2, display: 'flex', justifyContent: 'center'}}>
-                      <Button
-                        component={RouterLink}
-                        to={`/courses/${courseId}`}
-                        variant="outlined"
-                        size="small"
-                      >
-                        Continue Learning
-                      </Button>
-                    </Box>
-                  </Paper>
                 </Grid>
               );
             })}

@@ -1,3 +1,15 @@
+/*
+  * EnrollmentService.ts
+  * Service for managing course enrollments, including CRU operations, user enrollments, and course-specific queries.
+  * All methods are asynchronous, strictly typed, and use centralized API_CONFIG endpoints.
+  *
+  * @module EnrollmentService
+  * @description Provides a comprehensive interface for working with course enrollments in the Learning Platform.
+  *
+  * Relevant Design decisions:
+  * - no Delete method is provided, as enrollments should not be deleted but rather marked as inactive or unenrolled.
+  */
+
 import {ICourseEnrollment} from '@/types/entities';
 import {API_CONFIG} from 'src/services/api/apiConfig';
 import {ApiService} from 'src/services/api/apiService';
@@ -206,8 +218,7 @@ class EnrollmentService {
 
   /**
    * Unenroll from a course by course ID
-   * Uses the course-enrollments unenroll endpoint which properly updates enrollment status
-   * instead of deleting records
+   * Updates enrollment status to "dropped" instead of deleting records
    *
    * @param courseId The course ID to unenroll from
    * @returns Response with status of the unenrollment operation
@@ -216,8 +227,16 @@ class EnrollmentService {
     try {
       console.log(`Unenrolling from course ID: ${courseId}`);
 
-      // Special case for course ID 203 (for tests)
-      if (courseId === 203 || courseId === "203") {
+      // Call the primary enrollments unenroll endpoint
+      const response = await this.apiAny.post(
+        API_CONFIG.endpoints.enrollments.unenroll(courseId),
+        {}
+      ) as Record<string, any>;
+
+      console.log(`Successfully unenrolled from course ${courseId} using enrollments unenroll endpoint`);
+
+      // Special handling for "not enrolled" case from backend
+      if (response?.message?.includes('not enrolled')) {
         return {
           success: true,
           message: 'You are not enrolled in this course',
@@ -226,86 +245,30 @@ class EnrollmentService {
         };
       }
 
-      // Try the course-enrollments unenroll endpoint (primary API)
-      try {
-        const response = await this.apiAny.post(
-          API_CONFIG.endpoints.courseEnrollments.unenroll(courseId),
-          {}
-        ) as Record<string, any>;
-
-        console.log(`Successfully unenrolled from course ${courseId} using course-enrollments unenroll endpoint`);
-
-        // Special handling for "not enrolled" case from backend
-        if (response?.message?.includes('not enrolled')) {
-          return {
-            success: true,
-            message: 'You are not enrolled in this course',
-            courseId: String(courseId),
-            status: 'not_enrolled'
-          };
-        }
-
-        return {
-          success: true,
-          message: response?.message || 'Successfully unenrolled from course',
-          courseId: String(courseId),
-          status: response?.status || 'dropped',
-          enrollmentId: response?.enrollmentId
-        };
-      } catch (e) {
-        console.warn(`Course-enrollments unenroll endpoint failed for course ${courseId}, trying fallback`);
-
-        // Fallback to the courses unenroll endpoint
-        try {
-          const response = await this.apiAny.post(
-            API_CONFIG.endpoints.courses.unenroll(courseId),
-            {}
-          ) as Record<string, any>;
-
-          console.log(`Successfully unenrolled from course ${courseId} using courses unenroll endpoint`);
-
-          // Special handling for "not enrolled" case from backend
-          if (response?.message?.includes('not enrolled')) {
-            return {
-              success: true,
-              message: 'You are not enrolled in this course',
-              courseId: String(courseId),
-              status: 'not_enrolled'
-            };
-          }
-
-          return {
-            success: true,
-            message: response?.message || 'Successfully unenrolled from course',
-            courseId: String(courseId),
-            status: response?.status || 'dropped'
-          };
-        } catch (innerError) {
-          // If both API endpoints fail, determine if it's a "not enrolled" case
-          const errorMessage = innerError instanceof Error ? innerError.message : String(innerError);
-
-          if (errorMessage.includes('not enrolled') ||
-            (innerError as any)?.response?.data?.detail?.includes('not enrolled')) {
-            return {
-              success: true,
-              message: 'You are not enrolled in this course',
-              courseId: String(courseId),
-              status: 'not_enrolled'
-            };
-          }
-
-          // Otherwise return standard response for backwards compatibility
-          console.warn(`Both unenroll endpoints failed for course ${courseId}, returning standard response`);
-          return {
-            success: true,
-            message: 'Successfully processed unenrollment request',
-            courseId: String(courseId),
-            status: 'dropped'
-          };
-        }
-      }
+      return {
+        success: true,
+        message: response?.message || 'Successfully unenrolled from course',
+        courseId: String(courseId),
+        status: response?.status || 'dropped',
+        enrollmentId: response?.enrollmentId
+      };
     } catch (error) {
       console.error(`Error during unenrollment from course ${courseId}:`, error);
+
+      // For not enrolled cases in errors, return a formatted response
+      if (error instanceof Error &&
+        (error.message.includes('not enrolled') ||
+          (error as any)?.response?.data?.detail?.includes('not enrolled') ||
+          (error as any)?.response?.data?.message?.includes('not enrolled'))) {
+        return {
+          success: true,
+          message: 'You are not enrolled in this course',
+          courseId: String(courseId),
+          status: 'not_enrolled'
+        };
+      }
+
+      // Otherwise throw the error
       throw new Error(`Failed to complete unenrollment operation: ${(error as Error).message}`);
     }
   }
@@ -401,13 +364,6 @@ export const fetchUserEnrollments = async () => enrollmentService.fetchUserEnrol
  */
 export const enrollInCourse = async (courseId: string | number) => enrollmentService.enrollInCourse(courseId);
 
-/**
- * @deprecated Use enrollmentService.unenrollFromCourseById() instead.
- * @param {string | number} courseId - Course ID to unenroll from.
- * @returns {Promise<IEnrollmentResponse>} Promise resolving when unenrollment is complete.
- */
-export const unenrollFromCourse = async (courseId: string | number) =>
-  enrollmentService.unenrollFromCourseById(courseId);
 
 /**
  * @deprecated Use enrollmentService.fetchEnrolledStudents() instead.

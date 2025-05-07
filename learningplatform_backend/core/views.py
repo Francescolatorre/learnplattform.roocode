@@ -328,13 +328,32 @@ class CourseViewSet(viewsets.ModelViewSet):
         course = self.get_object()
         user = request.user
 
-        if CourseEnrollment.objects.filter(user=user, course=course).exists():
+        # Check if the user already has an enrollment record for this course
+        enrollment, created = CourseEnrollment.objects.get_or_create(
+            user=user, course=course, defaults={"status": "active"}
+        )
+
+        # If an enrollment record already existed and wasn't created
+        if not created:
+            # Check if the current status is already active
+            if enrollment.status == "active":
+                return Response(
+                    {"detail": "You are already enrolled in this course."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Update status from dropped to active for re-enrollment
+            enrollment.status = "active"
+            enrollment.save()
+
+            logger.info("User %s re-enrolled in course %s", user.id, course.id)
             return Response(
-                {"detail": "You are already enrolled in this course."},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"detail": "Successfully re-enrolled in the course."},
+                status=status.HTTP_200_OK,
             )
 
-        CourseEnrollment.objects.create(user=user, course=course, status="active")
+        # For newly created enrollments
+        logger.info("User %s enrolled in course %s", user.id, course.id)
         return Response(
             {"detail": "Successfully enrolled in the course."},
             status=status.HTTP_201_CREATED,
@@ -498,9 +517,16 @@ class QuizOptionViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class CourseEnrollmentViewSet(viewsets.ModelViewSet):
+class EnrollmentViewSet(viewsets.ModelViewSet):
     """
     API endpoint for course enrollments
+
+    Provides a unified interface for managing all enrollment operations, including:
+    - Creating enrollments (enroll)
+    - Listing enrollments
+    - Retrieving enrollment details
+    - Updating enrollment status
+    - Unenrolling from courses
     """
 
     queryset = CourseEnrollment.objects.all().order_by("id")
@@ -531,6 +557,52 @@ class CourseEnrollmentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new enrollment record or re-activate an existing dropped enrollment.
+        """
+        # Extract data from the request
+        user_id = request.user.id
+        course_id = request.data.get("course")
+
+        try:
+            # Check if an enrollment record already exists
+            enrollment = CourseEnrollment.objects.filter(
+                user_id=user_id, course_id=course_id
+            ).first()
+
+            if enrollment:
+                # If enrollment exists and is already active, return error
+                if enrollment.status == "active":
+                    return Response(
+                        {"detail": "You are already enrolled in this course."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
+                # If enrollment exists but was dropped, update it to active
+                enrollment.status = "active"
+                enrollment.save()
+
+                logger.info("User %s re-enrolled in course %s", user_id, course_id)
+                serializer = self.get_serializer(enrollment)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+
+            # If no enrollment exists, create a new one
+            return super().create(request, *args, **kwargs)
+
+        except Exception as e:
+            logger.error(
+                "Error enrolling user %s in course %s: %s",
+                user_id,
+                course_id,
+                str(e),
+                exc_info=True,
+            )
+            return Response(
+                {"detail": f"An error occurred during enrollment: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
     @action(detail=False, methods=["post"], url_path="unenroll/(?P<course_id>[^/.]+)")
     def unenroll(self, request, course_id=None):

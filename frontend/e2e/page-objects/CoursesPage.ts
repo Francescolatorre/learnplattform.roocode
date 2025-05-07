@@ -65,6 +65,13 @@ export class CoursesPage extends BasePage {
         '.course-card-description'
     ];
 
+    // View switch selectors
+    readonly viewSwitchSelectors = [
+        '.view-switch',
+        '[data-testid="view-switch"]',
+        '.view-mode-toggle'
+    ];
+
     constructor(page: Page, url: string) {
         super(page, url);
     }
@@ -73,17 +80,20 @@ export class CoursesPage extends BasePage {
      * Check if the courses page has loaded properly
      */
     async isCoursesPageLoaded(): Promise<boolean> {
+        console.log('Checking if courses page is loaded...');
         try {
             // Look for the title
             for (const selector of this.courseTitleSelectors) {
                 try {
                     const titleLocator = this.page.locator(selector).first();
                     const isVisible = await titleLocator.isVisible({timeout: 2000}).catch(() => false);
+                    console.log(`Checking selector: ${selector}, isVisible: ${isVisible}`);
                     if (isVisible) {
                         console.log('Courses page title found');
                         return true;
                     }
                 } catch (err) {
+                    console.error(`Error checking selector ${selector}:`, err);
                     // Continue to next selector
                 }
             }
@@ -724,7 +734,7 @@ export class CoursesPage extends BasePage {
                 }
             }
 
-            console.log(`Navigated to page ${pageNumber}`);
+            console.log(`Failed to navigate to page ${pageNumber}`);
             return false;
         } catch (error) {
             console.error(`Error navigating to page ${pageNumber}:`, error);
@@ -863,6 +873,36 @@ export class CoursesPage extends BasePage {
 
         return descriptions;
     }
+
+    /**
+     * Switch between grid and list view modes
+     */
+    async switchViewMode(mode: 'grid' | 'list'): Promise<boolean> {
+        try {
+            for (const selector of this.viewSwitchSelectors) {
+                const switchElement = this.page.locator(selector);
+                const isVisible = await switchElement.isVisible({timeout: 1000});
+
+                if (isVisible) {
+                    const modeButton = switchElement.locator(`button:has-text("${mode === 'grid' ? 'Grid' : 'List'}")`);
+                    const isModeButtonVisible = await modeButton.isVisible({timeout: 1000});
+
+                    if (isModeButtonVisible) {
+                        await modeButton.click();
+                        console.log(`Switched to ${mode} view`);
+                        await this.waitForPageLoad();
+                        return true;
+                    }
+                }
+            }
+
+            console.warn(`Could not find ${mode} view switch`);
+            return false;
+        } catch (error) {
+            console.error(`Error switching to ${mode} view:`, error);
+            return false;
+        }
+    }
 }
 
 /**
@@ -936,149 +976,131 @@ export class StudentCoursesPage extends CoursesPage {
 
     /**
      * Check if student is enrolled in a course
+     * Enhanced with retry mechanism for more reliable state checking
      */
-    async isEnrolledIn(title: string): Promise<boolean> {
+    async isEnrolledIn(title: string, maxRetries = 3, retryDelayMs = 1000): Promise<boolean> {
         try {
-            const cards = await this.getCourseCards();
-            const count = await cards.count();
+            // Implement a retry mechanism to give the application time to update
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                console.log(`Attempt ${attempt}/${maxRetries} to check enrollment status for: "${title}"`);
 
-            for (let i = 0; i < count; i++) {
-                const card = cards.nth(i);
-                const cardTitle = await card.locator('h2, h3, h4, .course-title, [data-testid="course-title"]').textContent();
+                // Force page reload on each attempt to get the most current state
+                if (attempt > 1) {
+                    console.log(`Refreshing page for attempt ${attempt}`);
+                    await this.page.reload();
+                    await this.waitForPageLoad();
+                    await this.page.waitForTimeout(retryDelayMs); // Additional wait after reload
+                }
 
-                if (cardTitle && cardTitle.includes(title)) {
-                    // Check for enrolled badge in this card
-                    for (const selector of this.enrolledBadgeSelectors) {
-                        const enrolledBadge = card.locator(selector);
-                        const isEnrolled = await enrolledBadge.isVisible({timeout: 1000});
+                const cards = await this.getCourseCards();
+                const count = await cards.count();
 
-                        if (isEnrolled) {
-                            console.log(`Verified enrollment in course: ${title}`);
-                            return true;
+                let courseFound = false;
+                for (let i = 0; i < count; i++) {
+                    const card = cards.nth(i);
+
+                    // Use multiple selectors to find the course title
+                    const titleSelectors = [
+                        'h2', 'h3', 'h4', 'h5', '.course-title',
+                        '[data-testid="course-title"]', '.MuiTypography-h5',
+                        '.MuiTypography-h6', '.MuiCardHeader-title'
+                    ];
+
+                    let cardTitle = '';
+                    // Try each title selector
+                    for (const selector of titleSelectors) {
+                        try {
+                            const titleElement = card.locator(selector);
+                            if (await titleElement.isVisible({timeout: 500}).catch(() => false)) {
+                                cardTitle = await titleElement.textContent() || '';
+                                if (cardTitle.trim()) break;
+                            }
+                        } catch (err) {
+                            // Continue to next selector
                         }
                     }
 
-                    // Also check if there's a "Continue Learning" button instead of "Enroll"
-                    const continueButton = card.locator('button:has-text("Continue"), button:has-text("View Course")');
-                    const hasContinueButton = await continueButton.isVisible({timeout: 1000});
-
-                    if (hasContinueButton) {
-                        console.log(`Verified enrollment in course ${title} (has Continue/View button)`);
-                        return true;
+                    // If no title found with selectors, try getting all text from card
+                    if (!cardTitle.trim()) {
+                        try {
+                            cardTitle = await card.textContent() || '';
+                        } catch (err) {
+                            // Ignore errors
+                        }
                     }
 
-                    return false;
+                    // Check if this card contains our target title
+                    if (cardTitle && (cardTitle.includes(title) || title.includes(cardTitle.trim()))) {
+                        courseFound = true;
+                        console.log(`Found course card for "${title}" on attempt ${attempt}`);
+
+                        // First check for explicit enrollment indicators
+                        let isEnrolled = false;
+
+                        // Check for enrolled badge
+                        for (const selector of this.enrolledBadgeSelectors) {
+                            try {
+                                const enrolledBadge = card.locator(selector);
+                                if (await enrolledBadge.isVisible({timeout: 1000}).catch(() => false)) {
+                                    console.log(`Enrolled badge found for course: ${title}`);
+                                    return true;
+                                }
+                            } catch (err) {
+                                // Continue to next selector
+                            }
+                        }
+
+                        // Check for "Continue Learning" button instead of "Enroll"
+                        try {
+                            const continueButton = card.locator('button:has-text("Continue"), button:has-text("View Course")');
+                            if (await continueButton.isVisible({timeout: 1000}).catch(() => false)) {
+                                console.log(`Continue/View button found for course ${title}`);
+                                return true;
+                            }
+                        } catch (err) {
+                            // Ignore errors
+                        }
+
+                        // Check for absence of "Enroll" button (which would indicate not enrolled)
+                        try {
+                            for (const selector of this.enrollButtonSelectors) {
+                                const enrollButton = card.locator(selector);
+                                if (await enrollButton.isVisible({timeout: 1000}).catch(() => false)) {
+                                    console.log(`Enroll button found for course ${title} - user is NOT enrolled`);
+                                    return false;
+                                }
+                            }
+                        } catch (err) {
+                            // Ignore errors
+                        }
+
+                        // If we've found the course but no decisive enrollment indicators, and this is the last attempt,
+                        // assume not enrolled
+                        if (attempt === maxRetries) {
+                            console.log(`No clear enrollment indicators for course ${title}, assuming not enrolled`);
+                            return false;
+                        }
+                    }
+                }
+
+                if (!courseFound) {
+                    console.warn(`Course not found: ${title} on attempt ${attempt}`);
+                    if (attempt === maxRetries) {
+                        return false;
+                    }
+                }
+
+                // Wait before the next retry attempt
+                if (attempt < maxRetries) {
+                    const waitTime = retryDelayMs * attempt; // Progressive backoff
+                    console.log(`Waiting ${waitTime}ms before next enrollment check...`);
+                    await this.page.waitForTimeout(waitTime);
                 }
             }
 
-            console.warn(`Course not found: ${title}`);
-            return false;
+            return false; // Course not found or not enrolled after all retries
         } catch (error) {
-            console.error(`Error checking enrollment for course ${title}:`, error);
-            return false;
-        }
-    }
-
-    /**
-     * Check if there are any courses available for enrollment
-     */
-    async hasAvailableCourses(): Promise<boolean> {
-        return this.hasAnyCourses();
-    }
-
-    /**
-     * Check if there are any enrolled courses
-     */
-    async hasEnrolledCourses(): Promise<boolean> {
-        try {
-            // Look for "My Enrolled Courses" section
-            const enrolledSection = this.page.locator('h4:has-text("My Enrolled Courses"), h4:has-text("My Courses")');
-            const isSectionVisible = await enrolledSection.isVisible({timeout: 2000});
-
-            if (!isSectionVisible) {
-                console.log('No enrolled courses section found');
-                return false;
-            }
-
-            // Check for enrolled course cards/items below the section
-            const cards = this.page.locator('.MuiCard-root, .MuiListItem-root').filter({
-                has: this.page.locator('.course-title, [data-testid="course-title"]')
-            });
-
-            const count = await cards.count();
-            console.log(`Found ${count} enrolled course items`);
-            return count > 0;
-        } catch (error) {
-            console.error('Error checking for enrolled courses:', error);
-            return false;
-        }
-    }
-}
-
-/**
- * Instructor-specific courses page
- */
-export class InstructorCoursesPage extends CoursesPage {
-    readonly createCourseButtonSelectors = [
-        'a:has-text("Create Course")',
-        'button:has-text("Create Course")',
-        'a:has-text("New Course")',
-        'button:has-text("New Course")',
-        '.create-course-button',
-        '[data-testid="create-course-button"]'
-    ];
-
-    readonly viewSwitchSelectors = [
-        '.view-switch',
-        '[role="group"]:has-button:has-text("Grid")',
-        '[data-testid="view-mode-switch"]'
-    ];
-
-    constructor(page: Page) {
-        super(page, '/instructor/courses');
-    }
-
-    /**
-     * Navigate to course creation page
-     */
-    async navigateToCreateCourse(): Promise<void> {
-        try {
-            const createButton = await this.findElement(this.createCourseButtonSelectors, 'create course button');
-            await createButton.click();
-            console.log('Clicked create course button');
-            await this.waitForPageLoad();
-        } catch (error) {
-            console.error('Failed to navigate to course creation:', error);
-            throw error;
-        }
-    }
-
-    /**
-     * Switch view mode between grid and list
-     */
-    async switchViewMode(mode: 'grid' | 'list'): Promise<boolean> {
-        try {
-            for (const selector of this.viewSwitchSelectors) {
-                const switchElement = this.page.locator(selector);
-                const isVisible = await switchElement.isVisible({timeout: 1000});
-
-                if (isVisible) {
-                    const modeButton = switchElement.locator(`button:has-text("${mode === 'grid' ? 'Grid' : 'List'}")`);
-                    const isModeButtonVisible = await modeButton.isVisible({timeout: 1000});
-
-                    if (isModeButtonVisible) {
-                        await modeButton.click();
-                        console.log(`Switched to ${mode} view`);
-                        await this.waitForPageLoad();
-                        return true;
-                    }
-                }
-            }
-
-            console.warn(`Could not find ${mode} view switch`);
-            return false;
-        } catch (error) {
-            console.error(`Error switching to ${mode} view:`, error);
+            console.error(`Error checking enrollment status for course ${title}:`, error);
             return false;
         }
     }

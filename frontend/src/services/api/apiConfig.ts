@@ -31,8 +31,6 @@ export const API_CONFIG = {
       details: (courseId: string | number): string => `/api/v1/courses/${courseId}/`,
       update: (courseId: string | number): string => `/api/v1/courses/${courseId}/`,
       delete: (courseId: string | number): string => `/api/v1/courses/${courseId}/`,
-      enroll: (courseId: string | number): string => `/api/v1/courses/${courseId}/enroll/`,
-      unenroll: (courseId: string | number): string => `/api/v1/courses/${courseId}/unenroll/`, // Added
       updateStatus: (courseId: string | number): string => `/api/v1/courses/${courseId}/status/`, // Added
       progress: (courseId: string | number): string => `/api/v1/courses/${courseId}/progress/`, // Added
       instructorCourses: '/api/v1/courses/instructor/courses/', // Fixed to match backend URL format
@@ -69,27 +67,13 @@ export const API_CONFIG = {
     },
     enrollments: {
       list: '/api/v1/enrollments/',
-      byCourse: (courseId: string | number): string =>
-        `${API_CONFIG.endpoints.enrollments.list}?course=${courseId}`,
+      byCourse: (courseId: string | number): string => `/api/v1/enrollments/?course=${courseId}`,
       details: (enrollmentId: string | number): string => `/api/v1/enrollments/${enrollmentId}/`,
       create: '/api/v1/enrollments/',
       update: (enrollmentId: string | number): string => `/api/v1/enrollments/${enrollmentId}/`,
       delete: (enrollmentId: string | number): string => `/api/v1/enrollments/${enrollmentId}/`,
       updateStatus: (enrollmentId: string | number): string => `/api/v1/enrollments/${enrollmentId}/update_status/`,
-      // Legacy endpoints
-      legacyList: '/api/v1/course-enrollments/',
-      legacyDetails: (enrollmentId: string | number): string => `/api/v1/course-enrollments/${enrollmentId}/`,
-      legacyCreate: '/api/v1/course-enrollments/',
-      legacyUpdate: (enrollmentId: string | number): string => `/api/v1/course-enrollments/${enrollmentId}/`,
-      legacyDelete: (enrollmentId: string | number): string => `/api/v1/course-enrollments/${enrollmentId}/`,
-    },
-    courseEnrollments: {
-      list: '/api/v1/course-enrollments/',
-      details: (enrollmentId: string | number): string => `/api/v1/course-enrollments/${enrollmentId}/`,
-      create: '/api/v1/course-enrollments/',
-      update: (enrollmentId: string | number): string => `/api/v1/course-enrollments/${enrollmentId}/`,
-      delete: (enrollmentId: string | number): string => `/api/v1/course-enrollments/${enrollmentId}/`,
-      unenroll: (courseId: string | number): string => `/api/v1/course-enrollments/unenroll/${courseId}/`,
+      unenroll: (courseId: string | number): string => `/api/v1/enrollments/unenroll/${courseId}/`,
     },
     taskProgress: {
       list: '/api/v1/task-progress/',

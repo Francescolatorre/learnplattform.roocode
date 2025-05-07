@@ -146,7 +146,7 @@ export interface IProgressResponse {
         completed_tasks?: number;
         [key: string]: any;
     };
-    courses: IUserProgress[];
+    courses: IDetailedCourseProgress[];
 }
 
 /**

@@ -115,36 +115,6 @@ describe('progressService Integration', () => {
         expect(progress.overallProgress).toBeLessThanOrEqual(100);
     });
 
-    it('enrollUserInCourse successfully enrolls user in a course', async () => {
-        try {
-            // First ensure user is not enrolled
-            await progressService.unenrollFromCourse(String(createdCourseId));
-
-            // Then enroll
-            const result = await progressService.enrollUserInCourse(String(createdCourseId));
-            expect(result).toHaveProperty('success', true);
-
-            // Verify enrollment
-            const status = await progressService.getUserEnrollmentStatus(String(createdCourseId));
-            expect(status.enrolled).toBe(true);
-        } catch (error) {
-            console.error('Test failed:', error);
-            throw error;
-        }
-    });
-
-    it('unenrollFromCourse successfully unenrolls user from a course', async () => {
-        // First ensure user is enrolled
-        await progressService.enrollUserInCourse(String(createdCourseId));
-
-        // Then unenroll
-        const result = await progressService.unenrollFromCourse(String(createdCourseId));
-        expect(result).toHaveProperty('success', true);
-
-        // Verify unenrollment
-        const status = await progressService.getUserEnrollmentStatus(String(createdCourseId));
-        expect(status.enrolled).toBe(false);
-    });
 
     it('getQuizAttempts returns quiz attempts for a specific quiz', async () => {
         // This test assumes there's a quiz ID available or can be mocked

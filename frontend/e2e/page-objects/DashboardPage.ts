@@ -208,68 +208,55 @@ export class DashboardPage extends BasePage {
     }
 
     /**
-     * Überprüfen, ob das Dashboard geladen ist
-     * Diese Methode wird von Tests erwartet, fehlte aber in der Implementierung
-     */
+ * Check if the dashboard is loaded
+ * This method is expected by tests but was missing in the implementation
+ */
     async isDashboardLoaded(): Promise<boolean> {
         try {
-            // Überprüfen, ob die URL 'dashboard' oder rollenspezifische Pfade enthält
+            // Check if the URL contains 'dashboard' or role-specific paths
             const currentUrl = this.page.url();
             const isDashboardUrl = currentUrl.includes('dashboard') ||
                 currentUrl.includes('/student/') ||
                 currentUrl.includes('/instructor/') ||
                 currentUrl.includes('/admin/') ||
-                currentUrl === '/';  // Fallback für die Hauptseite nach Login
+                currentUrl === '/';  // Fallback for the main page after login
 
             if (!isDashboardUrl) {
                 console.log(`Current URL ${currentUrl} doesn't match dashboard patterns`);
                 return false;
             }
 
-            // Nach Dashboard-Elementen suchen mit robusteren Selektoren
+            // Search for dashboard elements with more robust selectors
             const dashboardElements = [
                 this.dashboardSummary,
-                this.page.locator('.dashboard-container, .dashboard-content, .MuiContainer-root'),
-                // Fix: Correcting the data-testid selector syntax
+                this.page.locator('[data-testid="enrolled-courses"]'),
+                this.page.locator('[data-testid="learning-overview"]'),
+                this.page.locator('[data-testid="dashboard-summary"]'),
                 this.page.locator('[data-testid="dashboard-title"]'),
-                this.page.locator('.course-card, .course-list'),
-                // Generische Inhaltsselektoren als Fallback
-                this.page.locator('.MuiPaper-root:visible')
             ];
 
             // Debug all selectors
             console.log('Checking dashboard elements with these selectors:');
             const selectorTexts = [
-                '[data-testid="dashboard-summary"], .dashboard-summary, .MuiCard-root:has(.MuiCardContent-root)',
-                '.dashboard-container, .dashboard-content, .MuiContainer-root',
+                '[data-testid="dashboard-summary"]',
                 '[data-testid="dashboard-title"]',
-                '.course-card, .course-list',
-                '.MuiPaper-root:visible'
             ];
 
-            // Log selector check results
-            for (let i = 0; i < dashboardElements.length; i++) {
+            // Check dashboard elements and log results
+            for (const [index, element] of dashboardElements.entries()) {
                 try {
-                    const element = dashboardElements[i];
                     const count = await element.count();
                     const isVisible = count > 0 ? await element.first().isVisible().catch(() => false) : false;
-                    console.log(`Selector "${selectorTexts[i]}": Found ${count} elements, visible: ${isVisible}`);
-                } catch (error) {
-                    console.log(`Error checking selector "${selectorTexts[i]}":`, error.message);
-                }
-            }
 
-            // Versuchen, mindestens ein Dashboard-Element zu finden
-            for (const element of dashboardElements) {
-                try {
-                    const isVisible = await element.isVisible({timeout: 2000}).catch(() => false);
+                    console.log(`Selector "${selectorTexts[index]}": Found ${count} elements, visible: ${isVisible}`);
+
                     if (isVisible) {
-                        console.log('Found visible dashboard element');
-                        return true;
+                        console.log(`Found visible dashboard element ${selectorTexts[index]}`);
+                        return true; // Exit early if a visible element is found
                     }
                 } catch (error) {
-                    // Ignorieren und mit dem nächsten Element fortfahren
-                    continue;
+                    console.log(`Error checking selector "${selectorTexts[index]}":`, error.message);
+                    continue; // Continue to the next element on error
                 }
             }
 
@@ -281,6 +268,7 @@ export class DashboardPage extends BasePage {
             return false;
         }
     }
+
 }
 
 /**

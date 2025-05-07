@@ -43,10 +43,11 @@ class CourseService {
   private apiAny = new ApiService<unknown>();
   private transformUserProgressToStudentSummary(userProgress: IUserProgress[]): IStudentProgressSummary[] {
     return userProgress.map(progress => ({
-      user_id: progress.id, // Assuming 'id' corresponds to 'user_id'
-      username: progress.label || 'Unknown', // Using 'label' as a fallback for username
-      overall_progress: progress.percentage, // Using 'percentage' for overall progress
-      courses_enrolled: 1 // Example logic, adjust as necessary
+      user_id: progress.id,
+      username: progress.label || 'Unknown',
+      overall_progress: progress.percentage,
+      courses_enrolled: 1,
+      progress: progress.percentage // Assuming 'percentage' corresponds to 'progress'
     }));
   }
 
@@ -102,11 +103,14 @@ class CourseService {
     } catch (error) {
       console.error('CourseService: Failed to create course:', error);
       // Add better error information
-      if (error.response) {
-        console.error('CourseService: Error response:', {
-          status: error.response.status,
-          data: error.response.data
-        });
+      if (error instanceof Error) {
+        const response = (error as any).response;
+        if (response) {
+          console.error('CourseService: Error response:', {
+            status: response.status,
+            data: response.data
+          });
+        }
       }
       throw error;
     }
@@ -174,16 +178,6 @@ class CourseService {
    * Enrolls the current user in a course
    * @param courseId
    */
-  async enrollInCourse(courseId: string): Promise<void> {
-    console.info(`CourseService: Enrolling in course ${courseId}`);
-    try {
-      await this.apiVoid.post(API_CONFIG.endpoints.courses.enroll(courseId), {course_id: courseId});
-      console.info(`CourseService: Successfully enrolled in course ${courseId}`);
-    } catch (error) {
-      console.error(`CourseService: Failed to enroll in course ${courseId}`, error);
-      throw error;
-    }
-  }
 
   /**
      * Fetches courses where the current user is an instructor
@@ -231,7 +225,7 @@ class CourseService {
         };
       } else if (response && typeof response === 'object') {
         // If it's already in paginated format or some other format
-        if (Array.isArray(response.results)) {
+        if (response && typeof response === 'object' && 'results' in response && Array.isArray((response as any).results)) {
           // It's already in the expected paginated format
           formattedResponse = response as IPaginatedResponse<ICourse>;
         } else {
@@ -239,10 +233,10 @@ class CourseService {
           // Try to extract results or use whole response as results
           console.warn('CourseService: Unexpected response format, attempting to extract courses');
           formattedResponse = {
-            count: response.count || 0,
-            next: response.next || null,
-            previous: response.previous || null,
-            results: response.results || []
+            count: (response as any).count || 0,
+            next: (response as any).next || null,
+            previous: (response as any).previous || null,
+            results: (response as any).results || []
           };
         }
       } else {
@@ -283,21 +277,23 @@ class CourseService {
       console.error('CourseService: Failed to fetch instructor courses', error);
 
       // Enhanced error logging
-      if (error.response) {
-        console.error('CourseService: Error response details:', {
-          status: error.response.status,
-          statusText: error.response.statusText,
-          data: error.response.data,
-          headers: error.response.headers
-        });
-      } else if (error.request) {
-        console.error('CourseService: No response received, request details:', {
-          method: error.request.method,
-          url: error.request.url,
-          headers: error.request.headers
-        });
-      } else {
-        console.error('CourseService: Error setting up request:', error.message);
+      if (error instanceof Error) {
+        if ((error as any).response) {
+          console.error('CourseService: Error response details:', {
+            status: (error as any).response.status,
+            statusText: (error as any).response.statusText,
+            data: (error as any).response.data,
+            headers: (error as any).response.headers
+          });
+        } else if ((error as any).request) {
+          console.error('CourseService: No response received, request details:', {
+            method: (error as any).request.method,
+            url: (error as any).request.url,
+            headers: (error as any).request.headers
+          });
+        } else {
+          console.error('CourseService: Error setting up request:', error.message);
+        }
       }
 
       throw error;
@@ -327,7 +323,7 @@ class CourseService {
    */
   async archiveCourse(courseId: string): Promise<ICourse> {
     console.info(`CourseService: Archiving course ${courseId}`);
-    return this.updateCourseStatus(courseId, 'private');
+    return this.updateCourseStatus(courseId, 'archived');
   }
 
   /**

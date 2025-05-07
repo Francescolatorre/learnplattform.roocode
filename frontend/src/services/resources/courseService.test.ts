@@ -46,14 +46,8 @@ const mockCourse: ICourse = {
     prerequisites: 'None',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-02T00:00:00Z',
-    creator: 42,
-    creator_details: {
-        id: 42,
-        username: 'testuser',
-        email: 'test@example.com',
-        display_name: 'Test User',
-        role: 'instructor'
-    }
+    category: 'Testing',
+    difficulty_level: 'Beginner',
 };
 
 const mockPaginatedResponse: IPaginatedResponse<ICourse> = {
@@ -121,12 +115,6 @@ describe('courseService', () => {
         expect(mockDelete).toHaveBeenCalled();
     });
 
-    it('enrollInCourse calls apiService.post', async () => {
-        mockPost.mockResolvedValueOnce(undefined);
-        await courseService.enrollInCourse('1');
-        expect(mockPost).toHaveBeenCalled();
-    });
-
     it('fetchInstructorCourses calls apiService.get and returns data', async () => {
         mockGet.mockResolvedValueOnce(mockPaginatedResponse);
         const result = await courseService.fetchInstructorCourses();
@@ -141,10 +129,10 @@ describe('courseService', () => {
         expect(result).toEqual(mockCourse);
     });
 
-    it('archiveCourse calls updateCourseStatus with "private"', async () => {
+    it('archiveCourse calls updateCourseStatus with "archived"', async () => {
         const spy = vi.spyOn(courseService, 'updateCourseStatus').mockResolvedValueOnce(mockCourse);
         const result = await courseService.archiveCourse('1');
-        expect(spy).toHaveBeenCalledWith('1', 'private');
+        expect(spy).toHaveBeenCalledWith('1', 'archived');
         expect(result).toEqual(mockCourse);
         spy.mockRestore();
     });

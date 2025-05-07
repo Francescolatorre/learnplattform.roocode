@@ -168,12 +168,6 @@ describe('enrollmentService', () => {
         expect(result).toEqual(updatedEnrollment);
     });
 
-    it('delete calls apiService.delete with correct endpoint', async () => {
-        mockDelete.mockResolvedValueOnce({});
-        await enrollmentService.delete(1);
-        expect(mockDelete).toHaveBeenCalledWith(API_CONFIG.endpoints.enrollments.delete(1));
-    });
-
     it('fetchUserEnrollments calls apiService.get and returns user enrollments', async () => {
         mockGet.mockResolvedValueOnce(sampleEnrollmentList);
         const result = await enrollmentService.fetchUserEnrollments();
@@ -205,7 +199,7 @@ describe('enrollmentService', () => {
         expect(result).toEqual(enrollResponse);
     });
 
-    it('unenrollFromCourseById calls the course-enrollments unenroll endpoint', async () => {
+    it('unenrollFromCourseById calls the enrollments unenroll endpoint', async () => {
         const courseId = 201;
         const unenrollResponse: IEnrollmentResponse = {
             success: true,
@@ -219,7 +213,7 @@ describe('enrollmentService', () => {
         const result = await enrollmentService.unenrollFromCourseById(courseId);
 
         expect(mockPost).toHaveBeenCalledWith(
-            API_CONFIG.endpoints.courseEnrollments.unenroll(courseId),
+            API_CONFIG.endpoints.enrollments.unenroll(courseId),
             {}
         );
         expect(result).toEqual(unenrollResponse);
@@ -232,7 +226,7 @@ describe('enrollmentService', () => {
         expect(result).toEqual(sampleEnrollmentList);
     });
 
-    it.skip('findByFilter calls apiService.get with correctly formatted query params', async () => {
+    it('findByFilter calls apiService.get with correctly formatted query params', async () => {
         mockGet.mockResolvedValueOnce([sampleEnrollment]);
 
         const filter = {course: 201, user: 101, status: 'active' as TCompletionStatus};
@@ -242,7 +236,7 @@ describe('enrollmentService', () => {
         expect(result).toEqual([sampleEnrollment]);
     });
 
-    it.skip('findByFilter handles empty filter object', async () => {
+    it('findByFilter handles empty filter object', async () => {
         // Mock the response for the empty filter case
         mockGet.mockResolvedValueOnce(sampleEnrollmentList);
 
@@ -259,193 +253,5 @@ describe('enrollmentService', () => {
         mockGet.mockRejectedValueOnce(new Error(errorMessage));
 
         await expect(enrollmentService.getAll()).rejects.toThrow(errorMessage);
-    });
-
-    it('unenrollFromCourseById falls back to finding and deleting enrollment when direct endpoint fails', async () => {
-        const courseId = 202;
-        const enrollmentId = 42;
-
-        // Mock the direct endpoint failing
-        mockPost.mockRejectedValueOnce(new Error('Endpoint not available'));
-
-        // Mock the fallback flow - finding the enrollment by course ID
-        mockGet.mockResolvedValueOnce({
-            results: [{id: enrollmentId, course: courseId, status: 'active'}]
-        });
-
-        // Mock the deletion of the found enrollment
-        mockDelete.mockResolvedValueOnce({});
-
-        const result = await enrollmentService.unenrollFromCourseById(courseId);
-
-        // Verify the fallback path was used
-        expect(mockPost).toHaveBeenCalledWith(
-            API_CONFIG.endpoints.courses.unenroll(courseId),
-            {}
-        );
-        expect(mockGet).toHaveBeenCalledWith(`${API_CONFIG.endpoints.enrollments.list}?course=${courseId}`);
-        expect(mockDelete).toHaveBeenCalledWith(API_CONFIG.endpoints.enrollments.delete(enrollmentId));
-
-        // Verify the expected result format
-        expect(result).toEqual({
-            success: true,
-            message: 'Successfully unenrolled from course',
-            courseId: courseId.toString(),
-            status: 'dropped',
-            enrollmentId
-        });
-    });
-
-    it('unenrollFromCourseById throws an error when no enrollment is found for fallback', async () => {
-        const courseId = 203;
-
-        // Mock the direct endpoint failing
-        mockPost.mockRejectedValueOnce(new Error('Endpoint not available'));
-
-        // Mock the fallback flow - no enrollments found
-        mockGet.mockResolvedValueOnce({results: []});
-
-        // We've changed this test to match our updated implementation
-        const result = await enrollmentService.unenrollFromCourseById(courseId);
-
-        // Instead of expecting an error, we now expect a "not enrolled" response
-        expect(result).toEqual({
-            success: true,
-            message: 'You are not enrolled in this course',
-            courseId: String(courseId),
-            status: 'not_enrolled'
-        });
-
-        expect(mockPost).toHaveBeenCalledWith(
-            API_CONFIG.endpoints.courses.unenroll(courseId),
-            {}
-        );
-        expect(mockGet).toHaveBeenCalledWith(`${API_CONFIG.endpoints.enrollments.list}?course=${courseId}`);
-    });
-
-    it('returns a not enrolled response when no enrollment is found', async () => {
-        const courseId = 203;
-
-        // Mock the direct endpoint failing
-        mockPost.mockRejectedValueOnce(new Error('Endpoint not available'));
-
-        // Mock the fallback flow - no enrollments found
-        mockGet.mockResolvedValueOnce({results: []});
-
-        // Instead of expecting an error, we now expect a success response
-        const result = await enrollmentService.unenrollFromCourseById(courseId);
-
-        expect(result).toEqual({
-            success: true,
-            message: 'You are not enrolled in this course',
-            courseId: String(courseId),
-            status: 'not_enrolled'
-        });
-    });
-
-    it('unenrollFromCourseById tries the course-enrollments unenroll endpoint first', async () => {
-        const courseId = 201;
-        const enrollmentId = 42;
-        const unenrollResponse: IEnrollmentResponse = {
-            success: true,
-            message: 'Successfully unenrolled from course',
-            courseId: courseId.toString(),
-            status: 'dropped',
-            enrollmentId: enrollmentId
-        };
-
-        // Mock the course-enrollments endpoint succeeding
-        mockPost.mockResolvedValueOnce(unenrollResponse);
-
-        const result = await enrollmentService.unenrollFromCourseById(courseId);
-
-        // Verify the new endpoint was called first
-        expect(mockPost).toHaveBeenCalledWith(
-            API_CONFIG.endpoints.courseEnrollments.unenroll(courseId),
-            {}
-        );
-
-        // Verify we didn't call any fallback methods
-        expect(mockGet).not.toHaveBeenCalled();
-        expect(mockDelete).not.toHaveBeenCalled();
-
-        // Verify the expected result format
-        expect(result).toEqual({
-            success: true,
-            message: 'Successfully unenrolled from course',
-            courseId: courseId.toString(),
-            status: 'dropped',
-            enrollmentId
-        });
-    });
-
-    it('unenrollFromCourseById falls back to courses unenroll endpoint when course-enrollments endpoint fails', async () => {
-        const courseId = 202;
-        const unenrollResponse: IEnrollmentResponse = {
-            success: true,
-            message: 'Successfully unenrolled from course',
-            courseId: courseId.toString(),
-            status: 'dropped'
-        };
-
-        // Mock the course-enrollments endpoint failing but courses endpoint succeeding
-        mockPost.mockRejectedValueOnce(new Error('First endpoint unavailable'));
-        mockPost.mockResolvedValueOnce(unenrollResponse);
-
-        const result = await enrollmentService.unenrollFromCourseById(courseId);
-
-        // Verify both endpoints were tried in order
-        expect(mockPost).toHaveBeenCalledWith(
-            API_CONFIG.endpoints.courseEnrollments.unenroll(courseId),
-            {}
-        );
-        expect(mockPost).toHaveBeenCalledWith(
-            API_CONFIG.endpoints.courses.unenroll(courseId),
-            {}
-        );
-
-        // Verify we didn't need to use the ultimate fallback
-        expect(mockGet).not.toHaveBeenCalled();
-        expect(mockDelete).not.toHaveBeenCalled();
-
-        // Verify the expected result format
-        expect(result).toEqual(unenrollResponse);
-    });
-
-    // Adjust test for course ID 203 that tests "not enrolled" case
-    it('returns a not enrolled response when no enrollment is found', async () => {
-        const courseId = 203;
-
-        // Mock both course-enrollments and courses endpoints to reject
-        mockPost.mockRejectedValueOnce(new Error('Not found'));
-        mockPost.mockRejectedValueOnce(new Error('Not found'));
-
-        const result = await enrollmentService.unenrollFromCourseById(courseId);
-
-        expect(result).toEqual({
-            success: true,
-            message: 'You are not enrolled in this course',
-            courseId: String(courseId),
-            status: 'not_enrolled'
-        });
-    });
-
-    // Update this test to use specific mock responses without referencing the deleted method
-    it('special case for course ID 203 - returns not enrolled response', async () => {
-        const courseId = 203;
-
-        // Mock the endpoints to simulate API behavior
-        mockPost.mockRejectedValueOnce(new Error('Endpoint not available'));
-        mockPost.mockRejectedValueOnce(new Error('Not found'));
-
-        const result = await enrollmentService.unenrollFromCourseById(courseId);
-
-        // Validate the correct response for this special case
-        expect(result).toEqual({
-            success: true,
-            message: 'You are not enrolled in this course',
-            courseId: String(courseId),
-            status: 'not_enrolled'
-        });
     });
 });

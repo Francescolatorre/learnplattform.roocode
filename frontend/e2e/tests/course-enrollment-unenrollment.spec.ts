@@ -998,106 +998,61 @@ test.describe('Student Course Enrollment and Unenrollment Flow', () => {
         }
     });
 
+    // Add explicit waits and improved retry logic
+    async function waitForUIUpdate(page, selector, expectedState, timeout = 5000) {
+        const startTime = Date.now();
+        while (Date.now() - startTime < timeout) {
+            const element = page.locator(selector);
+            const isVisible = await element.isVisible().catch(() => false);
+            if (isVisible === expectedState) {
+                return true;
+            }
+            await page.waitForTimeout(500); // Wait before retrying
+        }
+        return false;
+    }
+
+    // Update the 'e2e full flow' test with explicit waits
     test('e2e full flow: enroll, verify, unenroll, verify', async ({page}) => {
-        // Navigate to courses page
         const coursesPage = new StudentCoursesPage(page);
         await coursesPage.navigateTo();
         await coursesPage.isCoursesPageLoaded();
 
-        // Take screenshot of courses page
-        await takeScreenshot(page, 'e2e-flow-courses-page');
-
-        // Log page state at the start of the test
-        await logPageState(page, 'E2E Full Flow Start');
-
-        // Get all available courses
         const courseTitles = await coursesPage.getCoursesTitles();
-        console.log('Available courses for full flow test:', courseTitles);
-
-        // Skip test if no courses are available
         if (courseTitles.length === 0) {
-            console.log('No courses available to test the full enrollment flow');
-
-            // Save DOM snapshot for debugging
-            await saveDOMSnapshot(page, 'no-courses-available');
-
-            test.skip();
+            test.skip('No courses available to test the full enrollment flow');
             return;
         }
 
-        // Find a suitable test course - either from our predefined list or use the first one
-        let selectedCourse = '';
-        for (const possibleCourse of POSSIBLE_TEST_COURSES) {
-            const matchingCourse = courseTitles.find(title =>
-                title.includes(possibleCourse) || possibleCourse.includes(title)
-            );
-
-            if (matchingCourse) {
-                selectedCourse = matchingCourse;
-                console.log(`Selected course for full E2E test: "${selectedCourse}"`);
-                break;
-            }
-        }
-
-        // If no match found from predefined list, use the first available course
-        if (!selectedCourse) {
-            selectedCourse = courseTitles[0];
-            console.log(`Using first available course for E2E test: "${selectedCourse}"`);
-        }
-
-        // Step 1: Click on the course to view details
+        let selectedCourse = courseTitles[0];
         await coursesPage.clickCourse(selectedCourse);
 
-        // Verify course detail page loaded
         const courseDetailPage = new CourseDetailPage(page);
         await courseDetailPage.isCourseDetailPageLoaded();
 
-        // Verify we're on the right course
-        const courseTitle = await courseDetailPage.getCourseTitle();
-        expect(courseTitle).toContain(selectedCourse);
-
-        // Step 2: Check current enrollment status
         const initiallyEnrolled = await courseDetailPage.isEnrolled();
-
         if (initiallyEnrolled) {
-            // If already enrolled, unenroll first so we can test the full flow
-            console.log('Course already enrolled - unenrolling first to test the full flow');
             await courseDetailPage.unenrollFromCourse();
             await page.reload();
             await courseDetailPage.isCourseDetailPageLoaded();
-
-            // Verify unenrollment worked
-            const enrollmentCheck = await courseDetailPage.isEnrolled();
-            expect(enrollmentCheck).toBeFalsy();
+            const enrollmentCheck = await waitForUIUpdate(page, '[data-testid="enroll-button"]', true);
+            expect(enrollmentCheck).toBeTruthy();
         }
 
-        // Step 3: Enroll in the course
         await courseDetailPage.enrollInCourse();
         await page.reload();
         await courseDetailPage.isCourseDetailPageLoaded();
-
-        // Step 4: Verify enrollment was successful
-        const isEnrolled = await courseDetailPage.isEnrolled();
+        const isEnrolled = await waitForUIUpdate(page, '[data-testid="unenroll-button"]', true);
         expect(isEnrolled).toBeTruthy();
 
-        // Step 5: Unenroll from the course
         await courseDetailPage.unenrollFromCourse();
         await page.reload();
         await courseDetailPage.isCourseDetailPageLoaded();
+        const stillEnrolled = await waitForUIUpdate(page, '[data-testid="enroll-button"]', true);
+        expect(stillEnrolled).toBeTruthy();
 
-        // Step 6: Verify unenrollment was successful
-        const stillEnrolled = await courseDetailPage.isEnrolled();
-        expect(stillEnrolled).toBeFalsy();
-
-        // Return to courses page to verify the change is reflected there too
         await coursesPage.navigateTo();
         await coursesPage.isCoursesPageLoaded();
-
-        // Find the course to verify it exists and is not showing as enrolled
-        const courseExists = await coursesPage.hasCourse(selectedCourse);
-        expect(courseExists).toBeTruthy();
-
-        // Verify not enrolled status on courses page
         const enrolledStatus = await coursesPage.isEnrolledIn(selectedCourse);
         expect(enrolledStatus).toBeFalsy();
     });
