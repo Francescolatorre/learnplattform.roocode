@@ -9,33 +9,11 @@ import Typography from '@mui/material/Typography';
 import React, {useState, useEffect} from 'react';
 import {useForm, Controller} from 'react-hook-form';
 import {useNavigate, useParams} from 'react-router-dom';
-import {z} from 'zod';
 
 import authService from '@/services/auth/authService';
 import {useNotification} from '@components/ErrorNotifier/useErrorNotifier';
-
-import {validatePassword, type PasswordStrength, getPasswordStrengthLabel} from '../../../utils/passwordValidation';
-
-
-const passwordSchema = z
-  .string()
-  .min(8, {message: 'Password must be at least 8 characters'})
-  .refine(validatePassword, {
-    message:
-      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
-  });
-
-const resetPasswordFormSchema = z
-  .object({
-    password: passwordSchema,
-    confirmPassword: z.string(),
-  })
-  .refine(data => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  });
-
-type ResetPasswordFormValues = z.infer<typeof resetPasswordFormSchema>;
+import {resetPasswordSchema, type ResetPasswordSchema} from '@/validation/schemas';
+import {type PasswordStrength, getPasswordStrengthLabel} from '@/utils/passwordValidation';
 
 const ResetPasswordForm: React.FC = () => {
   const {token} = useParams<{token: string}>();
@@ -54,22 +32,11 @@ const ResetPasswordForm: React.FC = () => {
     control,
     handleSubmit,
     watch,
-    register,
     formState: {errors},
-  } = useForm<ResetPasswordFormValues>({
-    resolver: zodResolver(resetPasswordFormSchema),
-    defaultValues: {
-      password: '',
-      confirmPassword: '',
-    },
+  } = useForm<ResetPasswordSchema>({
+    resolver: zodResolver(resetPasswordSchema),
+    mode: 'onChange',
   });
-
-  // Use register in a useEffect to avoid timing issues
-  useEffect(() => {
-    register('confirmPassword', {
-      validate: (value: string): string | true => value === watch('password') || 'Passwords do not match'
-    });
-  }, [register, watch]);
 
   useEffect(() => {
     if (!token) {
@@ -82,7 +49,7 @@ const ResetPasswordForm: React.FC = () => {
     }
   }, [token, navigate, notify]);
 
-  const onSubmit = async (data: ResetPasswordFormValues) => {
+  const onSubmit = async (data: ResetPasswordSchema) => {
     setLoading(true);
     setError(null);
     setSuccess(false);

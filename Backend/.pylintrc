@@ -1,0 +1,38 @@
+[MASTER]
+ignore=venv
+load-plugins=pylint_django
+django-settings-module=config.settings
+
+[MESSAGES CONTROL]
+disable=
+    missing-docstring,
+    invalid-name,
+    no-member,
+    no-self-use,
+    too-few-public-methods,
+    too-many-arguments,
+    too-many-locals,
+    too-many-statements,
+    too-many-branches,
+    too-many-instance-attributes,
+    too-many-public-methods,
+    too-many-lines,
+    too-many-nested-blocks,
+    too-many-return-statements,
+    too-many-boolean-expressions,
+    attribute-defined-outside-init,
+    fixme
+
+[TYPECHECK]
+generated-members=REQUEST,acl_users,aq_parent,objects,_meta,id,pk,DoesNotExist,MultipleObjectsReturned,title,description,clean_fields,clean,save,delete
+
+[DESIGN]
+max-args=10
+max-locals=15
+max-statements=50
+max-branches=12
+max-public-methods=20
+max-lines=1000
+max-nested-blocks=5
+max-return-statements=6
+max-boolean-expressions=5

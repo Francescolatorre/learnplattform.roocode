@@ -187,7 +187,7 @@ export class DashboardPage extends BasePage {
 
         try {
             // Zuerst den Navigationscontainer finden
-            const navContainer = await this.findElement(this.navigationMenuSelectors, 'navigation menu', {timeout: 5000});
+            const navContainer = await this.findElement(this.navigationMenuSelectors, 'navigation menu', {timeoutMs: 5000});
 
             // Alle Links oder Listenelemente innerhalb der Navigation finden
             const itemLocators = navContainer.locator('li, a[href]');
@@ -277,69 +277,47 @@ export class DashboardPage extends BasePage {
 export class StudentDashboardPage extends DashboardPage {
     // Student-spezifische Selektoren
     readonly enrolledCoursesSelectors = [
+        '[data-testid="enrolled-courses"]',
         'h2:has-text("Enrolled Courses")',
-        'h3:has-text("Enrolled Courses")',
-        'h4:has-text("My Courses")',
-        '.enrolled-courses',
-        '[data-testid="enrolled-courses"]'
+        'h3:has-text("My Courses")',
+        '.enrolled-courses'
     ];
 
     readonly progressSectionSelectors = [
+        '[data-testid="progress-section"]',
         'h2:has-text("Progress")',
-        'h3:has-text("Progress")',
-        '.progress-section',
-        '[data-testid="progress-section"]'
+        '.progress-section'
     ];
 
-    readonly studentCoursesLinkSelectors = [
-        '[data-testid="student-courses-link"]',
-        'a[href="/courses"]:visible',
-        'a:has-text("Courses"):visible',
-        'a:has-text("My Courses"):visible',
-        'button:has-text("Courses"):visible',
-        'button:has-text("My Courses"):visible'
+    readonly dashboardSummarySelectors = [
+        '[data-testid="dashboard-summary"]',
+        '.dashboard-stats',
+        '.overview-stats'
     ];
 
     /**
-     * Konstruktor für das Student Dashboard
-     * @param page Playwright Page-Objekt
+     * Constructor for the Student Dashboard
      */
     constructor(page: Page) {
         super(page, '/dashboard');
     }
 
     /**
-     * Navigieren zur Student-Kursliste
+     * Check if progress section is visible
      */
-    async navigateToStudentCourses(): Promise<void> {
-        console.log('Navigating to student courses');
-
-        // Versuchen, den Kurse-Link zu finden und zu klicken
-        try {
-            for (const selector of this.studentCoursesLinkSelectors) {
-                const linkLocator = this.page.locator(selector);
-                const isVisible = await linkLocator.isVisible({timeout: 1000}).catch(() => false);
-                if (isVisible) {
-                    await linkLocator.click();
-                    console.log(`Clicked courses link with selector: ${selector}`);
-                    await this.page.waitForURL('**/courses**');
-                    console.log('Navigated to courses page');
-                    return;
-                }
+    async hasProgressSection(): Promise<boolean> {
+        for (const selector of this.progressSectionSelectors) {
+            const locator = this.page.locator(selector);
+            const isVisible = await locator.isVisible({timeout: 2000}).catch(() => false);
+            if (isVisible) {
+                return true;
             }
-
-            // Alternative: Direkt zur URL navigieren
-            console.log('Could not find courses link, navigating directly to /courses');
-            await this.navigateTo('/courses');
-        } catch (error) {
-            console.error('Failed to navigate to student courses:', error);
-            await takeScreenshot(this.page, 'student-courses-navigation-failed');
-            throw error;
         }
+        return false;
     }
 
     /**
-     * Überprüfen, ob der Bereich für eingeschriebene Kurse sichtbar ist
+     * Check if enrolled courses section is visible
      */
     async hasEnrolledCourses(): Promise<boolean> {
         for (const selector of this.enrolledCoursesSelectors) {
@@ -353,13 +331,12 @@ export class StudentDashboardPage extends DashboardPage {
     }
 
     /**
-     * Liste der eingeschriebenen Kurse auf dem Dashboard abrufen
+     * Get list of enrolled courses
      */
     async getEnrolledCourses(): Promise<string[]> {
         const courses: string[] = [];
-
         try {
-            // Nach Kurs-Karten oder Kurslistenelementen suchen
+            // Look for course cards or course list items
             const courseElements = this.page.locator('.course-card, .course-list-item, [data-testid^="course-"]');
             const count = await courseElements.count();
 
@@ -373,8 +350,33 @@ export class StudentDashboardPage extends DashboardPage {
         } catch (error) {
             console.warn('Error getting enrolled courses:', error);
         }
-
         return courses;
+    }
+
+    /**
+     * Wait for dashboard page to load
+     */
+    override async waitForPageLoad(timeoutMs: number = 10000): Promise<void> {
+        try {
+            // Wait for essential elements
+            await this.page.waitForSelector('[data-testid="dashboard-title"]', {timeout: timeoutMs});
+            await this.page.waitForSelector('[data-testid="learning-overview"]', {timeout: timeoutMs});
+
+            // Try to find either enrolled courses or a message about no courses
+            try {
+                await this.page.waitForSelector(
+                    '.course-card, [data-testid="no-courses-message"]',
+                    {timeout: 2000}
+                );
+            } catch {
+                console.warn('No courses or no-courses message found');
+            }
+
+            console.log('Student dashboard page loaded');
+        } catch (error) {
+            console.error('Student dashboard did not load properly:', error);
+            throw error;
+        }
     }
 }
 
@@ -448,7 +450,7 @@ export class InstructorDashboardPage extends DashboardPage {
 
             // Alternative: Direkt zur URL navigieren
             console.log('Could not find create course button, navigating directly to /instructor/courses/new');
-            await this.navigateTo('/instructor/courses/new');
+            await this.page.goto('/instructor/courses/new');
             await this.page.waitForURL('**/instructor/courses/new**');
             console.log('Navigated to course creation page');
         } catch (error) {
@@ -499,7 +501,7 @@ export class InstructorDashboardPage extends DashboardPage {
 
             // Letzter Ausweg: Direkt zur URL navigieren
             console.log('Could not find courses link, navigating directly to /instructor/courses');
-            await this.navigateTo('/instructor/courses');
+            await this.page.goto('/instructor/courses');
             await this.page.waitForURL('**/instructor/courses**', {timeout: 5000});
             console.log('Navigated directly to instructor courses page');
         } catch (error) {

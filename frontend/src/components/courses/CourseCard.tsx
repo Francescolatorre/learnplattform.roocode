@@ -120,7 +120,7 @@ const CourseCard: React.FC<CourseCardProps> = ({course, isLoading = false, isIns
 
         <CardContent sx={{flexGrow: 1}}>
           <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1}}>
-            <Typography gutterBottom variant="h6" component="h2" sx={{mb: 0}}>
+            <Typography gutterBottom variant="h6" component="h2" sx={{mb: 0}} data-testid="course-card-course-title">
               {course.title}
             </Typography>
             <EnrollmentStatusIndicator

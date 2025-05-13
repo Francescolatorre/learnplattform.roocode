@@ -176,75 +176,21 @@ export class CoursesPage extends BasePage {
         const titles: string[] = [];
 
         try {
-            // Try to get course cards
-            let cards;
-            try {
-                cards = await this.getCourseCards();
-            } catch (error) {
-                console.warn('Could not find course cards, trying alternative approach');
-                // Try a more generic approach
-                cards = this.page.locator('.MuiCard-root, .course-card, [data-testid^="course-card-"]');
-            }
+            // First wait for loading to complete
+            await this.page.waitForSelector('.MuiCard-root', {state: 'visible', timeout: 5000});
 
+            // Get all course cards from the grid view
+            const cards = this.page.locator('.MuiCard-root');
             const count = await cards.count();
-            console.log(`Found ${count} cards to extract titles from`);
+            console.log(`Found ${count} course cards`);
 
+            // For each card, get the title
             for (let i = 0; i < count; i++) {
                 const card = cards.nth(i);
-                // Look for title elements in each card with multiple selectors
-                const titleSelectors = [
-                    'h2',
-                    'h3',
-                    'h4',
-                    'h5',
-                    '.course-title',
-                    '.card-title',
-                    '.MuiTypography-h5',
-                    '.MuiTypography-h6',
-                    '[data-testid="course-title"]',
-                    '.MuiCardHeader-title',
-                    '.title'
-                ];
-
-                let foundTitle = false;
-                for (const selector of titleSelectors) {
-                    try {
-                        const titleElements = card.locator(selector);
-                        const titleCount = await titleElements.count();
-
-                        if (titleCount > 0) {
-                            for (let j = 0; j < titleCount; j++) {
-                                const titleEl = titleElements.nth(j);
-                                const titleText = await titleEl.textContent();
-                                if (titleText && titleText.trim()) {
-                                    titles.push(titleText.trim());
-                                    foundTitle = true;
-                                    break;
-                                }
-                            }
-                            if (foundTitle) break;
-                        }
-                    } catch (err) {
-                        // Continue to the next selector
-                        continue;
-                    }
-                }
-
-                // If no title element found via selectors, try getting all text content from the card
-                if (!foundTitle) {
-                    try {
-                        const allText = await card.textContent();
-                        if (allText && allText.trim()) {
-                            // Just take the first line as a fallback title
-                            const firstLine = allText.trim().split('\n')[0].trim();
-                            if (firstLine) {
-                                titles.push(firstLine);
-                                console.log(`Using fallback text as title: "${firstLine}"`);
-                            }
-                        }
-                    } catch (err) {
-                        console.warn(`Could not extract any text from card ${i}`);
-                    }
+                const titleElement = card.locator('h2, h3, h4, h5, h6, .MuiTypography-h5, .MuiTypography-h6').first();
+                const titleText = await titleElement.textContent();
+                if (titleText?.trim()) {
+                    titles.push(titleText.trim());
                 }
             }
 
@@ -1241,6 +1187,49 @@ export class StudentCoursesPage extends CoursesPage {
         } catch (error) {
             console.error(`Error deleting course ${title}:`, error);
             return false;
+        }
+    }
+}
+
+/**
+ * Instructor-specific courses page object model
+ * Handles course management operations specific to instructors
+ */
+export class InstructorCoursesPage extends CoursesPage {
+    readonly createCourseButtonSelectors = [
+        '[data-testid="create-course-button"]',
+        'button:has-text("Create Course")',
+        'a:has-text("Create Course")',
+        '.create-course-button'
+    ];
+
+    constructor(page: Page) {
+        super(page, '/instructor/courses');
+    }
+
+    /**
+     * Navigate to course creation page
+     */
+    async navigateToCreateCourse(): Promise<void> {
+        try {
+            for (const selector of this.createCourseButtonSelectors) {
+                const button = this.page.locator(selector);
+                const isVisible = await button.isVisible({timeout: 1000});
+                if (isVisible) {
+                    await button.click();
+                    console.log('Clicked create course button');
+                    await this.page.waitForURL('**/instructor/courses/new**');
+                    return;
+                }
+            }
+
+            // If button not found, try direct navigation
+            console.log('Create course button not found, navigating directly');
+            await this.page.goto('/instructor/courses/new');
+            await this.page.waitForURL('**/instructor/courses/new**');
+        } catch (error) {
+            console.error('Failed to navigate to course creation:', error);
+            throw error;
         }
     }
 }

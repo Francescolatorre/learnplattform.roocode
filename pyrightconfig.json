@@ -1,0 +1,40 @@
+{
+    "include": [
+        "Backend"
+    ],
+    "exclude": [
+        "**/node_modules",
+        "**/__pycache__",
+        "**/.*"
+    ],
+    "pythonVersion": "3.12",
+    "pythonPlatform": "Windows",
+    "executionEnvironments": [
+        {
+            "root": "Backend",
+            "pythonPath": "Backend",
+            "extraPaths": [
+                "Backend"
+            ]
+        }
+    ],
+    "typeCheckingMode": "strict",
+    "reportMissingImports": "warning",
+    "reportMissingTypeStubs": false,
+    "reportUnknownMemberType": false,
+    "reportUnknownArgumentType": false,
+    "reportUnknownVariableType": false,
+    "reportUnknownLambdaType": false,
+    "reportAttributeAccessIssue": false,
+    "reportGeneralTypeIssues": "warning",
+    "reportMissingModuleSource": "none",
+    "reportOptionalMemberAccess": "none",
+    "stubPath": "./typings",
+    "typeStubSearchPaths": [
+        "./Backend"
+    ],
+    "extraPaths": [
+        "./Backend",
+        "./Backend/core"
+    ]
+}

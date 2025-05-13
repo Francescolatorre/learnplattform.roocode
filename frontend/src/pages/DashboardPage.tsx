@@ -1,4 +1,3 @@
-
 import {
   Box,
   Typography,
@@ -14,12 +13,9 @@ import {useQuery} from '@tanstack/react-query';
 import React, {useEffect} from 'react';
 import {Link as RouterLink} from 'react-router-dom';
 
-import {ICourseProgress} from '@/types';
-import {IProgressResponse} from '@/types/progress';
+import {IDashboardResponse} from '@/types/progress';
 import {useAuth} from '@context/auth/AuthContext';
-import progressService from '@services/resources/progressService';
-import {enrollmentService} from '@services/resources/enrollmentService';
-import {ICourseEnrollment} from '@/types';
+import {fetchDashboardData} from '@services/resources/dashboardService';
 import DashboardCourseCard from '@/components/DashboardCourseCard';
 
 /**
@@ -38,154 +34,28 @@ const Dashboard: React.FC = () => {
     };
   }, [user]);
 
-  /**
-   * Fetches user progress data using the progressService
-   * @returns Complete progress response including user info, stats and course progress
-   */
-  const fetchUserProgress = async (): Promise<IProgressResponse> => {
-    if (!user) {
-      throw new Error('User not authenticated');
-    }
-    try {
-      console.info('Fetching user progress for user ID:', user.id);
-      const response = await progressService.fetchStudentProgressByUser(user.id);
-      console.info('User progress response:', response);
-
-      // Handle the well-structured response that includes user_info, overall_stats, and courses
-      if (response && typeof response === 'object' && 'courses' in response) {
-        // This is already the expected structure
-        return response as unknown as IProgressResponse;
-      }
-
-      // If we get an array of progress items, adapt it to our expected format
-      if (Array.isArray(response)) {
-        console.warn('Received array response format, adapting to expected structure');
-        return {
-          user_info: {
-            id: user.id,
-            username: user.username,
-            display_name: user.display_name || user.username,
-          },
-          overall_stats: {
-            courses_enrolled: response.length,
-            completion_percentage: calculateAverageCompletion(response),
-          },
-          courses: response,
-        };
-      }
-
-      // If we received something neither in the expected structure nor an array
-      console.error('Error: Unexpected response format', response);
-
-      // Return a fallback structure
-      return {
-        user_info: {
-          id: user.id,
-          username: user.username,
-          display_name: user.display_name || user.username,
-        },
-        overall_stats: {
-          courses_enrolled: 0,
-          completion_percentage: 0,
-        },
-        courses: [],
-      };
-    } catch (error: any) {
-      console.error('Error fetching user progress:', error.message);
-      throw new Error('Failed to load progress data.');
-    }
-  };
-
-  /**
-   * Calculate average completion percentage across courses
-   */
-  const calculateAverageCompletion = (courses: ICourseProgress[]): number => {
-    if (!courses.length) return 0;
-    const sum = courses.reduce((acc, course) => acc + (course.completion_percentage || 0), 0);
-    return Math.round(sum / courses.length);
-  };
-
-  // Fetch enrollments to get course details
-  const {
-    data: enrollmentsResponse,
-    isLoading: isLoadingEnrollments
-  } = useQuery({
-    queryKey: ['enrollments'],
-    queryFn: () => enrollmentService.fetchUserEnrollments(),
-    enabled: !!user,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-
   // User progress data query using React Query
   const {
     data: progressResponse,
     isLoading: isLoadingProgress,
     error,
-  } = useQuery<IProgressResponse>({
+  } = useQuery<IDashboardResponse>({
     queryKey: ['userProgress', user?.id],
-    queryFn: fetchUserProgress,
-    enabled: !!user,
+    queryFn: () => {
+      if (!user?.id) {
+        throw new Error('User ID is required');
+      }
+      return fetchDashboardData(user.id);
+    },
+    enabled: !!user?.id,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    retry: 2,
   });
 
-  // Extract enrollments array from the response
-  const extractEnrollments = (response: any): ICourseEnrollment[] => {
-    // If response is an array, return it directly
-    if (Array.isArray(response)) {
-      return response;
-    }
-
-    // If response is a paginated response object
-    if (response && typeof response === 'object') {
-      // Check for results field (common in paginated responses)
-      if ('results' in response && Array.isArray(response.results)) {
-        return response.results;
-      }
-
-      // Check for data field (another common pattern)
-      if ('data' in response && Array.isArray(response.data)) {
-        return response.data;
-      }
-
-      // Check for items field (another common pattern)
-      if ('items' in response && Array.isArray(response.items)) {
-        return response.items;
-      }
-
-      // Check if response itself is an enrollment object (single enrollment)
-      if ('course' in response) {
-        return [response];
-      }
-    }
-
-    console.warn('Could not extract enrollments from response:', response);
-    return [];
-  };
-
-  // Get enrollments array from response
-  const enrollments = enrollmentsResponse ? extractEnrollments(enrollmentsResponse) : [];
-
   // Create a map of course IDs to course titles from enrollments
-  const courseTitleMap = React.useMemo(() => {
-    console.debug('Building course title map from enrollments:', enrollments);
-
-    const titleMap: Record<string | number, string> = {};
-
-    if (Array.isArray(enrollments)) {
-      enrollments.forEach(enrollment => {
-        if (enrollment && enrollment.course && enrollment.course_details?.title) {
-          titleMap[enrollment.course] = enrollment.course_details.title;
-        }
-      });
-    }
-
-    return titleMap;
-  }, [enrollments]);
+  const {overall_stats: stats, courses: progressData = []} = progressResponse || {};
 
   // Loading state
-  const isLoading = isLoadingProgress || isLoadingEnrollments;
-  if (isLoading) {
+  if (isLoadingProgress) {
     return (
       <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
         <CircularProgress />
@@ -206,9 +76,6 @@ const Dashboard: React.FC = () => {
       </Box>
     );
   }
-
-  // Destructure the progress response data
-  const {overall_stats: stats, courses: progressData = []} = progressResponse || {};
 
   return (
     <Box sx={{p: 3}}>
@@ -251,7 +118,7 @@ const Dashboard: React.FC = () => {
                 <Typography variant="subtitle2" color="text.secondary" gutterBottom>
                   Overall Completion
                 </Typography>
-                <Typography variant="h4">{stats?.completion_percentage || 0}%</Typography>
+                <Typography variant="h4">{stats?.overall_progress || 0}%</Typography>
               </CardContent>
             </Card>
           </Grid>
@@ -262,7 +129,7 @@ const Dashboard: React.FC = () => {
                   Completed Tasks
                 </Typography>
                 <Typography variant="h4">
-                  {stats?.completed_tasks || 0}/{stats?.total_tasks || 0}
+                  {stats?.tasks_completed || 0}/{stats?.tasks_in_progress || 0}
                 </Typography>
               </CardContent>
             </Card>
@@ -296,14 +163,8 @@ const Dashboard: React.FC = () => {
           </Paper>
         ) : (
           <Grid container spacing={3}>
-            {progressData.map((progress, idx) => {
-              // Get course title from enrollment data or fallback to progress data
-              const courseId = progress.studentId;
-              const courseTitle =
-                courseTitleMap[courseId] ||
-                progress.studentId.toString() ||
-                progress.course_title ||
-                `Course ${idx + 1}`;
+            {progressData.map((progress) => {
+              const courseId = progress.id;
 
               return (
                 <Grid
@@ -311,19 +172,18 @@ const Dashboard: React.FC = () => {
                   xs={12}
                   sm={6}
                   md={4}
-                  key={progress.id !== undefined ? progress.id : `progress-${idx}`}
+                  key={progress.id}
                 >
                   <DashboardCourseCard
-                    courseTitle={courseTitle}
+                    courseTitle={progress.title}
                     progress={{
-                      percentage: progress.averageScore || 0,
-                      completed_tasks: progress.completedTasks || 0,
-                      total_tasks: progress.totalTasks || 0,
-                      last_activity: progress.recentActivity[0]?.timestamp || undefined,
+                      percentage: progress.progress || 0,
+                      completed_tasks: stats?.tasks_completed || 0,
+                      total_tasks: stats?.tasks_in_progress || 0,
+                      last_activity: progress.last_activity_date
                     }}
-                    courseId={courseId.toString()}
+                    courseId={courseId}
                   />
-
                 </Grid>
               );
             })}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Grid,
   Paper,
@@ -7,31 +7,53 @@ import {
   ListItem,
   ListItemText,
   Divider,
-  Box,
   Card,
   CardContent,
   LinearProgress,
 } from '@mui/material';
 
-import {ICourseEnrollment} from '@/types/course';
 import {IProgressResponse} from '@/types/progress';
-import progressService from '@/services/resources/progressService';
+import {useApiService} from '@/services/api/apiClientContext';
 
 interface StudentDashboardProps {
-  progressData: IProgressResponse;
   userId: string;
 }
 
 /**
  * Displays the student dashboard with progress information
  */
-const StudentDashboard: React.FC<StudentDashboardProps> = ({progressData, userId}) => {
-  // Verwenden Sie die übergebenen progressData anstatt fetch
+const StudentDashboard: React.FC<StudentDashboardProps> = ({userId}) => {
+  const [progressData, setProgressData] = useState<IProgressResponse | null>(null);
+  const apiService = useApiService<IProgressResponse>();
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const data = await apiService.get(`/api/v1/students/${userId}/dashboard/`);
+        setProgressData(data);
+      } catch (error) {
+        console.error('Failed to fetch dashboard data:', error);
+      }
+    };
+
+    fetchDashboardData();
+  }, [userId, apiService]);
+
+  if (!progressData) {
+    return <Typography>Loading...</Typography>;
+  }
+
   const {user_info, overall_stats, courses} = progressData;
+
+  const courseProgress = courses.map(course => ({
+    completedTasks: course.completedTasks,
+    totalTasks: course.totalTasks,
+    averageScore: course.averageScore,
+  }));
 
   return (
     <Grid container spacing={3}>
-      {/* Übersichtsbereich */}
+      {/* Overview Section */}
       <Grid item xs={12}>
         <Paper sx={{p: 3, mb: 2}}>
           <Typography variant="h5" gutterBottom>
@@ -48,28 +70,19 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({progressData, userId
 
           <Grid container spacing={3}>
             <Grid item xs={12} sm={4}>
-              <StatCard
-                title="Courses Enrolled"
-                value={overall_stats?.courses_enrolled || 0}
-              />
+              <StatCard title="Courses Enrolled" value={overall_stats?.courses_enrolled || 0} />
             </Grid>
             <Grid item xs={12} sm={4}>
-              <StatCard
-                title="Completed Courses"
-                value={overall_stats?.courses_completed || 0}
-              />
+              <StatCard title="Completed Courses" value={overall_stats?.courses_completed || 0} />
             </Grid>
             <Grid item xs={12} sm={4}>
-              <StatCard
-                title="Tasks Completed"
-                value={overall_stats?.tasks_completed || 0}
-              />
+              <StatCard title="Tasks Completed" value={overall_stats?.tasks_completed || 0} />
             </Grid>
           </Grid>
         </Paper>
       </Grid>
 
-      {/* Kursliste */}
+      {/* Course List */}
       <Grid item xs={12} md={8}>
         <Paper sx={{p: 3}}>
           <Typography variant="h6" gutterBottom>
@@ -78,18 +91,18 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({progressData, userId
           <List>
             {courses?.length > 0 ? (
               courses.map((course, index) => (
-                <React.Fragment key={course.id || index}>
+                <React.Fragment key={index}>
                   <ListItem alignItems="flex-start">
                     <ListItemText
-                      primary={course.title}
+                      primary={`Completed Tasks: ${course.completedTasks}`}
                       secondary={
                         <>
                           <Typography component="span" variant="body2" color="text.primary">
-                            Progress: {course.percentage || 0}%
+                            Total Tasks: {course.totalTasks}
                           </Typography>
                           <LinearProgress
                             variant="determinate"
-                            value={course.percentage || 0}
+                            value={course.averageScore || 0}
                             sx={{mt: 1, height: 6, borderRadius: 3}}
                           />
                         </>
@@ -108,25 +121,25 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({progressData, userId
         </Paper>
       </Grid>
 
-      {/* Aktivitäten und Empfehlungen */}
+      {/* Activities and Recommendations */}
       <Grid item xs={12} md={4}>
         <Paper sx={{p: 3, mb: 3}}>
           <Typography variant="h6" gutterBottom>
             Recent Activity
           </Typography>
           <List dense>
-            {progressData.recent_activities?.slice(0, 5).map((activity, index) => (
+            {progressData.courses.slice(0, 5).map((course, index) => (
               <ListItem key={index}>
                 <ListItemText
-                  primary={activity.description}
-                  secondary={new Date(activity.timestamp).toLocaleDateString()}
+                  primary={`Course: ${course.studentId}`}
+                  secondary={`Completed Tasks: ${course.completedTasks}`}
                 />
               </ListItem>
             )) || (
-              <ListItem>
-                <ListItemText primary="No recent activity." />
-              </ListItem>
-            )}
+                <ListItem>
+                  <ListItemText primary="No recent activity." />
+                </ListItem>
+              )}
           </List>
         </Paper>
 
@@ -135,18 +148,15 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({progressData, userId
             Recommendations
           </Typography>
           <List dense>
-            {progressData.recommendations?.slice(0, 3).map((rec, index) => (
+            {progressData.courses.slice(0, 3).map((course, index) => (
               <ListItem key={index}>
-                <ListItemText
-                  primary={rec.title}
-                  secondary={rec.reason}
-                />
+                <ListItemText primary={`Course: ${course.studentId}`} secondary={`Average Score: ${course.averageScore}`} />
               </ListItem>
             )) || (
-              <ListItem>
-                <ListItemText primary="No recommendations available." />
-              </ListItem>
-            )}
+                <ListItem>
+                  <ListItemText primary="No recommendations available." />
+                </ListItem>
+              )}
           </List>
         </Paper>
       </Grid>
@@ -154,8 +164,8 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({progressData, userId
   );
 };
 
-// Hilfskom ponente für Statistik-Karten
-const StatCard: React.FC<{title: string, value: number | string}> = ({title, value}) => (
+// Helper component for statistic cards
+const StatCard: React.FC<{title: string; value: number | string}> = ({title, value}) => (
   <Card>
     <CardContent>
       <Typography color="textSecondary" gutterBottom>

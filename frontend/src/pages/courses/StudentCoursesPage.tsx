@@ -276,19 +276,6 @@ const StudentCoursesPage: React.FC = () => {
           )}
         </Paper>
       )}
-
-      {/* Enrolled Courses Section */}
-      <Box sx={{mt: 4}}>
-        <Typography variant="h4" component="h2" sx={{fontWeight: 500, mb: 3}}>
-          My Enrolled Courses
-        </Typography>
-        <FilterableCourseList
-          title=""
-          showStatusFilter={true}
-          enrolledOnly={true}
-          onCoursesLoaded={courses => console.info('Loaded enrolled courses:', courses.length)}
-        />
-      </Box>
     </Box>
   );
 };

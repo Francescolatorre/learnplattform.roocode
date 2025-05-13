@@ -151,6 +151,49 @@ In this project, "task" can mean two distinct things:
 - Include positive, negative, and edge case testing where appropriate.
 - Changes are only considered complete when corresponding tests pass.
 
+### Testing Workflow Algorithm
+
+1. **Initial Setup Phase**
+   - Create test data fixtures
+   - Set up test environment configuration
+   - Prepare mock services if needed
+
+2. **Unit Testing Phase**
+   - Write isolated component/function tests
+   - Test edge cases and error conditions
+   - Verify component state management
+   - Run `test:unit` command
+
+3. **Integration Testing Phase**
+   - Test component interactions
+   - Verify API integrations
+   - Check state management across components
+   - Run `test:integration` command
+
+4. **End-to-End Testing Phase**
+   - Test complete user workflows
+   - Verify frontend-backend integration
+   - Test data persistence
+   - Run E2E tests with Playwright
+
+5. **Performance Testing Phase**
+   - Check load times and rendering performance
+   - Verify API response times
+   - Test under different network conditions
+   - Monitor memory usage and leaks
+
+6. **Validation & Documentation**
+   - Update test documentation
+   - Verify test coverage
+   - Document any known limitations
+   - Add performance benchmarks
+
+7. **Continuous Integration**
+   - Ensure all tests pass in CI pipeline
+   - Verify build process
+   - Check for regression issues
+   - Update test reports
+
 ---
 
 ## Governance Model
