@@ -1,29 +1,22 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import {
-    Box,
-    Typography,
-    Button,
-    Paper,
-    Grid,
-    CircularProgress,
-    Alert,
-    Tabs,
-    Tab,
-    Divider,
-    Pagination
-} from '@mui/material';
-import {Link as RouterLink} from 'react-router-dom';
-import AddIcon from '@mui/icons-material/Add';
-import ViewListIcon from '@mui/icons-material/ViewList';
-import GridViewIcon from '@mui/icons-material/GridView';
+import {useDebug} from '@/utils/debug';
+import {Box, TextField, InputAdornment, Button} from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import ClearIcon from '@mui/icons-material/Clear';
 import {useQuery} from '@tanstack/react-query';
-
 import {useAuth} from '@/context/auth/AuthContext';
 import {courseService} from '@/services/resources/courseService';
 import {ICourse, IPaginatedResponse} from '@/types';
-import CourseCard from '@/components/courses/CourseCard';
-import CourseList from '@/components/courses/CourseList';
 import {useNotification} from '@/components/ErrorNotifier/useErrorNotifier';
+import PageHeader from '@/components/common/PageHeader';
+import ViewModeSelector from '@/components/common/ViewModeSelector';
+import LoadingIndicator from '@/components/common/LoadingIndicator';
+import ErrorAlert from '@/components/common/ErrorAlert';
+import NoCoursesMessage from '@/components/common/NoCoursesMessage';
+import CoursesGridView from '@/components/courses/CoursesGridView';
+import CourseList from '@/components/courses/CourseList';
+import PaginationControls from '@/components/common/PaginationControls';
+import StatsSummary from '@/components/common/StatsSummary';
 
 /**
  * Page for instructors to manage their courses
@@ -36,16 +29,32 @@ const InstructorCoursesPage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [pageSize] = useState<number>(9); // Fixed page size
     const [totalPages, setTotalPages] = useState<number>(1);
+    const [searchQuery, setSearchQuery] = useState<string>(''); // Add search state
+    const [debouncedSearch, setDebouncedSearch] = useState<string>(''); // Add debounced search state
 
     // Component lifecycle logging
     useEffect(() => {
-        console.info('InstructorCoursesPage: Component mounted');
-        console.info('InstructorCoursesPage: User context:', user);
+        if (process.env.NODE_ENV === 'development') {
+            useDebug('InstructorCoursesPage: Component mounted'); // Log for debugging
+            console.info('InstructorCoursesPage: User context:', user);
+        }
 
         return () => {
-            console.info('InstructorCoursesPage: Component unmounted');
+            if (process.env.NODE_ENV === 'development') {
+                console.info('InstructorCoursesPage: Component unmounted');
+            }
         };
     }, [user]);
+
+    // Add debounce effect for search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchQuery);
+            setCurrentPage(1); // Reset to first page on search
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
 
     // Fetch courses taught by this instructor
     const {
@@ -54,24 +63,44 @@ const InstructorCoursesPage: React.FC = () => {
         error,
         isError
     } = useQuery<IPaginatedResponse<ICourse>>({
-        queryKey: ['instructorCourses', user?.id, currentPage, pageSize],
-        queryFn: async () => {
-            console.info('InstructorCoursesPage: Fetching instructor courses for user ID:', user?.id, 'page:', currentPage);
+        queryKey: ['instructorCourses', user?.id, currentPage, pageSize, debouncedSearch], // Add search to query key
+        queryFn: async (): Promise<IPaginatedResponse<ICourse>> => {
+            if (process.env.NODE_ENV === 'development') {
+                console.info('InstructorCoursesPage: Fetching instructor courses for user ID:', user?.id, 'page:', currentPage);
+            }
             try {
                 const response = await courseService.fetchInstructorCourses({
                     page: currentPage,
-                    page_size: pageSize
+                    page_size: pageSize,
+                    search: debouncedSearch // Add search parameter
                 });
-                console.info('InstructorCoursesPage: Courses fetched successfully', {
-                    courseCount: response?.results?.length || 0,
-                    totalCount: response?.count || 0,
-                    hasNextPage: !!response?.next
-                });
-                return response;
+                if (process.env.NODE_ENV === 'development') {
+                    console.info('InstructorCoursesPage: Courses fetched successfully', {
+                        courseCount: response?.results?.length || 0,
+                        totalCount: response?.count || 0,
+                        hasNextPage: !!response?.next
+                    });
+                }
+                if (!response) {
+                    throw new Error('Failed to fetch courses');
+                }
+                if (!response) {
+                    throw new Error('Failed to fetch courses');
+                }
+                return response as IPaginatedResponse<ICourse>;
             } catch (error) {
-                console.error('InstructorCoursesPage: Failed to fetch courses', error);
+                useDebug('InstructorCoursesPage: Failed to fetch courses', error); // Log for debugging
+
+                if (!navigator.onLine) {
+                    notify({
+                        message: 'Network error: Please check your internet connection.',
+                        severity: 'error',
+                        duration: 6000,
+                    }, 'error');
+                    throw new Error('Network error: Please check your internet connection.');
+                }
                 // If we get a 404 (not found) for a page, it means we requested a page that doesn't exist
-                if (error?.response?.status === 404 && currentPage > 1) {
+                if ((error as any)?.response?.status === 404 && currentPage > 1) {
                     console.info('InstructorCoursesPage: Invalid page requested, resetting to page 1');
                     setTimeout(() => setCurrentPage(1), 0);
                 }
@@ -80,22 +109,32 @@ const InstructorCoursesPage: React.FC = () => {
         },
         enabled: !!user?.id && (user?.role === 'instructor' || user?.role === 'admin'),
         // Handle errors at the component level
-        retryOnError: false,
     });
 
     // Calculate total pages when data is loaded
     useEffect(() => {
-        if (coursesData?.count) {
+        if (coursesData && 'count' in coursesData) {
             const calculatedTotalPages = Math.ceil(coursesData.count / pageSize);
             setTotalPages(calculatedTotalPages);
-            console.info('InstructorCoursesPage: Total pages calculated:', calculatedTotalPages);
+            if (process.env.NODE_ENV === 'development') {
+                console.info('InstructorCoursesPage: Total pages calculated:', calculatedTotalPages);
+            }
         }
-    }, [coursesData?.count, pageSize]);
+    }, [coursesData, pageSize]);
 
     // Handle API errors when they occur
-    React.useEffect(() => {
+    useEffect(() => {
         if (error) {
-            console.error('InstructorCoursesPage: Failed to fetch instructor courses', error);
+            useDebug('InstructorCoursesPage: Failed to fetch instructor courses', error); // Log for debugging
+
+            if (!navigator.onLine) {
+                notify({
+                    message: 'Network error: Please check your internet connection.',
+                    severity: 'error',
+                    duration: 6000,
+                }, 'error');
+                return;
+            }
 
             // If it's a 404 error (page not found) and we're not on page 1, reset to page 1
             const statusCode = (error as any)?.response?.status;
@@ -108,6 +147,7 @@ const InstructorCoursesPage: React.FC = () => {
                     severity: 'info',
                     duration: 4000,
                 }, 'info');
+                return;
             } else {
                 notify({
                     message: 'Failed to load your courses. Please try again later.',
@@ -122,18 +162,20 @@ const InstructorCoursesPage: React.FC = () => {
     // Log when courses data changes
     useEffect(() => {
         if (coursesData) {
-            console.info('InstructorCoursesPage: Courses data updated', {
-                courseCount: coursesData.results?.length || 0,
-                totalCount: coursesData.count || 0,
-                hasNextPage: !!coursesData.next,
-                hasPreviousPage: !!coursesData.previous
-            });
+            if (process.env.NODE_ENV === 'development') {
+                console.info('InstructorCoursesPage: Courses data updated', {
+                    courseCount: coursesData.results?.length || 0,
+                    totalCount: coursesData.count || 0,
+                    hasNextPage: !!coursesData.next,
+                    hasPreviousPage: !!coursesData.previous
+                });
+            }
         }
     }, [coursesData]);
 
     // Handle pagination change
     const handlePageChange = useCallback((_event: React.ChangeEvent<unknown>, page: number) => {
-        console.info('InstructorCoursesPage: Changing to page', page);
+        useDebug('InstructorCoursesPage: Changing to page', page); // Log for debugging
         setCurrentPage(page);
         // Scroll to top when changing pages
         window.scrollTo(0, 0);
@@ -145,195 +187,113 @@ const InstructorCoursesPage: React.FC = () => {
         setViewMode(newValue);
     };
 
+    // Add search handler
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(event.target.value);
+        useDebug('InstructorCoursesPage: Search query updated:', event.target.value);
+    };
+
     // Get the current page courses
-    const courses = coursesData?.results || [];
-
-    // Render grid view of courses
-    const renderGridView = () => {
-        console.debug('InstructorCoursesPage: Rendering grid view with', courses.length, 'courses');
-        return (
-            <Grid container spacing={3}>
-                {courses.map((course) => (
-                    <Grid item xs={12} sm={6} md={4} key={course.id}>
-                        <CourseCard
-                            course={course}
-                            isInstructorView={true}
-                        />
-                    </Grid>
-                ))}
-            </Grid>
-        );
-    };
-
-    // Render list view using the CourseList component
-    const renderListView = () => {
-        console.debug('InstructorCoursesPage: Rendering list view with', courses.length, 'courses');
-        return (
-            <CourseList
-                courses={courses}
-                showInstructorActions={true}
-            />
-        );
-    };
-
-    console.debug('InstructorCoursesPage: Render state', {
-        isLoading,
-        hasError: !!error,
-        courseCount: courses.length,
-        viewMode,
-        currentPage,
-        totalPages
-    });
+    const courses = coursesData && 'results' in coursesData ? coursesData.results : [];
+    const totalCourses = coursesData && 'count' in coursesData ? coursesData.count : courses.length;
+    const publishedCourses = courses.filter((course: ICourse) => course.status === 'published').length;
+    const totalStudents = courses.reduce((total: number, course: ICourse) => total + (course.student_count || 0), 0);
+    const tasksNeedingAttention = 0; // Hardcoded to zero as the feature is not yet implemented
 
     return (
         <Box sx={{p: 3}}>
-            {/* Page Header with Title and Create Button */}
-            <Box sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                mb: 3
-            }}>
-                <Typography variant="h4" component="h1" sx={{fontWeight: 500}}>
-                    Manage Courses
-                </Typography>
+            <PageHeader />
 
-                <Button
-                    component={RouterLink}
-                    to="/instructor/courses/new"
-                    variant="contained"
-                    color="primary"
-                    startIcon={<AddIcon />}
-                    size="medium"
-                    data-testid="create-course-button"
-                >
-                    Create New Course
-                </Button>
+            {/* Updated Search and View Mode Layout */}
+            <Box sx={{
+                mb: 3,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2
+            }}>
+                {/* Top row with view toggle */}
+                <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
+                }}>
+                    <ViewModeSelector
+                        viewMode={viewMode}
+                        onChange={handleViewModeChange}
+                        data-testid="view-mode-selector"
+                    />
+                </Box>
+
+                {/* Search row */}
+                <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
+                    gap: 1 // Add gap between search field and reset button
+                }}>
+                    <TextField
+                        placeholder="Search courses..."
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        variant="outlined"
+                        size="small"
+                        sx={{width: '300px'}}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon />
+                                </InputAdornment>
+                            ),
+                        }}
+                        data-testid="course-search-field"
+                    />
+                    <Button
+                        variant="outlined"
+                        size="small"
+                        disabled={!searchQuery}
+                        onClick={() => {
+                            setSearchQuery('');
+                            useDebug('InstructorCoursesPage: Search reset');
+                        }}
+                        startIcon={<ClearIcon />}
+                        data-testid="reset-search-button"
+                    >
+                        Reset
+                    </Button>
+                </Box>
             </Box>
 
-            {/* View Mode Selector */}
-            <Paper sx={{mb: 3}}>
-                <Tabs
-                    value={viewMode}
-                    onChange={handleViewModeChange}
-                    indicatorColor="primary"
-                    textColor="primary"
-                    sx={{borderBottom: 1, borderColor: 'divider'}}
-                >
-                    <Tab
-                        value="grid"
-                        label="Grid View"
-                        icon={<GridViewIcon />}
-                        iconPosition="start"
-                    />
-                    <Tab
-                        value="list"
-                        label="List View"
-                        icon={<ViewListIcon />}
-                        iconPosition="start"
-                    />
-                </Tabs>
-            </Paper>
+            {isLoading && <LoadingIndicator />}
 
-            {/* Loading State */}
-            {isLoading && (
-                <Box sx={{display: 'flex', justifyContent: 'center', my: 4}}>
-                    <CircularProgress />
-                </Box>
-            )}
+            {error && !isLoading && <ErrorAlert error={error} />}
 
-            {/* Error State */}
-            {error && !isLoading && (
-                <Alert
-                    severity="error"
-                    sx={{mb: 3}}
-                >
-                    {error instanceof Error
-                        ? error.message
-                        : 'An error occurred while fetching your courses. Please try again.'}
-                </Alert>
-            )}
+            {!isLoading && !error && courses.length === 0 && <NoCoursesMessage />}
 
-            {/* No Courses State */}
-            {!isLoading && !error && courses.length === 0 && (
-                <Paper elevation={2} sx={{p: 4, textAlign: 'center'}}>
-                    <Typography variant="h6" gutterBottom>
-                        You haven't created any courses yet
-                    </Typography>
-                    <Typography variant="body1" color="text.secondary" paragraph>
-                        Start by creating your first course. You'll be able to add learning tasks and manage student enrollments.
-                    </Typography>
-                    <Button
-                        component={RouterLink}
-                        to="/instructor/courses/new"
-                        variant="contained"
-                        color="primary"
-                        startIcon={<AddIcon />}
-                        sx={{mt: 2}}
-                        data-testid="create-first-course-button"
-                    >
-                        Create Your First Course
-                    </Button>
-                </Paper>
-            )}
-
-            {/* Course List - conditionally render based on viewMode */}
             {!isLoading && !error && courses.length > 0 && (
-                <Paper elevation={2} sx={{p: 3}}>
-                    {viewMode === 'grid' ? renderGridView() : renderListView()}
-
-                    {/* Pagination Component */}
-                    {totalPages > 1 && (
-                        <Box sx={{display: 'flex', justifyContent: 'center', mt: 3, py: 2}}>
-                            <Pagination
-                                count={totalPages}
-                                page={currentPage}
-                                onChange={handlePageChange}
-                                color="primary"
-                                showFirstButton
-                                showLastButton
-                                size="large"
-                                data-testid="course-pagination"
-                            />
-                        </Box>
+                <>
+                    {viewMode === 'grid' ? (
+                        <CoursesGridView courses={courses} isInstructorView={true} />
+                    ) : (
+                        <CourseList
+                            courses={courses}
+                            showInstructorActions={true}
+                            title="Your Courses"
+                        />
                     )}
-                </Paper>
-            )}
-
-            {/* Stats Summary - Optional */}
-            {!isLoading && !error && courses.length > 0 && (
-                <Paper elevation={2} sx={{p: 3, mt: 3}}>
-                    <Typography variant="h6" gutterBottom>
-                        Summary
-                    </Typography>
-                    <Divider sx={{mb: 2}} />
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} sm={4}>
-                            <Typography variant="subtitle2" color="text.secondary">
-                                Total Courses
-                            </Typography>
-                            <Typography variant="h5">
-                                {coursesData?.count || courses.length}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <Typography variant="subtitle2" color="text.secondary">
-                                Published Courses
-                            </Typography>
-                            <Typography variant="h5">
-                                {courses.filter(c => c.status === 'published').length}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <Typography variant="subtitle2" color="text.secondary">
-                                Total Students
-                            </Typography>
-                            <Typography variant="h5">
-                                {courses.reduce((total, course) => total + (course.student_count || 0), 0)}
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                </Paper>
+                    <PaginationControls
+                        totalPages={totalPages}
+                        currentPage={currentPage}
+                        onPageChange={handlePageChange}
+                        data-testid="pagination-controls"
+                    />
+                    <StatsSummary
+                        courses={courses}
+                        totalCourses={totalCourses}
+                        totalStudents={totalStudents}
+                        publishedCourses={publishedCourses}
+                        tasksNeedingAttention={tasksNeedingAttention}
+                    />
+                </>
             )}
         </Box>
     );

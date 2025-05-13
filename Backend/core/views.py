@@ -155,6 +155,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     def instructor_courses(self, request):
         """
         Fetch courses created by the instructor or all courses for admin.
+        Supports search filtering through query parameter 'search'.
         """
         try:
             # Allow access for both instructors and admins
@@ -172,9 +173,19 @@ class CourseViewSet(viewsets.ModelViewSet):
                 request.user.role,
             )
 
-            # Modified logic: Return all courses for instructors instead of filtering by creator
-            # This allows instructors to see all courses in the system
+            # Start with base queryset
             queryset = self.get_queryset()
+
+            # Apply search filter if provided
+            search_query = request.query_params.get("search", "").strip()
+            if search_query:
+                logger.info(
+                    "Applying search filter '%s' for instructor courses", search_query
+                )
+                queryset = queryset.filter(
+                    models.Q(title__icontains=search_query)
+                    | models.Q(description__icontains=search_query)
+                )
 
             # Log how many courses were found
             course_count = queryset.count()

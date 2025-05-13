@@ -1,15 +1,14 @@
 import React from 'react';
 import {
   Card,
-  CardActions,
   CardContent,
+  CardActions,
   CardMedia,
-  Button,
   Typography,
   Box,
   Skeleton,
 } from '@mui/material';
-import {useNavigate, Link as RouterLink} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 import {ICourse} from '@/types/course';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
@@ -88,11 +87,26 @@ const CourseCard: React.FC<CourseCardProps> = ({course, isLoading = false, isIns
   };
 
   return (
-    <Card sx={{height: '100%', display: 'flex', flexDirection: 'column'}}>
+    <Card sx={{
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      transition: 'transform 0.2s, box-shadow 0.2s',
+      '&:hover': {
+        transform: 'translateY(-4px)',
+        boxShadow: (theme) => theme.shadows[4],
+      }
+    }}>
       {/* Make the entire card clickable as a link to the course */}
       <Box
         onClick={handleViewCourse}
-        sx={{cursor: 'pointer'}}
+        sx={{
+          cursor: 'pointer',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          flexGrow: 1
+        }}
         data-testid={`course-card-${course.id}`}
       >
         {course.image_url ? (
@@ -152,31 +166,6 @@ const CourseCard: React.FC<CourseCardProps> = ({course, isLoading = false, isIns
           </Box>
         </CardContent>
       </Box>
-
-      <CardActions>
-        <Button
-          size="small"
-          color="primary"
-          onClick={handleViewCourse}
-          data-testid="view-course-button"
-        >
-          {course.isEnrolled ? 'Continue Learning' : 'View Course'}
-        </Button>
-      </CardActions>
-
-      {isInstructorView && (
-        <CardActions>
-          <Button
-            component={RouterLink}
-            to={`/instructor/courses/${course.id}/edit`}
-            size="small"
-            color="primary"
-          >
-            Edit
-          </Button>
-          {/* Other instructor actions */}
-        </CardActions>
-      )}
     </Card>
   );
 };

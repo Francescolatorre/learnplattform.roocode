@@ -1,5 +1,6 @@
 import Button from '@mui/material/Button'; // Import the Button component
 import React, {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import TaskCreation from '../taskCreation/TaskCreation'; // Import the TaskCreation component
 import {
   List,
@@ -56,6 +57,7 @@ const CourseList: React.FC<ICourseListProps> = ({
 }) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const {user} = useAuth();
+  const navigate = useNavigate();
 
   // Check if user has instructor or admin privileges
   const canManageTasks = user?.role === 'instructor' || user?.role === 'admin';
@@ -66,6 +68,18 @@ const CourseList: React.FC<ICourseListProps> = ({
 
   const handleCloseModal = () => {
     setModalOpen(false);
+  };
+
+  const handleCourseClick = (courseId: number, event: React.MouseEvent) => {
+    // Don't navigate if clicking on action buttons
+    if ((event.target as Element).closest('.MuiListItemSecondaryAction-root')) {
+      return;
+    }
+    // Navigate based on user role/view mode
+    const path = showInstructorActions
+      ? `/instructor/courses/${courseId}`
+      : `/courses/${courseId}`;
+    navigate(path);
   };
 
   // Get status color based on course status
@@ -129,7 +143,21 @@ const CourseList: React.FC<ICourseListProps> = ({
           <React.Fragment key={course.id}>
             <ListItem
               alignItems="flex-start"
-              sx={{py: 2}}
+              onClick={(e) => handleCourseClick(course.id, e)}
+              sx={{
+                py: 2,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  bgcolor: 'action.hover',
+                  transform: 'translateX(8px)',
+                  '& .MuiListItemSecondaryAction-root': {
+                    opacity: 1,
+                    transform: 'translateX(0)',
+                  }
+                }
+              }}
+              data-testid={`course-list-item-${course.id}`}
             >
               <ListItemAvatar>
                 <Avatar
@@ -216,7 +244,14 @@ const CourseList: React.FC<ICourseListProps> = ({
               />
 
               {showInstructorActions && (
-                <ListItemSecondaryAction>
+                <ListItemSecondaryAction sx={{
+                  transition: 'all 0.2s ease',
+                  opacity: 0.4,
+                  transform: 'translateX(-10px)',
+                  '& .MuiIconButton-root': {
+                    zIndex: 1
+                  }
+                }}>
                   <Tooltip title="View details">
                     <IconButton
                       component={RouterLink}
@@ -245,7 +280,10 @@ const CourseList: React.FC<ICourseListProps> = ({
                     <IconButton
                       edge="end"
                       aria-label="delete"
-                      onClick={() => {/* Add deletion handling */}}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Add deletion handling
+                      }}
                     >
                       <DeleteOutlineIcon />
                     </IconButton>

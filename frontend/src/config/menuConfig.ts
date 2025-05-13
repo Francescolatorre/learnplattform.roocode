@@ -33,7 +33,7 @@ export const menuConfig: IMenuItem[] = [
   {
     text: 'Dashboard',
     path: '/dashboard',
-    roles: ['student', 'instructor', 'admin'],
+    roles: ['student'],
     icon: DashboardIcon,
     description: 'View your personalized dashboard'
   },
