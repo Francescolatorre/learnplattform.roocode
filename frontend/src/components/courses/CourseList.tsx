@@ -15,7 +15,8 @@ import {
   Box,
   Divider,
   Tooltip,
-  Paper
+  Paper,
+  CircularProgress
 } from '@mui/material';
 import {Link as RouterLink} from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
@@ -24,12 +25,15 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import PeopleIcon from '@mui/icons-material/People';
 import SchoolIcon from '@mui/icons-material/School';
 import AddIcon from '@mui/icons-material/Add';
+import {useQuery} from '@tanstack/react-query';
+import enrollmentService from '@/services/resources/enrollmentService';
 
 // Importiere den Typ direkt aus der Typdatei, um Casing-Probleme zu vermeiden
 import {ICourse} from '@/types/course';
 import {formatDateRelative} from '@/utils/dateUtils';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import {useAuth} from '@/context/auth/AuthContext';
+import EnrollmentStatusIndicator from './EnrollmentStatusIndicator';
 
 // Custom type extension for course with student count
 interface ICourseWithEnrollment extends ICourse {
@@ -56,7 +60,7 @@ const CourseList: React.FC<ICourseListProps> = ({
   showInstructorActions = false
 }) => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const {user} = useAuth();
+  const {user, isAuthenticated} = useAuth();
   const navigate = useNavigate();
 
   // Check if user has instructor or admin privileges
@@ -102,6 +106,36 @@ const CourseList: React.FC<ICourseListProps> = ({
       : course.description;
   };
 
+  const renderEnrollmentStatus = (courseId: string | number) => {
+    const {data: enrollment, isLoading} = useQuery({
+      queryKey: ['enrollment', courseId],
+      queryFn: () => enrollmentService.getEnrollmentStatus(courseId),
+      enabled: Boolean(courseId) && isAuthenticated,
+      retry: 2,
+      staleTime: 0,
+      refetchOnMount: true,
+      refetchOnWindowFocus: true
+    });
+
+    if (isLoading) {
+      return <CircularProgress size={20} />;
+    }
+
+    if (enrollment?.enrolled) {
+      return (
+        <Chip
+          label="Enrolled"
+          color="primary"
+          size="small"
+          data-testid="enrolled-badge"
+          sx={{mr: 1}}
+        />
+      );
+    }
+
+    return null;
+  };
+
   if (!courses.length) {
     return (
       <Paper elevation={0} sx={{p: 2, textAlign: 'center'}}>
@@ -114,7 +148,7 @@ const CourseList: React.FC<ICourseListProps> = ({
     <Box>
       <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2}}>
         {title && (
-          <Typography variant="h6" component="h2">
+          <Typography variant="h6" component="h2" data-test-id="course-list-element">
             {title}
           </Typography>
         )}
@@ -180,11 +214,22 @@ const CourseList: React.FC<ICourseListProps> = ({
                     >
                       {course.title}
                     </Typography>
-                    <Chip
-                      size="small"
-                      label={course.status}
-                      color={getStatusColor(course.status) as any}
-                    />
+                    {renderEnrollmentStatus(course.id)}
+                    {showInstructorActions ? (
+                      // Show published/draft status for instructors
+                      <Chip
+                        size="small"
+                        label={course.status}
+                        color={getStatusColor(course.status) as any}
+                      />
+                    ) : (
+                      // Show enrollment status for students
+                      <EnrollmentStatusIndicator
+                        isEnrolled={!!course.isEnrolled}
+                        compact={true}
+                        isCompleted={!!course.isCompleted}
+                      />
+                    )}
 
                     {/* Only show student count if property exists */}
                     {'student_count' in course && typeof course.student_count === 'number' && (

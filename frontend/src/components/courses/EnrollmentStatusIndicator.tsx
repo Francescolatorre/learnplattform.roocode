@@ -1,5 +1,5 @@
 import React from 'react';
-import {Chip, Tooltip, Box, Typography} from '@mui/material';
+import {Chip, Tooltip} from '@mui/material';
 import SchoolIcon from '@mui/icons-material/School';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -85,11 +85,11 @@ const EnrollmentStatusIndicator: React.FC<IEnrollmentStatusIndicatorProps> = ({
 
     const {label, color, icon, tooltip} = getChipProps();
 
-    // Render as a chip for compact mode, or as a more detailed indicator for normal mode
-    return compact ? (
+    // Always render as a chip for visual consistency
+    return (
         <Tooltip title={tooltip} arrow placement="top">
             <Chip
-                size="small"
+                size={compact ? "small" : "medium"}
                 label={label}
                 color={color}
                 icon={icon}
@@ -99,28 +99,12 @@ const EnrollmentStatusIndicator: React.FC<IEnrollmentStatusIndicatorProps> = ({
                         ? theme.palette[color === 'default' ? 'grey' : color]?.light || theme.palette.grey[300]
                         : theme.palette[color === 'default' ? 'grey' : color]?.dark || theme.palette.grey[700],
                     color: '#fff',
+                    '& .MuiChip-icon': {
+                        color: '#fff'  // Make icon same color as text
+                    }
                 }}
             />
         </Tooltip>
-    ) : (
-        <Box
-            sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-                backgroundColor: isDarkMode
-                    ? theme.palette[color === 'default' ? 'grey' : color]?.light || theme.palette.grey[300]
-                    : theme.palette[color === 'default' ? 'grey' : color]?.dark || theme.palette.grey[700],
-                p: 1,
-                borderRadius: 1,
-                width: 'fit-content',
-            }}
-        >
-            {icon}
-            <Typography variant="body2" fontWeight="medium">
-                {label}
-            </Typography>
-        </Box>
     );
 };
 

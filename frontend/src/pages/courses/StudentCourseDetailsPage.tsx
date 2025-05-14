@@ -48,8 +48,26 @@ const StudentCourseDetailsPage: React.FC = () => {
   const [unenrollDialogOpen, setUnenrollDialogOpen] = useState(false);
 
   /**
+   * Query to fetch enrollment status for the current course
+   * Zero stale time to ensure immediate refetching
+   */
+  const {
+    data: enrollmentStatus,
+    isLoading: isEnrollmentLoading,
+    error: enrollmentError
+  } = useQuery({
+    queryKey: ['enrollment', courseId],
+    queryFn: () => enrollmentService.getEnrollmentStatus(courseId!),
+    enabled: Boolean(courseId) && Boolean(isAuthenticated),
+    retry: 2,
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true
+  });
+
+  /**
    * Query to fetch course details by courseId
-   * Added staleTime to prevent excessive refetching
+   * Updated configuration for better real-time updates
    */
   const {
     data: courseDetails,
@@ -59,15 +77,38 @@ const StudentCourseDetailsPage: React.FC = () => {
     queryKey: ['courseDetails', courseId],
     queryFn: () => courseService.getCourseDetails(courseId!),
     enabled: !!courseId,
-    retry: false,
-    staleTime: 60000, // 1 minute stale time to prevent excessive refetching
+    retry: 2,
+    staleTime: 0, // Allow immediate refetching for enrollment status changes
+    refetchOnMount: true,
+    refetchOnWindowFocus: true
   });
+  // Memoize the canViewTasks value using enrollment status
+  const canViewTasks = useMemo(() => {
+    // First check primary enrollment status
+    const primaryEnrollmentStatus = courseDetails?.isEnrolled ?? enrollmentStatus?.enrolled;
 
-  // Memoize the canViewTasks value to prevent unnecessary re-renders
-  const canViewTasks = useMemo(() =>
-    isAuthenticated && !!courseDetails?.isEnrolled,
-    [isAuthenticated, courseDetails?.isEnrolled]
-  );
+    // Secondary verification through course completion status
+    const isCompletionVerified = courseDetails?.isCompleted ?? false;
+
+    const isEnrolled = !!primaryEnrollmentStatus || isCompletionVerified;
+
+    console.debug('[StudentCourseDetailsPage] Task View Conditions:', {
+      isAuthenticated,
+      courseDetailsEnrolled: courseDetails?.isEnrolled,
+      enrollmentStatusEnrolled: enrollmentStatus?.enrolled,
+      isCompletionVerified,
+      canViewTasks: isAuthenticated && isEnrolled,
+      courseId
+    });
+
+    return isAuthenticated && isEnrolled;
+  }, [
+    isAuthenticated,
+    courseDetails?.isEnrolled,
+    courseDetails?.isCompleted,
+    enrollmentStatus?.enrolled,
+    courseId
+  ]);
 
   /**
    * Query to fetch learning tasks associated with the course
@@ -79,10 +120,23 @@ const StudentCourseDetailsPage: React.FC = () => {
     error: tasksError,
   } = useQuery<IPaginatedResponse<ILearningTask>>({
     queryKey: ['learningTasks', courseId],
-    queryFn: () => courseService.getCourseTasks(courseId!),
-    enabled: !!courseId && canViewTasks, // Use the memoized value
+    queryFn: async () => {
+      console.debug('[StudentCourseDetailsPage] Fetching course tasks:', {courseId});
+      try {
+        const response = await courseService.getCourseTasks(courseId!);
+        console.debug('[StudentCourseDetailsPage] Tasks loaded:', {
+          count: response.count,
+          taskCount: response.results?.length
+        });
+        return response;
+      } catch (error) {
+        console.error('[StudentCourseDetailsPage] Failed to load tasks:', error);
+        throw error;
+      }
+    },
+    enabled: !!courseId && canViewTasks,
     retry: false,
-    staleTime: 60000, // 1 minute stale time to prevent excessive refetching
+    staleTime: 60000 // 1 minute stale time to prevent excessive refetching
   });
 
   /**
@@ -98,6 +152,8 @@ const StudentCourseDetailsPage: React.FC = () => {
       });
       queryClient.invalidateQueries({queryKey: ['enrollments']});
       queryClient.invalidateQueries({queryKey: ['courses', courseId]});
+      // Add invalidation for course list query
+      queryClient.invalidateQueries({queryKey: ['availableCourses']});
 
       notify({
         message: 'Successfully enrolled in course!',
@@ -127,6 +183,8 @@ const StudentCourseDetailsPage: React.FC = () => {
       });
       queryClient.invalidateQueries({queryKey: ['enrollments']});
       queryClient.invalidateQueries({queryKey: ['courses', courseId]});
+      // Add invalidation for course list query
+      queryClient.invalidateQueries({queryKey: ['availableCourses']});
 
       notify({
         message: 'Successfully unenrolled from course!',
@@ -201,15 +259,23 @@ const StudentCourseDetailsPage: React.FC = () => {
   return (
     <Box sx={{maxWidth: 1200, mx: 'auto', p: 2}}>
       <Paper sx={{p: 3, mb: 3}}>
-        <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2}}>
-          <Typography variant="h3" gutterBottom data-testid="course-title">
+        {/* Header with Title and Status */}
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 2
+        }}>
+          <Typography variant="h4" gutterBottom data-testid="course-title">
             {courseDetails.title}
           </Typography>
-          <EnrollmentStatusIndicator
-            isEnrolled={!!courseDetails.isEnrolled}
-            isCompleted={!!courseDetails.isCompleted}
-            data-testid="enrollment-status"
-          />
+          <Box sx={{display: 'flex', gap: 1, alignItems: 'center'}}>
+            <EnrollmentStatusIndicator
+              isEnrolled={!!courseDetails.isEnrolled}
+              isCompleted={!!courseDetails.isCompleted}
+              data-testid="enrollment-status"
+            />
+          </Box>
         </Box>
 
         <Divider sx={{my: 2}} />
@@ -269,23 +335,36 @@ const StudentCourseDetailsPage: React.FC = () => {
           ) : tasksError ? (
             <Typography variant="body1" color="error">
               Failed to load learning tasks. Please try again later.
-            </Typography>
-          ) : learningTasks?.results && learningTasks.results.length > 0 ? (
-            <List>
-              {learningTasks.results.map((task) => (
-                <ListItem key={task.id} divider>
-                  <ListItemText primary={task.title} />
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => navigate(`/tasks/${task.id}`)}
-                  >
-                    View Task
-                  </Button>
-                </ListItem>
-              ))}
-            </List>
-          ) : (
+            </Typography>) : learningTasks ? (
+              learningTasks.results && learningTasks.results.length > 0 ? (
+                <List>
+                  {learningTasks.results.map((task) => (
+                    <ListItem key={task.id} divider>
+                      <ListItemText
+                        primary={task.title}
+                        secondary={task.description}
+                      />
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => navigate(`/tasks/${task.id}`)}
+                      >
+                        View Task
+                      </Button>
+                    </ListItem>
+                  ))}
+                </List>
+              ) : (
+                <Box sx={{textAlign: 'center', py: 3}}>
+                  <Typography variant="body1" color="text.secondary">
+                    No learning tasks are currently available for this course.
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{mt: 1}}>
+                    Check back later as new content may be added.
+                  </Typography>
+                </Box>
+              )
+            ) : (
             <Typography variant="body1">No learning tasks available for this course.</Typography>
           )}
         </Paper>

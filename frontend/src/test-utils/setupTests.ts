@@ -75,3 +75,5 @@ vi.mock('@context/auth/AuthContext', () => ({
 Object.assign(globalThis, {mockAxios, mockAxiosInstance});
 
 console.log('🧪 Unit test setup loaded (axios mocked, ErrorNotifier using actual implementation)');
+
+import 'vitest';

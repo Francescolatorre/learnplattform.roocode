@@ -44,7 +44,7 @@ const StudentCourseEnrollmentPage: React.FC = () => {
     };
   }, [user]);
 
-  // Fetch available courses for students
+  // Fetch available courses for students with proper retry and caching config
   const {
     data: coursesData,
     isLoading,
@@ -75,7 +75,9 @@ const StudentCourseEnrollmentPage: React.FC = () => {
         throw err;
       }
     },
-    retry: false,
+    retry: 1,
+    staleTime: 0,  // Always validate on mount
+    cacheTime: 1000 * 60 * 5 // Cache for 5 minutes
   });
 
   // Calculate total pages when data is loaded

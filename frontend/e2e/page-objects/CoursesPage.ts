@@ -15,14 +15,14 @@ export class CoursesPage extends BasePage {
         'h4:has-text("Courses")',
         '[data-testid="courses-title"]',
         'h1, h2, h3, h4' // Fallback to any heading
-    ];
-
-    readonly courseCardSelectors = [
+    ]; readonly courseCardSelectors = [
         '.course-card',
         '.MuiCard-root',
         '[data-testid^="course-card-"]',
         '.course-item',
-        '.MuiPaper-root' // Generic fallback for Material UI cards
+        '.MuiPaper-root', // Generic fallback for Material UI cards
+        '.MuiListItem-root', // For student course list view
+        '[data-testid="course-list-item"]' // For student course list view
     ];
 
     readonly courseGridSelectors = [
@@ -35,7 +35,7 @@ export class CoursesPage extends BasePage {
     readonly courseListSelectors = [
         '.course-list',
         'ul.courses-list',
-        '[data-testid="courses-list"]',
+        '[data-testid^="courses-list"]',
         '.MuiList-root' // Generic fallback for Material UI lists
     ];
 
@@ -175,22 +175,35 @@ export class CoursesPage extends BasePage {
     async getCoursesTitles(): Promise<string[]> {
         const titles: string[] = [];
 
-        try {
-            // First wait for loading to complete
-            await this.page.waitForSelector('.MuiCard-root', {state: 'visible', timeout: 5000});
+        try {            // Check for list view first (student view)
+            const listItems = this.page.locator('.MuiListItem-root');
+            const listCount = await listItems.count();
 
-            // Get all course cards from the grid view
-            const cards = this.page.locator('.MuiCard-root');
-            const count = await cards.count();
-            console.log(`Found ${count} course cards`);
+            if (listCount > 0) {
+                console.log(`Found ${listCount} course list items`);
+                // For each list item, get the primary text (course title)
+                for (let i = 0; i < listCount; i++) {
+                    const item = listItems.nth(i);
+                    const titleElement = item.locator('.MuiListItemText-primary').first();
+                    const titleText = await titleElement.textContent();
+                    if (titleText?.trim()) {
+                        titles.push(titleText.trim());
+                    }
+                }
+            } else {
+                // Fallback to card view (instructor view)
+                const cards = this.page.locator('.MuiCard-root');
+                const cardCount = await cards.count();
+                console.log(`Found ${cardCount} course cards`);
 
-            // For each card, get the title
-            for (let i = 0; i < count; i++) {
-                const card = cards.nth(i);
-                const titleElement = card.locator('h2, h3, h4, h5, h6, .MuiTypography-h5, .MuiTypography-h6').first();
-                const titleText = await titleElement.textContent();
-                if (titleText?.trim()) {
-                    titles.push(titleText.trim());
+                // For each card, get the title
+                for (let i = 0; i < cardCount; i++) {
+                    const card = cards.nth(i);
+                    const titleElement = card.locator('h2, h3, h4, h5, .MuiTypography-h5, .MuiTypography-h6').first();
+                    const titleText = await titleElement.textContent();
+                    if (titleText?.trim()) {
+                        titles.push(titleText.trim());
+                    }
                 }
             }
 
@@ -867,6 +880,12 @@ export class StudentCoursesPage extends CoursesPage {
         '[data-testid="enrolled-badge"]'
     ];
 
+    readonly searchFieldSelectors = [
+        'input[placeholder*="search"]',
+        '[data-testid="course-search"]',
+        '.MuiInputBase-input'
+    ];
+
     constructor(page: Page) {
         super(page, '/courses');
     }
@@ -1187,6 +1206,66 @@ export class StudentCoursesPage extends CoursesPage {
         } catch (error) {
             console.error(`Error deleting course ${title}:`, error);
             return false;
+        }
+    }
+
+    /**
+     * Search for a course by search term
+     */
+    async searchForCourse(searchTerm: string): Promise<void> {
+        console.log(`Attempting to search for course: "${searchTerm}"`);
+
+        // Find and clear the search field
+        for (const selector of this.searchFieldSelectors) {
+            const searchField = this.page.locator(selector);
+            const isVisible = await searchField.isVisible({timeout: 2000}).catch(() => false);
+
+            if (isVisible) {
+                // Clear existing search
+                await searchField.click();
+                await searchField.clear();
+
+                // Type the search term and wait for results
+                await searchField.type(searchTerm, {delay: 100});
+
+                // Wait for search results to update
+                await this.page.waitForTimeout(1000); // Wait for debounce
+                await this.page.waitForLoadState('networkidle', {timeout: 5000});
+
+                // Additional wait for results to render
+                await this.page.waitForTimeout(500);
+                return;
+            }
+        }
+
+        throw new Error('Could not find search field');
+    }
+
+    /**
+     * Get course titles from search results
+     */
+    async getSearchResults(): Promise<string[]> {
+        try {
+            // Using the specific data-testid selector for course titles
+            const titleElements = this.page.locator('[data-testid^="course-title-"]');
+            const count = await titleElements.count();
+            console.log(`Found ${count} course titles`);
+
+            const titles: string[] = [];
+            for (let i = 0; i < count; i++) {
+                const titleText = await titleElements.nth(i).textContent();
+                if (titleText?.trim()) {
+                    titles.push(titleText.trim());
+                    console.log(`Found title: "${titleText.trim()}"`);
+                }
+            }
+
+            // Make sure we return a valid array even if empty
+            console.log('Final search results:', titles);
+            return titles || [];
+        } catch (error) {
+            console.error('Error getting search results:', error);
+            return [];
         }
     }
 }

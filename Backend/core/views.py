@@ -143,8 +143,45 @@ class CourseViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     pagination_class = SafePageNumberPagination  # Use our custom pagination class
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer: CourseSerializer):
+        """Create a new course with the current user as creator"""
         serializer.save(creator=self.request.user)
+
+    def get_queryset(self):
+        """Filter queryset based on user role and permissions:
+        - Admins and staff see all courses with status indicator
+        - Instructors see all published courses and their own courses (with status)
+        - Students see all courses they can potentially enroll in (published only)
+        """
+        queryset = Course.objects.select_related("creator").all()
+
+        # Handle unauthenticated users (should be prevented by IsAuthenticated)
+        if not self.request.user or not self.request.user.is_authenticated:
+            return Course.objects.none()
+
+        # First filter based on role
+        if self.request.user.is_staff or self.request.user.is_superuser:
+            pass  # No filtering needed, they see everything
+        elif getattr(self.request.user, "role", None) == "instructor":
+            # Instructors see all published courses and their own courses
+            queryset = queryset.filter(
+                models.Q(status="published") | models.Q(creator=self.request.user)
+            )
+        else:
+            # Students only see published courses
+            queryset = queryset.filter(status="published")
+
+        # Handle search if provided
+        search_query = self.request.query_params.get("search", "").strip()
+        if search_query:
+            queryset = queryset.filter(
+                models.Q(title__icontains=search_query)
+                | models.Q(description__icontains=search_query)
+                | models.Q(creator__first_name__icontains=search_query)
+                | models.Q(creator__last_name__icontains=search_query)
+            )
+
+        return queryset.order_by("id")
 
     @action(
         detail=False,
@@ -314,24 +351,40 @@ class CourseViewSet(viewsets.ModelViewSet):
                 is_completed = total_tasks > 0 and total_tasks == completed_tasks
 
             # Fetch tasks related to the course
-            tasks = LearningTask.objects.filter(course=course)
-            logger.info("Found %s tasks for course ID: %s", tasks.count(), pk)
 
-            return Response(
-                {
-                    "id": course.id,
-                    "title": course.title,
-                    "description": course.description,
-                    "learning_objectives": course.learning_objectives,
-                    "prerequisites": course.prerequisites,
-                    "isEnrolled": is_enrolled,
-                    "isCompleted": is_completed,
-                    "tasks": [
-                        {"id": task.id, "title": task.title, "type": task.type}
-                        for task in tasks
-                    ],
-                }
-            )
+            tasks = LearningTask.objects.filter(course=course)
+
+            # Prepare response data
+            response_data = {
+                "id": course.id,
+                "title": course.title,
+                "description": course.description,
+                "learning_objectives": course.learning_objectives,
+                "prerequisites": course.prerequisites,
+                "isEnrolled": is_enrolled,
+                "isCompleted": is_completed,
+                "tasks": [
+                    {"id": task.id, "title": task.title, "type": task.type}
+                    for task in tasks
+                ],
+            }
+
+            # Add status field based on user role
+            if (
+                request.user.is_staff
+                or request.user.is_superuser
+                or getattr(request.user, "role", None) == "instructor"
+            ):
+                response_data["status"] = course.status
+            else:
+                # For students, show enrollment status instead of published status
+                response_data["enrollmentStatus"] = (
+                    "enrolled" if is_enrolled else "not_enrolled"
+                )
+                if is_enrolled and is_completed:
+                    response_data["enrollmentStatus"] = "completed"
+
+            return Response(response_data)
         except Course.DoesNotExist:
             logger.error("Course with ID %s does not exist.", pk)
             return Response({"error": "Course not found."}, status=404)
@@ -486,10 +539,28 @@ class LearningTaskViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
+        """Filter queryset based on user role and permissions:
+        - Admins and staff see all tasks
+        - Instructors see all tasks in their courses
+        - Students only see published tasks
+        """
         queryset = LearningTask.objects.all()
+
+        # First filter by course if specified
         course_id = self.request.query_params.get("course")
         if course_id is not None:
             queryset = queryset.filter(course_id=course_id)
+
+        # Filter based on user role
+        if self.request.user.is_staff or self.request.user.is_superuser:
+            pass  # No filtering needed, they see everything
+        elif getattr(self.request.user, "role", None) == "instructor":
+            # Instructors see all tasks in their courses
+            queryset = queryset.filter(course__creator=self.request.user)
+        else:
+            # Students only see published tasks
+            queryset = queryset.filter(is_published=True)
+
         return queryset
 
     @action(detail=False, methods=["get"], url_path="course/(?P<course_id>[^/.]+)")
@@ -498,11 +569,14 @@ class LearningTaskViewSet(viewsets.ModelViewSet):
         Fetch tasks for a specific course.
         """
         try:
-            tasks = LearningTask.objects.filter(course_id=course_id).order_by("order")
+            # Filter tasks by course
+            tasks = self.get_queryset().filter(course_id=course_id).order_by("order")
+            
             if not tasks.exists():
                 return Response(
                     {"error": "No tasks found for this course."}, status=404
                 )
+
             serializer = self.get_serializer(tasks, many=True)
             return Response(serializer.data)
         except Exception as e:

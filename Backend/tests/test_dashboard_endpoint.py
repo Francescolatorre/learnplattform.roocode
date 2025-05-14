@@ -18,15 +18,26 @@ from rest_framework.test import APIClient
 
 
 @pytest.mark.django_db
-def test_dashboard_endpoint():
-    client = APIClient()
-    student_id = 1  # Replace with a valid student ID for testing
-    url = reverse(
-        "dashboard", kwargs={"studentId": student_id}
-    )  # Ensure the URL name matches your urls.py
+def test_dashboard_endpoint(db):
+    from django.contrib.auth import get_user_model
 
+    client = APIClient()
+    User = get_user_model()
+    student = User.objects.create_user(
+        username="teststudent",
+        email="teststudent@example.com",
+        password="testpass",
+        role="student",
+    )
+    url = reverse("student-dashboard-detail", kwargs={"pk": student.pk})
+
+    client.force_authenticate(user=student)
     response = client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
-    assert "data" in response.json()  # Adjust based on the expected response structure
-    assert response.json()["data"] is not None  # Ensure data is not None
+    resp = response.json()
+    assert "courses" in resp
+    assert "progress" in resp
+    assert "quiz_performance" in resp
+    assert "recent_activity" in resp
+    assert "user_info" in resp

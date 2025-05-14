@@ -1,57 +1,96 @@
 /**
  * TaskCreation.test.tsx
- * Simplified test suite with all tests skipped due to context issues
- * TODO: Implement comprehensive tests after fixing the ErrorNotifier context in tests
+ * Comprehensive test suite for TaskCreation component using real context providers.
  */
 import React from 'react';
-import {render, screen} from '@testing-library/react';
-import {vi, describe, test} from 'vitest';
+import {screen, fireEvent, waitFor} from '@testing-library/react';
+import {describe, test, vi, beforeEach} from 'vitest';
+import {renderWithProviders} from '../../test-utils/renderWithProviders';
 
-// Mock the entire component to avoid context-related issues
-vi.mock('./TaskCreation', () => ({
+// Mock MarkdownRenderer to avoid highlight.js/react-markdown issues in test env
+vi.mock('../shared/MarkdownRenderer', () => ({
     __esModule: true,
-    default: (props: any) => (
-        <div data-testid="mock-task-creation">
-            <div data-testid="mock-title">Create a New Task</div>
-            <button onClick={props.onClose}>Cancel</button>
-        </div>
-    )
+    default: ({content}: {content: string}) => <div data-testid="mock-markdown">{content}</div>
 }));
 
-// Import the component after mocking
 import TaskCreation from './TaskCreation';
 
 describe('TaskCreation Component', () => {
     const mockOnClose = vi.fn();
+    const mockOnSave = vi.fn();
 
     beforeEach(() => {
         mockOnClose.mockClear();
+        mockOnSave.mockClear();
     });
 
-    // Skipping all tests to avoid hanging issues until we can fix the ErrorNotifier context
-    test.skip('renders TaskCreation component', () => {
-        render(<TaskCreation open={true} onClose={mockOnClose} />);
-        expect(screen.getByTestId('mock-title')).toBeInTheDocument();
+    test('renders TaskCreation dialog and title', () => {
+        renderWithProviders(
+            <TaskCreation open={true} onClose={mockOnClose} />
+        );
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
         expect(screen.getByText('Create a New Task')).toBeInTheDocument();
+        expect(screen.getByLabelText('Task Title')).toBeInTheDocument();
+        expect(screen.getByLabelText('Task Description')).toBeInTheDocument();
     });
 
-    test.skip('requires title and description', () => {
-        // This test will be implemented in the future
+    test('requires title and description', async () => {
+        renderWithProviders(
+            <TaskCreation open={true} onClose={mockOnClose} />
+        );
+        fireEvent.click(screen.getByText('Create Task'));
+        expect(await screen.findByText('Title and description are required.')).toBeInTheDocument();
     });
 
-    test.skip('updates title on input change', () => {
-        // This test will be implemented in the future
+    test('updates title on input change', () => {
+        renderWithProviders(
+            <TaskCreation open={true} onClose={mockOnClose} />
+        );
+        const titleInput = screen.getByLabelText('Task Title') as HTMLInputElement;
+        fireEvent.change(titleInput, {target: {value: 'My New Task'}});
+        expect(titleInput.value).toBe('My New Task');
     });
 
-    test.skip('updates description in markdown editor', () => {
-        // This test will be implemented in the future
+    test('updates description in markdown editor', () => {
+        renderWithProviders(
+            <TaskCreation open={true} onClose={mockOnClose} />
+        );
+        const descriptionInput = screen.getByLabelText('Task Description') as HTMLInputElement | HTMLTextAreaElement;
+        fireEvent.change(descriptionInput, {target: {value: 'Some description'}});
+        expect(descriptionInput.value).toBe('Some description');
     });
 
-    test.skip('calls onClose when Cancel button is clicked', () => {
-        // This test will be implemented in the future
+    test('calls onClose when Cancel button is clicked', () => {
+        renderWithProviders(
+            <TaskCreation open={true} onClose={mockOnClose} />
+        );
+        fireEvent.click(screen.getByText('Cancel'));
+        expect(mockOnClose).toHaveBeenCalled();
     });
 
-    test.skip('submits the form successfully when fields are filled', () => {
-        // This test will be implemented in the future
+    test('submits the form successfully when fields are filled', async () => {
+        renderWithProviders(
+            <TaskCreation open={true} onClose={mockOnClose} onSave={mockOnSave} />
+        );
+        fireEvent.change(screen.getByLabelText('Task Title'), {target: {value: 'Test Task'}});
+        fireEvent.change(screen.getByLabelText('Task Description'), {target: {value: 'Test Description'}});
+        fireEvent.click(screen.getByText('Create Task'));
+        await waitFor(() => expect(mockOnSave).toHaveBeenCalledWith(expect.objectContaining({
+            title: 'Test Task',
+            description: 'Test Description'
+        })));
+    });
+
+    test('shows error notification when onSave throws', async () => {
+        mockOnSave.mockImplementation(() => {
+            throw new Error('Save failed');
+        });
+        renderWithProviders(
+            <TaskCreation open={true} onClose={mockOnClose} onSave={mockOnSave} />
+        );
+        fireEvent.change(screen.getByLabelText('Task Title'), {target: {value: 'Test Task'}});
+        fireEvent.change(screen.getByLabelText('Task Description'), {target: {value: 'Test Description'}});
+        fireEvent.click(screen.getByText('Create Task'));
+        expect(await screen.findByText('Save failed')).toBeInTheDocument();
     });
 });

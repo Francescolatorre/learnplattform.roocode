@@ -11,7 +11,7 @@ import ProfilePage from '@/pages/ProfilePage';
 import RegisterFormPage from '@/pages/RegisterFormPage';
 
 // Student pages
-import {StudentCoursesPage} from '@/pages/courses/StudentCoursesPage';
+import StudentCoursesPage from '@/pages/courses/StudentCoursesPage';
 import StudentCourseDetailsPage from '@/pages/courses/StudentCourseDetailsPage';
 import StudentTasksPage from '@/pages/learningTasks/StudentTasksPage';
 import CourseProgressPage from '@/pages/courses/CourseProgressPage';

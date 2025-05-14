@@ -10,7 +10,7 @@
   * - no Delete method is provided, as enrollments should not be deleted but rather marked as inactive or unenrolled.
   */
 
-import {ICourseEnrollment} from '@/types/entities';
+import {ICourseEnrollment, IEnrollmentStatus} from '@/types/entities';
 import {API_CONFIG} from 'src/services/api/apiConfig';
 import {ApiService} from 'src/services/api/apiService';
 import {IPaginatedResponse} from 'src/types/paginatedResponse';
@@ -63,6 +63,39 @@ class EnrollmentService {
   private userProfileCache: Record<string, any> = {};
 
   private authToken: string | null = null;
+
+  /**
+   * Get enrollment status for the current user in a specific course.
+   * This method is optimized for real-time status checks with minimal data transfer.
+   *
+   * @param {string | number} courseId - The ID of the course to check enrollment status for
+   * @returns {Promise<IEnrollmentStatus>} A promise resolving to the enrollment status
+   */
+  async getEnrollmentStatus(courseId: string | number): Promise<IEnrollmentStatus> {
+    try {
+      // Find enrollments for this course
+      const enrollments = await this.findByFilter({course: Number(courseId)});
+      const enrollment = enrollments.find(e => e.course === Number(courseId));
+
+      if (!enrollment) {
+        return {
+          enrolled: false,
+          enrollmentDate: null,
+          enrollmentId: null
+        };
+      }
+
+      // A user is considered enrolled only if their status is 'active'
+      return {
+        enrolled: enrollment.status === 'active',
+        enrollmentDate: enrollment.enrollment_date || null,
+        enrollmentId: enrollment.id
+      };
+    } catch (error) {
+      console.error('Failed to get enrollment status:', error);
+      throw new Error('Failed to get enrollment status');
+    }
+  }
 
   /**
    * Fetch all enrollments.

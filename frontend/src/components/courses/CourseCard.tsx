@@ -1,39 +1,26 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
 import {
   Card,
   CardContent,
   CardActions,
-  CardMedia,
   Typography,
+  Button,
   Box,
-  Skeleton,
+  Chip,
+  CircularProgress
 } from '@mui/material';
-import {useNavigate} from 'react-router-dom';
-
-import {ICourse} from '@/types/course';
-import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
-import EnrollmentStatusIndicator from './EnrollmentStatusIndicator';
+import {useQuery} from '@tanstack/react-query';
+import {useAuth} from '@/context/auth/AuthContext';
+import enrollmentService from '@/services/resources/enrollmentService';
+import {ICourse} from '@/types';
 
 /**
  * Interface for CourseCard component props
  */
-interface CourseCardProps {
-  /**
-   * Course data to display in the card
-   */
+interface ICourseCardProps {
   course: ICourse;
-
-  /**
-   * Whether the card is in a loading state
-   * @default false
-   */
-  isLoading?: boolean;
-
-  /**
-   * Whether the card is in instructor view
-   * @default false
-   */
-  isInstructorView?: boolean;
+  isInstructorView: boolean;
 }
 
 /**
@@ -46,126 +33,77 @@ interface CourseCardProps {
  *
  * @returns A card component displaying course information
  */
-const CourseCard: React.FC<CourseCardProps> = ({course, isLoading = false, isInstructorView = false}) => {
-  const navigate = useNavigate();
+const CourseCard: React.FC<ICourseCardProps> = ({course, isInstructorView}) => {
+  const {isAuthenticated} = useAuth();
 
-  if (isLoading) {
-    return (
-      <Card sx={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-        <Skeleton variant="rectangular" height={140} />
-        <CardContent sx={{flexGrow: 1}}>
-          <Skeleton variant="text" height={32} width="80%" />
-          <Skeleton variant="text" height={20} width="40%" />
-          <Skeleton variant="text" height={20} width="100%" />
-          <Skeleton variant="text" height={20} width="90%" />
-        </CardContent>
-        <CardActions>
-          <Skeleton variant="rectangular" height={36} width={120} />
-        </CardActions>
-      </Card>
-    );
-  }
-
-  const handleViewCourse = () => {
-    if (isInstructorView) {
-      // Navigate to instructor course detail view
-      navigate(`/instructor/courses/${course.id}`);
-    } else {
-      // Navigate to student course detail view
-      navigate(`/courses/${course.id}`);
-    }
-  };
-
-  // Process description to create preview
-  const getDescriptionPreview = () => {
-    if (!course.description) {
-      return "No description available";
-    }
-    return course.description.length > 120
-      ? `${course.description.substring(0, 120)}...`
-      : course.description;
-  };
+  // Enhanced query configuration for more reliable data fetching
+  const {data: enrollment, isLoading: enrollmentLoading} = useQuery({
+    queryKey: ['enrollment', course.id],
+    queryFn: () => enrollmentService.getEnrollmentStatus(course.id),
+    enabled: Boolean(course.id) && Boolean(isAuthenticated),
+    retry: 3,
+    retryDelay: 1000,
+    staleTime: 1000, // Consider data fresh for 1 second
+    gcTime: 1000 * 60 * 5, // Keep in cache for 5 minutes
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true
+  });
 
   return (
-    <Card sx={{
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      transition: 'transform 0.2s, box-shadow 0.2s',
-      '&:hover': {
-        transform: 'translateY(-4px)',
-        boxShadow: (theme) => theme.shadows[4],
-      }
-    }}>
-      {/* Make the entire card clickable as a link to the course */}
-      <Box
-        onClick={handleViewCourse}
-        sx={{
-          cursor: 'pointer',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          flexGrow: 1
-        }}
-        data-testid={`course-card-${course.id}`}
-      >
-        {course.image_url ? (
-          <CardMedia
-            component="img"
-            height="140"
-            image={course.image_url}
-            alt={course.title}
-          />
-        ) : (
-          <Box
-            sx={{
-              height: 140,
-              backgroundColor: 'grey.300',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Typography variant="body2" color="text.secondary">
-              No image available
-            </Typography>
-          </Box>
-        )}
+    <Card sx={{display: 'flex', flexDirection: 'column', height: '100%'}} data-testid={`course-card-${course.id}`}>
+      <CardContent sx={{flexGrow: 1}}>
+        <Typography variant="h6" component="h2" gutterBottom>
+          {course.title}
+        </Typography>
 
-        <CardContent sx={{flexGrow: 1}}>
-          <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1}}>
-            <Typography gutterBottom variant="h6" component="h2" sx={{mb: 0}} data-testid="course-card-course-title">
-              {course.title}
-            </Typography>
-            <EnrollmentStatusIndicator
-              isEnrolled={!!course.isEnrolled}
-              compact={true}
-              isCompleted={!!course.isCompleted}
+        {/* Enrollment Status Chip */}
+        <Box sx={{mb: 2, minHeight: 32, display: 'flex', alignItems: 'center'}}>
+          {enrollmentLoading ? (
+            <CircularProgress size={20} />
+          ) : enrollment?.enrolled ? (
+            <Chip
+              label="Enrolled"
+              color="primary"
+              size="small"
+              data-testid="enrolled-badge"
+              sx={{mr: 1}}
             />
-          </Box>
+          ) : null}
+          <Chip
+            label={course.visibility}
+            color="default"
+            size="small"
+            variant="outlined"
+          />
+        </Box>
 
-          <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>
-            {course.instructor_name && `Instructor: ${course.instructor_name}`}
-          </Typography>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{
+            mb: 2,
+            display: '-webkit-box',
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden'
+          }}
+        >
+          {course.description}
+        </Typography>
+      </CardContent>
 
-          {/* Description with Markdown support */}
-          <Box sx={{maxHeight: '120px', overflow: 'hidden'}}>
-            {course.description_html ? (
-              <Box sx={{'& img': {display: 'none'}, '& h1,h2,h3': {fontSize: '1rem'}}}>
-                <MarkdownRenderer
-                  content={getDescriptionPreview()}
-                  component="span"
-                  isPreview={true}
-                />
-              </Box>
-            ) : (
-              <Typography variant="body2" color="text.secondary">
-                {getDescriptionPreview()}
-              </Typography>
-            )}
-          </Box>
-        </CardContent>
-      </Box>
+      <CardActions>
+        <Button
+          component={Link}
+          to={`/courses/${course.id}`}
+          size="small"
+          color="primary"
+
+        >
+          {enrollment?.enrolled ? 'Continue Learning' : 'View Details'}
+        </Button>
+      </CardActions>
     </Card>
   );
 };

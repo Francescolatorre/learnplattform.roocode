@@ -361,11 +361,21 @@ class CourseService {
     console.info(`CourseService: Fetching tasks for course ${courseId}`);
     try {
       const response = await this.apiLearningTasks.get(API_CONFIG.endpoints.tasks.byCourse(courseId));
+
+      // Ensure response is in the correct format
+      const formattedResponse: IPaginatedResponse<ILearningTask> = {
+        count: Array.isArray(response) ? response.length : (response.count ?? 0),
+        next: response.next || null,
+        previous: response.previous || null,
+        results: Array.isArray(response) ? response : (response.results || [])
+      };
+
       console.info(`CourseService: Retrieved tasks for course ${courseId}`, {
-        count: response.count,
-        taskCount: response.results?.length || 0
+        count: formattedResponse.count,
+        taskCount: formattedResponse.results?.length || 0
       });
-      return response;
+
+      return formattedResponse;
     } catch (error) {
       console.error(`CourseService: Failed to fetch tasks for course ${courseId}`, error);
       throw error;

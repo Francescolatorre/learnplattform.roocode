@@ -1,8 +1,8 @@
 import React from 'react';
-import {render, screen, fireEvent} from '@testing-library/react';
+import {screen, fireEvent} from '../tests/testUtils';
+import {render} from '../tests/testUtils';
 import CourseCard from './CourseCard';
 import {describe, it, expect, vi} from 'vitest';
-import {BrowserRouter} from 'react-router-dom';
 
 // Mock react-router-dom's useNavigate
 const mockedNavigate = vi.fn();
@@ -33,13 +33,8 @@ describe('CourseCard Component', () => {
   beforeEach(() => {
     mockedNavigate.mockClear();
   });
-
   it('renders the course card with title and description', () => {
-    render(
-      <BrowserRouter>
-        <CourseCard course={mockCourse} />
-      </BrowserRouter>
-    );
+    render(<CourseCard course={mockCourse} isInstructorView={false} />);
 
     expect(screen.getByText('Test Course')).toBeInTheDocument();
     expect(screen.getByText('This is a test course description')).toBeInTheDocument();
@@ -48,9 +43,8 @@ describe('CourseCard Component', () => {
   it('handles missing image by showing placeholder', () => {
     const courseWithoutImage = {...mockCourse, image_url: null};
     render(
-      <BrowserRouter>
-        <CourseCard course={courseWithoutImage} />
-      </BrowserRouter>
+      <CourseCard course={courseWithoutImage} />
+      </BrowserRouter >
     );
 
     expect(screen.getByText('No image available')).toBeInTheDocument();

@@ -38,7 +38,6 @@ from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from core import views
 from core.progress_api import (
     CourseAnalyticsAPI,
     CourseStudentProgressAPI,
@@ -48,33 +47,47 @@ from core.progress_api import (
     StudentProgressAPI,
     StudentQuizPerformanceAPI,
 )
-from core.views import AdminDashboardAPI
-from core.views import CourseViewSet
-from core.views import InstructorDashboardAPI
-from core.views import validate_token
-from core.views import admin_dashboard_summary
-from core.views import UserProfileAPI
+from core.views.dashboards import (
+    AdminDashboardAPI,
+    InstructorDashboardAPI,
+    admin_dashboard_summary,
+    StudentDashboardAPI,
+)
+from core.views.courses import CourseViewSet, CourseVersionViewSet
+from core.views.auth import (
+    CustomTokenObtainPairView,
+    RegisterView,
+    LogoutView,
+    validate_token,
+)
+from core.views.users import UserProfileAPI, UserViewSet
+from core.views.tasks import LearningTaskViewSet
+from core.views.quizzes import QuizTaskViewSet, QuizQuestionViewSet, QuizOptionViewSet
+from core.views.enrollments import EnrollmentViewSet
+from core.views.misc import health_check
+
+# EnhancedTaskProgressViewSet and EnhancedQuizAttemptViewSet remain from progress_api
 
 # API router
 router = DefaultRouter()
-router.register(r"users", views.UserViewSet, basename="user")
-router.register(r"courses", views.CourseViewSet)
-router.register(r"course-versions", views.CourseVersionViewSet)
-router.register(r"learning-tasks", views.LearningTaskViewSet)
-router.register(r"quiz-tasks", views.QuizTaskViewSet)
-router.register(r"quiz-questions", views.QuizQuestionViewSet)
-router.register(r"quiz-options", views.QuizOptionViewSet)
-router.register(r"enrollments", views.EnrollmentViewSet)
+router.register(r"users", UserViewSet, basename="user")
+router.register(r"courses", CourseViewSet)
+router.register(r"course-versions", CourseVersionViewSet)
+router.register(r"learning-tasks", LearningTaskViewSet)
+router.register(r"quiz-tasks", QuizTaskViewSet)
+router.register(r"quiz-questions", QuizQuestionViewSet)
+router.register(r"quiz-options", QuizOptionViewSet)
+router.register(r"enrollments", EnrollmentViewSet)
 router.register(r"task-progress", EnhancedTaskProgressViewSet)
 router.register(r"quiz-attempts", EnhancedQuizAttemptViewSet)
-router.register(r"tasks", views.LearningTaskViewSet)
+router.register(r"tasks", LearningTaskViewSet)
 
 # JWT auth URLs
 auth_urls = [
-    path("login/", views.CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("login/", CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("register/", views.RegisterView.as_view(), name="register"),
-    path("logout/", views.LogoutView.as_view(), name="logout"),
+    path("register/", RegisterView.as_view(), name="register"),
+    path("logout/", LogoutView.as_view(), name="logout"),
     path("validate-token/", validate_token, name="validate_token"),
 ]
 
@@ -112,7 +125,7 @@ analytics_urls = [
     ),
     path(
         "students/<int:pk>/dashboard/",
-        views.StudentDashboardAPI.as_view(),
+        StudentDashboardAPI.as_view(),
         name="student-dashboard-detail",
     ),
 ]
@@ -121,7 +134,7 @@ analytics_urls = [
 instructor_urls = [
     path(
         "instructor/courses/",
-        views.CourseViewSet.as_view({"get": "instructor_courses"}),
+        CourseViewSet.as_view({"get": "instructor_courses"}),
         name="instructor_courses",
     ),
 ]
@@ -143,7 +156,7 @@ urlpatterns = [
     path("api/v1/", include(instructor_urls)),
     path("auth/", include(auth_urls)),
     path("api-auth/", include("rest_framework.urls")),
-    path("health/", views.health_check, name="health_check"),
+    path("health/", health_check, name="health_check"),
     path(
         "api/v1/instructor/dashboard/",
         InstructorDashboardAPI.as_view(),
