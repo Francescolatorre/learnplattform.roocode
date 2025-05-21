@@ -1,8 +1,8 @@
 // Export all page objects for easy importing in tests
 
-import {CourseCreationPage} from './CourseCreationPage';
-import {CourseDetailPage} from './CourseDetailPage';
-import {InstructorCoursesPage, StudentCoursesPage} from './CoursesPage';
+import {CourseCreationPage} from './courses/CourseCreationPage';
+import {CourseDetailPage} from './courses/CourseDetailPage';
+import {InstructorCoursesPage, StudentCoursesPage} from './courses';
 import {AdminDashboardPage, InstructorDashboardPage, StudentDashboardPage} from './DashboardPage';
 import {LoginPage} from './LoginPage';
 import {MarkdownEditorPage} from './MarkdownEditorPage';
@@ -21,9 +21,9 @@ export {
 } from './DashboardPage';
 
 // Course management page objects
-export {CoursesPage, StudentCoursesPage, InstructorCoursesPage} from './CoursesPage';
-export {CourseCreationPage} from './CourseCreationPage';
-export {CourseDetailPage} from './CourseDetailPage';
+export {StudentCoursesPage, InstructorCoursesPage} from './courses';
+export {CourseCreationPage} from './courses/CourseCreationPage';
+export {CourseDetailPage} from './courses/CourseDetailPage';
 
 // Component page objects
 export {MarkdownEditorPage} from './MarkdownEditorPage';

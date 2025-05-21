@@ -6,9 +6,9 @@ import {
     LoginPage,
     InstructorDashboardPage,
     CourseCreationPage,
-    MarkdownEditorPage,
     InstructorCoursesPage
 } from '../../page-objects';
+import {TaskMarkdownEditorPage} from '../../page-objects/TaskMarkdownEditorPage';
 
 test.describe('Learning Task Description Markdown Rendering', () => {
     let courseId: string;
@@ -44,15 +44,15 @@ test.describe('Learning Task Description Markdown Rendering', () => {
 
         // Get the course ID from URL
         const url = page.url();
-        courseId = url.split('/').pop() || '';
-
-        // Create a test task with markdown
+        courseId = url.split('/').pop() || '';        // Create a test task with markdown
         // Note: We don't have a TaskCreationPage page object yet, so using direct selectors
         await page.goto(`/instructor/courses/${courseId}/tasks/create`);
+        // Wait for the task form to be loaded
+        await page.waitForSelector('#task-title', {state: 'visible', timeout: 30000});
         await page.locator('#task-title').fill('Markdown Task Test');
 
         // Use MarkdownEditorPage for the description
-        const markdownEditor = new MarkdownEditorPage(page);
+        const markdownEditor = new TaskMarkdownEditorPage(page);
         await markdownEditor.enterMarkdown(MarkdownTestUtils.getTestMarkdownContent());
 
         await page.locator('#task-is_published').check();
@@ -83,16 +83,14 @@ test.describe('Learning Task Description Markdown Rendering', () => {
         // Fill in task details with markdown using the markdown editor page object
         await page.locator('#title').fill('Another Markdown Task');
 
-        const markdownEditor = new MarkdownEditorPage(page);
+        const markdownEditor = new TaskMarkdownEditorPage(page);
         await markdownEditor.enterMarkdown(MarkdownTestUtils.getTestMarkdownContent());
 
         // Check preview tab using the page object
-        await markdownEditor.switchToPreview();
-
-        // Verify markdown is rendered correctly in the preview
+        await markdownEditor.switchToPreview();        // Verify markdown is rendered correctly in the preview
         await MarkdownTestUtils.verifyMarkdownRendering(
             page,
-            '.markdown-preview',
+            '[data-testid="markdown-preview-container"]',
             {
                 headers: true,
                 paragraphs: true,
@@ -104,7 +102,7 @@ test.describe('Learning Task Description Markdown Rendering', () => {
         );
 
         // Switch back and save using the page object
-        await markdownEditor.switchToEdit();
+        await markdownEditor.switchToWrite();
         await page.locator('select[name="is_published"]').selectOption('true');
         await page.getByRole('button', {name: 'Save'}).click();
 
@@ -129,7 +127,8 @@ test.describe('Learning Task Description Markdown Rendering', () => {
 
         // Verify the description shows rendered markdown
         const renderedContent = taskItem.locator('.task-description');
-        await expect(renderedContent.locator('h1, h2, strong, em, code, li')).toHaveCount({min: 1});
+        const elementCount = await renderedContent.locator('h1, h2, strong, em, code, li').count();
+        expect(elementCount).toBeGreaterThan(0);
     });
 
     test('student can view learning task with markdown description', async ({page}) => {
@@ -179,18 +178,19 @@ test.describe('Learning Task Description Markdown Rendering', () => {
         await loginPage.login(
             TEST_USERS.lead_instructor.username,
             TEST_USERS.lead_instructor.password
-        );
-
-        // Navigate to course tasks page
+        );        // Navigate to course tasks page
         await page.goto(`/instructor/courses/${courseId}/tasks`);
 
         // Open task creation form
         await page.getByRole('button', {name: 'Add Task'}).click();
 
-        // Fill in task details with potentially unsafe markdown using the markdown editor
-        await page.locator('#title').fill('Unsafe Markdown Test');
+        // Wait for the task form to be loaded
+        await page.waitForSelector('#task-title', {state: 'visible', timeout: 30000});
 
-        const markdownEditor = new MarkdownEditorPage(page);
+        // Fill in task details with potentially unsafe markdown using the markdown editor
+        await page.locator('#task-title').fill('Unsafe Markdown Test');
+
+        const markdownEditor = new TaskMarkdownEditorPage(page);
         await markdownEditor.enterMarkdown(MarkdownTestUtils.getUnsafeMarkdownContent());
 
         // Save the task

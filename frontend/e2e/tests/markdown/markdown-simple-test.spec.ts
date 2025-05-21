@@ -1,10 +1,10 @@
 import {test, expect} from '@playwright/test';
-import {takeScreenshot, TEST_USERS} from '../setupTests';
-import {LoginPage} from '../page-objects/LoginPage';
-import {InstructorDashboardPage} from '../page-objects/DashboardPage';
-import {InstructorCoursesPage} from '../page-objects/CoursesPage';
-import {CourseCreationPage} from '../page-objects/CourseCreationPage';
-import {MarkdownEditorPage} from '../page-objects/MarkdownEditorPage';
+import {takeScreenshot, TEST_USERS} from '../../setupTests';
+import {LoginPage} from '../../page-objects/LoginPage';
+import {InstructorDashboardPage} from '../../page-objects/DashboardPage';
+import {InstructorCoursesPage} from '../../page-objects/courses';
+import {CourseCreationPage} from '../../page-objects/courses/CourseCreationPage';
+import {MarkdownEditorPage} from '../../page-objects/MarkdownEditorPage';
 
 /**
  * Simple test to verify that the markdown editor component is working correctly.

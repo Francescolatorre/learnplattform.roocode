@@ -1,5 +1,5 @@
 import {Page, Locator} from '@playwright/test';
-import {BasePage} from './BasePage';
+import {BasePage} from '../BasePage';
 
 /**
  * Interface for course creation data to provide structured input

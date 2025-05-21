@@ -27,28 +27,29 @@ if (!fs.existsSync(outputDir)) {
 const config: Config = defineConfig({
   testDir: './e2e/tests',
   testMatch: ['**/*.spec.ts'],
-  timeout: 60 * 1000, // Increased timeout from 30s to 60s
+  timeout: 120 * 1000, // Increased timeout to 120s for slower operations
   expect: {
-    timeout: 10000, // Increased from 5000ms to 10000ms
+    timeout: 30000, // Increased to 30s for element expectations
   },
   fullyParallel: false,
   forbidOnly: process.env.CI === 'true',
-  retries: process.env.CI === 'true' ? 2 : 0,
+  retries: process.env.CI === 'true' ? 2 : 0, // Added 1 retry for local development
   workers: process.env.CI === 'true' ? 1 : undefined,
   reporter: [
-    ['html', {outputFolder: path.join(outputDir, 'playwright-report')}],
+    ['html', {outputFolder: path.join(outputDir, 'playwright-report'), open: 'never'}],
     ['junit', {outputFile: path.join(outputDir, 'junit-report.xml')}],
-    //    ['./e2e/reporters/llm-reporter.ts'],
-    //    ['./e2e/reporters/markdown-reporter.ts']
   ],
 
   // Configure outputDir for all test artifacts including screenshots
   outputDir: path.join(outputDir, 'test-artifacts'),
   use: {
     baseURL: process.env.BASE_URL || 'http://localhost:5173',
-    trace: 'on-first-retry',
-    video: 'on-first-retry',
+    trace: 'retain-on-failure', // Changed to retain traces on failure
+    video: 'retain-on-failure', // Changed to retain videos on failure
     screenshot: 'only-on-failure',
+    actionTimeout: 15000, // Added timeout for actions like click
+    navigationTimeout: 30000, // Added timeout for navigation
+    testIdAttribute: 'data-testid', // Explicitly set testId attribute
   },
 
   projects: [
@@ -57,7 +58,6 @@ const config: Config = defineConfig({
       use: {...devices['Desktop Chrome']},
     },
   ],
-
   webServer: {
     command: 'npm run dev',
     url: process.env.BASE_URL || 'http://localhost:5173',

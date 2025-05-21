@@ -51,6 +51,24 @@ class CourseService {
     }));
   }
 
+  /**
+   * Enroll a student in a course.
+   * @param courseId - The ID of the course to enroll in.
+   * @param studentId - The ID of the student to enroll.
+   * @returns The enrollment response from the backend.
+   */
+  async enrollStudent(courseId: string | number, studentId: string | number): Promise<any> {
+    try {
+      this.ensureAuthToken();
+      const body = {course: courseId, student: studentId};
+      const response = await this.apiAny.post(API_CONFIG.endpoints.enrollments.create, body);
+      return response;
+    } catch (error) {
+      console.error('CourseService: Failed to enroll student:', error);
+      throw error;
+    }
+  }
+
   private apiTaskProgressArray = new ApiService<ITaskProgress[]>();
   private apiLearningTasks = new ApiService<IPaginatedResponse<ILearningTask>>();
 

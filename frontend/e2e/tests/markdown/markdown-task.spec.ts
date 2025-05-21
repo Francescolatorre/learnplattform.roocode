@@ -1,7 +1,7 @@
 import {test, expect} from '@playwright/test';
-import {MarkdownTestUtils} from '../utils/markdown-test-utils';
-import {loginAsInstructor, loginAsStudent} from '../utils/auth-helpers';
-import {UserSession} from '../setupTests';
+import {MarkdownTestUtils} from '../../utils/markdown-test-utils';
+import {loginAsInstructor, loginAsStudent} from '../../utils/auth-helpers';
+import {UserSession} from '../../setupTests';
 
 test.describe('Learning Task Description Markdown Rendering', () => {
     let courseId: string;

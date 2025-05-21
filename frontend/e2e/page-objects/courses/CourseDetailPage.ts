@@ -1,7 +1,7 @@
 // filepath: c:\DEVELOPMENT\projects\learnplatfom2\frontend\e2e\page-objects\CourseDetailPage.ts
 import {Page, Locator} from '@playwright/test';
-import {BasePage} from './BasePage';
-import {takeScreenshot} from '../setupTests';
+import {BasePage} from '../BasePage';
+import {takeScreenshot} from '../../setupTests';
 
 /**
  * Page object model for Course Detail view
@@ -31,14 +31,10 @@ export class CourseDetailPage extends BasePage {
 
     readonly enrollButtonSelectors = [
         '[data-testid="enroll-button"]',
-        // Fallback selector if data-testid attribute is not available
-        'button:has-text("Enroll in Course")'
     ];
 
     readonly unenrollButtonSelectors = [
         '[data-testid="unenroll-button"]',
-        // Fallback selector if data-testid attribute is not available
-        'button:has-text("Unenroll"):not([aria-labelledby="unenroll-dialog-title"]):not([data-testid="confirm-unenroll"])'
     ];
 
     readonly confirmUnenrollButtonSelectors = [

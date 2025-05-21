@@ -14,7 +14,7 @@
             "cwd": "${workspaceFolder}/backend",
             "console": "integratedTerminal",
             "env": {
-                "DJANGO_SETTINGS_MODULE": "learningplatform_backend.settings"
+                "DJANGO_SETTINGS_MODULE": "backend.settings"
             },
             "python": "${workspaceFolder}/.venv/Scripts/python.exe"
         },
@@ -45,7 +45,7 @@
             "cwd": "${workspaceFolder}/backend",
             "console": "integratedTerminal",
             "env": {
-                "DJANGO_SETTINGS_MODULE": "learningplatform_backend.settings"
+                "DJANGO_SETTINGS_MODULE": "backend.settings"
             },
             "python": "${workspaceFolder}/.venv/Scripts/python.exe"
         },
@@ -61,7 +61,7 @@
             "cwd": "${workspaceFolder}/backend",
             "console": "integratedTerminal",
             "env": {
-                "DJANGO_SETTINGS_MODULE": "learningplatform_backend.settings"
+                "DJANGO_SETTINGS_MODULE": "backend.settings"
             },
             "python": "${workspaceFolder}/.venv/Scripts/python.exe"
         },
@@ -77,7 +77,7 @@
             "cwd": "${workspaceFolder}/backend",
             "console": "integratedTerminal",
             "env": {
-                "DJANGO_SETTINGS_MODULE": "learningplatform_backend.settings"
+                "DJANGO_SETTINGS_MODULE": "backend.settings"
             },
             "python": "${workspaceFolder}/.venv/Scripts/python.exe"
         },
@@ -93,9 +93,99 @@
             "cwd": "${workspaceFolder}/backend",
             "console": "integratedTerminal",
             "env": {
-                "DJANGO_SETTINGS_MODULE": "learningplatform_backend.settings"
+                "DJANGO_SETTINGS_MODULE": "backend.settings"
             },
             "python": "${workspaceFolder}/.venv/Scripts/python.exe"
+        },
+        {
+            "name": "Debug Playwright Tests",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "${workspaceFolder}/frontend/node_modules/.bin/playwright",
+            "runtimeArgs": [
+                "test",
+                "--debug",
+                "--timeout",
+                "0"
+            ],
+            "autoAttachChildProcesses": true,
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/frontend"
+        },
+        {
+            "name": "Debug Current Playwright Test File",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "${workspaceFolder}/frontend/node_modules/.bin/playwright",
+            "runtimeArgs": [
+                "test",
+                "${relativeFile}",
+                "--debug",
+                "--timeout",
+                "0"
+            ],
+            "autoAttachChildProcesses": true,
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/frontend"
+        },
+        {
+            "name": "Debug Playwright Test",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "${workspaceFolder}/frontend/node_modules/.bin/playwright",
+            "runtimeArgs": [
+                "test",
+                "${relativeFile}",
+                "--debug",
+                "--timeout",
+                "0"
+            ],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/frontend",
+            "autoAttachChildProcesses": true,
+            "skipFiles": [
+                "<node_internals>/**",
+                "**/node_modules/**"
+            ]
+        },
+        {
+            "name": "Playwright: Debug All Tests",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "${workspaceFolder}/frontend/node_modules/.bin/playwright",
+            "runtimeArgs": [
+                "test",
+                "--debug",
+                "--timeout",
+                "0"
+            ],
+            "autoAttachChildProcesses": true,
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/frontend",
+            "skipFiles": [
+                "<node_internals>/**",
+                "**/node_modules/**"
+            ]
+        },
+        {
+            "name": "Playwright: Debug Current File",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "${workspaceFolder}/frontend/node_modules/.bin/playwright",
+            "runtimeArgs": [
+                "test",
+                "${relativeFile}",
+                "--debug",
+                "--timeout",
+                "0"
+            ],
+            "autoAttachChildProcesses": true,
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/frontend",
+            "skipFiles": [
+                "<node_internals>/**",
+                "**/node_modules/**"
+            ]
         }
         // Note: To run multiple configurations, open multiple VSCode windows
         // and start each configuration separately

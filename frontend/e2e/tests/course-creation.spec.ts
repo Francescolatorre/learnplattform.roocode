@@ -1,19 +1,12 @@
 // filepath: c:\DEVELOPMENT\projects\learnplatfom2\frontend\e2e\tests\course-creation.spec.ts
 import {test, expect, Page} from '@playwright/test';
 import {login, TEST_USERS, takeScreenshot, UserSession} from '../setupTests';
+import {logTestAction} from '../utils/debugHelper';
 import {LoginPage} from '../page-objects/LoginPage';
 import {InstructorDashboardPage} from '../page-objects/DashboardPage';
-import {InstructorCoursesPage} from '../page-objects/CoursesPage';
-import {CourseCreationPage} from '../page-objects/CourseCreationPage';
+import {InstructorCoursesPage} from '../page-objects/courses';
+import {CourseCreationPage, ICourseCreationData} from '../page-objects/courses/CourseCreationPage';
 
-/**
- * Helper function to log test actions and outcomes with timestamps
- * Used to track the flow and debug potential issues in the course creation process
- */
-const logTestAction = (message: string) => {
-  const timestamp = new Date().toISOString();
-  console.log(`[${timestamp}] ${message}`);
-};
 
 /**
  * Test suite for course creation functionality
@@ -60,14 +53,12 @@ test.describe('Course Creation Functionality', () => {
     await courseCreationPage.waitForPageLoad();
 
     // Take screenshot of the form for debugging
-    await courseCreationPage.takeScreenshot('course-form-initial');
-
-    // 6. Create a course with our page object
+    await courseCreationPage.takeScreenshot('course-form-initial');    // 6. Create a course with our page object
     const courseTitle = 'Playwright Test Course';
     const courseDescription = 'This is a test course created by Playwright automated testing to verify the course creation functionality works properly.';
 
     // Using structured course data
-    const courseData = {
+    const courseData: ICourseCreationData = {
       title: courseTitle,
       description: courseDescription,
       category: 'Testing',

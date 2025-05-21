@@ -5,7 +5,7 @@ import {ICourse, TCourseStatus} from '@/types/course';
 import {useDebounce} from '@utils/useDebounce';
 
 import {courseService, CourseFilterOptions} from '@services/resources/courseService';
-
+import {IPaginatedResponse} from '@/types/paginatedResponse';
 import CourseList from './CourseList';
 
 
@@ -21,6 +21,8 @@ interface FilterableCourseListProps {
   onCoursesLoaded?: (courses: ICourse[]) => void;
   pageSize?: number;
   onPageChange?: (page: number) => void;
+  customFetchFunction?: (options: CourseFilterOptions) => Promise<IPaginatedResponse<ICourse>>;
+  showInstructorActions?: boolean;
 }
 
 const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
@@ -31,11 +33,12 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
     course.title.toLowerCase().includes(searchTerm.toLowerCase()),
   emptyMessage = 'No courses available.',
   noResultsMessage = 'No courses match your search criteria.',
-  showStatusFilter = false,
-  showCreatorFilter = false,
+  showStatusFilter = false, showCreatorFilter = false,
   onCoursesLoaded,
   pageSize = 20,
   onPageChange,
+  customFetchFunction,
+  showInstructorActions = false,
 }) => {
   const [courses, setCourses] = useState<ICourse[]>(initialCourses || []);
   const [loading, setLoading] = useState<boolean>(!initialCourses);
@@ -64,7 +67,7 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
 
       console.info('Fetching courses with options:', filterOptions);
 
-      const response = await courseService.fetchCourses(filterOptions);
+      const response = await (customFetchFunction ? customFetchFunction(filterOptions) : courseService.fetchCourses(filterOptions));
 
       // Log the complete response structure
       console.info('API Response structure:', {
@@ -187,6 +190,7 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
       <>
         <CourseList
           courses={filteredCourses}
+          showInstructorActions={showInstructorActions}
           onError={error => {
             console.error('CourseList error:', error);
             setError({
@@ -224,22 +228,30 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
             size="small"
             value={searchTerm}
             onChange={handleSearch}
+            inputProps={{
+              'data-testid': 'course-search-field'
+            }}
           />
         </Grid>
-
         {showStatusFilter && (
-          <Grid item xs={6} md={3}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Status</InputLabel>
-              <Select value={status} onChange={handleStatusChange} label="Status">
-                {statusOptions.map(option => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
+          <FormControl sx={{minWidth: 200, mr: 2}}>
+            <InputLabel id="status-filter-label">Status</InputLabel>
+            <Select
+              labelId="status-filter-label"
+              value={status}
+              label="Status"
+              data-testid="course-status-filter"
+              onChange={(event: SelectChangeEvent<string>) => {
+                setStatus(event.target.value as TCourseStatus | '');
+                setPage(1);
+              }}
+            >
+              <MenuItem value="">All</MenuItem>
+              <MenuItem value="draft">Draft</MenuItem>
+              <MenuItem value="published">Published</MenuItem>
+              <MenuItem value="archived">Archived</MenuItem>
+            </Select>
+          </FormControl>
         )}
       </Grid>
 

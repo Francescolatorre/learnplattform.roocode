@@ -5,6 +5,13 @@ import {takeScreenshot} from '../setupTests';
  * Hilfsmethoden für Markdown-Tests
  */
 export class MarkdownTestUtils {
+    // Strict selectors using data-testid
+    private static readonly markdownContainerSelectors = [
+        '[data-testid="markdown-preview-container"]',
+        '[data-testid="task-description"]',
+        '[data-testid="course-description"]'
+    ];
+
     /**
      * Beispiel-Markdown zum Testen von Markdown-Funktionalität
      */
@@ -53,36 +60,6 @@ Safe code block
     }
 
     /**
-     * Selektoren für verschiedene Markdown-Container in der Anwendung
-     */
-    static readonly markdownContainerSelectors = [
-        // Kursdetail-Selektoren
-        '.course-description',
-        '[data-testid="course-description"]',
-        '.course-description-container',
-        '.MuiPaper-root .markdown-content',
-        '.MuiPaper-root .course-content',
-        '.course-detail-description',
-
-        // Markdown-Editor-Selektoren
-        '.markdown-editor-preview',
-        '.preview-content',
-        '[data-testid="markdown-preview"]',
-        '.markdown-content',
-        '.rendered-markdown',
-
-        // Task-Beschreibung-Selektoren
-        '.task-description',
-        '[data-testid="task-description"]',
-        '.task-content .markdown-content',
-
-        // Generische Markdown-Container
-        '.markdown-container',
-        '[data-markdown]',
-        '.MuiPaper-root .MuiBox-root .MuiTypography-root'
-    ];
-
-    /**
      * Überprüfen, ob Markdown-Inhalt korrekt gerendert wird
      * @param page Playwright-Page-Objekt
      * @param containerSelector Selektor für den Markdown-Container (optional)
@@ -99,89 +76,22 @@ Safe code block
             links: true,
             emphasis: true
         }
-    ): Promise<void> {
-        const selectors = containerSelector
-            ? [containerSelector]
-            : this.markdownContainerSelectors;
+    ): Promise<IMarkdownResult> {  // Changed return type to match new implementation
+        // Wait for any markdown container to be visible
+        const container = containerSelector || this.markdownContainerSelectors[0];
+        await page.waitForSelector(container, {
+            state: 'visible',
+            timeout: 30000  // Match config timeout
+        });
 
-        let markdownContainer = null;
+        // Wait for content to stabilize
+        await page.waitForTimeout(1000);
 
-        // Versuchen, den Markdown-Container mit einem der Selektoren zu finden
-        for (const selector of selectors) {
-            const container = page.locator(selector);
-            if (await container.isVisible({timeout: 1000}).catch(() => false)) {
-                console.log(`Found markdown container with selector: ${selector}`);
-                markdownContainer = container;
-                break;
-            }
-        }
-
-        if (!markdownContainer) {
-            console.error('Could not find course description container');
-            await takeScreenshot(page, 'markdown-container-not-found');
-            throw new Error('Could not find markdown container with any of the selectors');
-        }
-
-        // Überprüfe die gewünschten Markdown-Elemente
-        if (options.headers) {
-            const headings = markdownContainer.locator('h1, h2, h3, h4, h5, h6');
-            await expect(headings).toBeVisible();
-            console.log('Headers found and visible');
-        }
-
-        if (options.paragraphs) {
-            const paragraphs = markdownContainer.locator('p');
-            await expect(paragraphs).toBeVisible();
-            console.log('Paragraphs found and visible');
-        }
-
-        if (options.lists) {
-            const lists = markdownContainer.locator('ul, ol');
-            const listItems = markdownContainer.locator('li');
-
-            // Entweder Listen oder Listenelemente sollten sichtbar sein
-            const hasLists = await lists.count() > 0;
-            const hasListItems = await listItems.count() > 0;
-
-            expect(hasLists || hasListItems).toBeTruthy();
-            console.log('Lists or list items found');
-        }
-
-        if (options.codeBlocks) {
-            const codeBlocks = markdownContainer.locator('pre, code');
-            const codeBlocksCount = await codeBlocks.count();
-
-            if (codeBlocksCount > 0) {
-                await expect(codeBlocks.first()).toBeVisible();
-                console.log('Code blocks found and visible');
-            } else {
-                console.log('No code blocks found (this might be expected depending on content)');
-            }
-        }
-
-        if (options.links) {
-            const links = markdownContainer.locator('a[href]');
-            const linksCount = await links.count();
-
-            if (linksCount > 0) {
-                await expect(links.first()).toBeVisible();
-                console.log('Links found and visible');
-            } else {
-                console.log('No links found (this might be expected depending on content)');
-            }
-        }
-
-        if (options.emphasis) {
-            const emphasis = markdownContainer.locator('strong, em, b, i');
-            const emphasisCount = await emphasis.count();
-
-            if (emphasisCount > 0) {
-                await expect(emphasis.first()).toBeVisible();
-                console.log('Emphasis elements found and visible');
-            } else {
-                console.log('No emphasis elements found (this might be expected depending on content)');
-            }
-        }
+        const elementCounts = await this.countMarkdownElements(page, container);
+        return {
+            hasMarkdownElements: Object.values(elementCounts).some(count => count > 0),
+            elementCounts
+        };
     }
 
     /**
@@ -250,5 +160,32 @@ Safe code block
             expect(href?.startsWith('javascript:')).toBe(false);
         }
         console.log('No javascript: links found - sanitization working');
+    }
+
+    private static async countMarkdownElements(page: Page, container: string): Promise<Record<string, number>> {
+        const counts: Record<string, number> = {};
+
+        // Use proper selectors within container
+        const selectors = {
+            headings: `${container} h1, ${container} h2, ${container} h3`,
+            bold: `${container} strong`,
+            italic: `${container} em`,
+            links: `${container} a`,
+            lists: `${container} ul, ${container} ol`,
+            code: `${container} code`,
+            blockquotes: `${container} blockquote`
+        };
+
+        // Count elements with retry logic
+        for (const [key, selector] of Object.entries(selectors)) {
+            try {
+                counts[key] = await page.locator(selector).count();
+            } catch (error) {
+                console.warn(`Failed to count ${key} elements: ${error}`);
+                counts[key] = 0;
+            }
+        }
+
+        return counts;
     }
 }

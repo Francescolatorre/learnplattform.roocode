@@ -1,56 +1,33 @@
 import {type Locator, type Page} from '@playwright/test';
-import {takeScreenshot} from '../setupTests';
-import {BasePage} from './BasePage';
-import {expect} from '@playwright/test';
+import {BasePage} from '../BasePage';
 
-export class CoursesPage extends BasePage {
-    // Course related selectors
-    readonly courseTitleSelectors = ['[data-testid^="courses-title-"]'];
+/**
+ * Base class for all course pages providing common functionality
+ */
+export class BaseCourses extends BasePage {
+    // Common selectors used across all role-specific pages
+    protected readonly courseTitleSelectors = ['[data-testid^="courses-title-"]'];
 
-    readonly courseCardSelectors = [
+    protected readonly courseCardSelectors = [
         '[data-testid^="course-card-"]',
         '[data-testid="course-list-item"]'
     ];
 
-    readonly courseGridSelectors = [
+    protected readonly courseGridSelectors = [
         '.course-grid',
         '.courses-container',
         '.MuiGrid-container',
         '[data-testid="courses-grid"]'
     ];
 
-    readonly courseListSelectors = [
+    protected readonly courseListSelectors = [
         '.course-list',
         'ul.courses-list',
         '[data-testid^="courses-list"]',
         '.MuiList-root'
     ];
 
-    readonly courseDescriptionSelectors = [
-        '.course-description',
-        '[data-testid="course-description"]',
-        '.course-summary',
-        '.MuiCardContent-root p',
-        '.MuiCardContent-root .MuiTypography-root',
-        '.course-card-description'
-    ];
-
-    // UI control selectors
-    readonly paginationSelectors = [
-        'nav[aria-label="pagination"]',
-        '.MuiPagination-root',
-        '.pagination',
-        '[data-testid="pagination"]',
-        '[data-testid="course-pagination"]'
-    ];
-
-    readonly viewSwitchSelectors = [
-        '.view-switch',
-        '[data-testid="view-switch"]',
-        '.view-mode-toggle'
-    ];
-
-    readonly searchFieldSelectors = [
+    protected readonly searchFieldSelectors = [
         '[data-testid="search-courses-input"]',
         '[data-testid="course-search-field"]',
         'input[aria-label="Search courses"]',
@@ -59,22 +36,22 @@ export class CoursesPage extends BasePage {
         '.course-search input'
     ];
 
-    readonly emptyStateSelectors = [
+    protected readonly emptyStateSelectors = [
         '.empty-state',
         '.no-courses',
         '[data-testid="empty-state"]',
         'text="No courses found"',
         'text="No courses available"'
-    ]; constructor(page: Page, basePath: string) {
-        super(page, basePath);
-    }
+    ];
 
-    /**
-     * Navigate to the courses page
-     */    async navigateTo(): Promise<void> {
-        await this.page.goto(this.basePath);
-        await this.waitForPageLoad();
-        console.log('Navigated to courses page');
+    protected readonly viewSwitchSelectors = [
+        '.view-switch',
+        '[data-testid="view-switch"]',
+        '.view-mode-toggle'
+    ];
+
+    constructor(page: Page, basePath: string) {
+        super(page, basePath);
     }
 
     /**
@@ -151,90 +128,6 @@ export class CoursesPage extends BasePage {
     }
 
     /**
-     * Count how many courses are displayed
-     */
-    async getCourseCount(): Promise<number> {
-        try {
-            const cards = await this.getCourseCards();
-            return await cards.count();
-        } catch (error) {
-            // Check for empty state
-            for (const selector of this.emptyStateSelectors) {
-                const emptyState = this.page.locator(selector);
-                const isVisible = await emptyState.isVisible({timeout: 1000});
-
-                if (isVisible) {
-                    console.log('No courses found (empty state detected)');
-                    return 0;
-                }
-            }
-
-            console.error('Error getting course count:', error);
-            return 0;
-        }
-    }
-
-    /**
-     * Check if any courses are displayed
-     */
-    async hasAnyCourses(): Promise<boolean> {
-        try {
-            const count = await this.getCourseCount();
-            return count > 0;
-        } catch (error) {
-            console.error('Error checking for courses:', error);
-            return false;
-        }
-    }
-
-    /**
-     * Get all course titles from the page
-     */
-    async getCoursesTitles(): Promise<string[]> {
-        const titles: string[] = [];
-
-        try {
-            // Check for list items first (student view)
-            const listItems = this.page.locator('.MuiListItem-root');
-            const listCount = await listItems.count();
-
-            if (listCount > 0) {
-                console.log(`Found ${listCount} course list items`);
-                // Get title from each list item
-                for (let i = 0; i < listCount; i++) {
-                    const item = listItems.nth(i);
-                    const titleElement = item.locator('.MuiListItemText-primary').first();
-                    const titleText = await titleElement.textContent();
-                    if (titleText?.trim()) {
-                        titles.push(titleText.trim());
-                    }
-                }
-            } else {
-                // Fallback to card view (instructor view)
-                const cards = this.page.locator('.MuiCard-root');
-                const cardCount = await cards.count();
-                console.log(`Found ${cardCount} course cards`);
-
-                // Get title from each card
-                for (let i = 0; i < cardCount; i++) {
-                    const card = cards.nth(i);
-                    const titleElement = card.locator('h2, h3, h4, h5, .MuiTypography-h5, .MuiTypography-h6').first();
-                    const titleText = await titleElement.textContent();
-                    if (titleText?.trim()) {
-                        titles.push(titleText.trim());
-                    }
-                }
-            }
-
-            console.log(`Found ${titles.length} course titles:`, titles);
-            return titles;
-        } catch (error) {
-            console.error('Error getting course titles:', error);
-            return titles;
-        }
-    }
-
-    /**
      * Search for a specific course name
      */
     async searchForCourse(searchTerm: string): Promise<void> {
@@ -277,7 +170,6 @@ export class CoursesPage extends BasePage {
     protected async waitForSearchResults(): Promise<void> {
         console.log('Waiting for search results...');
         try {
-            // Wait for any loading indicators to disappear
             const loadingSelectors = [
                 '[data-testid="loading-indicator"]',
                 '.loading-spinner',
@@ -288,7 +180,6 @@ export class CoursesPage extends BasePage {
                 await this.page.locator(selector).waitFor({state: 'detached', timeout: 5000}).catch(() => { });
             }
 
-            // Wait for network requests to settle
             await this.page.waitForLoadState('networkidle', {timeout: 5000}).catch(() => {
                 console.log('Network did not reach idle state, continuing...');
             });
@@ -297,51 +188,6 @@ export class CoursesPage extends BasePage {
             console.log('Search results loaded');
         } catch (error) {
             console.warn('Error waiting for search results:', error);
-        }
-    }
-
-    /**
-     * Click the first course in the list/grid
-     */
-    async clickFirstCourse(): Promise<void> {
-        try {
-            const cards = await this.getCourseCards();
-            const firstCard = cards.first();
-            await firstCard.click();
-            await this.waitForPageLoad();
-            console.log('Clicked first course card');
-        } catch (error) {
-            console.error('Failed to click first course:', error);
-        }
-    }
-
-    /**
-     * Switch between grid and list view modes
-     */
-    async switchViewMode(mode: 'grid' | 'list'): Promise<boolean> {
-        try {
-            for (const selector of this.viewSwitchSelectors) {
-                const switchElement = this.page.locator(selector);
-                const isVisible = await switchElement.isVisible({timeout: 1000}).catch(() => false);
-
-                if (isVisible) {
-                    const modeButton = switchElement.locator(`button:has-text("${mode === 'grid' ? 'Grid' : 'List'}")`);
-                    const isModeButtonVisible = await modeButton.isVisible({timeout: 1000}).catch(() => false);
-
-                    if (isModeButtonVisible) {
-                        await modeButton.click();
-                        await this.waitForPageLoad();
-                        console.log(`Switched to ${mode} view`);
-                        return true;
-                    }
-                }
-            }
-
-            console.warn(`Could not find ${mode} view switch`);
-            return false;
-        } catch (error) {
-            console.error(`Error switching to ${mode} view:`, error);
-            return false;
         }
     }
 
@@ -362,29 +208,48 @@ export class CoursesPage extends BasePage {
     }
 
     /**
-     * Find a test course from a list of possible course titles
-     * @param possibleCourses List of course titles to try finding
-     * @returns Object containing found course title or undefined if none found
+     * Get all course titles from the page
      */
-    async findTestCourseWithSearch(possibleCourses: string[]): Promise<{title: string}> {
-        await this.navigateTo();
-        await this.isCoursesPageLoaded();
+    async getCoursesTitles(): Promise<string[]> {
+        const titles: string[] = [];
 
-        console.log('Attempting to find a test course...');
+        try {
+            // Check for list items first
+            const listItems = this.page.locator('.MuiListItem-root');
+            const listCount = await listItems.count();
 
-        for (const courseName of possibleCourses) {
-            console.log(`Trying to find course: ${courseName}`);
-            await this.searchForCourse(courseName);
-            await this.page.waitForTimeout(500);
+            if (listCount > 0) {
+                console.log(`Found ${listCount} course list items`);
+                for (let i = 0; i < listCount; i++) {
+                    const item = listItems.nth(i);
+                    const titleElement = item.locator('.MuiListItemText-primary').first();
+                    const titleText = await titleElement.textContent();
+                    if (titleText?.trim()) {
+                        titles.push(titleText.trim());
+                    }
+                }
+            } else {
+                // Fallback to card view
+                const cards = this.page.locator('.MuiCard-root');
+                const cardCount = await cards.count();
+                console.log(`Found ${cardCount} course cards`);
 
-            const results = await this.getSearchResults();
-            if (results.includes(courseName)) {
-                console.log(`Found test course: ${courseName}`);
-                return {title: courseName};
+                for (let i = 0; i < cardCount; i++) {
+                    const card = cards.nth(i);
+                    const titleElement = card.locator('h2, h3, h4, h5, .MuiTypography-h5, .MuiTypography-h6').first();
+                    const titleText = await titleElement.textContent();
+                    if (titleText?.trim()) {
+                        titles.push(titleText.trim());
+                    }
+                }
             }
-        }
 
-        throw new Error('Could not find any test course');
+            console.log(`Found ${titles.length} course titles:`, titles);
+            return titles;
+        } catch (error) {
+            console.error('Error getting course titles:', error);
+            return titles;
+        }
     }
 
     /**
@@ -392,7 +257,6 @@ export class CoursesPage extends BasePage {
      */
     async clickCourse(courseTitle: string): Promise<void> {
         try {
-            // Try to find course in both grid and list views
             const titleSelectors = [
                 `text="${courseTitle}"`,
                 `h2:text("${courseTitle}")`,

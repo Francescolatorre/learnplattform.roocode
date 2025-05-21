@@ -87,7 +87,7 @@ const Dashboard: React.FC = () => {
       </Typography>
 
       {/* Overall Statistics Card */}
-      <Paper elevation={2} sx={{p: 3, mt: 3}}>
+      <Paper elevation={2} sx={{p: 3, mt: 3}} data-testid="dashboard-summary">
         <Typography variant="h5" gutterBottom data-testid="learning-overview">
           Learning Overview
         </Typography>
@@ -138,7 +138,7 @@ const Dashboard: React.FC = () => {
       </Paper>
 
       {/* Course Progress Section */}
-      <Box sx={{mt: 4}}>
+      <Box sx={{mt: 4}} data-testid="progress-section">
         <Typography variant="h5" gutterBottom>
           Course Progress
         </Typography>
@@ -172,17 +172,18 @@ const Dashboard: React.FC = () => {
                   xs={12}
                   sm={6}
                   md={4}
-                  key={progress.id}
+                  key={progress.id || progress.title || Math.random()}
                 >
                   <DashboardCourseCard
                     courseTitle={progress.title}
                     progress={{
-                      percentage: progress.progress || 0,
+                      percentage: typeof progress.progress === 'number' ? progress.progress : 0,
                       completed_tasks: stats?.tasks_completed || 0,
                       total_tasks: stats?.tasks_in_progress || 0,
                       last_activity: progress.last_activity_date
                     }}
-                    courseId={courseId}
+                    courseId={courseId || ''}
+                    data-testid={`course-card-${courseId}`}
                   />
                 </Grid>
               );

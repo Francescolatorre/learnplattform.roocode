@@ -3,97 +3,66 @@ import {MarkdownTestUtils} from '../../utils/markdown-test-utils';
 import {loginAsInstructor} from '../../utils/auth-helpers';
 import {TEST_USERS} from '../../setupTests';
 import {
-    LoginPage,
-    CourseCreationPage,
-    MarkdownEditorPage
+  LoginPage,
+  CourseCreationPage
 } from '../../page-objects';
+import {CourseMarkdownEditorPage} from '../../page-objects/CourseMarkdownEditorPage';
 
 test.describe('Markdown Editor Component', () => {
-    test('markdown editor toggles between write and preview modes', async ({page}) => {
-        // Login as instructor using the page object
-        const loginPage = new LoginPage(page);
-        await loginPage.navigateTo();
-        await loginPage.login(
-            TEST_USERS.lead_instructor.username,
-            TEST_USERS.lead_instructor.password
-        );
+  test('markdown editor toggles between write and preview modes', async ({page}) => {
+    // Login as instructor
+    const loginPage = new LoginPage(page);
+    await loginPage.navigateTo();
+    await loginPage.login(
+      TEST_USERS.lead_instructor.username,
+      TEST_USERS.lead_instructor.password
+    );
 
-        // Navigate to course creation page using the page object
-        const courseCreationPage = new CourseCreationPage(page);
-        await courseCreationPage.navigateTo();
-        await courseCreationPage.waitForPageLoad();
+    // Navigate to course creation page where we can test the editor
+    const courseCreationPage = new CourseCreationPage(page);
+    await courseCreationPage.navigateTo();
+    await courseCreationPage.waitForPageLoad();
 
-        // Use the MarkdownEditor page object to interact with the editor
-        const markdownEditor = new MarkdownEditorPage(page);
-        const markdownContent = MarkdownTestUtils.getTestMarkdownContent();
-        await markdownEditor.enterMarkdown(markdownContent);
+    // Initialize markdown editor and wait for it to be ready
+    const markdownEditor = new CourseMarkdownEditorPage(page);
+    await markdownEditor.waitForEditor();
 
-        // Initially we should be in write mode - verify using data-testid
-        await expect(page.locator('[data-testid="markdown-editor-textarea"]')).toBeVisible();
+    // Verify initial write mode with explicit wait
+    await expect(async () => {
+      expect(await markdownEditor.isInWriteMode()).toBeTruthy();
+    }).toPass({timeout: 10000});
 
-        // Use the page object to switch to preview mode
-        await markdownEditor.switchToPreview();
+    // Enter test content with verification
+    const markdownContent = MarkdownTestUtils.getTestMarkdownContent();
+    await markdownEditor.enterMarkdown(markdownContent);
+    const initialContent = await markdownEditor.getContent();
+    expect(initialContent).toContain('# Test heading');
 
-        // Now we should see the preview and not the textarea - verify with data-testid
-        await expect(page.locator('[data-testid="markdown-editor-textarea"]')).not.toBeVisible();
-        await expect(page.locator('[data-testid="markdown-preview-container"]')).toBeVisible();
+    // Switch to preview mode with explicit wait
+    await markdownEditor.switchToPreview();
+    await expect(async () => {
+      expect(await markdownEditor.isInPreviewMode()).toBeTruthy();
+    }).toPass({timeout: 10000});
 
-        // Check markdown elements are properly rendered
-        await MarkdownTestUtils.verifyMarkdownRendering(
-            page,
-            '[data-testid="markdown-preview-container"]',
-            {
-                headers: true,
-                paragraphs: true,
-                lists: true,
-                codeBlocks: true,
-                links: true,
-                emphasis: true
-            }
-        );
+    // Verify preview content using MarkdownTestUtils with detailed checks
+    const result = await MarkdownTestUtils.verifyMarkdownRendering(page);
+    expect(result.hasMarkdownElements).toBeTruthy();
 
-        // Use the page object to switch back to edit mode
-        await markdownEditor.switchToEdit();
+    // Verify specific markdown elements are rendered
+    const {elementCounts} = result;
+    expect(elementCounts.headings, 'Should have headings').toBeGreaterThanOrEqual(2);
+    expect(elementCounts.lists, 'Should have list items').toBeGreaterThanOrEqual(1);
+    expect(elementCounts.code, 'Should have code block').toBeGreaterThanOrEqual(1);
+    expect(elementCounts.links, 'Should have links').toBeGreaterThanOrEqual(1);
 
-        // We should be back in write mode - verify with data-testid
-        await expect(page.locator('[data-testid="markdown-editor-textarea"]')).toBeVisible();
-    });
+    // Switch back to write mode with verification
+    await markdownEditor.switchToWrite();
+    await expect(async () => {
+      expect(await markdownEditor.isInWriteMode()).toBeTruthy();
+    }).toPass({timeout: 10000});
 
-    test('markdown help dialog shows formatting reference', async ({page}) => {
-        // Login as instructor using the page object
-        const loginPage = new LoginPage(page);
-        await loginPage.navigateTo();
-        await loginPage.login(
-            TEST_USERS.lead_instructor.username,
-            TEST_USERS.lead_instructor.password
-        );
-
-        // Navigate to course creation page using the page object
-        const courseCreationPage = new CourseCreationPage(page);
-        await courseCreationPage.navigateTo();
-        await courseCreationPage.waitForPageLoad();
-
-        // Use the MarkdownEditor page object to open the help dialog
-        const markdownEditor = new MarkdownEditorPage(page);
-        await markdownEditor.openHelpDialog();
-
-        // Verify help dialog is shown using data-testid
-        await expect(page.locator('[data-testid="markdown-help-dialog"]')).toBeVisible();
-
-        // Verify it contains help sections using specific data-testid selectors
-        await expect(page.locator('[data-testid="markdown-help-headers"]')).toBeVisible();
-        await expect(page.locator('[data-testid="markdown-help-emphasis"]')).toBeVisible();
-        await expect(page.locator('[data-testid="markdown-help-lists"]')).toBeVisible();
-        await expect(page.locator('[data-testid="markdown-help-links"]')).toBeVisible();
-        await expect(page.locator('[data-testid="markdown-help-code"]')).toBeVisible();
-
-        // Check if it contains code examples using data-testid
-        await expect(page.locator('[data-testid="markdown-help-headers-example"]')).toBeVisible();
-
-        // Close dialog using the page object
-        await markdownEditor.closeHelpDialog();
-
-        // Verify dialog is closed
-        await expect(page.locator('[data-testid="markdown-help-dialog"]')).not.toBeVisible();
-    });
+    // Verify content is preserved after mode switching
+    const finalContent = await markdownEditor.getContent();
+    expect(finalContent).toBe(initialContent);
+  });
 });

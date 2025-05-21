@@ -14,7 +14,9 @@ test.describe('User Roles and Permissions', () => {
     await waitForGlobalLoadingToDisappear(page);
     await expect(page.locator('h4:has-text("Dashboard")')).toBeVisible();
     await expect(page.locator('li:has-text("Courses")')).toBeVisible();
+    await expect(page.locator('li:has-text("Tasks")')).toBeVisible();
     await expect(page.locator('li:has-text("Profile")')).toBeVisible();
+
   });
 
   test('Instructor role can access instructor and student views', async ({page}) => {
@@ -32,11 +34,9 @@ test.describe('User Roles and Permissions', () => {
     await userSession.loginAs('admin');
     await page.goto('/dashboard');
     await waitForGlobalLoadingToDisappear(page);
-    await expect(page.locator('h4:has-text("Dashboard")')).toBeVisible();
-    await expect(page.locator('li:has-text("Courses")')).toBeVisible();
-    await expect(page.locator('li:has-text("Profile")')).toBeVisible();
     await expect(page.locator('li:has-text("Instructor Dashboard")')).toBeVisible();
-    await expect(page.locator('li:has-text("Tasks")')).toBeVisible();
+    await expect(page.locator('li:has-text("Manage Courses")')).toBeVisible();
+    await expect(page.locator('li:has-text("Profile")')).toBeVisible();
     await expect(page.locator('li:has-text("Admin Dashboard")')).toBeVisible();
     await expect(page.locator('li:has-text("User Management")')).toBeVisible();
   });

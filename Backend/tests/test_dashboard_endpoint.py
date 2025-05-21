@@ -1,4 +1,4 @@
-"""
+p""
 Dashboard endpoint test suite for the Learning Platform.
 
 This module tests the dashboard endpoints for different user roles (student,
@@ -20,6 +20,7 @@ from rest_framework.test import APIClient
 @pytest.mark.django_db
 def test_dashboard_endpoint(db):
     from django.contrib.auth import get_user_model
+    from core.models import Course, CourseEnrollment
 
     client = APIClient()
     User = get_user_model()
@@ -29,6 +30,15 @@ def test_dashboard_endpoint(db):
         password="testpass",
         role="student",
     )
+    # Create a course with a valid, non-empty title
+    course = Course.objects.create(
+        title="Test Course Title",
+        description="A test course for dashboard endpoint.",
+        creator=student,  # or assign to another user if needed
+    )
+    # Enroll the student in the course
+    CourseEnrollment.objects.create(user=student, course=course, status="active")
+
     url = reverse("student-dashboard-detail", kwargs={"pk": student.pk})
 
     client.force_authenticate(user=student)
@@ -41,3 +51,9 @@ def test_dashboard_endpoint(db):
     assert "quiz_performance" in resp
     assert "recent_activity" in resp
     assert "user_info" in resp
+
+    # Assert that each course object has a non-empty course_title
+    for course_obj in resp["courses"]:
+        assert "course_title" in course_obj
+        assert isinstance(course_obj["course_title"], str)
+        assert course_obj["course_title"].strip() != ""

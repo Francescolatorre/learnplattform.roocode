@@ -244,13 +244,13 @@ In this project, "task" can mean two distinct things:
 
 ## Testing Overview
 
-### Backend
+### Backend-Testing
 
 - pytest + pytest-django
 - Model factories (factory_boy)
 - API tests using django.test.Client
 
-### Frontend
+### Frontend-Testing
 
 - Vitest for unit tests
 - Playwright for end-to-end tests

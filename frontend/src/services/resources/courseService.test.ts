@@ -89,6 +89,14 @@ describe('courseService', () => {
         expect(mockPost).toHaveBeenCalled();
         expect(result).toEqual(mockCourse);
     });
+    it('createCourse sends both title and description in the payload', async () => {
+        const payload = {title: 'Test Course', description: 'A test course description'};
+        mockPost.mockResolvedValueOnce({...mockCourse, ...payload});
+        const result = await courseService.createCourse(payload);
+        expect(mockPost).toHaveBeenCalledWith(expect.any(String), payload);
+        expect(result.title).toBe(payload.title);
+        expect(result.description).toBe(payload.description);
+    });
 
     it('getCourseDetails returns course if found', async () => {
         mockGet.mockResolvedValueOnce(mockCourse);
@@ -156,6 +164,38 @@ describe('courseService', () => {
         mockGet.mockResolvedValueOnce([{id: 1, title: 'Task'}]);
         const result = await courseService.getCourseTasks('1');
         expect(mockGet).toHaveBeenCalled();
-        expect(result).toEqual([{id: 1, title: 'Task'}]);
+        expect(result).toEqual({count: 1, next: null, previous: null, results: [{id: 1, title: 'Task'}]});
+    });
+});
+
+describe('CourseService.enrollStudent', () => {
+    const mockPost = (globalThis as any).mockPost;
+
+    beforeEach(() => {
+        mockPost.mockClear();
+    });
+
+    it('should POST to the enrollments endpoint with correct body and return response', async () => {
+        const courseId = 123;
+        const studentId = 456;
+        const mockResponse = {id: 1, course: courseId, student: studentId, status: 'enrolled'};
+        mockPost.mockResolvedValueOnce(mockResponse);
+
+        const result = await courseService.enrollStudent(courseId, studentId);
+
+        expect(mockPost).toHaveBeenCalledWith(
+            '/api/v1/enrollments/',
+            {course: courseId, student: studentId}
+        );
+        expect(result).toEqual(mockResponse);
+    });
+
+    it('should throw if the API call fails', async () => {
+        const courseId = 123;
+        const studentId = 456;
+        const error = new Error('API error');
+        mockPost.mockRejectedValueOnce(error);
+
+        await expect(courseService.enrollStudent(courseId, studentId)).rejects.toThrow('API error');
     });
 });

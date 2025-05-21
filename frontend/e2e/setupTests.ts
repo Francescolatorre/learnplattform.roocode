@@ -1,8 +1,262 @@
 // Playwright-specific test helpers for E2E tests
 
-import {Page, expect} from '@playwright/test';
+import {Page, request, expect} from '@playwright/test';
 import path from 'path';
 import fs from 'fs';
+const API_URL = 'http://localhost:8000';
+
+/**
+ * Helper class for API testing
+ */
+export class ApiHelper {
+    private accessToken: string = '';
+    private refreshToken: string = '';
+
+    /**
+     * Authenticate and get tokens
+     */
+    async authenticate(username: string, password: string) {
+        const requestContext = await request.newContext({
+            baseURL: API_URL,
+        });
+
+        const response = await requestContext.post('/auth/login/', {
+            data: {
+                username: username,
+                password: password,
+            },
+        });
+
+        expect(response.ok()).toBeTruthy();
+
+        const responseData = await response.json();
+        this.accessToken = responseData.access;
+        this.refreshToken = responseData.refresh;
+
+        return {
+            accessToken: this.accessToken,
+            refreshToken: this.refreshToken,
+        };
+    }
+
+    /**
+     * Get the access token
+     */
+    public getAccessToken() {
+        return this.accessToken;
+    }
+
+    /**
+     * Get the authenticated user's profile (to retrieve numeric user ID)
+     */
+    async getUserProfile() {
+        const requestContext = await request.newContext({
+            baseURL: API_URL,
+            extraHTTPHeaders: {
+                Authorization: `Bearer ${this.accessToken}`,
+            },
+        });
+        const response = await requestContext.get('/users/profile/');
+        expect(response.ok()).toBeTruthy();
+        return await response.json();
+    }
+
+    /**
+     * Get courses from API with authentication
+     */
+    async getCourses() {
+        const requestContext = await request.newContext({
+            baseURL: API_URL,
+            extraHTTPHeaders: {
+                Authorization: `Bearer ${this.accessToken}`,
+            },
+        });
+
+        const response = await requestContext.get('/api/v1/courses/');
+        return response;
+    }
+
+    /**
+     * Get course details from API
+     */
+    async getCourseDetails(courseId: string) {
+        const requestContext = await request.newContext({
+            baseURL: API_URL,
+            extraHTTPHeaders: {
+                Authorization: `Bearer ${this.accessToken}`,
+            },
+        });
+
+        const response = await requestContext.get(`/api/v1/courses/${courseId}/`);
+        return response;
+    }
+
+    /**
+     * Get tasks for a course from API
+     */
+    async getCourseTasks(courseId: string) {
+        const requestContext = await request.newContext({
+            baseURL: API_URL,
+            extraHTTPHeaders: {
+                Authorization: `Bearer ${this.accessToken}`,
+            },
+        });
+
+        const response = await requestContext.get(`/api/v1/learning-tasks/`, {
+            params: {course: courseId},
+        });
+        return response;
+    }
+
+    /**
+     * Create a task via API
+     */
+    async createTask(courseId: string, taskData: any) {
+        const requestContext = await request.newContext({
+            baseURL: API_URL,
+            extraHTTPHeaders: {
+                Authorization: `Bearer ${this.accessToken}`,
+            },
+        });
+
+        const data = {
+            ...taskData,
+            course: parseInt(courseId, 10),
+        };
+
+        const response = await requestContext.post(`/api/v1/learning-tasks/`, {
+            data: data,
+        });
+        return response;
+    }
+
+    /**
+     * Update a task via API
+     */
+    async updateTask(taskId: string, taskData: any) {
+        const requestContext = await request.newContext({
+            baseURL: API_URL,
+            extraHTTPHeaders: {
+                Authorization: `Bearer ${this.accessToken}`,
+            },
+        });
+
+        const response = await requestContext.put(`/api/v1/learning-tasks/${taskId}/`, {
+            data: taskData,
+        });
+        return response;
+    }
+
+    /**
+     * Delete a task via API
+     */
+    async deleteTask(taskId: string) {
+        const requestContext = await request.newContext({
+            baseURL: API_URL,
+            extraHTTPHeaders: {
+                Authorization: `Bearer ${this.accessToken}`,
+            },
+        });
+
+        const response = await requestContext.delete(`/api/v1/learning-tasks/${taskId}/`);
+        return response;
+    }
+
+    /**
+     * Refresh authentication token
+     */
+    async refreshAuthToken() {
+        const requestContext = await request.newContext({
+            baseURL: API_URL,
+        });
+
+        const response = await requestContext.post('/auth/token/refresh/', {
+            data: {
+                refresh: this.refreshToken,
+            },
+        });
+
+        expect(response.ok()).toBeTruthy();
+
+        const responseData = await response.json();
+        this.accessToken = responseData.access;
+
+        return {
+            accessToken: this.accessToken,
+        };
+    }
+    /**
+     * Create a course via API
+     */
+    async createCourse(courseData: any) {
+        const requestContext = await request.newContext({
+            baseURL: API_URL,
+            extraHTTPHeaders: {
+                Authorization: `Bearer ${this.accessToken}`,
+            },
+        });
+
+        const response = await requestContext.post('/api/v1/courses/', {
+            data: courseData,
+        });
+        expect(response.ok()).toBeTruthy();
+        return await response.json();
+    }
+
+    /**
+     * Delete a course via API
+     */
+    async deleteCourse(courseId: string | number) {
+        const requestContext = await request.newContext({
+            baseURL: API_URL,
+            extraHTTPHeaders: {
+                Authorization: `Bearer ${this.accessToken}`,
+            },
+        });
+
+        const response = await requestContext.delete(`/api/v1/courses/${courseId}/`);
+        expect(response.ok()).toBeTruthy();
+        return response;
+    }
+
+    /**
+     * Enroll a student in a course via API
+     */
+    async enrollInCourse(courseId: string | number, studentId: string | number) {
+        const requestContext = await request.newContext({
+            baseURL: API_URL,
+            extraHTTPHeaders: {
+                Authorization: `Bearer ${this.accessToken}`,
+            },
+        });
+
+        const response = await requestContext.post('/api/v1/enrollments/', {
+            data: {
+                course: courseId,
+                user: studentId,
+                status: 'active',
+            },
+        });
+        expect(response.ok()).toBeTruthy();
+        return await response.json();
+    }
+
+    /**
+     * Unenroll a student from a course via API
+     */
+    async unenrollFromCourse(courseId: string | number, studentId: string | number) {
+        const requestContext = await request.newContext({
+            baseURL: API_URL,
+            extraHTTPHeaders: {
+                Authorization: `Bearer ${this.accessToken}`,
+            },
+        });
+        // Assuming the API supports DELETE with course and user as params
+        const response = await requestContext.delete(`/api/enrollments/?course=${courseId}&user=${studentId}`);
+        expect(response.ok()).toBeTruthy();
+        return response;
+    }
+}
 
 // Function to get the screenshot directory
 function getScreenshotPath(filename: string): string {
@@ -178,8 +432,7 @@ export const login = async (page: Page, username: string, password: string): Pro
             'button:has-text("Sign in"), ' +
             'button:has-text("Log in"), ' +
             '[role="button"]:has-text("Login"), ' +
-            '[role="button"]:has-text("Sign in")',
-            'button[type="submit"]'
+            '[role="button"]:has-text("Sign in")'
         )
     }
     catch (error) {

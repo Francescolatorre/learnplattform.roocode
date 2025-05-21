@@ -1,7 +1,6 @@
-import Button from '@mui/material/Button'; // Import the Button component
-import React, {useState} from 'react';
+import Button from '@mui/material/Button';
+import React from 'react';
 import {useNavigate} from 'react-router-dom';
-import TaskCreation from '../taskCreation/TaskCreation'; // Import the TaskCreation component
 import {
   List,
   ListItem,
@@ -59,20 +58,11 @@ const CourseList: React.FC<ICourseListProps> = ({
   title,
   showInstructorActions = false
 }) => {
-  const [isModalOpen, setModalOpen] = useState(false);
-  const {user, isAuthenticated} = useAuth();
+  const {user} = useAuth();
   const navigate = useNavigate();
 
   // Check if user has instructor or admin privileges
   const canManageTasks = user?.role === 'instructor' || user?.role === 'admin';
-
-  const handleOpenModal = () => {
-    setModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setModalOpen(false);
-  };
 
   const handleCourseClick = (courseId: number, event: React.MouseEvent) => {
     // Don't navigate if clicking on action buttons
@@ -106,36 +96,6 @@ const CourseList: React.FC<ICourseListProps> = ({
       : course.description;
   };
 
-  const renderEnrollmentStatus = (courseId: string | number) => {
-    const {data: enrollment, isLoading} = useQuery({
-      queryKey: ['enrollment', courseId],
-      queryFn: () => enrollmentService.getEnrollmentStatus(courseId),
-      enabled: Boolean(courseId) && isAuthenticated,
-      retry: 2,
-      staleTime: 0,
-      refetchOnMount: true,
-      refetchOnWindowFocus: true
-    });
-
-    if (isLoading) {
-      return <CircularProgress size={20} />;
-    }
-
-    if (enrollment?.enrolled) {
-      return (
-        <Chip
-          label="Enrolled"
-          color="primary"
-          size="small"
-          data-testid="enrolled-badge"
-          sx={{mr: 1}}
-        />
-      );
-    }
-
-    return null;
-  };
-
   if (!courses.length) {
     return (
       <Paper elevation={0} sx={{p: 2, textAlign: 'center'}}>
@@ -151,26 +111,20 @@ const CourseList: React.FC<ICourseListProps> = ({
           <Typography variant="h6" component="h2" data-test-id="course-list-element">
             {title}
           </Typography>
-        )}
-
-        {/* Only show Add Task button for instructors and admins */}
+        )}        {/* Show Add Course button for instructors and admins */}
         {canManageTasks && showInstructorActions && (
           <Button
             variant="contained"
             color="primary"
             startIcon={<AddIcon />}
-            onClick={handleOpenModal}
+            component={RouterLink}
+            to="/instructor/courses/new"
             size="small"
           >
-            Add Task
+            Add Course
           </Button>
         )}
-      </Box>
-
-      {/* Task creation dialog - only rendered if user has the right permissions */}
-      {canManageTasks && showInstructorActions && (
-        <TaskCreation open={isModalOpen} onClose={handleCloseModal} />
-      )}
+      </Box>      {/* We've removed the TaskCreation modal as tasks should be managed within course context */}
 
       <List sx={{width: '100%', bgcolor: 'background.paper'}}>
         {courses.map((course, index) => (
@@ -214,7 +168,6 @@ const CourseList: React.FC<ICourseListProps> = ({
                     >
                       {course.title}
                     </Typography>
-                    {renderEnrollmentStatus(course.id)}
                     {showInstructorActions ? (
                       // Show published/draft status for instructors
                       <Chip

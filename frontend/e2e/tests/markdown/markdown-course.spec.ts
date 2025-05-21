@@ -23,10 +23,10 @@ import {MarkdownTestUtils} from '../../utils/markdown-test-utils';
 import {UserSession, TEST_USERS} from '../../setupTests';
 import {
     CourseCreationPage,
-    MarkdownEditorPage,
     InstructorCoursesPage,
     StudentCoursesPage
 } from '../../page-objects';
+import {CourseMarkdownEditorPage} from '../../page-objects/CourseMarkdownEditorPage';
 
 test.describe('Course Description Markdown Rendering', () => {
     let courseId: string;
@@ -58,7 +58,7 @@ test.describe('Course Description Markdown Rendering', () => {
         await courseCreationPage.fillTitle(courseTitle);
 
         // Use the MarkdownEditorPage for handling the description
-        const markdownEditor = new MarkdownEditorPage(page);
+        const markdownEditor = new CourseMarkdownEditorPage(page);
         await markdownEditor.enterMarkdown(MarkdownTestUtils.getTestMarkdownContent());
         console.log('Filled course details with markdown content');
 
@@ -188,7 +188,7 @@ test.describe('Course Description Markdown Rendering', () => {
         await courseCreationPage.fillTitle(courseTitle);
 
         // Use the MarkdownEditorPage for handling the description
-        const markdownEditor = new MarkdownEditorPage(page);
+        const markdownEditor = new CourseMarkdownEditorPage(page);
         await markdownEditor.enterMarkdown(MarkdownTestUtils.getUnsafeMarkdownContent());
         console.log('Filled course details with unsafe markdown content');
 

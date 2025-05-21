@@ -197,3 +197,13 @@ export async function evaluateAndLog(page: Page, script: string, name: string): 
         await takeScreenshot(page, `script-error-${name}`);
     }
 }
+
+
+/**
+ * Helper function to log test actions and outcomes with timestamps
+ * Used to track the flow and debug potential issues in the course creation process
+ */
+export const logTestAction = (message: string) => {
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] ${message}`);
+};

@@ -127,3 +127,24 @@ This report synthesizes recent findings from code, test/infrastructure, and UX r
    - Address minor usability issues as part of regular UX review cycles.
 
 ---
+todo:
+The frontend integration for task progress and quiz attempts is now implemented as follows:
+
+**Affected files:**
+
+- [`frontend/src/services/useTaskProgress.ts`](frontend/src/services/useTaskProgress.ts): New hook for fetching and updating task progress and quiz attempts.
+- [`frontend/src/pages/learningTasks/TaskViewPage.tsx`](frontend/src/pages/learningTasks/TaskViewPage.tsx): Updated to display task progress, attempts, and score, and to allow marking a task as completed using the new hook.
+
+**Purpose of changes:**
+
+- Enables fetching and updating of per-task progress, including quiz attempts, via a dedicated React Query hook.
+- UI now displays progress status, attempts, and score for each task, and allows users to mark tasks as completed.
+- Lays the foundation for further integration into dashboards and E2E test coverage.
+
+**Remaining known issues:**
+
+- Quiz-specific UI/UX (e.g., question/answer flows) is not yet implemented.
+- E2E tests for quiz attempt flows and dashboard integration are pending.
+- Additional integration into dashboards and progress indicators may be required for full feature coverage.
+
+All TypeScript errors are resolved and the code is ready for further UI and test enhancements.

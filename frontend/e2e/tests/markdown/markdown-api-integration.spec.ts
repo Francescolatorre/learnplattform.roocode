@@ -4,9 +4,9 @@ import {MarkdownTestUtils} from '../../utils/markdown-test-utils';
 import {TEST_USERS} from '../../setupTests';
 import {
     LoginPage,
-    CourseCreationPage,
-    MarkdownEditorPage
+    CourseCreationPage
 } from '../../page-objects';
+import {CourseMarkdownEditorPage} from '../../page-objects/CourseMarkdownEditorPage';
 
 test.describe('Markdown API Integration Tests', () => {
     test('backend correctly processes and returns HTML for markdown content', async ({page}) => {
@@ -27,7 +27,7 @@ test.describe('Markdown API Integration Tests', () => {
         await courseCreationPage.fillTitle(title);
 
         // Use MarkdownEditorPage for the description
-        const markdownEditor = new MarkdownEditorPage(page);
+        const markdownEditor = new CourseMarkdownEditorPage(page);
         const markdownContent = MarkdownTestUtils.getTestMarkdownContent();
         await markdownEditor.enterMarkdown(markdownContent);
 
@@ -78,7 +78,7 @@ test.describe('Markdown API Integration Tests', () => {
         await courseCreationPage.fillTitle(title);
 
         // Use MarkdownEditorPage for the initial simple description
-        const markdownEditor = new MarkdownEditorPage(page);
+        const markdownEditor = new CourseMarkdownEditorPage(page);
         await markdownEditor.enterMarkdown('# Initial Heading\n\nInitial paragraph.');
 
         // Submit the form

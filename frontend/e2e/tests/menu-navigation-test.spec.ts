@@ -2,7 +2,7 @@ import {test, expect} from '@playwright/test';
 import {NavigationHelper} from '../page-objects/NavigationHelper';
 import {LoginPage} from '../page-objects/LoginPage';
 import {DashboardPage, StudentDashboardPage, InstructorDashboardPage} from '../page-objects/DashboardPage';
-import {MarkdownEditorPage} from '../page-objects/MarkdownEditorPage';
+import {CourseMarkdownEditorPage} from '../page-objects/CourseMarkdownEditorPage';
 import {takeScreenshot} from '../setupTests';
 
 /**
@@ -65,10 +65,10 @@ test.describe('Menu Navigation Tests', () => {
 
     test('should navigate to instructor course creation and use markdown editor', async ({page}) => {
         // Import the MarkdownEditorPage here to show it uses NavigationHelper
-        const {MarkdownEditorPage} = require('../page-objects/MarkdownEditorPage');
+        const {CourseMarkdownEditorPage} = require('../page-objects/CourseMarkdownEditorPage');
 
         const loginPage = new LoginPage(page);
-        const markdownEditor = new MarkdownEditorPage(page);
+        const markdownEditor = new CourseMarkdownEditorPage(page);
 
         // Login as instructor
         await loginPage.navigateTo();

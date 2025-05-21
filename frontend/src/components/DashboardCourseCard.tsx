@@ -3,9 +3,10 @@ import {
     Box,
     Typography,
     Paper,
-    Button,
     Divider,
+    Link,
 } from '@mui/material';
+import {Link as RouterLink} from 'react-router-dom';
 import ProgressIndicator from '@/components/shared/ProgressIndicator';
 
 interface DashboardCourseCardProps {
@@ -21,46 +22,54 @@ interface DashboardCourseCardProps {
 
 const DashboardCourseCard: React.FC<DashboardCourseCardProps> = ({courseTitle, progress, courseId}) => {
     return (
-        <Paper elevation={2} sx={{p: 2, height: '100%', display: 'flex', flexDirection: 'column'}} data-testid="dashboard-course-card">
-            <Typography variant="h6" gutterBottom align="center">
-                {courseTitle}
-            </Typography>
-
-            <Box sx={{display: 'flex', justifyContent: 'center', my: 2}}>
-                <ProgressIndicator
-                    value={progress.percentage || 0}
-                    label={`${progress.percentage || 0}% Complete`}
-                    size={120}
-                />
-            </Box>
-
-            <Divider sx={{my: 1}} />
-
-            <Box sx={{pt: 1}}>
-                <Typography variant="body2" color="text.secondary">
-                    <strong>Tasks Completed:</strong> {progress.completed_tasks || 0}/{progress.total_tasks || 0}
+        <Paper
+            elevation={2}
+            sx={{
+                p: 2,
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                transition: 'box-shadow 0.2s',
+                '&:hover': {boxShadow: 6}
+            }}
+            data-testid="dashboard-course-card"
+            className="course-card"
+        >
+            <Link
+                component={RouterLink}
+                to={`/courses/${courseId}`}
+                color="inherit"
+                underline="none"
+                sx={{display: 'flex', flexDirection: 'column', flexGrow: 1}}
+            >
+                <Typography
+                    variant="h4"
+                    component="h3"
+                    className="course-title"
+                    gutterBottom
+                    align="center"
+                >
+                    {courseTitle}
                 </Typography>
+
+                <Divider sx={{my: 2}} />
+
+                <Box sx={{mt: 2}}>
+                    <ProgressIndicator
+                        value={progress.percentage}
+                        label={`${progress.completed_tasks} / ${progress.total_tasks} tasks completed`}
+                        showPercentage
+                    />
+                </Box>
+
                 {progress.last_activity && (
-                    <Typography variant="body2" color="text.secondary">
-                        <strong>Last Activity:</strong> {new Date(progress.last_activity).toLocaleDateString()}
+                    <Typography variant="body2" color="text.secondary" sx={{mt: 2}}>
+                        Last activity: {progress.last_activity}
                     </Typography>
                 )}
-            </Box>
-
-            <Box sx={{mt: 'auto', pt: 2, display: 'flex', justifyContent: 'center'}}>
-                <Button
-                    component={RouterLink}
-                    to={`/courses/${courseId}`}
-                    variant="outlined"
-                    size="small"
-                >
-                    Continue Learning
-                </Button>
-            </Box>
+            </Link>
         </Paper>
     );
 };
 
 export default DashboardCourseCard;
-
-import {Link as RouterLink} from 'react-router-dom';

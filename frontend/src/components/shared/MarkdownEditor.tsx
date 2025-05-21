@@ -6,7 +6,7 @@ import {
   TextField,
   Paper,
   Typography,
-  Divider,
+
   IconButton,
   Tooltip,
   Theme,
@@ -101,7 +101,7 @@ const MarkdownEditor: React.FC<IMarkdownEditorProps> = ({
   };
 
   return (
-    <Box sx={{width: '100%', ...sx}} data-testid={`${id}-editor`}>
+    <Box sx={{width: '100%', ...sx}} data-testid="markdown-editor" className="markdown-editor">
       <Box sx={{display: 'flex', alignItems: 'center', mb: 1}}>
         {label && <Typography variant="subtitle1" sx={{mr: 1}}>{label}</Typography>}
         <Tooltip title="Markdown Help">
@@ -110,6 +110,7 @@ const MarkdownEditor: React.FC<IMarkdownEditorProps> = ({
             onClick={() => setShowHelp(true)}
             aria-label="Markdown Help"
             data-testid="markdown-help-button"
+            className="markdown-help-button"
           >
             <HelpOutlineIcon fontSize="small" />
           </IconButton>
@@ -122,6 +123,7 @@ const MarkdownEditor: React.FC<IMarkdownEditorProps> = ({
             value={currentTab}
             onChange={handleTabChange}
             aria-label="Markdown editor tabs"
+            data-testid="markdown-editor-tabs"
           >
             <Tab label="Write" value="write" disabled={disabled} data-testid="markdown-write-tab" />
             <Tab label="Preview" value="preview" data-testid="markdown-preview-tab" />
@@ -153,16 +155,17 @@ const MarkdownEditor: React.FC<IMarkdownEditorProps> = ({
                 fontSize: '0.9rem'
               }
             }}
-            name={id} // Add name to match test selectors
+            name="markdown-content"
             inputProps={{
-              'data-testid': 'markdown-editor-textarea'
+              'data-testid': 'markdown-editor-textarea',
+              className: 'markdown-editor-textarea'
             }}
           />
         ) : (
           <Box
             sx={{p: 2, minHeight: `${minRows * 1.5}em`}}
-            className="markdown-preview-container"
             data-testid="markdown-preview-container"
+            className="markdown-preview-container"
           >
             {value ? (
               <MarkdownRenderer content={value} />
@@ -182,6 +185,7 @@ const MarkdownEditor: React.FC<IMarkdownEditorProps> = ({
         maxWidth="md"
         aria-labelledby="markdown-help-dialog-title"
         data-testid="markdown-help-dialog"
+        className="markdown-help-dialog"
       >
         <DialogTitle id="markdown-help-dialog-title">Markdown Reference</DialogTitle>
         <DialogContent dividers>

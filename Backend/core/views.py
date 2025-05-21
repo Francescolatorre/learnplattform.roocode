@@ -571,7 +571,7 @@ class LearningTaskViewSet(viewsets.ModelViewSet):
         try:
             # Filter tasks by course
             tasks = self.get_queryset().filter(course_id=course_id).order_by("order")
-            
+
             if not tasks.exists():
                 return Response(
                     {"error": "No tasks found for this course."}, status=404
