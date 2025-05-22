@@ -162,32 +162,59 @@ export class BaseCourses extends BasePage {
         }
 
         throw new Error(`Could not find search field after ${maxAttempts} attempts`);
-    }
-
-    /**
+    }    /**
      * Wait for search results to load
+     * Enhanced with better detection for network activity and UI state changes
      */
     protected async waitForSearchResults(): Promise<void> {
         console.log('Waiting for search results...');
         try {
+            // First wait for any loading indicators to disappear
             const loadingSelectors = [
                 '[data-testid="loading-indicator"]',
                 '.loading-spinner',
-                '.MuiCircularProgress-root'
+                '.MuiCircularProgress-root',
+                '[role="progressbar"]'
             ];
 
+            // Note when search/filter started
+            const startTime = Date.now();
+
+            // Check for loading indicators
+            let loadingIndicatorFound = false;
             for (const selector of loadingSelectors) {
-                await this.page.locator(selector).waitFor({state: 'detached', timeout: 5000}).catch(() => { });
+                const visible = await this.page.locator(selector).isVisible().catch(() => false);
+                if (visible) {
+                    loadingIndicatorFound = true;
+                    console.log(`Loading indicator found: ${selector}`);
+                    // Wait for it to disappear
+                    await this.page.locator(selector).waitFor({state: 'detached', timeout: 7000}).catch(() => {
+                        console.log(`Loading indicator ${selector} did not disappear, continuing anyway`);
+                    });
+                }
             }
 
-            await this.page.waitForLoadState('networkidle', {timeout: 5000}).catch(() => {
+            // If we found and waited for a loading indicator, wait a bit longer for content to settle
+            if (loadingIndicatorFound) {
+                await this.page.waitForTimeout(500);
+            }
+
+            // Wait for network to be relatively quiet
+            await this.page.waitForLoadState('networkidle', {timeout: 7000}).catch(() => {
                 console.log('Network did not reach idle state, continuing...');
             });
 
-            await this.page.waitForTimeout(300);
-            console.log('Search results loaded');
+            // Additional wait for DOM to settle after network activity
+            await this.page.waitForTimeout(500);
+
+            // Take screenshot for debugging
+            await this.takeScreenshot('after-search-results-wait');
+
+            const endTime = Date.now();
+            console.log(`Search results loaded after ${endTime - startTime}ms`);
         } catch (error) {
             console.warn('Error waiting for search results:', error);
+            await this.takeScreenshot('error-waiting-for-search-results');
         }
     }
 

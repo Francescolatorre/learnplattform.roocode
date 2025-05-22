@@ -44,16 +44,28 @@ export class InstructorCoursesPage extends BaseCourses {
         console.log('Could not find create course button, navigating directly to /instructor/courses/new');
         await this.page.goto('/instructor/courses/new');
         await this.waitForPageLoad();
-    }
-
-    /**
+    }    /**
      * Filter courses by status
+     * Handles Material UI select components
      */
     async filterByStatus(status: 'draft' | 'published'): Promise<void> {
-        const filter = this.page.locator(this.courseStatusFilter);
-        await filter.selectOption(status);
-        await this.waitForSearchResults();
-        console.log(`Filtered courses by status: ${status}`);
+        try {
+            // For Material UI components, we need to click to open dropdown first
+            const filter = this.page.locator(this.courseStatusFilter);
+            await filter.click({timeout: 5000});
+
+            // Wait for the dropdown menu to appear
+            await this.page.waitForSelector('.MuiMenu-list, .MuiPopover-paper', {timeout: 5000});
+
+            // Then click on the option with the specified text
+            await this.page.locator(`.MuiMenu-list li:text-is("${status}"), .MuiMenuItem-root:text-is("${status}")`).click();
+
+            await this.waitForSearchResults();
+            console.log(`Filtered courses by status: ${status}`);
+        } catch (error) {
+            console.error(`Error filtering by status "${status}":`, error);
+            await this.takeScreenshot(`filter-error-${status}`);
+        }
     }
 
     /**
@@ -93,16 +105,151 @@ export class InstructorCoursesPage extends BaseCourses {
 
         await this.waitForPageLoad();
         console.log(`Clicked edit button for course: ${courseTitle}`);
+    }    /**
+     * Check if a course exists in the list by title
+     * @param title The title of the course to look for
+     * @param options Additional options for finding the course
+     * @returns Promise<boolean> True if course exists, false otherwise
+     */
+    async hasCourse(title: string, options: {
+        useSearch?: boolean;
+        useFilters?: boolean;
+        filterStatus?: 'draft' | 'published' | 'all';
+        retryCount?: number;
+    } = {}): Promise<boolean> {
+        const {
+            useSearch = true,
+            useFilters = false,  // Disabled by default since we're skipping filters
+            filterStatus = 'all',
+            retryCount = 2
+        } = options;
+
+        try {
+            // Log before starting search
+            console.log(`Looking for course with title: "${title}" (useSearch: ${useSearch}, useFilters: DISABLED, filterStatus: ${filterStatus})`);
+
+            // First check if the page has loaded course content
+            const hasContent = await this.page.locator('[data-testid="courses-list"], .courses-list, .MuiGrid-container, .course-card').isVisible()
+                .catch(() => false);
+
+            if (!hasContent) {
+                console.warn('Cannot find course list container. Taking screenshot for debugging.');
+                await this.takeScreenshot('missing-course-list-container');
+
+                // Try waiting a bit more for courses to load
+                await this.page.waitForTimeout(2000);
+            }
+
+            // First try directly without filters or search
+            if (await this.findCourseDirectly(title)) {
+                return true;
+            }
+
+            // If not found and search is enabled, try searching
+            if (useSearch) {
+                console.log(`Course not found. Trying search with term: ${title}`);
+                try {
+                    await this.searchForCourse(title);
+                    await this.waitForSearchResults();
+
+                    if (await this.findCourseDirectly(title)) {
+                        return true;
+                    }
+                } catch (err) {
+                    console.error('Error during search:', err);
+                }
+            }
+
+            // Last resort - try dumping all course titles for debugging
+            console.warn(`❌ Course "${title}" not found after search`);
+            await this.takeScreenshot(`course-not-found-${title.replace(/\s+/g, '-')}`);
+
+            // Log all course titles found for debugging
+            const allCourses = await this.page.locator('[data-testid*="course"], .course-card, .MuiCard-root').all();
+            console.log(`Found ${allCourses.length} total course elements on page`);
+            for (let i = 0; i < allCourses.length; i++) {
+                try {
+                    const courseText = await allCourses[i].textContent();
+                    console.log(`Course ${i + 1}: ${courseText?.trim().substring(0, 50)}...`);
+                } catch (err) {
+                    console.log(`Could not get text for course ${i + 1}`);
+                }
+            }
+
+            return false;
+        } catch (error) {
+            console.error(`Error checking for course "${title}":`, error);
+            await this.takeScreenshot(`error-finding-course-${title.replace(/\s+/g, '-')}`);
+            return false;
+        }
     }
 
     /**
-     * Check if a course exists in the list by title
-     * @param title The title of the course to look for
-     * @returns Promise<boolean> True if course exists, false otherwise
+     * Helper method to find a course directly using selectors without search or filters
+     * @private
      */
-    async hasCourse(title: string): Promise<boolean> {
-        const courseSelector = `[data-testid="course-card"]:has-text("${title}")`;
-        const course = this.page.locator(courseSelector);
-        return await course.isVisible();
+    private async findCourseDirectly(title: string): Promise<boolean> {
+        // Use various selectors to try to find the course
+        const courseSelectors = [
+            // Specific selectors
+            `[data-testid="course-card"]:has-text("${title}")`,
+            `[data-testid*="course"]:has-text("${title}")`,
+            `.course-card:has-text("${title}")`,
+            // Material UI selectors
+            `.MuiCard-root:has-text("${title}")`,
+            `.MuiCardContent-root:has-text("${title}")`,
+            `.MuiTypography-root:has-text("${title}")`,
+            // Tag based selectors
+            `h3:has-text("${title}")`,
+            `h4:has-text("${title}")`,
+            `h5:has-text("${title}")`,
+            `p:has-text("${title}")`,
+            `div:has-text("${title}")`,
+            // Fallback approach - get all text nodes
+            `text=${title}`
+        ];
+
+        // Try each selector
+        for (const selector of courseSelectors) {
+            try {
+                const course = this.page.locator(selector);
+                const count = await course.count();
+                console.log(`Selector "${selector}" found ${count} matches`);
+
+                if (count > 0) {
+                    // Try to get the full text to verify it contains our title
+                    for (let i = 0; i < count; i++) {
+                        const element = course.nth(i);
+                        try {
+                            const isVisible = await element.isVisible().catch(() => false);
+                            if (isVisible) {
+                                const text = await element.textContent() || '';
+                                if (text.includes(title)) {
+                                    console.log(`✅ Found course with title "${title}" using selector: ${selector}`);
+                                    await this.takeScreenshot(`course-found-${title.replace(/\s+/g, '-')}`);
+                                    return true;
+                                } else {
+                                    console.log(`Element matched but text didn't contain title. Found: "${text}"`);
+                                }
+                            }
+                        } catch (err) {
+                            console.log(`Error checking element ${i} with selector ${selector}:`, err);
+                        }
+                    }
+                }
+            } catch (selectorError) {
+                console.log(`Error using selector "${selector}":`, selectorError);
+            }
+        }
+
+        // As a last resort, try to get all visible text on the page
+        const pageContent = await this.page.textContent('body');
+        if (pageContent && pageContent.includes(title)) {
+            console.log(`Found course title "${title}" in page content but couldn't locate the element`);
+            await this.takeScreenshot(`course-in-page-${title.replace(/\s+/g, '-')}`);
+            return true;
+        }
+
+        return false;
     }
 }

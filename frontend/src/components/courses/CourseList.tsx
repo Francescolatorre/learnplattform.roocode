@@ -1,7 +1,7 @@
-import Button from '@mui/material/Button';
-import React from 'react';
+import React, {useState, ReactElement} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {
+  Button,
   List,
   ListItem,
   ListItemText,
@@ -15,35 +15,43 @@ import {
   Divider,
   Tooltip,
   Paper,
-  CircularProgress
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@mui/material';
-import {Link as RouterLink} from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import PeopleIcon from '@mui/icons-material/People';
-import SchoolIcon from '@mui/icons-material/School';
+import SchoolIcon from '@mui/icons-material/Add';
 import AddIcon from '@mui/icons-material/Add';
-import {useQuery} from '@tanstack/react-query';
-import enrollmentService from '@/services/resources/enrollmentService';
-
-// Importiere den Typ direkt aus der Typdatei, um Casing-Probleme zu vermeiden
+import {useQueryClient} from '@tanstack/react-query';
+import {useNotification} from '@components/ErrorNotifier/useErrorNotifier';
 import {ICourse} from '@/types/course';
 import {formatDateRelative} from '@/utils/dateUtils';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import {useAuth} from '@/context/auth/AuthContext';
 import EnrollmentStatusIndicator from './EnrollmentStatusIndicator';
+import {courseService} from '@/services/resources/courseService';
+import CourseCreation from './CourseCreation';
 
-// Custom type extension for course with student count
+// Custom type extension for course with student count and enrollment status
 interface ICourseWithEnrollment extends ICourse {
   student_count?: number;
+  isEnrolled?: boolean;
+  isCompleted?: boolean;
+  description_html?: string;
+  status: 'draft' | 'published' | 'archived';
 }
 
 export interface ICourseListProps {
   courses: ICourseWithEnrollment[] | ICourse[];
   title?: string;
   showInstructorActions?: boolean;
-  onError?: (error: Error) => void; // Hinzugefügt für FilterableCourseList
+  onError?: (error: Error) => void;
 }
 
 /**
@@ -56,13 +64,28 @@ export interface ICourseListProps {
 const CourseList: React.FC<ICourseListProps> = ({
   courses,
   title,
-  showInstructorActions = false
-}) => {
+  showInstructorActions = false,
+  onError
+}): ReactElement => {
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const queryClient = useQueryClient();
+  const notify = useNotification();
   const {user} = useAuth();
   const navigate = useNavigate();
 
   // Check if user has instructor or admin privileges
   const canManageTasks = user?.role === 'instructor' || user?.role === 'admin';
+
+  // Close all modals
+  const handleCloseModals = () => {
+    setCreateModalOpen(false);
+    setEditModalOpen(false);
+    setSelectedCourse(null);
+  };
 
   const handleCourseClick = (courseId: number, event: React.MouseEvent) => {
     // Don't navigate if clicking on action buttons
@@ -95,7 +118,88 @@ const CourseList: React.FC<ICourseListProps> = ({
       ? `${course.description.substring(0, 150)}...`
       : course.description;
   };
+  // Delete course handler
+  const handleDeleteCourse = async () => {
+    if (!selectedCourse) return;
 
+    setIsDeleting(true);
+    try {
+      await courseService.deleteCourse(String(selectedCourse.id));
+      await queryClient.invalidateQueries({queryKey: ['courses']});
+      notify('Course deleted successfully', 'success');
+      // Navigate back to course list if we're on the deleted course's detail page
+      if (window.location.pathname.includes(`/courses/${selectedCourse.id}`)) {
+        navigate('/instructor/courses');
+      }
+    } catch (err) {
+      console.error('Error deleting course:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete course';
+      notify(errorMessage, 'error');
+      if (onError) onError(err as Error);
+    } finally {
+      setIsDeleting(false);
+      setDeleteDialogOpen(false);
+      setSelectedCourse(null);
+    }
+  };
+  const handleSaveCourse = async (courseData: Partial<ICourse>) => {
+    try {
+      let savedCourse: ICourse;
+
+      // If editing existing course
+      if (selectedCourse?.id) {
+        // Optimistically update the UI
+        queryClient.setQueryData(['courses'], (old: ICourse[] | undefined) => {
+          return (old || []).map(course =>
+            course.id === selectedCourse.id
+              ? {...course, ...courseData}
+              : course
+          );
+        });
+
+        savedCourse = await courseService.updateCourse(String(selectedCourse.id), courseData);
+        notify('Course updated successfully', 'success');
+      } else {
+        // For new courses, we'll wait for the response since we need the ID
+        savedCourse = await courseService.createCourse(courseData);
+        notify('Course created successfully', 'success');
+      }
+
+      // Update cache with actual server response
+      queryClient.setQueryData(['courses'], (old: ICourse[] | undefined) => {
+        if (!old) return [savedCourse];
+        if (selectedCourse?.id) {
+          return old.map(course => course.id === savedCourse.id ? savedCourse : course);
+        }
+        return [...old, savedCourse];
+      });
+
+      // Also update the individual course query if it exists
+      if (savedCourse.id) {
+        queryClient.setQueryData(['course', String(savedCourse.id)], savedCourse);
+      }
+
+      handleCloseModals();
+    } catch (err) {
+      console.error('Error saving course:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save course';
+      notify(errorMessage, 'error');
+      if (onError) onError(err as Error);
+
+      // On error, rollback the optimistic update
+      queryClient.setQueryData(['courses'], (old: ICourse[] | undefined) => {
+        return selectedCourse?.id
+          ? (old || []).map(course => course.id === selectedCourse.id ? selectedCourse : course)
+          : old;
+      });
+    }
+  };
+  // Don't show anything if courses is still loading
+  if (courses === undefined) {
+    return <></>;
+  }
+
+  // If courses array is empty, show a message
   if (!courses.length) {
     return (
       <Paper elevation={0} sx={{p: 2, textAlign: 'center'}}>
@@ -117,8 +221,7 @@ const CourseList: React.FC<ICourseListProps> = ({
             variant="contained"
             color="primary"
             startIcon={<AddIcon />}
-            component={RouterLink}
-            to="/instructor/courses/new"
+            onClick={() => setCreateModalOpen(true)}
             size="small"
           >
             Add Course
@@ -239,9 +342,7 @@ const CourseList: React.FC<ICourseListProps> = ({
                     </Box>
                   </React.Fragment>
                 }
-              />
-
-              {showInstructorActions && (
+              />              {showInstructorActions && (
                 <ListItemSecondaryAction sx={{
                   transition: 'all 0.2s ease',
                   opacity: 0.4,
@@ -252,8 +353,10 @@ const CourseList: React.FC<ICourseListProps> = ({
                 }}>
                   <Tooltip title="View details">
                     <IconButton
-                      component={RouterLink}
-                      to={`/instructor/courses/${course.id}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCourseClick(course.id, e);
+                      }}
                       edge="end"
                       aria-label="view"
                       sx={{mr: 1}}
@@ -264,8 +367,11 @@ const CourseList: React.FC<ICourseListProps> = ({
 
                   <Tooltip title="Edit course">
                     <IconButton
-                      component={RouterLink}
-                      to={`/instructor/courses/${course.id}/edit`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedCourse(course);
+                        setEditModalOpen(true);
+                      }}
                       edge="end"
                       aria-label="edit"
                       sx={{mr: 1}}
@@ -280,7 +386,8 @@ const CourseList: React.FC<ICourseListProps> = ({
                       aria-label="delete"
                       onClick={(e) => {
                         e.stopPropagation();
-                        // Add deletion handling
+                        setSelectedCourse(course);
+                        setDeleteDialogOpen(true);
                       }}
                     >
                       <DeleteOutlineIcon />
@@ -296,6 +403,54 @@ const CourseList: React.FC<ICourseListProps> = ({
           </React.Fragment>
         ))}
       </List>
+
+      {/* Course Create/Edit Modals */}
+      <CourseCreation
+        open={createModalOpen}
+        onClose={handleCloseModals}
+        onSave={handleSaveCourse}
+      />
+
+      <CourseCreation
+        open={editModalOpen}
+        course={selectedCourse || undefined}
+        isEditing={true}
+        onClose={handleCloseModals}
+        onSave={handleSaveCourse}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => !isDeleting && setDeleteDialogOpen(false)}
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description"
+      >        <DialogTitle id="delete-dialog-title">
+          Confirm Course Deletion
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="delete-dialog-description">
+            Are you sure you want to delete the course "{selectedCourse?.title}"? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setDeleteDialogOpen(false)}
+            disabled={isDeleting}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteCourse}
+            disabled={isDeleting}
+            color="error"
+            variant="contained"
+            startIcon={isDeleting ? <CircularProgress size={20} /> : null}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

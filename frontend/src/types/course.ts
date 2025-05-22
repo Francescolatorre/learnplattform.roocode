@@ -52,17 +52,12 @@ export interface ICourseStructure {
     }[];
 }
 
-export interface ICourseCreationData {
-    id: number;
+export interface ICourseCreationData extends Partial<ICourse> {
     title: string;
     description: string;
-    version: number;
-    status: TCourseStatus;
-    visibility: 'public' | 'private';
-    learning_objectives: string;
-    prerequisites: string;
-    created_at: string;
-    updated_at: string;
-    creator: number;
-    creator_details: IUser;
+    category?: string;
+    difficulty_level?: 'beginner' | 'intermediate' | 'advanced';
+    is_published?: boolean;
+    status?: TCourseStatus;
+    visibility?: 'public' | 'private';
 }

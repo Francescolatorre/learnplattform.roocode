@@ -18,7 +18,7 @@ import {
   CircularProgress,
   Alert
 } from '@mui/material';
-import {useParams, Link} from 'react-router-dom';
+import {useParams, useNavigate} from 'react-router-dom';
 
 import {ICourse} from '@/types/course';
 import {ILearningTask} from '@/types/task';
@@ -27,7 +27,9 @@ import learningTaskService, {updateTask} from '@/services/resources/learningTask
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import InfoCard from '@/components/shared/InfoCard';
 import TaskCreation from '@/components/taskCreation/TaskCreation';
+import CourseCreation from '@/components/courses/CourseCreation';
 import {useNotification} from '@components/ErrorNotifier/useErrorNotifier';
+import {useQueryClient} from '@tanstack/react-query';
 
 // Hauptkomponente
 const InstructorCourseDetailPage: React.FC = () => {
@@ -38,11 +40,16 @@ const InstructorCourseDetailPage: React.FC = () => {
   const [selectedTask, setSelectedTask] = useState<ILearningTask | null>(null);
   const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState<boolean>(false);
 
+  // State for course edit modal
+  const [isCourseEditModalOpen, setIsCourseEditModalOpen] = useState<boolean>(false);
+
   // State for task edit modal
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [taskToEdit, setTaskToEdit] = useState<ILearningTask | null>(null);
 
   const notify = useNotification();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -96,6 +103,34 @@ const InstructorCourseDetailPage: React.FC = () => {
     } catch (err) {
       console.error('Failed to update task:', err);
       notify(err instanceof Error ? err.message : 'Failed to update task', 'error');
+    }
+  };
+
+  // Update course handler
+  const handleOpenCourseEdit = () => {
+    setIsCourseEditModalOpen(true);
+  };
+
+  const handleCloseCourseEdit = () => {
+    setIsCourseEditModalOpen(false);
+  };
+
+  const handleSaveCourse = async (courseData: Partial<ICourse>) => {
+    try {
+      if (!courseId) return;
+
+      const updatedCourse = await courseService.updateCourse(courseId, courseData);
+      // Update local state
+      setCourse(updatedCourse);
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({queryKey: ['courses']});
+      queryClient.invalidateQueries({queryKey: ['course', courseId]});
+
+      notify('Course updated successfully', 'success');
+      handleCloseCourseEdit();
+    } catch (err) {
+      console.error('Failed to update course:', err);
+      notify(err instanceof Error ? err.message : 'Failed to update course', 'error');
     }
   };
 
@@ -155,12 +190,10 @@ const InstructorCourseDetailPage: React.FC = () => {
               {course.title}
             </Typography>
             <Button
-              component={Link}
-              to={`/instructor/courses/${courseId}/edit`}
               variant="contained"
               color="primary"
-              size="medium"
-              sx={{ml: 2}}
+              onClick={handleOpenCourseEdit}
+              data-testid="edit-course-button"
             >
               Edit Course
             </Button>
@@ -294,6 +327,15 @@ const InstructorCourseDetailPage: React.FC = () => {
           )}
         </Box>
       </Paper>
+
+      {/* Course Edit Modal */}
+      <CourseCreation
+        open={isCourseEditModalOpen}
+        course={course || undefined}
+        isEditing={true}
+        onClose={handleCloseCourseEdit}
+        onSave={handleSaveCourse}
+      />
 
       {/* TaskCreation modal for creating new tasks */}
       <TaskCreation
