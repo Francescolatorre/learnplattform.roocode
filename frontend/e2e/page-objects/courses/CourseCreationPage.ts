@@ -67,11 +67,14 @@ export class CourseCreationPage extends BasePage {
     'button:has-text("Create Course")',
     'button:has-text("Save Course")'
   ];
-
   readonly errorNotificationSelectors = [
-    '.MuiAlert-standardError',
+    '[data-testid="error-notification"]',
     '.error-notification',
-    '[data-testid="error-notification"]'
+    '.MuiAlert-standardError',
+    '[role="alert"]',
+    '.Mui-error .help-text',
+    '.error-message',
+    '.error-text'
   ];
 
   readonly successNotificationSelectors = [
@@ -821,21 +824,84 @@ export class CourseCreationPage extends BasePage {
 
   /**
    * Wait for error notification toast/alert
-   */
-  async waitForErrorNotification(timeout = 5000): Promise<{success: boolean; message?: string}> {
+   */  async waitForErrorNotification(timeout = 15000): Promise<{success: boolean; message?: string}> {
     try {
-      for (const selector of this.errorNotificationSelectors) {
-        const notification = this.page.locator(selector);
-        await notification.waitFor({state: 'visible', timeout});
-        const message = await notification.textContent();
-        if (message) {
-          return {success: false, message};
+      let errorFound = false;
+      let errorMessage = '';
+
+      // Increase initial wait time to ensure UI has time to show error
+      await this.page.waitForTimeout(1000);
+
+      // Try each selector in parallel for better performance
+      const notificationPromises = this.errorNotificationSelectors.map(async (selector) => {
+        try {
+          const notification = this.page.locator(selector);
+          if (await notification.count() > 0) {
+            // First check if it's already visible
+            if (await notification.isVisible()) {
+              const text = await notification.textContent();
+              if (text) {
+                console.log(`Found error notification with selector ${selector}: ${text}`);
+                errorFound = true;
+                errorMessage = text;
+              }
+            } else {
+              // If not visible, wait for it
+              await notification.waitFor({state: 'visible', timeout});
+              const text = await notification.textContent();
+              if (text) {
+                console.log(`Error notification became visible with selector ${selector}: ${text}`);
+                errorFound = true;
+                errorMessage = text;
+              }
+            }
+          }
+        } catch (e) {
+          // Ignore errors for individual selectors
+          console.log(`No error notification found with selector ${selector}`);
+        }
+      });
+
+      // Wait for all selector checks to complete
+      await Promise.all(notificationPromises);
+
+      // Also check generic error text that might appear
+      const errorTextSelectors = [
+        'text=failed',
+        'text=error',
+        'text=unsuccessful',
+        'text=network',
+        'text=offline',
+        'text=cannot',
+        'text=unable'
+      ];
+
+      if (!errorFound) {
+        for (const textSelector of errorTextSelectors) {
+          try {
+            const errorText = this.page.getByText(textSelector, {exact: false});
+            if (await errorText.isVisible()) {
+              const text = await errorText.textContent();
+              if (text) {
+                console.log(`Found error text: ${text}`);
+                errorFound = true;
+                errorMessage = text;
+                break;
+              }
+            }
+          } catch (e) {
+            // Ignore errors for text selectors
+          }
         }
       }
-      return {success: false};
+
+      return {
+        success: !errorFound,  // success should be false if we found an error
+        message: errorMessage || undefined
+      };
     } catch (error) {
-      console.error('Error waiting for error notification:', error);
-      return {success: false};
+      console.error('Error in waitForErrorNotification:', error);
+      return {success: false, message: error.toString()};
     }
   }
 

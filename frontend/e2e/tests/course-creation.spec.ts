@@ -433,14 +433,19 @@ test.describe('Course Creation Functionality', () => {
     logTestAction('Checking for error notification due to network failure');
     let errorNotificationShown = false;
     try {
-      const {success} = await courseCreationPage.waitForErrorNotification(3000);
+      const {success, message} = await courseCreationPage.waitForErrorNotification(15000);
       errorNotificationShown = !success;
       if (errorNotificationShown) {
-        logTestAction('Error notification appeared as expected');
+        logTestAction(`Error notification appeared as expected: ${message || 'No message content'}`);
+      } else {
+        logTestAction('Unexpected success state from error notification check');
       }
     } catch (error) {
-      logTestAction('No error notification appeared - may use different error handling approach');
+      logTestAction(`Error while checking error notification: ${error.message}`);
     }
+
+    // Assert that we did detect an error notification
+    await expect.soft(errorNotificationShown, 'Should show some form of error notification after network failure').toBeTruthy();
 
     // Take screenshot for debugging
     await courseCreationPage.takeScreenshot('after-network-failure-submit');

@@ -1,13 +1,10 @@
 import {Box, Typography, TextField, CircularProgress, MenuItem, Select, FormControl, InputLabel, Grid, SelectChangeEvent, Pagination} from '@mui/material';
-import React, {useState, useMemo, useEffect, useCallback} from 'react';
-
+import React, {useState, useCallback, useEffect} from 'react';
 import {ICourse, TCourseStatus} from '@/types/course';
 import {useDebounce} from '@utils/useDebounce';
-
 import {courseService, CourseFilterOptions} from '@services/resources/courseService';
 import {IPaginatedResponse} from '@/types/paginatedResponse';
 import CourseList from './CourseList';
-
 
 interface FilterableCourseListProps {
   initialCourses?: ICourse[];
@@ -33,7 +30,8 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
     course.title.toLowerCase().includes(searchTerm.toLowerCase()),
   emptyMessage = 'No courses available.',
   noResultsMessage = 'No courses match your search criteria.',
-  showStatusFilter = false, showCreatorFilter = false,
+  showStatusFilter = false,
+  showCreatorFilter = false,
   onCoursesLoaded,
   pageSize = 20,
   onPageChange,
@@ -65,207 +63,118 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
       if (status) filterOptions.status = status as TCourseStatus;
       if (creator) filterOptions.creator = creator;
 
-      console.info('Fetching courses with options:', filterOptions);
-
       const response = await (customFetchFunction ? customFetchFunction(filterOptions) : courseService.fetchCourses(filterOptions));
 
-      // Log the complete response structure
-      console.info('API Response structure:', {
-        fullResponse: response,
-        hasData: Boolean(response),
-        dataKeys: response ? Object.keys(response) : [],
-      });
-
-      // Extract the paginated data from response.data
-      const paginatedData = response;
-
-      // Log the raw response first
-      console.info('Paginated data:', paginatedData);
-
-      // Validate the paginated response structure
-      if (
-        !paginatedData ||
-        typeof paginatedData.count !== 'number' ||
-        !Array.isArray(paginatedData.results)
-      ) {
-        throw new Error('Invalid paginated response format');
+      if (!response || typeof response.count !== 'number' || !Array.isArray(response.results)) {
+        throw new Error('Invalid response format from the server');
       }
 
-      const {count, results} = paginatedData;
-
-      // Log the extracted data for debugging
-      console.info('Extracted course data:', {
-        count,
-        resultsLength: results.length,
-        firstResult: results[0],
-        paginatedStructure: {
-          hasCount: 'count' in paginatedData,
-          hasResults: 'results' in paginatedData,
-          resultsIsArray: Array.isArray(results),
-        },
-      });
-
+      const {count, results} = response;
+      setTotalCount(count);
       setCourses(results);
-      setTotalCount(count || 0);
-
-      // Log state updates
-      console.info('State updated with:', {
-        courseCount: results.length,
-        totalCount: count,
-      });
+      onCoursesLoaded?.(results);
     } catch (err) {
-      console.error('Error loading courses:', err);
+      const error = err as Error;
       setError({
         message: 'Failed to load courses',
-        details: err instanceof Error ? err.message : 'Unknown error occurred',
+        details: error.message
       });
-      setCourses([]);
-      setTotalCount(0);
+      console.error('Error loading courses:', error);
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearchTerm, status, creator, page, pageSize]); // Add all dependencies
+  }, [customFetchFunction, debouncedSearchTerm, status, creator, page, pageSize, onCoursesLoaded]);
 
   useEffect(() => {
-    if (!clientSideFiltering && (!initialCourses || initialCourses.length === 0)) {
+    if (!clientSideFiltering) {
       loadCourses();
     }
-  }, [clientSideFiltering, initialCourses, loadCourses]); // Now loadCourses is properly memoized
-
-  useEffect(() => {
-    if (initialCourses) {
-      setCourses(initialCourses);
-    }
-  }, [initialCourses]);
-
-  useEffect(() => {
-    if (onCoursesLoaded && courses.length > 0) {
-      onCoursesLoaded(courses);
-    }
-  }, [courses, onCoursesLoaded]);
-
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-    setPage(1);
-  };
-
-  const handleStatusChange = (event: SelectChangeEvent<string>) => {
-    setStatus(event.target.value as TCourseStatus);
-    setPage(1);
-  };
-
-  const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
-    onPageChange?.(value);
-  };
-
-  const statusOptions = [
-    {value: '', label: 'All'},
-    {value: 'published', label: 'Published'},
-    {value: 'draft', label: 'Draft'},
-    {value: 'private', label: 'Private'},
-  ];
-
-  const filteredCourses = useMemo(() => {
-    console.info('Filtering courses:', {
-      clientSideFiltering,
-      coursesLength: courses.length,
-      searchTerm,
-    });
-
-    if (!clientSideFiltering) return courses;
-    return courses.filter(course => filterPredicate(course, searchTerm));
-  }, [clientSideFiltering, courses, searchTerm, filterPredicate]);
-
-  const renderCourseList = () => {
-    if (filteredCourses.length === 0) {
-      return (
-        <Typography color="textSecondary">
-          {courses.length === 0 ? emptyMessage : noResultsMessage}
-        </Typography>
-      );
-    }
-
-    return (
-      <>
-        <CourseList
-          courses={filteredCourses}
-          showInstructorActions={showInstructorActions}
-          onError={error => {
-            console.error('CourseList error:', error);
-            setError({
-              message: 'Error displaying courses',
-              details: error.message,
-            });
-          }}
-        />
-        {totalCount > pageSize && (
-          <Box sx={{mt: 2, display: 'flex', justifyContent: 'center'}}>
-            <Pagination
-              count={Math.ceil(totalCount / pageSize)}
-              page={page}
-              onChange={handlePageChange}
-              color="primary"
-            />
-          </Box>
-        )}
-      </>
-    );
-  };
+  }, [clientSideFiltering, loadCourses]);
 
   return (
-    <Box>
-      <Typography variant="h4" gutterBottom>
-        {title}
-      </Typography>
+    <Box data-testid="course-list-container" sx={{width: '100%'}}>
+      {title && (
+        <Typography variant="h6" gutterBottom data-testid="course-list-title">
+          {title}
+        </Typography>
+      )}
 
-      <Grid container spacing={2} sx={{mb: 3}}>
-        <Grid item xs={12} md={showStatusFilter || showCreatorFilter ? 6 : 12}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={showStatusFilter ? 9 : 12}>
           <TextField
             fullWidth
-            label="Search courses"
+            size="medium"
             variant="outlined"
-            size="small"
+            placeholder="Search courses..."
             value={searchTerm}
-            onChange={handleSearch}
+            onChange={(e) => setSearchTerm(e.target.value)}
             inputProps={{
-              'data-testid': 'course-search-field'
+              'data-testid': 'course-search-input'
             }}
+            sx={{mb: 2}}
           />
         </Grid>
         {showStatusFilter && (
-          <FormControl sx={{minWidth: 200, mr: 2}}>
-            <InputLabel id="status-filter-label">Status</InputLabel>
-            <Select
-              labelId="status-filter-label"
-              value={status}
-              label="Status"
-              data-testid="course-status-filter"
-              onChange={(event: SelectChangeEvent<string>) => {
-                setStatus(event.target.value as TCourseStatus | '');
-                setPage(1);
-              }}
-            >
-              <MenuItem value="">All</MenuItem>
-              <MenuItem value="draft">Draft</MenuItem>
-              <MenuItem value="published">Published</MenuItem>
-              <MenuItem value="archived">Archived</MenuItem>
-            </Select>
-          </FormControl>
+          <Grid item xs={12} md={3}>
+            <FormControl variant="outlined" fullWidth sx={{mb: 2}}>
+              <InputLabel id="status-filter-label">Status</InputLabel>
+              <Select
+                labelId="status-filter-label"
+                id="status-filter"
+                value={status}
+                label="Status"
+                onChange={(event: SelectChangeEvent<string>) => setStatus(event.target.value as TCourseStatus | '')}
+                inputProps={{
+                  'data-testid': 'course-status-filter-input'
+                }}
+              >
+                <MenuItem value="">All</MenuItem>
+                <MenuItem value="draft">Draft</MenuItem>
+                <MenuItem value="published">Published</MenuItem>
+                <MenuItem value="archived">Archived</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
         )}
       </Grid>
 
       {loading ? (
-        <Box sx={{display: 'flex', justifyContent: 'center', my: 4}}>
+        <Box sx={{display: 'flex', justifyContent: 'center', p: 4}} data-testid="course-list-loading">
           <CircularProgress />
         </Box>
       ) : error ? (
-        <Box sx={{color: 'error.main', my: 2}}>
-          <Typography variant="h6">{error.message}</Typography>
-          {error.details && <Typography variant="body2">{error.details}</Typography>}
-        </Box>
+        <Typography color="error" data-testid="course-list-error">
+          {error.message}
+          {error.details && (
+            <Typography variant="body2" color="error">
+              {error.details}
+            </Typography>
+          )}
+        </Typography>
+      ) : courses.length === 0 ? (
+        <Typography data-testid="course-list-empty">
+          {searchTerm ? noResultsMessage : emptyMessage}
+        </Typography>
       ) : (
-        renderCourseList()
+        <>
+          <CourseList
+            courses={courses}
+            showInstructorActions={showInstructorActions}
+          />
+          {totalCount > pageSize && (
+            <Box sx={{mt: 2, display: 'flex', justifyContent: 'center'}}>
+              <Pagination
+                count={Math.ceil(totalCount / pageSize)}
+                page={page}
+                onChange={(_, value) => {
+                  setPage(value);
+                  onPageChange?.(value);
+                }}
+                data-testid="course-list-pagination"
+              />
+            </Box>
+          )}
+        </>
       )}
     </Box>
   );

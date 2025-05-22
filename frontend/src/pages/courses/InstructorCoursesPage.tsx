@@ -1,5 +1,6 @@
 import React from 'react';
-import {Box, Typography} from '@mui/material';
+import {Box, Typography, Button} from '@mui/material';
+import {Link} from 'react-router-dom';
 import FilterableCourseList from '@/components/courses/FilterableCourseList';
 import StatsSummary from '@/components/common/StatsSummary';
 import {courseService} from '@/services/resources/courseService';
@@ -22,13 +23,27 @@ const InstructorCoursesPage: React.FC = () => {
     return (
         <Box sx={{width: '100%', p: 3}}>
             <Box component="header" data-testid="course-management-header">
-                <Typography variant="h4">My Courses</Typography>
-                <Typography variant="subtitle1" color="text.secondary">
-                    Manage and track your courses
-                </Typography>
+                <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3}}>
+                    <div>
+                        <Typography variant="h4">My Courses</Typography>
+                        <Typography variant="subtitle1" color="text.secondary">
+                            Manage and track your courses
+                        </Typography>
+                    </div>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        component={Link}
+                        to="/instructor/courses/new"
+                        data-testid="create-course-button"
+                    >
+                        Create Course
+                    </Button>
+                </Box>
             </Box>
             <StatsSummary {...stats} />
             <FilterableCourseList
+                data-testid="instructor-course-list"
                 showStatusFilter={true}
                 showCreatorFilter={false}
                 clientSideFiltering={false}

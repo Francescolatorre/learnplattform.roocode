@@ -229,7 +229,7 @@ const CourseList: React.FC<ICourseListProps> = ({
         )}
       </Box>      {/* We've removed the TaskCreation modal as tasks should be managed within course context */}
 
-      <List sx={{width: '100%', bgcolor: 'background.paper'}}>
+      <List data-testid="course-list" sx={{width: '100%', bgcolor: 'background.paper'}}>
         {courses.map((course, index) => (
           <React.Fragment key={course.id}>
             <ListItem
@@ -277,6 +277,7 @@ const CourseList: React.FC<ICourseListProps> = ({
                         size="small"
                         label={course.status}
                         color={getStatusColor(course.status) as any}
+                        data-testid={`course-status-${course.id}`}
                       />
                     ) : (
                       // Show enrollment status for students
@@ -292,7 +293,7 @@ const CourseList: React.FC<ICourseListProps> = ({
                       <Tooltip title="Enrolled students">
                         <Box sx={{display: 'flex', alignItems: 'center', ml: 'auto', mr: 2}}>
                           <PeopleIcon fontSize="small" sx={{mr: 0.5}} />
-                          <Typography variant="body2">
+                          <Typography variant="body2" data-testid={`course-enrollment-count-${course.id}`}>
                             {course.student_count}
                           </Typography>
                         </Box>
@@ -322,6 +323,7 @@ const CourseList: React.FC<ICourseListProps> = ({
                         variant="body2"
                         color="text.primary"
                         sx={{display: 'inline', mr: 1}}
+                        data-testid={`course-description-${course.id}`}
                       >
                         {getDescriptionPreview(course)}
                       </Typography>
@@ -360,6 +362,7 @@ const CourseList: React.FC<ICourseListProps> = ({
                       edge="end"
                       aria-label="view"
                       sx={{mr: 1}}
+                      data-testid={`view-course-${course.id}`}
                     >
                       <VisibilityIcon />
                     </IconButton>
@@ -375,6 +378,7 @@ const CourseList: React.FC<ICourseListProps> = ({
                       edge="end"
                       aria-label="edit"
                       sx={{mr: 1}}
+                      data-testid={`edit-course-${course.id}`}
                     >
                       <EditIcon />
                     </IconButton>
@@ -389,6 +393,7 @@ const CourseList: React.FC<ICourseListProps> = ({
                         setSelectedCourse(course);
                         setDeleteDialogOpen(true);
                       }}
+                      data-testid={`delete-course-${course.id}`}
                     >
                       <DeleteOutlineIcon />
                     </IconButton>

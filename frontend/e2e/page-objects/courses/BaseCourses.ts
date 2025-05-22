@@ -25,11 +25,9 @@ export class BaseCourses extends BasePage {
         'ul.courses-list',
         '[data-testid^="courses-list"]',
         '.MuiList-root'
-    ];
-
-    protected readonly searchFieldSelectors = [
-        '[data-testid="search-courses-input"]',
-        '[data-testid="course-search-field"]',
+    ]; protected readonly searchFieldSelectors = [
+        '[data-testid="course-search-input"]',
+        'input[data-testid="course-search-input"]',
         'input[aria-label="Search courses"]',
         'input[placeholder*="Search courses"]',
         '.MuiInputBase-input[type="text"]',
@@ -132,37 +130,18 @@ export class BaseCourses extends BasePage {
      */
     async searchForCourse(searchTerm: string): Promise<void> {
         console.log(`Attempting to search for course: "${searchTerm}"`);
-        const maxAttempts = 3;
-
-        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-            try {
-                for (const selector of this.searchFieldSelectors) {
-                    const searchField = this.page.locator(selector);
-                    const isVisible = await searchField.isVisible({timeout: 1000}).catch(() => false);
-                    if (isVisible) {
-                        await searchField.clear();
-                        await searchField.type(searchTerm, {delay: 50});
-                        await this.waitForSearchResults();
-                        return;
-                    }
-                }
-
-                if (attempt < maxAttempts) {
-                    await this.page.waitForTimeout(1000 * attempt);
-                    continue;
-                }
-            } catch (error) {
-                console.error(`Search attempt ${attempt} failed:`, error);
-                if (attempt < maxAttempts) {
-                    await this.page.waitForTimeout(1000 * attempt);
-                    continue;
-                }
-                throw error;
-            }
+        try {
+            // Look for the search input using more specific selectors
+            const searchInput = this.page.locator('input[data-testid="course-search-input"]').first();
+            await searchInput.waitFor({state: 'visible', timeout: 5000});
+            await searchInput.fill(searchTerm);
+            await this.page.keyboard.press('Enter');
+            await this.waitForSearchResults();
+        } catch (error) {
+            console.error('Error during search:', error);
+            throw error;
         }
-
-        throw new Error(`Could not find search field after ${maxAttempts} attempts`);
-    }    /**
+    }/**
      * Wait for search results to load
      * Enhanced with better detection for network activity and UI state changes
      */
