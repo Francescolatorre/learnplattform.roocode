@@ -1,5 +1,6 @@
 import {Box, Typography, TextField, CircularProgress, MenuItem, Select, FormControl, InputLabel, Grid, SelectChangeEvent, Pagination} from '@mui/material';
-import React, {useState, useCallback, useEffect} from 'react';
+import React, {useState} from 'react';
+import {useQuery} from '@tanstack/react-query';
 import {ICourse, TCourseStatus} from '@/types/course';
 import {useDebounce} from '@utils/useDebounce';
 import {courseService, CourseFilterOptions} from '@services/resources/courseService';
@@ -38,10 +39,6 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
   customFetchFunction,
   showInstructorActions = false,
 }) => {
-  const [courses, setCourses] = useState<ICourse[]>(initialCourses || []);
-  const [loading, setLoading] = useState<boolean>(!initialCourses);
-  const [error, setError] = useState<{message: string; details?: string} | null>(null);
-  const [totalCount, setTotalCount] = useState<number>(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [status, setStatus] = useState<TCourseStatus | ''>('');
   const [creator] = useState<number | null>(null);
@@ -49,132 +46,157 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
-  const loadCourses = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
+  // Use React Query for data fetching with proper caching configuration
+  const {
+    data: coursesData,
+    isLoading,
+    error
+  } = useQuery<IPaginatedResponse<ICourse>, Error>({
+    queryKey: ['courses', {
+      page,
+      pageSize,
+      search: debouncedSearchTerm,
+      status,
+      creator
+    }],
+    queryFn: async () => {
       const filterOptions: CourseFilterOptions = {
         page,
         page_size: pageSize,
       };
 
       if (debouncedSearchTerm) filterOptions.search = debouncedSearchTerm;
-      if (status) filterOptions.status = status as TCourseStatus;
+      if (status) filterOptions.status = status;
       if (creator) filterOptions.creator = creator;
 
-      const response = await (customFetchFunction ? customFetchFunction(filterOptions) : courseService.fetchCourses(filterOptions));
+      // Use customFetchFunction if provided, otherwise use default courseService
+      return customFetchFunction
+        ? customFetchFunction(filterOptions)
+        : courseService.fetchCourses(filterOptions);
+    },
+    // Prevent refetching too often
+    staleTime: 30 * 1000, // Consider data fresh for 30 seconds
+    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
+    // Reduce unnecessary refetches
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    enabled: !clientSideFiltering, // Only fetch if using server-side filtering
+  });
 
-      if (!response || typeof response.count !== 'number' || !Array.isArray(response.results)) {
-        throw new Error('Invalid response format from the server');
-      }
-
-      const {count, results} = response;
-      setTotalCount(count);
-      setCourses(results);
-      onCoursesLoaded?.(results);
-    } catch (err) {
-      const error = err as Error;
-      setError({
-        message: 'Failed to load courses',
-        details: error.message
-      });
-      console.error('Error loading courses:', error);
-    } finally {
-      setLoading(false);
+  // Call onCoursesLoaded when data changes
+  React.useEffect(() => {
+    if (coursesData?.results && onCoursesLoaded) {
+      onCoursesLoaded(coursesData.results);
     }
-  }, [customFetchFunction, debouncedSearchTerm, status, creator, page, pageSize, onCoursesLoaded]);
+  }, [coursesData?.results, onCoursesLoaded]);
 
-  useEffect(() => {
-    if (!clientSideFiltering) {
-      loadCourses();
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+    if (clientSideFiltering) {
+      setPage(1); // Reset to first page on new search
     }
-  }, [clientSideFiltering, loadCourses]);
+  };
+
+  const handleStatusChange = (event: SelectChangeEvent<string>) => {
+    setStatus(event.target.value as TCourseStatus);
+    setPage(1); // Reset to first page on status change
+  };
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+    if (onPageChange) {
+      onPageChange(value);
+    }
+  };
+
+  // Show loading state
+  if (isLoading && !clientSideFiltering) {
+    return (
+      <Box sx={{display: 'flex', justifyContent: 'center', p: 3}}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  // Show error state
+  if (error && !clientSideFiltering) {
+    return (
+      <Box sx={{p: 3}}>
+        <Typography color="error" data-testid="error-message">
+          {error instanceof Error ? error.message : 'Failed to load courses'}
+        </Typography>
+      </Box>
+    );
+  }
+
+  // Handle no courses
+  if (!coursesData?.results?.length && !clientSideFiltering) {
+    return (
+      <Box sx={{p: 3}} data-testid="no-courses-message">
+        <Typography>{searchTerm ? noResultsMessage : emptyMessage}</Typography>
+      </Box>
+    );
+  }
 
   return (
-    <Box data-testid="course-list-container" sx={{width: '100%'}}>
-      {title && (
-        <Typography variant="h6" gutterBottom data-testid="course-list-title">
+    <Box sx={{width: '100%'}}>
+      <Box sx={{mb: 3}}>
+        <Typography variant="h5" gutterBottom>
           {title}
         </Typography>
-      )}
 
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={showStatusFilter ? 9 : 12}>
-          <TextField
-            fullWidth
-            size="medium"
-            variant="outlined"
-            placeholder="Search courses..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            inputProps={{
-              'data-testid': 'course-search-input'
-            }}
-            sx={{mb: 2}}
-          />
-        </Grid>
-        {showStatusFilter && (
-          <Grid item xs={12} md={3}>
-            <FormControl variant="outlined" fullWidth sx={{mb: 2}}>
-              <InputLabel id="status-filter-label">Status</InputLabel>
-              <Select
-                labelId="status-filter-label"
-                id="status-filter"
-                value={status}
-                label="Status"
-                onChange={(event: SelectChangeEvent<string>) => setStatus(event.target.value as TCourseStatus | '')}
-                inputProps={{
-                  'data-testid': 'course-status-filter-input'
-                }}
-              >
-                <MenuItem value="">All</MenuItem>
-                <MenuItem value="draft">Draft</MenuItem>
-                <MenuItem value="published">Published</MenuItem>
-                <MenuItem value="archived">Archived</MenuItem>
-              </Select>
-            </FormControl>
+        {/* Filters */}
+        <Grid container spacing={2} alignItems="flex-start">
+          <Grid item xs={12} sm={6} md={4}>
+            <TextField
+              data-testid="course-search-input"
+              fullWidth
+              label="Search courses"
+              value={searchTerm}
+              onChange={handleSearchChange}
+            // data-testid="course-search"
+            />
           </Grid>
-        )}
-      </Grid>
 
-      {loading ? (
-        <Box sx={{display: 'flex', justifyContent: 'center', p: 4}} data-testid="course-list-loading">
-          <CircularProgress />
-        </Box>
-      ) : error ? (
-        <Typography color="error" data-testid="course-list-error">
-          {error.message}
-          {error.details && (
-            <Typography variant="body2" color="error">
-              {error.details}
-            </Typography>
+          {showStatusFilter && (
+            <Grid item xs={12} sm={6} md={4}>
+              <FormControl fullWidth>
+                <InputLabel id="status-filter-label">Status</InputLabel>
+                <Select
+                  labelId="status-filter-label"
+                  id="course-status-filter"
+                  value={status}
+                  onChange={handleStatusChange}
+                  label="Status"
+                  data-testid="course-status-filter"
+                  data-value={status}
+                >
+                  <MenuItem value="" data-value="">All</MenuItem>
+                  <MenuItem value="draft" data-value="draft">Draft</MenuItem>
+                  <MenuItem value="published" data-value="published">Published</MenuItem>
+                  <MenuItem value="archived" data-value="archived">Archived</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
           )}
-        </Typography>
-      ) : courses.length === 0 ? (
-        <Typography data-testid="course-list-empty">
-          {searchTerm ? noResultsMessage : emptyMessage}
-        </Typography>
-      ) : (
-        <>
-          <CourseList
-            courses={courses}
-            showInstructorActions={showInstructorActions}
+        </Grid>
+      </Box>
+
+      {/* Course List */}
+      <CourseList
+        courses={coursesData?.results || []}
+        showInstructorActions={showInstructorActions}
+      />
+
+      {/* Pagination */}
+      {coursesData?.count && Math.ceil(coursesData.count / pageSize) > 1 && (
+        <Box sx={{display: 'flex', justifyContent: 'center', mt: 3}} data-testid="pagination-controls">
+          <Pagination
+            count={Math.ceil(coursesData.count / pageSize)}
+            page={page}
+            onChange={handlePageChange}
           />
-          {totalCount > pageSize && (
-            <Box sx={{mt: 2, display: 'flex', justifyContent: 'center'}}>
-              <Pagination
-                count={Math.ceil(totalCount / pageSize)}
-                page={page}
-                onChange={(_, value) => {
-                  setPage(value);
-                  onPageChange?.(value);
-                }}
-                data-testid="course-list-pagination"
-              />
-            </Box>
-          )}
-        </>
+        </Box>
       )}
     </Box>
   );

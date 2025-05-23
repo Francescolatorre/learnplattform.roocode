@@ -5,47 +5,35 @@ import {BasePage} from '../BasePage';
  * Base class for all course pages providing common functionality
  */
 export class BaseCourses extends BasePage {
-    // Common selectors used across all role-specific pages
-    protected readonly courseTitleSelectors = ['[data-testid^="courses-title-"]'];
+    protected readonly courseSearchInput = '[data-testid="course-search-input"]';
+
+    protected readonly statusFilterSelectors = [
+        '[data-testid="course-status-filter"]',
+        '[data-testid="course-status-select"]'
+    ];
 
     protected readonly courseCardSelectors = [
         '[data-testid^="course-card-"]',
-        '[data-testid="course-list-item"]'
+        '.course-card'
     ];
 
     protected readonly courseGridSelectors = [
-        '.course-grid',
-        '.courses-container',
-        '.MuiGrid-container',
-        '[data-testid="courses-grid"]'
+        '[data-testid="courses-grid"]',
+        '.courses-grid'
     ];
 
     protected readonly courseListSelectors = [
-        '.course-list',
-        'ul.courses-list',
-        '[data-testid^="courses-list"]',
-        '.MuiList-root'
-    ]; protected readonly searchFieldSelectors = [
-        '[data-testid="course-search-input"]',
-        'input[data-testid="course-search-input"]',
-        'input[aria-label="Search courses"]',
-        'input[placeholder*="Search courses"]',
-        '.MuiInputBase-input[type="text"]',
-        '.course-search input'
+        '[data-testid="courses-list"]',
+        '.courses-list',
+        '.MuiGrid-container'
     ];
 
     protected readonly emptyStateSelectors = [
+        '[data-testid="empty-state"]',
         '.empty-state',
         '.no-courses',
-        '[data-testid="empty-state"]',
         'text="No courses found"',
         'text="No courses available"'
-    ];
-
-    protected readonly viewSwitchSelectors = [
-        '.view-switch',
-        '[data-testid="view-switch"]',
-        '.view-mode-toggle'
     ];
 
     constructor(page: Page, basePath: string) {
@@ -256,9 +244,7 @@ export class BaseCourses extends BasePage {
             console.error('Error getting course titles:', error);
             return titles;
         }
-    }
-
-    /**
+    }    /**
      * Click a course by its title
      */
     async clickCourse(courseTitle: string): Promise<void> {
@@ -288,5 +274,82 @@ export class BaseCourses extends BasePage {
             console.error(`Failed to click course ${courseTitle}:`, error);
             throw error;
         }
+    }/**
+     * Filter courses by status
+     * @param status The status to filter by ('draft', 'published', 'archived' or '')
+     */
+    async filterByStatus(status: '' | 'draft' | 'published' | 'archived'): Promise<void> {
+        try {
+            // First try to find the filter using our preferred selector
+            let filter = this.page.locator(this.statusFilterSelectors[0]);
+            let isVisible = await filter.isVisible({timeout: 1000}).catch(() => false);
+
+            // If not found, try alternate selector
+            if (!isVisible) {
+                filter = this.page.locator(this.statusFilterSelectors[1]);
+                isVisible = await filter.isVisible({timeout: 1000}).catch(() => false);
+            }
+
+            if (!isVisible) {
+                throw new Error('Could not find status filter');
+            }
+
+            const optionText = status || 'All';
+
+            // Try Material UI select dropdown with explicit wait for dropdown
+            await filter.click();
+            await this.page.waitForSelector('.MuiMenu-list', {timeout: 2000});
+
+            // Try to find and click the option
+            const option = this.page.locator(`.MuiMenu-list [data-value="${status}"], .MuiMenuItem-root[data-value="${status}"]`);
+            await option.click();
+
+            // Wait for results to update
+            await this.waitForSearchResults();
+            console.log(`Successfully filtered by status: ${status}`);
+        } catch (error) {
+            console.error('Error filtering by status:', error);
+            await this.takeScreenshot(`filter-status-error-${status}`);
+            throw error;
+        }
+    }    /**
+     * Get current status filter value
+     */
+    async getCurrentStatusFilter(): Promise<string> {
+        try {
+            // Wait for the filter to be visible
+            const filter = this.page.locator('[data-testid="course-status-filter"]');
+            await filter.waitFor({state: 'attached', timeout: 2000});
+
+            // Get selected value
+            const value = await filter.getAttribute('data-value').catch(() => '');
+            console.log('Current status filter value:', value);
+            return value || '';
+        } catch (error) {
+            console.error('Error getting current status filter:', error);
+            return '';
+        }
+    }
+
+    /**
+     * Verify that all visible courses have the given status
+     */
+    async verifyVisibleCourseStatuses(expectedStatus: string): Promise<boolean> {
+        if (!expectedStatus) return true;
+
+        const cards = this.page.locator('[data-testid^="course-card-"]');
+        const count = await cards.count();
+
+        for (let i = 0; i < count; i++) {
+            const card = cards.nth(i);
+            const statusElement = card.locator('[data-testid="course-status"]');
+            const status = await statusElement.getAttribute('data-value');
+
+            if (status?.toLowerCase() !== expectedStatus.toLowerCase()) {
+                console.error(`Course status mismatch: expected ${expectedStatus}, got ${status}`);
+                return false;
+            }
+        }
+        return true;
     }
 }

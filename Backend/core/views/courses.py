@@ -7,11 +7,14 @@ Includes:
 """
 
 import logging
+from typing import Any, Optional
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.http import Http404
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from ..models import Course, CourseEnrollment, CourseVersion, LearningTask, TaskProgress
@@ -36,11 +39,11 @@ class CourseViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     pagination_class = SafePageNumberPagination
 
-    def perform_create(self, serializer: CourseSerializer):
+    def perform_create(self, serializer: CourseSerializer) -> None:
         """Create a new course with the current user as creator"""
         serializer.save(creator=self.request.user)
 
-    def get_queryset(self):
+    def get_queryset(self) -> Any:
         """
         Filter queryset based on user role and permissions:
         - Admins and staff see all courses with status indicator
@@ -74,10 +77,12 @@ class CourseViewSet(viewsets.ModelViewSet):
         url_path="instructor/courses",
         permission_classes=[IsInstructorOrAdmin],
     )
-    def instructor_courses(self, request):
+    def instructor_courses(self, request: Request) -> Response:
         """
         Fetch courses created by the instructor or all courses for admin.
-        Supports search filtering through query parameter 'search'.
+        Supports filtering through query parameters:
+        - search: Text search in title and description
+        - status: Filter by course status (draft/published/archived)
         """
         try:
             if request.user.role not in ["instructor", "admin"]:
@@ -85,13 +90,31 @@ class CourseViewSet(viewsets.ModelViewSet):
                     {"error": "You do not have permission to access this resource."},
                     status=403,
                 )
+
             logger.info(
                 "Fetching instructor courses for user ID: %s, username: %s, role: %s",
                 request.user.id,
                 request.user.username,
                 request.user.role,
             )
-            queryset = self.get_queryset()
+
+            # Start with base queryset of all courses created by this instructor
+            queryset = Course.objects.filter(creator=request.user)
+
+            # Handle status filter
+            status_filter = request.query_params.get("status", None)
+            if status_filter is not None:
+                status_filter = status_filter.strip()
+                if status_filter:  # Only apply filter for non-empty status
+                    logger.info(
+                        "Applying status filter '%s' for instructor courses",
+                        status_filter,
+                    )
+                    queryset = queryset.filter(status=status_filter)
+                else:
+                    logger.info("No status filter applied (showing all courses)")
+
+            # Apply search filter if provided
             search_query = request.query_params.get("search", "").strip()
             if search_query:
                 logger.info(
@@ -101,12 +124,14 @@ class CourseViewSet(viewsets.ModelViewSet):
                     models.Q(title__icontains=search_query)
                     | models.Q(description__icontains=search_query)
                 )
+
             course_count = queryset.count()
             logger.info(
                 "Found %d courses for instructor with ID %s",
                 course_count,
                 request.user.id,
             )
+
             page = self.paginate_queryset(queryset)
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
@@ -135,45 +160,30 @@ class CourseViewSet(viewsets.ModelViewSet):
         url_path="student-progress/(?P<user_id>[^/.]+)",
         permission_classes=[IsAuthenticated],
     )
-    def student_progress(self, request, pk=None, user_id=None):
+    def student_progress(
+        self, request: Request, pk: Optional[str] = None, user_id: Optional[str] = None
+    ) -> Response:
         """
         Fetch student progress for a specific course and user.
         """
         try:
             course = self.get_object()
-            is_enrolled = CourseEnrollment.objects.filter(
-                user_id=user_id, course_id=course.id
-            ).exists()
-            if not is_enrolled:
-                return Response(
-                    {
-                        "course_title": course.title,
-                        "description": course.description,
-                        "learning_objectives": course.learning_objectives,
-                        "prerequisites": course.prerequisites,
-                        "message": "Enroll in the course to access progress details.",
-                    },
-                    status=200,
-                )
+            user = get_user_model().objects.get(id=user_id)
+
             progress = TaskProgress.objects.filter(
-                user_id=user_id, task__course_id=course.id
-            )
-            if not progress.exists():
-                return Response(
-                    {"message": "No progress found for this course."}, status=404
-                )
+                task__course=course, student=user
+            ).select_related("task")
+
             serializer = TaskProgressSerializer(progress, many=True)
             return Response(serializer.data)
+        except Http404:
+            return Response({"error": "Course not found."}, status=404)
+        except get_user_model().DoesNotExist:
+            return Response({"error": "Student not found."}, status=404)
         except Exception as e:
-            logger.error(
-                "Error fetching student progress for course %s: %s",
-                pk,
-                str(e),
-                exc_info=True,
-            )
+            logger.error("Error fetching student progress: %s", str(e), exc_info=True)
             return Response(
-                {"error": "An unexpected error occurred while fetching progress."},
-                status=500,
+                {"error": "An error occurred while fetching progress."}, status=500
             )
 
     @action(
@@ -182,163 +192,80 @@ class CourseViewSet(viewsets.ModelViewSet):
         url_path="details",
         permission_classes=[IsAuthenticated],
     )
-    def course_details(self, request, pk=None):
-        """
-        Fetch course details including enrollment status for the current user.
-        """
+    def course_details(self, request: Request, pk: Optional[str] = None) -> Response:
+        """Get detailed course information including enrollment status"""
         try:
-            logger.info("Fetching course details for course ID: %s", pk)
             course = self.get_object()
-            is_enrolled = CourseEnrollment.objects.filter(
-                user=request.user, course=course, status="active"
-            ).exists()
-            is_completed = False
-            if is_enrolled:
-                total_tasks = LearningTask.objects.filter(course=course).count()
-                completed_tasks = TaskProgress.objects.filter(
-                    user=request.user, task__course=course, status="completed"
-                ).count()
-                is_completed = total_tasks > 0 and total_tasks == completed_tasks
-            tasks = LearningTask.objects.filter(course=course)
-            response_data = {
-                "id": course.id,
-                "title": course.title,
-                "description": course.description,
-                "learning_objectives": course.learning_objectives,
-                "prerequisites": course.prerequisites,
-                "isEnrolled": is_enrolled,
-                "isCompleted": is_completed,
-                "tasks": [
-                    {"id": task.id, "title": task.title, "type": task.type}
-                    for task in tasks
-                ],
-            }
-            if (
-                request.user.is_staff
-                or request.user.is_superuser
-                or getattr(request.user, "role", None) == "instructor"
-            ):
-                response_data["status"] = course.status
-            else:
-                response_data["enrollmentStatus"] = (
-                    "enrolled" if is_enrolled else "not_enrolled"
-                )
-                if is_enrolled and is_completed:
-                    response_data["enrollmentStatus"] = "completed"
-            return Response(response_data)
-        except Course.DoesNotExist:
-            logger.error("Course with ID %s does not exist.", pk)
+            serializer = self.get_serializer(course)
+            data = serializer.data
+
+            if request.user.is_authenticated:
+                enrollment = CourseEnrollment.objects.filter(
+                    course=course, user=request.user
+                ).first()
+                data["is_enrolled"] = enrollment is not None
+                if enrollment:
+                    data["enrollment_date"] = enrollment.created_at
+
+            return Response(data)
+        except Http404:
             return Response({"error": "Course not found."}, status=404)
         except Exception as e:
-            logger.error(
-                "Error fetching course details for course ID %s: %s",
-                pk,
-                str(e),
-                exc_info=True,
-            )
+            logger.error("Error fetching course details: %s", str(e), exc_info=True)
             return Response(
-                {
-                    "error": "An unexpected error occurred while fetching course details."
-                },
+                {"error": "An error occurred while fetching course details."},
                 status=500,
             )
 
-    @action(
-        detail=True,
-        methods=["post"],
-        url_path="enroll",
-        permission_classes=[IsAuthenticated],
-    )
-    def enroll(self, request, pk=None):
-        course = self.get_object()
-        user = request.user
-        enrollment, created = CourseEnrollment.objects.get_or_create(
-            user=user, course=course, defaults={"status": "active"}
-        )
-        if not created:
-            if enrollment.status == "active":
-                return Response(
-                    {"detail": "You are already enrolled in this course."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            enrollment.status = "active"
-            enrollment.save()
-            logger.info("User %s re-enrolled in course %s", user.id, course.id)
-            return Response(
-                {"detail": "Successfully re-enrolled in the course."},
-                status=status.HTTP_200_OK,
-            )
-        logger.info("User %s enrolled in course %s", user.id, course.id)
-        return Response(
-            {"detail": "Successfully enrolled in the course."},
-            status=status.HTTP_201_CREATED,
-        )
-
-    @action(
-        detail=True,
-        methods=["post"],
-        url_path="unenroll",
-        permission_classes=[IsAuthenticated],
-    )
-    def unenroll(self, request, pk=None):
-        """
-        Unenroll the current user from a course by setting enrollment status to 'dropped'.
-        """
-        course = self.get_object()
-        user = request.user
+    @action(detail=True, methods=["post"])
+    def enroll(self, request: Request, pk: Optional[str] = None) -> Response:
+        """Enroll the current user in a course"""
         try:
-            enrollment = CourseEnrollment.objects.get(user=user, course=course)
-            enrollment.status = "dropped"
-            enrollment.save()
-            logger.info("User %s unenrolled from course %s", user.id, course.id)
-            return Response(
-                {
-                    "success": True,
-                    "message": "Successfully unenrolled from the course.",
-                    "courseId": str(course.id),
-                    "status": "unenrolled",
-                },
-                status=status.HTTP_200_OK,
-            )
-        except CourseEnrollment.DoesNotExist:
-            logger.warning(
-                "User %s attempted to unenroll from course %s but no enrollment exists",
-                user.id,
-                course.id,
-            )
-            return Response(
-                {"success": False, "detail": "You are not enrolled in this course."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except Exception as e:
-            logger.error(
-                "Error unenrolling user %s from course %s: %s",
-                user.id,
-                course.id,
-                str(e),
-                exc_info=True,
-            )
-            return Response(
-                {
-                    "success": False,
-                    "detail": "An error occurred while unenrolling from the course.",
-                },
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            course = self.get_object()
+            if not course.is_published:
+                return Response(
+                    {"error": "Cannot enroll in unpublished course."}, status=400
+                )
+
+            enrollment, created = CourseEnrollment.objects.get_or_create(
+                course=course, user=request.user
             )
 
-    def get_permissions(self):
-        """
-        Allow different permissions based on the action:
-        - create: Only instructors and admins can create courses
-        - retrieve: Students can view course details
-        - other actions: Default to the class permissions
-        """
-        if self.action == "create":
-            return [permissions.IsAuthenticated(), IsInstructorOrAdmin()]
-        elif self.action == "retrieve" and self.request.user.is_authenticated:
-            if self.request.user.role == "student":
-                return [permissions.IsAuthenticated()]
-        return super().get_permissions()
+            if created:
+                return Response({"message": "Successfully enrolled in course."})
+            return Response({"message": "Already enrolled in this course."}, status=400)
+        except Http404:
+            return Response({"error": "Course not found."}, status=404)
+        except Exception as e:
+            logger.error("Error enrolling in course: %s", str(e), exc_info=True)
+            return Response({"error": "An error occurred while enrolling."}, status=500)
+
+    @action(detail=True, methods=["post"])
+    def unenroll(self, request: Request, pk: Optional[str] = None) -> Response:
+        """Remove the current user's enrollment from a course"""
+        try:
+            course = self.get_object()
+            enrollment = CourseEnrollment.objects.filter(
+                course=course, user=request.user
+            ).first()
+
+            if enrollment:
+                enrollment.delete()
+                return Response({"message": "Successfully unenrolled from course."})
+            return Response({"error": "Not enrolled in this course."}, status=400)
+        except Http404:
+            return Response({"error": "Course not found."}, status=404)
+        except Exception as e:
+            logger.error("Error unenrolling from course: %s", str(e), exc_info=True)
+            return Response(
+                {"error": "An error occurred while unenrolling."}, status=500
+            )
+
+    def get_permissions(self) -> list[permissions.BasePermission]:
+        """Get the list of permissions that the current action requires"""
+        if self.action == "instructor_courses":
+            return [IsInstructorOrAdmin()]
+        return [IsAuthenticated()]
 
 
 class CourseVersionViewSet(viewsets.ModelViewSet):
@@ -350,37 +277,51 @@ class CourseVersionViewSet(viewsets.ModelViewSet):
     serializer_class = CourseVersionSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer: CourseVersionSerializer) -> None:
         serializer.save(created_by=self.request.user)
 
 
-def get_course_details(request, course_id):
+def get_course_details(request: Request, course_id: str) -> Response:
+    """Get detailed course information including enrollment status and progress"""
     is_enrolled = CourseEnrollment.objects.filter(
         user=request.user, course_id=course_id
     ).exists()
-    if not is_enrolled:
+
+    try:
         course = Course.objects.get(id=course_id)
+        if not is_enrolled:
+            return Response(
+                {
+                    "course": {
+                        "id": course.id,
+                        "title": course.title,
+                        "description": course.description,
+                    },
+                    "progress": [],
+                }
+            )
+
+        tasks = LearningTask.objects.filter(course=course)
+        progress = TaskProgress.objects.filter(
+            user=request.user, task__course_id=course_id
+        )
         return Response(
             {
                 "course": {
                     "id": course.id,
                     "title": course.title,
                     "description": course.description,
+                    "tasks": [{"id": task.id, "title": task.title} for task in tasks],
                 },
-                "progress": [],
+                "progress": [
+                    {"task_id": p.task_id, "status": p.status} for p in progress
+                ],
             }
         )
-    course = Course.objects.get(id=course_id)
-    tasks = LearningTask.objects.filter(course=course)
-    progress = TaskProgress.objects.filter(user=request.user, task__course_id=course_id)
-    return Response(
-        {
-            "course": {
-                "id": course.id,
-                "title": course.title,
-                "description": course.description,
-                "tasks": [{"id": task.id, "title": task.title} for task in tasks],
-            },
-            "progress": [{"task_id": p.task_id, "status": p.status} for p in progress],
-        }
-    )
+    except Course.DoesNotExist:
+        return Response({"error": "Course not found."}, status=404)
+    except Exception as e:
+        logger.error("Error getting course details: %s", str(e), exc_info=True)
+        return Response(
+            {"error": "An error occurred while fetching course details."}, status=500
+        )

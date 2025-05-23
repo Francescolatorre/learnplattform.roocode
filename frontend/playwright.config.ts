@@ -28,8 +28,10 @@ const config: Config = defineConfig({
   testDir: './e2e/tests',
   testMatch: ['**/*.spec.ts'],
   timeout: 120 * 1000, // Increased timeout to 120s for slower operations
+
   expect: {
     timeout: 30000, // Increased to 30s for element expectations
+    toMatchTimeout: 5000, // Increased to 10s for text match
   },
   fullyParallel: false,
   forbidOnly: process.env.CI === 'true',

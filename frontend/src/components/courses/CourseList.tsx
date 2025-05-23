@@ -277,7 +277,8 @@ const CourseList: React.FC<ICourseListProps> = ({
                         size="small"
                         label={course.status}
                         color={getStatusColor(course.status) as any}
-                        data-testid={`course-status-${course.id}`}
+                        data-testid={`course-status`}
+                        data-value={course.status}
                       />
                     ) : (
                       // Show enrollment status for students

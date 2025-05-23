@@ -15,8 +15,7 @@ export class InstructorCoursesPage extends BaseCourses {
         'a:has-text("New Course")',
         'a[href="/instructor/courses/new"]',
         '.create-course-button'
-    ];
-    private readonly courseStatusFilter = '[data-testid="course-status-filter"]';
+    ]; private readonly courseStatusFilter = '[data-testid="course-status-filter-input"]';
     private readonly editCourseButtons = '[data-testid="edit-course-button"]';
     private readonly courseManagementHeader = '[data-testid="course-management-header"]';
 

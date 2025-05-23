@@ -200,8 +200,7 @@ class CourseService {
   /**
      * Fetches courses where the current user is an instructor
      * @param options Optional pagination and filtering options
-     */
-  async fetchInstructorCourses(options: CourseFilterOptions = {}): Promise<IPaginatedResponse<ICourse>> {
+     */  async fetchInstructorCourses(options: CourseFilterOptions = {}): Promise<IPaginatedResponse<ICourse>> {
     console.info('CourseService: Fetching instructor courses with options:', options);
     try {
       // Prepare query parameters
@@ -209,7 +208,7 @@ class CourseService {
       if (options.page) queryParams.append('page', options.page.toString());
       if (options.page_size) queryParams.append('page_size', options.page_size.toString());
       if (options.search) queryParams.append('search', options.search);
-      if (options.status) queryParams.append('status', options.status);
+      if (options.status && options.status !== '') queryParams.append('status', options.status);
 
       // Construct URL with query parameters
       const url = queryParams.toString()

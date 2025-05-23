@@ -57,8 +57,18 @@ const CourseCard: React.FC<ICourseCardProps> = ({course, isInstructorView}) => {
           {course.title}
         </Typography>
 
-        {/* Enrollment Status Chip */}
-        <Box sx={{mb: 2, minHeight: 32, display: 'flex', alignItems: 'center'}}>
+        {/* Status indicators */}
+        <Box sx={{mb: 2, minHeight: 32, display: 'flex', alignItems: 'center', gap: 1}}>
+          <Chip
+            label={course.status}
+            color={
+              course.status === 'published' ? 'success' :
+                course.status === 'draft' ? 'warning' :
+                  course.status === 'archived' ? 'default' : 'primary'
+            }
+            size="small"
+            data-testid="course-status-indicator"
+          />
           {enrollmentLoading ? (
             <CircularProgress size={20} />
           ) : enrollment?.enrolled ? (
