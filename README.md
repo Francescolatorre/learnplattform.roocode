@@ -1,4 +1,6 @@
 # Roo Code Modules Documentation
+Version: 1.0.0
+Last Updated: 2025-06-10
 
 ## Project Overview
 The Roo code modules system is a sophisticated governance framework that manages and coordinates different roles, processes, and tasks within the learning platform codebase. This documentation serves as the central reference point for understanding how the various components work together.
@@ -6,20 +8,31 @@ The Roo code modules system is a sophisticated governance framework that manages
 ## Directory Structure
 
 ```
-rules/
-├── core/                    # Core governance principles and rules
-│   ├── consistency.md      # Consistency guidelines
-│   ├── governance.md       # Fundamental governance principles
-│   └── versioning.md       # Version control standards
-├── processes/              # Process-specific documentation
-│   ├── escalation/        # Escalation procedures
-│   ├── review-process/    # Review guidelines
-│   └── task-lifecycle/    # Task workflow management
-└── roles/                 # Role-specific rules
-    ├── architect/         # Architect role guidelines
-    ├── code/             # Code role specifications
-    ├── debug/            # Debug role protocols
-    └── digital-design/   # Digital Design role standards
+├── rules/                    # Core governance rules and processes
+│   ├── core/                # Core governance principles
+│   │   ├── consistency.md   # Consistency guidelines
+│   │   ├── governance.md    # Fundamental governance principles
+│   │   ├── inconsistency_resolution.md  # Handling inconsistencies
+│   │   └── versioning.md    # Version control standards
+│   ├── modes/               # Mode-specific guidelines
+│   │   ├── code.md         # Code mode specifications
+│   │   └── digital-design.md # Digital Design mode standards
+│   ├── processes/          # Process documentation
+│   │   ├── escalation.md   # Escalation procedures
+│   │   ├── review-process.md # Review guidelines
+│   │   └── task-lifecycle.md # Task workflow management
+│   └── rules-*/            # Role-specific rule sets
+├── rules-architect/        # Architect role guidelines
+├── rules-code/            # Code role specifications
+├── rules-debug/           # Debug role protocols
+├── rules-digitaldesign/   # Digital Design role standards
+├── snippets/             # Reusable content templates
+│   ├── rule-templates.md # Templates for rule creation
+│   ├── subtask_governance_rules.md # Subtask guidelines
+│   └── task-template.md  # Task documentation templates
+└── templates/            # Project templates
+    ├── project_status_template.md # Project status reporting
+    └── task_template.md  # Task documentation format
 ```
 
 ## Rule Hierarchy and Precedence
@@ -30,13 +43,13 @@ rules/
    - Take precedence over role-specific rules
    - Must be followed by all roles and processes
 
-2. **Role-Based Rules** (`rules/roles/*/rules.md`)
+2. **Role-Based Rules** (`rules-*/rules.md`)
    - Define role-specific responsibilities
    - Outline operational boundaries
    - Must align with core governance principles
    - Include role-specific workflows and standards
 
-3. **Process Rules** (`rules/processes/*/*.md`)
+3. **Process Rules** (`rules/processes/*.md`)
    - Define workflows and procedures
    - Establish cross-role interactions
    - Detail escalation paths
@@ -44,9 +57,9 @@ rules/
 
 ## How to Use This Repository
 
-1. Start with `core/governance.md` to understand fundamental principles
-2. Review your role-specific rules in `roles/<your-role>/rules.md`
-3. Follow task lifecycle documentation in `processes/task-lifecycle/workflow.md`
+1. Start with `rules/core/governance.md` to understand fundamental principles
+2. Review your role-specific rules in `rules-<your-role>/rules.md`
+3. Follow task lifecycle documentation in `rules/processes/task-lifecycle.md`
 4. Reference process-specific guidelines as needed
 5. Use escalation procedures when encountering blockers
 
@@ -61,7 +74,8 @@ rules/
 ## Quick Start Guide
 
 1. **For New Tasks**
-   - Check task state definitions in `task-lifecycle/workflow.md`
+   - Check task state definitions in `rules/processes/task-lifecycle.md`
+   - Use templates from `templates/task_template.md`
    - Follow role-specific task handling procedures
    - Ensure all required documentation is completed
 
@@ -72,7 +86,7 @@ rules/
    - Maintain task state consistency
 
 3. **For Issue Resolution**
-   - Follow escalation procedures in `processes/escalation/procedures.md`
+   - Follow escalation procedures in `rules/processes/escalation.md`
    - Document all decisions and changes
    - Update relevant documentation
    - Ensure proper handoff between roles
@@ -80,7 +94,7 @@ rules/
 ## Contributing Guidelines
 
 1. **Documentation Updates**
-   - Follow the established document structure
+   - Follow templates in `snippets/rule-templates.md`
    - Maintain cross-references between related documents
    - Include version information
    - Update all affected documents together
@@ -105,19 +119,27 @@ rules/
 
 ## Related Core Documents
 
-- [Core Governance](core/governance.md)
-- [Consistency Guidelines](core/consistency.md)
-- [Versioning Strategy](core/versioning.md)
+- [Core Governance](rules/core/governance.md)
+- [Consistency Guidelines](rules/core/consistency.md)
+- [Versioning Strategy](rules/core/versioning.md)
+- [Inconsistency Resolution](rules/core/inconsistency_resolution.md)
 
 ## Role-Specific Rules
 
-- [Architect Rules](roles/architect/rules.md)
-- [Code Rules](roles/code/rules.md)
-- [Debug Rules](roles/debug/rules.md)
-- [Digital Design Rules](roles/digital-design/rules.md)
+- [Architect Rules](rules-architect/rules.md)
+- [Code Rules](rules-code/rules.md)
+- [Debug Rules](rules-debug/rules.md)
+- [Digital Design Rules](rules-digitaldesign/rules.md)
 
 ## Process Documentation
 
-- [Task Lifecycle Workflow](processes/task-lifecycle/workflow.md)
-- [Review Guidelines](processes/review-process/guidelines.md)
-- [Escalation Procedures](processes/escalation/procedures.md)
+- [Task Lifecycle](rules/processes/task-lifecycle.md)
+- [Review Process](rules/processes/review-process.md)
+- [Escalation Procedures](rules/processes/escalation.md)
+
+## Templates and Snippets
+
+- [Task Template](templates/task_template.md)
+- [Project Status Template](templates/project_status_template.md)
+- [Rule Templates](snippets/rule-templates.md)
+- [Subtask Governance](snippets/subtask_governance_rules.md)
