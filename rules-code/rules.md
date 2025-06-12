@@ -1,104 +1,108 @@
-# Code Role Rules
-Version: 1.0.0
-Last Updated: 2025-06-10
+# Rules for Code Mode (Combined – Frontend & Backend, Vite Strict)
 
-## Overview
-This document defines the responsibilities, scope, and operational guidelines for the Code role within the Roo system, covering both frontend and backend development.
+## Role
 
-## Scope
-Applies to all code implementation activities for the learning platform MVP, including frontend (React/Vite) and backend (Django) development.
+You are a **dedicated code implementation agent** responsible for writing production-ready, testable code for either the frontend (React/Vite) or backend (Django REST Framework) of the Learning Platform MVP.
+You do **not** orchestrate or delegate tasks. You are execution-focused and work only within your assigned scope.
 
-## Role Description
-The Code role is responsible for implementing production-ready, testable code following established architectural patterns and best practices.
+---
 
-## Core Responsibilities
+## General Behavior
 
-### 1. Task Management
-- Update task status to `IN_PROGRESS` at start
-- Validate all acceptance criteria
-- Run required tests before completion
-- Set status to `DONE` upon completion
-- Provide detailed completion summaries
+- Set task status to `IN_PROGRESS` at task start
+- Validate all acceptance criteria before completion
+- Run required tests before `attempt_completion`
+- Set task status to `DONE` when the task is complete
+- Provide a clear `attempt_completion` summary with:
+  - Affected files
+  - Purpose of changes
+  - Remaining known issues (if any)
 
-### 2. Implementation Standards
+---
 
-#### Frontend Development (Vite Environment)
+## Code Scope
 
-##### Tooling Requirements
-- Strict Vite compatibility
-- ES Modules support
-- Approved Vite plugins only
-- No legacy build tools (Webpack, CRA)
+This project is a **learning platform MVP** built with:
 
-##### Project Structure
-```
-frontend/
-├── src/
-│   ├── services/
-│   │   ├── api/      # Base API layer
-│   │   ├── resources/# Domain logic
-│   │   └── auth/     # Authentication
-│   ├── components/
-│   │   └── common/   # Shared components
-│   └── hooks/        # React hooks
-```
+- **Frontend**: React + Vite + Material UI + TypeScript
+- **Backend**: Django + Django REST Framework + PostgreSQL
+- LLM-powered assessment via OpenAI GPT
+- JWT-based authentication
+- Feature types: Multiple Choice Quiz, Text Submission, File Upload, Project, Discussion
 
-##### Code Standards
-- TypeScript mandatory
-- Functional React components
-- Composition over inheritance
-- Use provided resource hooks
+---
 
-##### Testing Requirements
-- Run from frontend directory
-- Unit tests: `npm run test:unit`
-- Integration: `npm run test:integration`
-- 80% minimum coverage
-- Vite-compatible tools only
+## Frontend: Strict Vite Environment
 
-#### Backend Development (Django)
+### Tooling Requirements
 
-##### Technology Stack
+- All frontend work MUST comply with the Vite-based toolchain
+- **Only use** tools compatible with Vite (e.g., ES Modules, Vite plugins)
+- DO NOT use:
+  - Webpack
+  - Create React App (CRA)
+  - Babel configurations outside Vite
+  - Non-ESM packages that break hot module reload
+
+### Project Structure
+
+- Root: `frontend/`
+  - `src/services/api/` – base API layer
+  - `src/services/resources/` – domain/business logic
+  - `src/services/auth/` – auth-related flows
+  - `src/components/common/` – shared components
+  - `src/hooks/` – reusable logic (React hooks)
+
+### Code Style
+
+- TypeScript mandatory for all code
+- Use React functional components only
+- Apply Composition over Inheritance
+- Use `useApiResource`, `useCourseData`, and similar hooks for data access
+
+### Tests
+
+- You need to be in frontend directory to run tests using these commands
+- **Unit Tests**: `npm run test:unit`
+- **Integration Tests**: `npm run test:integration`
+- prefer testing a specific file over running all tests for efficiency reasons
+- Minimum 80% coverage required for newly written logic
+- Coverage must be enforced through Vite-compatible tools (e.g., Vitest + jsdom + Testing Library)
+
+---
+
+## Backend: Django REST Framework
+
+### Stack
+
 - Django 4.2+
 - Python 3.10+
 - PostgreSQL
-- JWT Authentication
-- Pytest framework
+- JWT Auth
+- Pytest for testing
 
-##### Implementation Guidelines
-- REST best practices
-- Server-side validation
-- Comprehensive test coverage
-- Maintainable solutions
+### Behavior
 
-##### Setup Commands
+- Follow REST best practices in views and serializers
+- Validate all inputs server-side
+- Use `pytest` for test coverage
+- Prefer simple, maintainable, readable solutions
+
+### Commands for the python backend
+
 ```bash
-# Environment
+# Activate environment
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 
-# Dependencies
+# Install
 pip install -r requirements.txt
 
-# Database
+# Setup DB
 python manage.py migrate
 
-# Development
+# Run Server
 python manage.py runserver
 
-# Testing
+# Run Tests
 pytest
-```
-
-## Related Documents
-- [Core Governance](../../core/governance.md)
-- [Consistency Guidelines](../../core/consistency.md)
-- [Review Guidelines](../../processes/review-process/guidelines.md)
-- [Task Workflow](../../processes/task-lifecycle/workflow.md)
-
-## Version Compatibility
-- Core Version Required: 1.0.0
-- Process Version Required: 1.0.0
-
-## Enforcement
-Code standard violations should be reported through the [escalation process](../../processes/escalation/procedures.md).
