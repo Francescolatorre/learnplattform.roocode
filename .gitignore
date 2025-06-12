@@ -89,5 +89,6 @@ secrets.yml
 .tmp/
 .temp/
 node_modules/lodash-es/_getNative.js
+.vite/
 
 
