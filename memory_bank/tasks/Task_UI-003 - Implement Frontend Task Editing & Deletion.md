@@ -1,19 +1,31 @@
-# Task: Implement Frontend Task Editing & Deletion
+# TASK-UI-003: Implement Frontend Task Editing & Deletion
 
 ## Task Metadata
+
 - **Task-ID:** TASK-UI-003
 - **Status:** TODO
 - **Priority:** High
-- **Dependencies:** 
+- **Dependencies:**
+  - TASK-UI-002
+  - TASK-EDIT-001
+
+## Task Metadata
+
+- **Task-ID:** TASK-UI-003
+- **Status:** TODO
+- **Priority:** High
+- **Dependencies:**
   - TASK-UI-002
   - TASK-EDIT-001
 
 ## Description
+
 Develop a comprehensive interface for editing and deleting learning tasks with robust permission checks and user experience considerations.
 
 ## Requirements
 
 ### Editing Functionality
+
 1. Task Edit Interface
    - Prefill existing task data
    - Editable fields matching creation form
@@ -33,6 +45,7 @@ Develop a comprehensive interface for editing and deleting learning tasks with r
    - Role-based access control
 
 ### Technical Requirements
+
 - Use React with TypeScript
 - Implement state management
 - Create reusable modal components
@@ -41,6 +54,7 @@ Develop a comprehensive interface for editing and deleting learning tasks with r
 - Implement comprehensive error handling
 
 ## Validation Criteria
+
 - [x] Only authorized users can edit/delete tasks
 - [x] Edit form captures all task modifications
 - [x] Deletion process is secure and reversible
@@ -48,6 +62,7 @@ Develop a comprehensive interface for editing and deleting learning tasks with r
 - [x] Performance remains consistent
 
 ## Implementation Notes
+
 - Use context or Redux for permission state
 - Create confirmation and error modal components
 - Implement optimistic UI updates
@@ -56,6 +71,7 @@ Develop a comprehensive interface for editing and deleting learning tasks with r
 - Implement accessibility features
 
 ## Acceptance Criteria
+
 1. Task editing works seamlessly
 2. Deletion process is intuitive
 3. Permissions are strictly enforced
@@ -63,6 +79,7 @@ Develop a comprehensive interface for editing and deleting learning tasks with r
 5. Error handling is comprehensive
 
 ## Estimated Effort
+
 - UI Design: 2 story points
 - Frontend Implementation: 4 story points
 - Permission Logic: 3 story points
@@ -70,6 +87,7 @@ Develop a comprehensive interface for editing and deleting learning tasks with r
 - Total: 11 story points
 
 ## Potential Risks
+
 - Complex permission logic
 - Ensuring consistent UI state
 - Handling concurrent edits

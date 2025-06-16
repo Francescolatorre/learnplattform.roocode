@@ -1,4 +1,11 @@
-# Task: TASK-TEST-006 - Fix TaskCreation Component Tests
+# TASK-TEST-006: Fix TaskCreation Component Tests
+
+## Task Metadata
+
+- **Task-ID:** TASK-TEST-006
+- **Status:** DRAFT
+- **Priority:** Medium
+- **Effort:** 5 story points
 
 ## Status: DRAFT
 

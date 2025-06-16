@@ -1,6 +1,18 @@
-# Task: Implement Grading Feedback UI for Students
+# TASK-UI-006: Implement Grading Feedback UI for Students
 
 ## Task Metadata
+
+- **Task-ID:** TASK-UI-006
+- **Status:** TODO
+- **Priority:** Medium
+- **Dependencies:** TASK-GRADING-001, TASK-UI-004
+- **Assigned To:** Architect
+- **Started At:** 2025-02-26 21:30:05
+- **Estimated Completion:** 2025-05-30
+- **Story Points:** 5
+
+## Task Metadata
+
 - **Task-ID:** TASK-UI-006
 - **Status:** TODO
 - **Priority:** Medium
@@ -11,14 +23,17 @@
 - **Story Points:** 5
 
 ## Description
+
 Implement a comprehensive user interface for displaying grading feedback to students. This interface will provide students with detailed insights into their performance, including scores, comments, rubric evaluations, and suggestions for improvement. The UI will support various feedback formats and visualization methods to enhance student understanding and learning outcomes.
 
 ## Business Context
+
 Effective feedback is a critical component of the learning process. It helps students understand their strengths and weaknesses, provides guidance for improvement, and reinforces learning objectives. A well-designed feedback interface can significantly enhance student engagement with assessment results, leading to better learning outcomes and academic performance. This feature directly supports the educational mission by closing the feedback loop between instructors and students.
 
 ## Technical Context
+
 - **System Architecture:** React frontend with TypeScript
-- **Related Components:** 
+- **Related Components:**
   - Grading system (from TASK-GRADING-001)
   - Task submission interface (from TASK-UI-004)
   - Notification system (from TASK-NOTIFICATION-001)
@@ -32,6 +47,7 @@ Effective feedback is a critical component of the learning process. It helps stu
 ## Requirements
 
 ### Inputs
+
 - Grading data (scores, comments, rubric evaluations)
 - Submission data and history
 - Instructor feedback (text, annotations, media)
@@ -39,6 +55,7 @@ Effective feedback is a critical component of the learning process. It helps stu
 - Course learning objectives
 
 ### Outputs
+
 - Visual representation of grades and feedback
 - Interactive feedback elements
 - Comparative performance metrics
@@ -46,6 +63,7 @@ Effective feedback is a critical component of the learning process. It helps stu
 - Learning resource recommendations
 
 ### Functional Requirements
+
 1. Feedback Overview
    - Overall score and grade visualization
    - Summary of strengths and areas for improvement
@@ -75,6 +93,7 @@ Effective feedback is a critical component of the learning process. It helps stu
    - Next steps recommendations
 
 ### Technical Requirements
+
 - Implement responsive React components using TypeScript
 - Create reusable feedback visualization components
 - Support various feedback formats (text, annotations, media)
@@ -85,6 +104,7 @@ Effective feedback is a critical component of the learning process. It helps stu
 ## Implementation Details
 
 ### Required Libraries and Versions
+
 - React 18.0+
 - TypeScript 4.9+
 - React Router 6.8+
@@ -97,14 +117,15 @@ Effective feedback is a critical component of the learning process. It helps stu
 ### Code Examples
 
 #### Feedback Overview Component
+
 ```tsx
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import { 
-  Box, 
-  Paper, 
-  Typography, 
-  Divider, 
+import {
+  Box,
+  Paper,
+  Typography,
+  Divider,
   Chip,
   Grid,
   Card,
@@ -130,17 +151,17 @@ interface FeedbackOverviewProps {
   taskId: string;
 }
 
-const FeedbackOverview: React.FC<FeedbackOverviewProps> = ({ 
+const FeedbackOverview: React.FC<FeedbackOverviewProps> = ({
   submissionId,
   taskId
 }) => {
   const theme = useTheme();
   const [acknowledged, setAcknowledged] = useState<boolean>(false);
-  
+
   // Fetch feedback data
-  const { 
-    data: feedback, 
-    isLoading, 
+  const {
+    data: feedback,
+    isLoading,
     error,
     refetch
   } = useQuery<GradingFeedback>(
@@ -150,7 +171,7 @@ const FeedbackOverview: React.FC<FeedbackOverviewProps> = ({
       staleTime: 30 * 60 * 1000, // 30 minutes
     }
   );
-  
+
   // Handle feedback acknowledgment
   const handleAcknowledge = async () => {
     try {
@@ -161,17 +182,17 @@ const FeedbackOverview: React.FC<FeedbackOverviewProps> = ({
       console.error('Error acknowledging feedback:', error);
     }
   };
-  
+
   // Calculate grade color based on score
   const getGradeColor = (score: number, maxScore: number) => {
     const percentage = (score / maxScore) * 100;
-    
+
     if (percentage >= 90) return theme.palette.success.main;
     if (percentage >= 70) return theme.palette.primary.main;
     if (percentage >= 60) return theme.palette.warning.main;
     return theme.palette.error.main;
   };
-  
+
   if (isLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
@@ -179,7 +200,7 @@ const FeedbackOverview: React.FC<FeedbackOverviewProps> = ({
       </Box>
     );
   }
-  
+
   if (error) {
     return (
       <Alert severity="error">
@@ -187,7 +208,7 @@ const FeedbackOverview: React.FC<FeedbackOverviewProps> = ({
       </Alert>
     );
   }
-  
+
   if (!feedback) {
     return (
       <Alert severity="info">
@@ -195,7 +216,7 @@ const FeedbackOverview: React.FC<FeedbackOverviewProps> = ({
       </Alert>
     );
   }
-  
+
   return (
     <Box sx={{ maxWidth: 1200, mx: 'auto', p: 2 }}>
       {/* Feedback header */}
@@ -212,17 +233,17 @@ const FeedbackOverview: React.FC<FeedbackOverviewProps> = ({
               Graded: {format(new Date(feedback.gradedDate), 'MMMM d, yyyy h:mm a')}
             </Typography>
           </Box>
-          
-          <Box sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
+
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             bgcolor: 'background.paper',
             p: 2,
             borderRadius: 2,
             boxShadow: 1
           }}>
-            <Typography variant="h3" sx={{ 
+            <Typography variant="h3" sx={{
               color: getGradeColor(feedback.score, feedback.maxScore),
               fontWeight: 'bold'
             }}>
@@ -238,16 +259,16 @@ const FeedbackOverview: React.FC<FeedbackOverviewProps> = ({
             )}
           </Box>
         </Box>
-        
+
         {/* Status chips */}
         <Box sx={{ mt: 2, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-          <Chip 
-            label={feedback.isLate ? 'Late Submission' : 'On Time'} 
+          <Chip
+            label={feedback.isLate ? 'Late Submission' : 'On Time'}
             color={feedback.isLate ? 'warning' : 'success'}
             size="small"
           />
           {feedback.attemptsUsed && feedback.maxAttempts && (
-            <Chip 
+            <Chip
               label={`Attempt ${feedback.attemptsUsed} of ${feedback.maxAttempts}`}
               color="primary"
               size="small"
@@ -255,29 +276,29 @@ const FeedbackOverview: React.FC<FeedbackOverviewProps> = ({
             />
           )}
           {feedback.acknowledged ? (
-            <Chip 
-              label="Acknowledged" 
+            <Chip
+              label="Acknowledged"
               color="success"
               size="small"
               variant="outlined"
             />
           ) : (
-            <Chip 
-              label="New Feedback" 
+            <Chip
+              label="New Feedback"
               color="info"
               size="small"
             />
           )}
         </Box>
       </Paper>
-      
+
       {/* Overall feedback summary */}
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h5" gutterBottom>
           Overall Feedback
         </Typography>
         <Divider sx={{ mb: 2 }} />
-        
+
         {feedback.overallFeedback ? (
           <Typography variant="body1">
             {feedback.overallFeedback}
@@ -287,7 +308,7 @@ const FeedbackOverview: React.FC<FeedbackOverviewProps> = ({
             No overall feedback provided.
           </Typography>
         )}
-        
+
         {/* Strengths and areas for improvement */}
         {(feedback.strengths?.length > 0 || feedback.areasForImprovement?.length > 0) && (
           <Grid container spacing={3} sx={{ mt: 2 }}>
@@ -309,7 +330,7 @@ const FeedbackOverview: React.FC<FeedbackOverviewProps> = ({
                 </Card>
               </Grid>
             )}
-            
+
             {feedback.areasForImprovement && feedback.areasForImprovement.length > 0 && (
               <Grid item xs={12} md={6}>
                 <Card variant="outlined">
@@ -331,7 +352,7 @@ const FeedbackOverview: React.FC<FeedbackOverviewProps> = ({
           </Grid>
         )}
       </Paper>
-      
+
       {/* Rubric feedback */}
       {feedback.rubricFeedback && feedback.rubricFeedback.length > 0 && (
         <Paper sx={{ p: 3, mb: 3 }}>
@@ -339,30 +360,30 @@ const FeedbackOverview: React.FC<FeedbackOverviewProps> = ({
             Rubric Evaluation
           </Typography>
           <Divider sx={{ mb: 2 }} />
-          
+
           <RubricFeedback rubricItems={feedback.rubricFeedback} />
         </Paper>
       )}
-      
+
       {/* Type-specific feedback */}
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h5" gutterBottom>
           Detailed Feedback
         </Typography>
         <Divider sx={{ mb: 2 }} />
-        
+
         {feedback.taskType === 'text_submission' && feedback.textFeedback && (
           <TextFeedback feedback={feedback.textFeedback} />
         )}
-        
+
         {feedback.taskType === 'file_upload' && feedback.fileFeedback && (
           <FileFeedback feedback={feedback.fileFeedback} />
         )}
-        
+
         {feedback.taskType === 'multiple_choice_quiz' && feedback.quizFeedback && (
           <QuizFeedback feedback={feedback.quizFeedback} />
         )}
-        
+
         {/* Audio/video feedback */}
         {feedback.mediaFeedback && feedback.mediaFeedback.length > 0 && (
           <Box sx={{ mt: 3 }}>
@@ -373,7 +394,7 @@ const FeedbackOverview: React.FC<FeedbackOverviewProps> = ({
           </Box>
         )}
       </Paper>
-      
+
       {/* Learning resources */}
       {feedback.resourceRecommendations && feedback.resourceRecommendations.length > 0 && (
         <Paper sx={{ p: 3, mb: 3 }}>
@@ -381,34 +402,34 @@ const FeedbackOverview: React.FC<FeedbackOverviewProps> = ({
             Recommended Resources
           </Typography>
           <Divider sx={{ mb: 2 }} />
-          
+
           <ResourceRecommendations resources={feedback.resourceRecommendations} />
         </Paper>
       )}
-      
+
       {/* Feedback timeline */}
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h5" gutterBottom>
           Submission Timeline
         </Typography>
         <Divider sx={{ mb: 2 }} />
-        
+
         <FeedbackTimeline events={feedback.timelineEvents} />
       </Paper>
-      
+
       {/* Acknowledgment and actions */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
-        <Button 
-          variant="outlined" 
+        <Button
+          variant="outlined"
           color="primary"
           onClick={() => window.history.back()}
         >
           Back to Task
         </Button>
-        
+
         {!feedback.acknowledged && !acknowledged && (
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             color="primary"
             onClick={handleAcknowledge}
           >
@@ -424,14 +445,15 @@ export default FeedbackOverview;
 ```
 
 #### Rubric Feedback Component
+
 ```tsx
 import React, { useState } from 'react';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
   TableRow,
   Paper,
   Typography,
@@ -455,7 +477,7 @@ const RubricFeedback: React.FC<RubricFeedbackProps> = ({ rubricItems }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
-  
+
   // Toggle expanded state for a rubric item
   const toggleExpanded = (itemId: string) => {
     setExpandedItems(prev => ({
@@ -463,32 +485,32 @@ const RubricFeedback: React.FC<RubricFeedbackProps> = ({ rubricItems }) => {
       [itemId]: !prev[itemId]
     }));
   };
-  
+
   // Calculate color based on score percentage
   const getScoreColor = (score: number, maxScore: number) => {
     const percentage = (score / maxScore) * 100;
-    
+
     if (percentage >= 90) return theme.palette.success.main;
     if (percentage >= 70) return theme.palette.primary.main;
     if (percentage >= 60) return theme.palette.warning.main;
     return theme.palette.error.main;
   };
-  
+
   // Mobile view for rubric
   if (isMobile) {
     return (
       <Box>
         {rubricItems.map((item) => (
-          <Paper 
-            key={item.id} 
-            elevation={0} 
-            variant="outlined" 
+          <Paper
+            key={item.id}
+            elevation={0}
+            variant="outlined"
             sx={{ mb: 2, overflow: 'hidden' }}
           >
-            <Box 
-              sx={{ 
-                p: 2, 
-                display: 'flex', 
+            <Box
+              sx={{
+                p: 2,
+                display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 cursor: 'pointer'
@@ -500,7 +522,7 @@ const RubricFeedback: React.FC<RubricFeedbackProps> = ({ rubricItems }) => {
                   {item.criterion}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Score: <span style={{ 
+                  Score: <span style={{
                     color: getScoreColor(item.score, item.maxScore),
                     fontWeight: 'bold'
                   }}>
@@ -508,12 +530,12 @@ const RubricFeedback: React.FC<RubricFeedbackProps> = ({ rubricItems }) => {
                   </span>
                 </Typography>
               </Box>
-              
+
               <IconButton size="small">
                 {expandedItems[item.id] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </IconButton>
             </Box>
-            
+
             <Collapse in={expandedItems[item.id]}>
               <Box sx={{ p: 2, pt: 0, bgcolor: 'action.hover' }}>
                 {item.description && (
@@ -526,7 +548,7 @@ const RubricFeedback: React.FC<RubricFeedbackProps> = ({ rubricItems }) => {
                     </Typography>
                   </Box>
                 )}
-                
+
                 {item.feedback && (
                   <Box>
                     <Typography variant="body2" color="text.secondary">
@@ -544,7 +566,7 @@ const RubricFeedback: React.FC<RubricFeedbackProps> = ({ rubricItems }) => {
       </Box>
     );
   }
-  
+
   // Desktop view for rubric
   return (
     <TableContainer component={Paper} variant="outlined">
@@ -571,9 +593,9 @@ const RubricFeedback: React.FC<RubricFeedbackProps> = ({ rubricItems }) => {
                 </Typography>
               </TableCell>
               <TableCell align="center">
-                <Typography 
-                  variant="body1" 
-                  sx={{ 
+                <Typography
+                  variant="body1"
+                  sx={{
                     fontWeight: 'bold',
                     color: getScoreColor(item.score, item.maxScore)
                   }}
@@ -600,6 +622,7 @@ export default RubricFeedback;
 ## Edge Cases and Challenges
 
 ### Edge Cases
+
 1. **No Feedback Provided**: Handle cases where instructor provides score but no detailed feedback
 2. **Partial Rubric Completion**: Display rubric items that have been evaluated while indicating those that haven't
 3. **Multiple Feedback Versions**: Support viewing history of feedback if instructor updates it
@@ -607,6 +630,7 @@ export default RubricFeedback;
 5. **Large Annotation Sets**: Efficiently display and navigate numerous annotations on submissions
 
 ### Challenges
+
 1. **Feedback Clarity**: Ensuring feedback is presented in a clear, actionable manner
 2. **Mobile Responsiveness**: Adapting complex feedback visualizations for small screens
 3. **Accessibility of Feedback**: Making all feedback formats accessible to all users
@@ -614,6 +638,7 @@ export default RubricFeedback;
 5. **Offline Access**: Providing access to feedback when offline
 
 ## Performance Considerations
+
 - Implement lazy loading for media feedback
 - Optimize PDF rendering for annotated documents
 - Use pagination for large feedback sets
@@ -621,6 +646,7 @@ export default RubricFeedback;
 - Consider caching strategies for frequently accessed feedback
 
 ## Security Considerations
+
 - Implement proper authentication and authorization checks
 - Ensure students can only view their own feedback
 - Secure media feedback storage and delivery
@@ -628,6 +654,7 @@ export default RubricFeedback;
 - Log access to feedback data
 
 ## Testing Requirements
+
 - Unit tests for feedback rendering components
 - Integration tests for feedback loading and display
 - Accessibility testing for all feedback formats
@@ -636,6 +663,7 @@ export default RubricFeedback;
 - Media playback testing across devices
 
 ## Validation Criteria
+
 - [x] Feedback is displayed clearly and comprehensively
 - [x] All feedback formats (text, rubric, annotations, media) are supported
 - [x] Interface is responsive and works on mobile devices
@@ -643,6 +671,7 @@ export default RubricFeedback;
 - [x] Performance is optimized for various feedback types
 
 ## Acceptance Criteria
+
 1. Students can view overall grades and summary feedback
 2. Students can access detailed rubric-based evaluations
 3. Students can view annotations and comments on their submissions
@@ -652,17 +681,20 @@ export default RubricFeedback;
 7. All feedback is accessible on mobile devices
 
 ## Learning Resources
+
 - [Accessible Feedback Design](https://www.w3.org/WAI/tutorials/forms/notifications/)
 - [React PDF Rendering](https://react-pdf.org/)
 - [Media Playback in React](https://cookpete.github.io/react-player/)
 - [Educational Feedback Best Practices](https://www.facultyfocus.com/articles/educational-assessment/feedback-that-fosters-growth/)
 
 ## Expert Contacts
-- **Educational Feedback**: Dr. Sarah Johnson (sarah.johnson@example.com)
-- **Accessibility**: Miguel Rodriguez (miguel.rodriguez@example.com)
-- **Media Integration**: Priya Patel (priya.patel@example.com)
+
+- **Educational Feedback**: Dr. Sarah Johnson (<sarah.johnson@example.com>)
+- **Accessibility**: Miguel Rodriguez (<miguel.rodriguez@example.com>)
+- **Media Integration**: Priya Patel (<priya.patel@example.com>)
 
 ## Related Design Patterns
+
 - **Strategy Pattern**: For handling different feedback types
 - **Decorator Pattern**: For adding features to base feedback components
 - **Composite Pattern**: For organizing hierarchical feedback structures
@@ -671,6 +703,7 @@ export default RubricFeedback;
 ## Sample Data Structures
 
 ### Feedback Data Interface
+
 ```typescript
 interface GradingFeedback {
   id: string;
@@ -784,6 +817,7 @@ interface TimelineEvent {
 ```
 
 ## Estimated Effort
+
 - Feedback Overview Implementation: 2 story points
 - Rubric Feedback Component: 1 story point
 - Type-specific Feedback Components: 1 story point
@@ -791,6 +825,7 @@ interface TimelineEvent {
 - Total: 5 story points
 
 ## Potential Risks
+
 - Complexity of handling various feedback formats
 - Performance issues with rich media feedback
 - Accessibility challenges with complex visualizations

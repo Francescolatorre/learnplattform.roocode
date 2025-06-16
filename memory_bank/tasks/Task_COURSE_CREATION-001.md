@@ -1,5 +1,15 @@
 # TASK-CREATION-001: Course Creation Feature
 
+## Task Metadata
+
+- **Task-ID:** TASK-CREATION-001
+- **Status:** IN_PROGRESS
+- **Owner:** Code Team
+- **Created:** 2025-02-27 08:55:45
+- **Updated:** 2025-06-13 08:17:00
+- **Priority:** High
+- **Effort:** 5 story points
+
 ## Status
 
 - **Status**: IN_PROGRESS

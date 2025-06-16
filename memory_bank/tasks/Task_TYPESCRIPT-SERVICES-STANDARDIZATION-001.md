@@ -1,6 +1,13 @@
-# Task: TypeScript Services Standardization
+# TASK-TYPESCRIPT-SERVICES-STANDARDIZATION-001: TypeScript Services Standardization
 
-## Status: TODO
+## Task Metadata
+
+- **Task-ID:** TASK-TYPESCRIPT-SERVICES-STANDARDIZATION-001
+- **Status:** IN_PROGRESS
+- **Priority:** High
+- **Effort:** 13 story points
+
+## Status: IN_PROGRESS
 
 ## Description
 
