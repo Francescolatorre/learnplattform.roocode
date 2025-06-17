@@ -18,7 +18,7 @@ import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import React, {useMemo, useState} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 
-import {useNotification} from '@/components/ErrorNotifier/useErrorNotifier';
+import {useNotification} from '@/components/Notifications/useNotification';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import {ICourse} from '@/types/course';
 import {ILearningTask} from '@/types/task';

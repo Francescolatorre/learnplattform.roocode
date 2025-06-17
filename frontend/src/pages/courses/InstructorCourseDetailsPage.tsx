@@ -28,7 +28,7 @@ import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import InfoCard from '@/components/shared/InfoCard';
 import TaskCreation from '@/components/taskCreation/TaskCreation';
 import CourseCreation from '@/components/courses/CourseCreation';
-import {useNotification} from '@components/ErrorNotifier/useErrorNotifier';
+import {useNotification} from '@/components/Notifications/useNotification';
 import {useQueryClient} from '@tanstack/react-query';
 
 // Hauptkomponente

@@ -16,7 +16,7 @@ import {useMutation, useQueryClient, useQuery} from '@tanstack/react-query';
 
 import {useAuth} from '@context/auth/AuthContext';
 import {courseService} from '@services/resources/courseService';
-import {useNotification} from '@components/ErrorNotifier/useErrorNotifier';
+import {useNotification} from '@/components/Notifications/useNotification';
 import {ICourse} from '@/types/course';
 import MarkdownEditor from '@/components/shared/MarkdownEditor';
 

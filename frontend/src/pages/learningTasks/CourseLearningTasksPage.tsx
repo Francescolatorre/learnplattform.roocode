@@ -28,7 +28,7 @@ import React, {useEffect, useState} from 'react';
 import {Navigate} from 'react-router-dom';
 import {useNavigate, useParams} from 'react-router-dom';
 
-import {useNotification} from '@/components/ErrorNotifier/useErrorNotifier';
+import {useNotification} from '@/components/Notifications/useNotification';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import {ILearningTask} from '@/types/task';
 import {useAuth} from '@context/auth/AuthContext';

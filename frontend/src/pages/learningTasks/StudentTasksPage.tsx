@@ -4,7 +4,7 @@ import {useEffect} from 'react';
 
 import {ILearningTask} from '@/types/task';
 import learningTaskService from '@services/resources/learningTaskService';
-import {useNotification} from 'src/components/ErrorNotifier/useErrorNotifier';
+import {useNotification} from '@/components/Notifications/useNotification';
 import {useAuth} from 'src/context/auth'; // Annahme: Auth-Kontext für Benutzer-ID
 import LearningTaskCard from 'src/pages/learningTasks/LearningTaskCard';
 

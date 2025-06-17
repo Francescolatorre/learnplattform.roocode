@@ -3,7 +3,7 @@ import {Navigate, useLocation} from 'react-router-dom';
 
 import {useAuth} from '@/context/auth/AuthContext';
 import {TUserRole} from '@/types';
-import {useNotification} from '@/components/ErrorNotifier/useErrorNotifier';
+import {useNotification} from '@/components/Notifications/useNotification';
 
 interface IProtectedRouteProps {
   children: React.ReactNode;
