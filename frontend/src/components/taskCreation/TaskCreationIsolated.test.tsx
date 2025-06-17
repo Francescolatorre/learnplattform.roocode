@@ -16,8 +16,7 @@ function MockTaskCreation({open, onClose}) {
 // Mock the ErrorNotifier hooks
 vi.mock('@components/ErrorNotifier/useErrorNotifier', () => {
     return {
-        useNotification: () => jest.fn(),
-        useErrorNotifier: () => jest.fn()
+        useNotification: () => jest.fn()
     };
 });
 

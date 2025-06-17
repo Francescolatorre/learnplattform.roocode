@@ -98,6 +98,12 @@ const InstructorCourseDetailPage: React.FC = () => {
       // Update the tasks list with the saved task
       setTasks(tasks.map(task => task.id === savedTask.id ? savedTask : task));
 
+      // Invalidate related queries so other views stay in sync
+      if (courseId) {
+        queryClient.invalidateQueries({queryKey: ['courseTasks', courseId]});
+        queryClient.invalidateQueries({queryKey: ['learningTasks', courseId]});
+      }
+
       notify('Task updated successfully', 'success');
       handleCloseEditModal();
     } catch (err) {

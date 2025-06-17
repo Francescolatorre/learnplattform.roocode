@@ -28,9 +28,6 @@
 - TASK-CREATION-001: Course Creation Feature
   - **Dependencies**: None
   - **Progress**: Development of course creation feature is in progress.
-- TASK-TEST-006: Fix TaskCreation Component Tests
-  - **Dependencies**: None
-  - **Progress**: Temporary workaround implemented with skipped tests. Need to resolve ErrorNotifier context issues.
 
 ## IN_PROGRESS
 
@@ -118,6 +115,9 @@
 - TASK-MODEL-CONSOLIDATION-002: Model Consolidation Task
   - **Completion Date**: 2025-04-20
   - **Summary**: Consolidated and standardized data models across the platform. Task file archived.
+- TASK-TEST-006: Fix TaskCreation Component Tests
+  - **Completion Date**: 2025-06-17
+  - **Summary**: Resolved ErrorNotifier context issues and updated TaskCreation tests to use the real provider.
 
 ## Comprehensive Task List
 

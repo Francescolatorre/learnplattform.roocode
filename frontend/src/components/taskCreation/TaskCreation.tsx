@@ -4,6 +4,7 @@ import MarkdownEditor from '../shared/MarkdownEditor';
 import {createTask, updateTask} from '@/services/resources/learningTaskService';
 import {ILearningTask} from '@/types/task';
 import {useNotification} from '@components/ErrorNotifier/useErrorNotifier';
+import {useQueryClient} from '@tanstack/react-query';
 
 interface TaskCreationProps {
     open: boolean;
@@ -39,6 +40,7 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
     // Use injected notification service or the hook
     const defaultNotify = useNotification();
     const notify = notificationService || defaultNotify;
+    const queryClient = useQueryClient();
 
     // Update form data when the dialog opens or task changes while dialog is open
     useEffect(() => {
@@ -100,6 +102,10 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
             // If onSave is provided, use it (this handles both create and update)
             if (onSave) {
                 await onSave(formData);
+                if (courseId) {
+                    queryClient.invalidateQueries({queryKey: ['courseTasks', courseId]});
+                    queryClient.invalidateQueries({queryKey: ['learningTasks', courseId]});
+                }
                 resetForm();
             } else {
                 // Otherwise use the direct API approach
@@ -120,6 +126,12 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
                 } else {
                     await createTask(taskData);
                     notify('Task created successfully', 'success');
+                }
+
+                // Ensure other components get fresh data
+                if (courseId) {
+                    queryClient.invalidateQueries({queryKey: ['courseTasks', courseId]});
+                    queryClient.invalidateQueries({queryKey: ['learningTasks', courseId]});
                 }
 
                 // Reset form and close dialog
