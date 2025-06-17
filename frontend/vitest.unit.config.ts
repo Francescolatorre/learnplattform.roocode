@@ -10,5 +10,7 @@ export default defineConfig({
         setupFiles: './src/test-utils/setupTests.ts',
         include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
         exclude: ['src/**/*.int.test.ts'],
+        reporters: ['default', 'vitest-html-reporter'],
+        outputFile: 'vitest-unit-report.html',
     },
 });

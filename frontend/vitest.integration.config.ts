@@ -9,5 +9,7 @@ export default defineConfig({
         environment: 'jsdom', // Changed from 'node' to 'jsdom' to provide browser APIs
         setupFiles: './src/test-utils/setupIntegrationTests.ts',
         include: ['src/**/*.int.test.ts'],
+        reporters: ['default', 'vitest-html-reporter'],
+        outputFile: 'vitest-integration-report.html',
     },
 });

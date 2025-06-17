@@ -17,11 +17,11 @@ import TaskCreation from './TaskCreation';
 
 describe('TaskCreation Component', () => {
     const mockOnClose = vi.fn();
-    const mockOnSave = vi.fn();
+    let mockOnSave: any;
 
     beforeEach(() => {
         mockOnClose.mockClear();
-        mockOnSave.mockClear();
+        mockOnSave = vi.fn(async () => { }); // Default to async resolved
     });
 
     test('renders TaskCreation dialog and title', () => {
@@ -82,9 +82,7 @@ describe('TaskCreation Component', () => {
     });
 
     test('shows error notification when onSave throws', async () => {
-        mockOnSave.mockImplementation(() => {
-            throw new Error('Save failed');
-        });
+        mockOnSave = vi.fn(async () => {throw new Error('Save failed');});
         renderWithProviders(
             <TaskCreation open={true} onClose={mockOnClose} onSave={mockOnSave} />
         );

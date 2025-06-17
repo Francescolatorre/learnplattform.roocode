@@ -1,6 +1,7 @@
 import React from 'react';
 import {render, RenderOptions} from '@testing-library/react';
 import {ErrorProvider} from '../components/ErrorNotifier/ErrorProvider';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
 interface ProvidersProps {
     children: React.ReactNode;
@@ -10,11 +11,16 @@ interface ProvidersProps {
  * Wraps children in all required context providers for testing.
  * Extend this as more providers are needed.
  */
-const Providers: React.FC<ProvidersProps> = ({children}) => (
-    <ErrorProvider>
-        {children}
-    </ErrorProvider>
-);
+const Providers: React.FC<ProvidersProps> = ({children}) => {
+    const queryClient = new QueryClient();
+    return (
+        <QueryClientProvider client={queryClient}>
+            <ErrorProvider>
+                {children}
+            </ErrorProvider>
+        </QueryClientProvider>
+    );
+};
 
 /**
  * Custom render function that wraps UI in Providers.
