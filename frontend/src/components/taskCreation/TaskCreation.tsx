@@ -39,13 +39,7 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
     const defaultNotify = useNotification();
     console.log('TaskCreation: after useNotification');
     const notify = notificationService || defaultNotify;
-<<<<<<< HEAD
     const queryClient = useQueryClient();
-=======
-    console.log('TaskCreation: before useQueryClient');
-    const queryClient = useQueryClient();
-    console.log('TaskCreation: after useQueryClient');
->>>>>>> codex/schwächen-im-code-für-benachrichtigungen-finden
 
     // Update form data when the dialog opens or task changes while dialog is open
     useEffect(() => {
@@ -108,11 +102,8 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
             if (onSave) {
                 await onSave(formData);
                 if (courseId) {
-<<<<<<< HEAD
                     // Invalidate queries related to tasks for the course
                     queryClient.invalidateQueries({queryKey: ['tasks', courseId]});
-=======
->>>>>>> codex/schwächen-im-code-für-benachrichtigungen-finden
                     queryClient.invalidateQueries({queryKey: ['courseTasks', courseId]});
                     queryClient.invalidateQueries({queryKey: ['learningTasks', courseId]});
                 }
@@ -143,10 +134,6 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
                     queryClient.invalidateQueries({queryKey: ['courseTasks', courseId]});
                     queryClient.invalidateQueries({queryKey: ['learningTasks', courseId]});
                 }
-<<<<<<< HEAD
-=======
-
->>>>>>> codex/schwächen-im-code-für-benachrichtigungen-finden
                 // Reset form and close dialog
                 resetForm();
             }

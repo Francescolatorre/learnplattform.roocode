@@ -43,8 +43,9 @@ describe('CourseCard Component', () => {
   it('handles missing image by showing placeholder', () => {
     const courseWithoutImage = {...mockCourse, image_url: null};
     render(
-      <CourseCard course={courseWithoutImage} />
-      </BrowserRouter >
+      <BrowserRouter>
+        <CourseCard course={courseWithoutImage} />
+      </BrowserRouter>
     );
 
     expect(screen.getByText('No image available')).toBeInTheDocument();
