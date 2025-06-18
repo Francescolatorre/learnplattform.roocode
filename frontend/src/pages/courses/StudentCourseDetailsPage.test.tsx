@@ -9,6 +9,9 @@ import {courseService} from '@/services/resources/courseService';
 import {enrollmentService} from '@/services/resources/enrollmentService';
 import {AuthContext} from '@/context/auth/AuthContext';
 
+// Use the real AuthContext implementation instead of the mock from setupTests
+vi.unmock('@/context/auth/AuthContext');
+
 // Mock the services
 vi.mock('@/services/resources/courseService');
 vi.mock('@/services/resources/enrollmentService');

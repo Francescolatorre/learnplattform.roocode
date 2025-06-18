@@ -1,10 +1,12 @@
 import React from 'react';
-import {render, screen} from '@testing-library/react';
+import {screen} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {vi} from 'vitest';
 import Dashboard from './DashboardPage';
 import {fetchDashboardData} from '@services/resources/dashboardService';
+import {BrowserRouter} from 'react-router-dom';
+import {renderWithProviders} from '@/test-utils/renderWithProviders';
 
 vi.mock('@services/resources/dashboardService', () => ({
     fetchDashboardData: vi.fn(),
@@ -30,9 +32,11 @@ const queryClient = new QueryClient();
 
 describe('DashboardPage', () => {
     test('renders the dashboard title', () => {
-        render(
+        renderWithProviders(
             <QueryClientProvider client={queryClient}>
-                <Dashboard />
+                <BrowserRouter>
+                    <Dashboard />
+                </BrowserRouter>
             </QueryClientProvider>
         );
         const titleElement = screen.getByTestId('dashboard-title');
@@ -41,9 +45,11 @@ describe('DashboardPage', () => {
     });
 
     test('displays loading spinner when data is loading', () => {
-        render(
+        renderWithProviders(
             <QueryClientProvider client={queryClient}>
-                <Dashboard />
+                <BrowserRouter>
+                    <Dashboard />
+                </BrowserRouter>
             </QueryClientProvider>
         );
         const loadingElement = screen.getByRole('progressbar');
@@ -51,9 +57,11 @@ describe('DashboardPage', () => {
     });
 
     test('displays error message when there is an error', () => {
-        render(
+        renderWithProviders(
             <QueryClientProvider client={queryClient}>
-                <Dashboard />
+                <BrowserRouter>
+                    <Dashboard />
+                </BrowserRouter>
             </QueryClientProvider>
         );
         const errorElement = screen.getByText(/An error occurred while loading data/i);
@@ -61,9 +69,11 @@ describe('DashboardPage', () => {
     });
 
     test('renders enrolled courses statistics', () => {
-        render(
+        renderWithProviders(
             <QueryClientProvider client={queryClient}>
-                <Dashboard />
+                <BrowserRouter>
+                    <Dashboard />
+                </BrowserRouter>
             </QueryClientProvider>
         );
         const enrolledCoursesElement = screen.getByTestId('enrolled-courses');

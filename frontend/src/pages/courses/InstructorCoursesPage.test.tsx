@@ -1,12 +1,15 @@
 import {render, screen, act, waitFor} from '@testing-library/react';
 import {BrowserRouter as Router} from 'react-router-dom';
 import InstructorCoursesPage from './InstructorCoursesPage';
-import {ErrorProvider} from '@/components/Notifications/ErrorProvider';
+import {NotificationProvider} from '@/components/Notifications/NotificationProvider';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {useAuth} from '@/context/auth/AuthContext';
+import {vi} from 'vitest';
 import {courseService} from '@/services/resources/courseService';
 import {fireEvent} from '@testing-library/react';
-import {vi} from 'vitest';
+
+// Provide a controllable mock for useAuth
+vi.mock('@/context/auth/AuthContext', () => ({useAuth: vi.fn()}));
+import {useAuth} from '@/context/auth/AuthContext';
 
 describe('InstructorCoursesPage', () => {
     const mockUser = {id: '1', role: 'instructor'};
@@ -18,7 +21,7 @@ describe('InstructorCoursesPage', () => {
     };
 
     beforeEach(() => {
-        (useAuth as vi.Mock).mockReturnValue({user: mockUser}); // Mock user only
+        (useAuth as vi.Mock).mockReturnValue({user: mockUser});
         (courseService.fetchInstructorCourses as jest.Mock).mockResolvedValue(mockCoursesData);
     });
 
@@ -26,9 +29,9 @@ describe('InstructorCoursesPage', () => {
         const queryClient = new QueryClient();
         render(
             <QueryClientProvider client={queryClient}>
-                <ErrorProvider>
+                <NotificationProvider>
                     <InstructorCoursesPage />
-                </ErrorProvider>
+                </NotificationProvider>
             </QueryClientProvider>
         );
     };
