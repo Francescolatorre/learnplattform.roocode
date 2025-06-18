@@ -9,25 +9,60 @@ const NotificationContext = createContext<NotificationContextType | undefined>(u
  * Provider for the notification system. Maintains a list of notifications
  * and exposes methods for adding and dismissing them.
  */
-export const NotificationProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
+export interface NotificationProviderProps {
+    children: React.ReactNode;
+    /** Maximum number of visible notifications. Defaults to 3. */
+    maxVisible?: number;
+    /** Snackbar position. Defaults to bottom-right. */
+    position?: {vertical: 'top' | 'bottom'; horizontal: 'left' | 'right'};
+    /** Default duration if not specified on notification. */
+    defaultDuration?: number;
+}
+
+export const NotificationProvider: React.FC<NotificationProviderProps> = ({
+    children,
+    maxVisible = 3,
+    position = {vertical: 'bottom', horizontal: 'right'},
+    defaultDuration = 6000,
+}) => {
     const [notifications, setNotifications] = useState<INotification[]>([]);
     const idCounter = useRef(0);
 
-    const addNotification = useCallback((notification: Omit<INotification, 'id'>) => {
-        setNotifications((prev) => [
-            ...prev,
-            {...notification, id: idCounter.current++}
-        ]);
-    }, []);
+    const addNotification = useCallback(
+        (notification: Omit<INotification, 'id'>) => {
+            setNotifications((prev) => {
+                const newNotif: INotification = {
+                    ...notification,
+                    id: idCounter.current++,
+                    duration:
+                        notification.duration === undefined
+                            ? defaultDuration
+                            : notification.duration,
+                };
+                return [...prev, newNotif].sort(
+                    (a, b) => (b.priority ?? 0) - (a.priority ?? 0)
+                );
+            });
+        },
+        [defaultDuration]
+    );
 
     const dismissNotification = useCallback((id: number) => {
-        setNotifications((prev) => prev.filter((err) => err.id !== id));
+        setNotifications((prev) => {
+            const notif = prev.find((n) => n.id === id);
+            if (notif?.onClose) notif.onClose();
+            return prev.filter((err) => err.id !== id);
+        });
     }, []);
 
     return (
         <NotificationContext.Provider value={{addNotification, dismissNotification}}>
             {children}
-            <NotificationToast notifications={notifications} onDismiss={dismissNotification} />
+            <NotificationToast
+                notifications={notifications.slice(0, maxVisible)}
+                onDismiss={dismissNotification}
+                position={position}
+            />
         </NotificationContext.Provider>
     );
 };

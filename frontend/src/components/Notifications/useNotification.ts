@@ -18,13 +18,24 @@ function useNotification() {
             if (typeof notification === 'string') {
                 addNotification({message: notification, severity});
             } else {
-                addNotification({...notification, severity: notification.severity ?? severity});
+                addNotification({
+                    ...notification,
+                    severity: notification.severity ?? severity,
+                });
             }
         },
         [addNotification]
     );
 
-    return notify;
+    const makeSeverityFn = (sev: 'error' | 'success' | 'info' | 'warning') =>
+        (msg: Omit<INotification, 'id'> | string) => notify(msg, sev);
+
+    return Object.assign(notify, {
+        success: makeSeverityFn('success'),
+        error: makeSeverityFn('error'),
+        info: makeSeverityFn('info'),
+        warning: makeSeverityFn('warning'),
+    });
 }
 
 export {useNotification};

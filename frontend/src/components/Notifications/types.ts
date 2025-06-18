@@ -15,6 +15,10 @@ export interface INotification {
     severity?: NotificationSeverity;
     /** Optional duration for auto dismiss in milliseconds. */
     duration?: number;
+    /** Optional priority to control display order. Higher appears first. */
+    priority?: number;
+    /** Callback when the notification is dismissed. */
+    onClose?: () => void;
     // Additional fields can be added for actions, debugging, etc.
 }
 
