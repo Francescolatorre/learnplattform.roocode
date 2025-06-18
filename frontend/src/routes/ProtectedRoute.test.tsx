@@ -8,7 +8,7 @@ vi.mock("@context/auth/AuthContext", () => ({
 import {describe, it, expect} from 'vitest';
 
 import {useAuth} from "@context/auth/AuthContext";
-import {ErrorProvider} from "@/components/Notifications/ErrorProvider";
+import {NotificationProvider} from "@/components/Notifications/NotificationProvider";
 
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -19,7 +19,7 @@ describe("ProtectedRoute with isRestoring logic", () => {
 
     const renderWithAuthContext = (initialRoute = "/dashboard") => {
         return render(
-            <ErrorProvider>
+            <NotificationProvider>
                 <MemoryRouter initialEntries={[initialRoute]}>
                     <Routes>
                         <Route
@@ -33,7 +33,7 @@ describe("ProtectedRoute with isRestoring logic", () => {
                         <Route path="/login" element={<div>Login Page</div>} />
                     </Routes>
                 </MemoryRouter>
-            </ErrorProvider>
+            </NotificationProvider>
         );
     };
 
@@ -110,7 +110,7 @@ describe("ProtectedRoute with isRestoring logic", () => {
 
         // Rerender with the same component structure as before
         rerender(
-            <ErrorProvider>
+            <NotificationProvider>
                 <MemoryRouter initialEntries={["/dashboard"]}>
                     <Routes>
                         <Route
@@ -124,7 +124,7 @@ describe("ProtectedRoute with isRestoring logic", () => {
                         <Route path="/login" element={<div>Login Page</div>} />
                     </Routes>
                 </MemoryRouter>
-            </ErrorProvider>
+            </NotificationProvider>
         );
 
         await waitFor(() => expect(screen.getByTestId("dashboard-content")).toBeInTheDocument());
