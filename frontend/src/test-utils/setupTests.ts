@@ -23,12 +23,12 @@ vi.mock('../components/Notifications/useNotification', () => {
   };
 });
 
-vi.mock('../components/Notifications/ErrorProvider', () => {
+vi.mock('../components/Notifications/NotificationProvider', () => {
   return {
-    ErrorProvider: ({children}: {children: React.ReactNode}) => children,
-    useErrorNotifierContext: vi.fn().mockReturnValue({
-      addError: vi.fn(),
-      dismissError: vi.fn()
+    NotificationProvider: ({children}: {children: React.ReactNode}) => children,
+    useNotificationContext: vi.fn().mockReturnValue({
+      addNotification: vi.fn(),
+      dismissNotification: vi.fn()
     })
   };
 });

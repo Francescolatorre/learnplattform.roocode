@@ -1,10 +1,6 @@
 import React from 'react';
 import {render, RenderOptions} from '@testing-library/react';
-<<<<<<< HEAD
-import {ErrorProvider} from '../components/ErrorNotifier/ErrorProvider';
-=======
-import {ErrorProvider} from '../components/Notifications/ErrorProvider';
->>>>>>> codex/schwächen-im-code-für-benachrichtigungen-finden
+import {NotificationProvider} from '../components/Notifications/NotificationProvider';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
 interface ProvidersProps {
@@ -18,9 +14,9 @@ interface ProvidersProps {
 const queryClient = new QueryClient();
 const Providers: React.FC<ProvidersProps> = ({children}) => (
     <QueryClientProvider client={queryClient}>
-        <ErrorProvider>
+        <NotificationProvider>
             {children}
-        </ErrorProvider>
+        </NotificationProvider>
     </QueryClientProvider>
 );
 
