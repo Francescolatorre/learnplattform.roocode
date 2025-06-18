@@ -155,7 +155,7 @@ Parent Completion = (Completed Subtasks / Total Subtasks) * 100%
 
 ### Task Status Tracking Files
 
-As defined in [ADR-018](../../memory_bank/ADRs/ADR-018-Task-Status-Tracking-Files-Structure.md), the system uses two primary files for tracking task status:
+As defined in [ADR-018](memory_bank/ADRs/ADR-018-Task-Status-Tracking-Files-Structure.md), the system uses two primary files for tracking task status:
 
 #### activeContext.md
 
