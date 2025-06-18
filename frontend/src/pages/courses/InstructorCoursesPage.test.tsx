@@ -1,7 +1,7 @@
 import {render, screen, act, waitFor} from '@testing-library/react';
 import {BrowserRouter as Router} from 'react-router-dom';
 import InstructorCoursesPage from './InstructorCoursesPage';
-import {ErrorProvider} from '@/components/Notifications/ErrorProvider';
+import {NotificationProvider} from '@/components/Notifications/NotificationProvider';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {useAuth} from '@/context/auth/AuthContext';
 import {courseService} from '@/services/resources/courseService';
@@ -26,9 +26,9 @@ describe('InstructorCoursesPage', () => {
         const queryClient = new QueryClient();
         render(
             <QueryClientProvider client={queryClient}>
-                <ErrorProvider>
+                <NotificationProvider>
                     <InstructorCoursesPage />
-                </ErrorProvider>
+                </NotificationProvider>
             </QueryClientProvider>
         );
     };

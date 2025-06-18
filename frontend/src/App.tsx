@@ -4,7 +4,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import React from 'react';
 
 import {ErrorBoundary} from '@components/shared';
-import {ErrorProvider} from '@components/Notifications/ErrorProvider';
+import {NotificationProvider} from '@components/Notifications/NotificationProvider';
 import NavigationBar from '@components/navigation/NavigationBar.tsx';
 import AppRoutes from '@routes/AppRoutes.tsx';
 import {theme} from '@styles/theme.ts';
@@ -15,13 +15,13 @@ const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
-        <ErrorProvider>
+        <NotificationProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <NavigationBar />
             <AppRoutes />
           </ThemeProvider>
-        </ErrorProvider>
+        </NotificationProvider>
       </ErrorBoundary>
     </QueryClientProvider>
   );
