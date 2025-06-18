@@ -1,15 +1,34 @@
-export type ErrorSeverity = 'error' | 'warning' | 'info' | 'success';
+/** Severity levels for a notification. */
+export type NotificationSeverity = 'error' | 'warning' | 'info' | 'success';
 
-export interface IErrorNotification {
+/**
+ * Structure of a notification object.
+ */
+export interface INotification {
+    /** Unique identifier assigned internally. */
     id: number;
+    /** Message to display in the toast. */
     message: string;
+    /** Optional title used as alert heading. */
     title?: string;
-    severity?: ErrorSeverity;
-    duration?: number; // ms, optional, for auto-dismiss
-    // Add more fields as needed for extensibility (e.g., actions, debug info)
+    /** Optional severity for styling. Defaults to 'error'. */
+    severity?: NotificationSeverity;
+    /** Optional duration for auto dismiss in milliseconds. */
+    duration?: number;
+    // Additional fields can be added for actions, debugging, etc.
 }
 
-export interface ErrorNotifierContextType {
-    addError: (error: Omit<IErrorNotification, 'id'>) => void;
-    dismissError: (id: number) => void;
+/**
+ * Public API exposed by the notification context.
+ */
+export interface NotificationContextType {
+    /** Enqueue a notification to be displayed. */
+    addNotification: (error: Omit<INotification, 'id'>) => void;
+    /** Dismiss an existing notification by id. */
+    dismissNotification: (id: number) => void;
 }
+
+// ---- Backward compatibility aliases ----
+export type ErrorSeverity = NotificationSeverity;
+export interface IErrorNotification extends INotification {}
+export interface ErrorNotifierContextType extends NotificationContextType {}

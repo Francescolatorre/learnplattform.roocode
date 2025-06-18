@@ -3,12 +3,10 @@ import '@testing-library/jest-dom';
 import React from 'react';
 import {vi, describe, it, expect, beforeEach, afterEach} from 'vitest';
 
-// Use real implementations for notification context and hook
-vi.unmock('@/components/Notifications/ErrorProvider');
-vi.unmock('@/components/Notifications/useNotification');
+// Import actual components instead of mocking the entire implementation
+import {NotificationProvider} from './NotificationProvider';
+import {useNotification} from './useNotification';
 
-const {ErrorProvider: NotificationProvider} = await import('./ErrorProvider');
-const {useNotification} = await import('./useNotification');
 
 // Simple test component using the real notification hook
 const TestComponent = () => {
