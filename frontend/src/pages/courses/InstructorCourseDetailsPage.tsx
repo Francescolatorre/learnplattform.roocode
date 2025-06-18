@@ -28,7 +28,7 @@ import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import InfoCard from '@/components/shared/InfoCard';
 import TaskCreation from '@/components/taskCreation/TaskCreation';
 import CourseCreation from '@/components/courses/CourseCreation';
-import {useNotification} from '@components/ErrorNotifier/useErrorNotifier';
+import {useNotification} from '@/components/Notifications/useNotification';
 import {useQueryClient} from '@tanstack/react-query';
 
 // Hauptkomponente
@@ -97,6 +97,12 @@ const InstructorCourseDetailPage: React.FC = () => {
 
       // Update the tasks list with the saved task
       setTasks(tasks.map(task => task.id === savedTask.id ? savedTask : task));
+
+      // Invalidate related queries so other views stay in sync
+      if (courseId) {
+        queryClient.invalidateQueries({queryKey: ['courseTasks', courseId]});
+        queryClient.invalidateQueries({queryKey: ['learningTasks', courseId]});
+      }
 
       notify('Task updated successfully', 'success');
       handleCloseEditModal();

@@ -1,6 +1,10 @@
 import React from 'react';
 import {render, RenderOptions} from '@testing-library/react';
+<<<<<<< HEAD
 import {ErrorProvider} from '../components/ErrorNotifier/ErrorProvider';
+=======
+import {ErrorProvider} from '../components/Notifications/ErrorProvider';
+>>>>>>> codex/schwächen-im-code-für-benachrichtigungen-finden
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
 interface ProvidersProps {
@@ -11,16 +15,14 @@ interface ProvidersProps {
  * Wraps children in all required context providers for testing.
  * Extend this as more providers are needed.
  */
-const Providers: React.FC<ProvidersProps> = ({children}) => {
-    const queryClient = new QueryClient();
-    return (
-        <QueryClientProvider client={queryClient}>
-            <ErrorProvider>
-                {children}
-            </ErrorProvider>
-        </QueryClientProvider>
-    );
-};
+const queryClient = new QueryClient();
+const Providers: React.FC<ProvidersProps> = ({children}) => (
+    <QueryClientProvider client={queryClient}>
+        <ErrorProvider>
+            {children}
+        </ErrorProvider>
+    </QueryClientProvider>
+);
 
 /**
  * Custom render function that wraps UI in Providers.

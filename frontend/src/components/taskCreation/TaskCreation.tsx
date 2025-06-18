@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react';
+import {useNotification} from '@/components/Notifications/useNotification';
+import {useQueryClient} from '@tanstack/react-query';
 import {Box, Button, TextField, FormControlLabel, Switch, Dialog, DialogContent, DialogTitle, DialogActions} from '@mui/material';
 import MarkdownEditor from '../shared/MarkdownEditor';
 import {createTask, updateTask} from '@/services/resources/learningTaskService';
 import {ILearningTask} from '@/types/task';
-import {useNotification} from '@components/ErrorNotifier/useErrorNotifier';
-import {useQueryClient} from '@tanstack/react-query';
 
 interface TaskCreationProps {
     open: boolean;
@@ -25,6 +25,7 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
     onSave,
     notificationService
 }) => {
+    console.log('TaskCreation: render start');
     const [formData, setFormData] = useState<Partial<ILearningTask>>({
         title: '',
         description: '',
@@ -33,14 +34,18 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
     });
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-
-    // Keep track of the dialog open state to prevent unnecessary form resets
     const [previouslyOpen, setPreviouslyOpen] = useState(open);
-
-    // Use injected notification service or the hook
+    console.log('TaskCreation: before useNotification');
     const defaultNotify = useNotification();
+    console.log('TaskCreation: after useNotification');
     const notify = notificationService || defaultNotify;
+<<<<<<< HEAD
     const queryClient = useQueryClient();
+=======
+    console.log('TaskCreation: before useQueryClient');
+    const queryClient = useQueryClient();
+    console.log('TaskCreation: after useQueryClient');
+>>>>>>> codex/schwächen-im-code-für-benachrichtigungen-finden
 
     // Update form data when the dialog opens or task changes while dialog is open
     useEffect(() => {
@@ -103,8 +108,11 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
             if (onSave) {
                 await onSave(formData);
                 if (courseId) {
+<<<<<<< HEAD
                     // Invalidate queries related to tasks for the course
                     queryClient.invalidateQueries({queryKey: ['tasks', courseId]});
+=======
+>>>>>>> codex/schwächen-im-code-für-benachrichtigungen-finden
                     queryClient.invalidateQueries({queryKey: ['courseTasks', courseId]});
                     queryClient.invalidateQueries({queryKey: ['learningTasks', courseId]});
                 }
@@ -135,6 +143,10 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
                     queryClient.invalidateQueries({queryKey: ['courseTasks', courseId]});
                     queryClient.invalidateQueries({queryKey: ['learningTasks', courseId]});
                 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> codex/schwächen-im-code-für-benachrichtigungen-finden
                 // Reset form and close dialog
                 resetForm();
             }

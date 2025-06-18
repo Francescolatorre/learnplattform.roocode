@@ -32,12 +32,12 @@ A centralized error notification system was implemented using the React Context 
 - **ErrorToast:**
   A Material UI-based component responsible for rendering error messages as toasts/snackbars, ensuring accessibility and visual consistency.
 
-- **useErrorNotifier:**
+- **useNotification:**
   A custom React hook that allows any component to trigger error notifications via the ErrorProvider context.
 
 - **Integration Points:**
   - ErrorProvider wraps the application (typically at the root or layout level).
-  - Components use the useErrorNotifier hook to trigger errors.
+  - Components use the useNotification hook to trigger errors.
   - ErrorToast is rendered within the provider to display notifications.
 
 ## References to Implementation

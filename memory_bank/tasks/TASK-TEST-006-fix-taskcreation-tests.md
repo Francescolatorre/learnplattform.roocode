@@ -3,11 +3,11 @@
 ## Task Metadata
 
 - **Task-ID:** TASK-TEST-006
-- **Status:** DRAFT
+- **Status:** DONE
 - **Priority:** Medium
 - **Effort:** 5 story points
 
-## Status: DRAFT
+## Status: DONE
 
 ## Description
 

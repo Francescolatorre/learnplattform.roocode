@@ -1,23 +1,45 @@
+console.log('File loaded');
+import TaskCreation from './TaskCreation';
+import {renderWithProviders} from '../../test-utils/renderWithProviders';
+import {screen} from '@testing-library/react';
 /**
  * TaskCreation.test.tsx
  * Comprehensive test suite for TaskCreation component using real context providers.
  */
 import React from 'react';
-import {screen, fireEvent, waitFor} from '@testing-library/react';
+import {fireEvent, waitFor} from '@testing-library/react';
 import {describe, test, vi, beforeEach} from 'vitest';
-import {renderWithProviders} from '../../test-utils/renderWithProviders';
 
+// Mock Notification Hook
+vi.mock('@/components/Notifications/useNotification', () => ({
+    useNotification: vi.fn(),
+}));
+// Mock learning task service
+vi.mock('@/services/resources/learningTaskService', () => ({
+    createTask: vi.fn().mockResolvedValue({id: 1, title: 'Test Task'}),
+    updateTask: vi.fn().mockResolvedValue({id: 1, title: 'Updated Task'})
+}));
 // Mock MarkdownRenderer to avoid highlight.js/react-markdown issues in test env
 vi.mock('../shared/MarkdownRenderer', () => ({
     __esModule: true,
     default: ({content}: {content: string}) => <div data-testid="mock-markdown">{content}</div>
 }));
 
-import TaskCreation from './TaskCreation';
-
 describe('TaskCreation Component', () => {
-    const mockOnClose = vi.fn();
-    let mockOnSave: any;
+    console.log('Starting TaskCreation tests');
+    test.only('render TaskCreation with all providers and debug', () => {
+        console.log('Provider+Component test started');
+        const onClose = () => {console.log('onClose called');};
+        renderWithProviders(
+            <TaskCreation open={true} onClose={onClose} />
+        );
+        console.log('Rendered TaskCreation');
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+        console.log('Provider+Component test finished');
+    });
+
+    let mockOnClose = vi.fn();
+    let mockOnSave: (task: Partial<ILearningTask>) => Promise<void>;
 
     beforeEach(() => {
         mockOnClose.mockClear();
@@ -25,13 +47,17 @@ describe('TaskCreation Component', () => {
     });
 
     test('renders TaskCreation dialog and title', () => {
+        console.log('Test started');
         renderWithProviders(
             <TaskCreation open={true} onClose={mockOnClose} />
         );
+        console.log('Rendered TaskCreation');
         expect(screen.getByRole('dialog')).toBeInTheDocument();
+        console.log('Dialog found');
         expect(screen.getByText('Create a New Task')).toBeInTheDocument();
         expect(screen.getByLabelText('Task Title')).toBeInTheDocument();
         expect(screen.getByLabelText('Task Description')).toBeInTheDocument();
+        console.log('All assertions passed');
     });
 
     test('requires title and description', async () => {

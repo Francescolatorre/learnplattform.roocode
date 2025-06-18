@@ -11,7 +11,7 @@ import {useForm, Controller} from 'react-hook-form';
 import {useNavigate, useParams} from 'react-router-dom';
 
 import authService from '@/services/auth/authService';
-import {useNotification} from '@components/ErrorNotifier/useErrorNotifier';
+import {useNotification} from '@/components/Notifications/useNotification';
 import {resetPasswordSchema, type ResetPasswordSchema} from '@/validation/schemas';
 import {type PasswordStrength, getPasswordStrengthLabel} from '@/utils/passwordValidation';
 

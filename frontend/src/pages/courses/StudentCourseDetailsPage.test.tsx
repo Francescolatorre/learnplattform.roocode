@@ -12,8 +12,8 @@ import {AuthContext} from '@/context/auth/AuthContext';
 // Mock the services
 vi.mock('@/services/resources/courseService');
 vi.mock('@/services/resources/enrollmentService');
-vi.mock('@/components/ErrorNotifier/useErrorNotifier', () => ({
-    useNotification: vi.fn()
+vi.mock('@/components/Notifications/useNotification', () => ({
+    useNotification: vi.fn(),
 }));
 
 const mockCourse = {

@@ -8,7 +8,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import InstructorCourseDetailPage from './InstructorCourseDetailsPage';
 import {courseService} from '@/services/resources/courseService';
 import learningTaskService, {updateTask} from '@/services/resources/learningTaskService';
-import {useNotification} from '@components/ErrorNotifier/useErrorNotifier';
+import {useNotification} from '@/components/Notifications/useNotification';
 
 // Mock the required dependencies
 vi.mock('react-router-dom', async () => {
@@ -37,7 +37,7 @@ vi.mock('@/services/resources/learningTaskService', () => ({
     updateTask: vi.fn(),
 }));
 
-vi.mock('@components/ErrorNotifier/useErrorNotifier', () => ({
+vi.mock('@components/Notifications/useNotification', () => ({
     useNotification: vi.fn(),
 }));
 

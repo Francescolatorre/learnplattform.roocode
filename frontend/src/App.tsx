@@ -4,7 +4,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import React from 'react';
 
 import {ErrorBoundary} from '@components/shared';
-import {ErrorProvider} from '@components/ErrorNotifier/ErrorProvider';
+import {ErrorProvider} from '@components/Notifications/ErrorProvider';
 import NavigationBar from '@components/navigation/NavigationBar.tsx';
 import AppRoutes from '@routes/AppRoutes.tsx';
 import {theme} from '@styles/theme.ts';

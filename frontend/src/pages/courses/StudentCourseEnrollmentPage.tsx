@@ -20,7 +20,7 @@ import courseService from '@services/resources/courseService';
 import {ICourse, IPaginatedResponse} from '@/types';
 import CourseCard from '@/components/courses/CourseCard';
 import CourseList from '@/components/courses/CourseList';
-import {useNotification} from '@/components/ErrorNotifier/useErrorNotifier';
+import {useNotification} from '@/components/Notifications/useNotification';
 
 /**
  * Page for students to browse and enroll in courses

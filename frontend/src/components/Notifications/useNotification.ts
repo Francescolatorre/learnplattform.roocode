@@ -28,4 +28,3 @@ function useNotification() {
 }
 
 export {useNotification};
-export {useNotification as useErrorNotifier};

@@ -5,7 +5,7 @@ import {vi, describe, it, expect, beforeEach, afterEach} from 'vitest';
 
 // Import actual components instead of mocking the entire implementation
 import {ErrorProvider} from './ErrorProvider';
-import {useNotification} from './useErrorNotifier';
+import {useNotification} from './useNotification';
 
 // Simple test component using the real notification hook
 const TestComponent = () => {

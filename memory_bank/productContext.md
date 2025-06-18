@@ -91,7 +91,7 @@ A centralized, accessible error notification system is required for the React/Ty
 - [ ] Error notifications are announced to screen readers (e.g., via role="alert" and aria-live attributes).
 - [ ] Users can dismiss error toasts/messages using both mouse and keyboard (e.g., Escape key, close button).
 - [ ] Only one error toast/message is visible at a time; new errors replace or queue previous ones.
-- [ ] The error notification system is accessible from any component via a custom hook (e.g., useErrorNotifier).
+ - [ ] The error notification system is accessible from any component via a custom hook (e.g., useNotification).
 - [ ] The provider is integrated at the application root and covers the entire app.
 - [ ] The system is covered by unit and integration tests, including accessibility tests.
 - [ ] The implementation is documented and references ADR-012.

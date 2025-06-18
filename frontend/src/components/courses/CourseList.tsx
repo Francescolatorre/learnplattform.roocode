@@ -29,7 +29,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import SchoolIcon from '@mui/icons-material/Add';
 import AddIcon from '@mui/icons-material/Add';
 import {useQueryClient} from '@tanstack/react-query';
-import {useNotification} from '@components/ErrorNotifier/useErrorNotifier';
+import {useNotification} from '@/components/Notifications/useNotification';
 import {ICourse} from '@/types/course';
 import {formatDateRelative} from '@/utils/dateUtils';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';

@@ -3,7 +3,7 @@ import {DataGrid, GridColDef, GridRenderCellParams} from '@mui/x-data-grid';
 import React, {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
 
-import {useNotification} from '@/components/ErrorNotifier/useErrorNotifier';
+import {useNotification} from '@/components/Notifications/useNotification';
 import CourseService from '@/services/resources/courseService';
 import {ICourse} from '@/types/course';
 

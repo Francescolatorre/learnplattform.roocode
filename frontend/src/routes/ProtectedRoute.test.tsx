@@ -8,7 +8,7 @@ vi.mock("@context/auth/AuthContext", () => ({
 import {describe, it, expect} from 'vitest';
 
 import {useAuth} from "@context/auth/AuthContext";
-import {ErrorProvider} from "@/components/ErrorNotifier/ErrorProvider";
+import {ErrorProvider} from "@/components/Notifications/ErrorProvider";
 
 import ProtectedRoute from "./ProtectedRoute";
 

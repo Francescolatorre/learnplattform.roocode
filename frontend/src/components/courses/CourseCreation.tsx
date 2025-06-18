@@ -11,7 +11,7 @@ import {
     DialogActions,
     CircularProgress
 } from '@mui/material';
-import {useNotification} from '@components/ErrorNotifier/useErrorNotifier';
+import {useNotification} from '@/components/Notifications/useNotification';
 import {courseService} from '@/services/resources/courseService';
 import {ICourse} from '@/types/course';
 import MarkdownEditor from '../shared/MarkdownEditor';

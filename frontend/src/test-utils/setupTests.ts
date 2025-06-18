@@ -1,6 +1,6 @@
 // src/test-utils/setupTests.ts
 import {vi} from 'vitest';
-import '@testing-library/jest-dom'; // Removed for Vitest compatibility
+import '@testing-library/jest-dom';
 import React from 'react';
 
 // Mock for MarkdownRenderer component
@@ -14,6 +14,24 @@ vi.mock('@/components/common/MarkdownRenderer', () => ({
     });
   })
 }));
+
+// Mock Notifications hooks and context
+vi.mock('../components/Notifications/useNotification', () => {
+  const mockNotify = vi.fn();
+  return {
+    useNotification: () => mockNotify
+  };
+});
+
+vi.mock('../components/Notifications/ErrorProvider', () => {
+  return {
+    ErrorProvider: ({children}: {children: React.ReactNode}) => children,
+    useErrorNotifierContext: vi.fn().mockReturnValue({
+      addError: vi.fn(),
+      dismissError: vi.fn()
+    })
+  };
+});
 
 // Axios Mocking
 const mockAxiosInstance = {
@@ -65,15 +83,13 @@ vi.mock('@context/auth/AuthContext', () => ({
     user: {id: '1', username: 'testuser', role: 'user'},
     login: vi.fn(),
     logout: vi.fn(),
-    getUserRole: vi.fn().mockReturnValue('user'), // Diese Funktion fehlte
+    getUserRole: vi.fn().mockReturnValue('user'),
   }),
 }));
-
-// Note: ErrorNotifier mocks have been removed to allow tests to use the actual implementation
 
 // Expose mocks for tests
 Object.assign(globalThis, {mockAxios, mockAxiosInstance});
 
-console.log('🧪 Unit test setup loaded (axios mocked, ErrorNotifier using actual implementation)');
+console.log('🧪 Unit test setup loaded (axios, notifications, localStorage, auth mocked)');
 
 import 'vitest';
