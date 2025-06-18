@@ -1,3 +1,8 @@
+/**
+ * These tests require a running backend server at http://localhost:8000.
+ * Ensure the Django backend is started before running this test suite.
+ */
+
 import {describe, it, expect} from 'vitest';
 
 /**
