@@ -3,9 +3,12 @@ import '@testing-library/jest-dom';
 import React from 'react';
 import {vi, describe, it, expect, beforeEach, afterEach} from 'vitest';
 
-// Import actual components instead of mocking the entire implementation
-import {ErrorProvider} from './ErrorProvider';
-import {useNotification} from './useNotification';
+// Use real implementations for notification context and hook
+vi.unmock('@/components/Notifications/ErrorProvider');
+vi.unmock('@/components/Notifications/useNotification');
+
+const {ErrorProvider: NotificationProvider} = await import('./ErrorProvider');
+const {useNotification} = await import('./useNotification');
 
 // Simple test component using the real notification hook
 const TestComponent = () => {
@@ -56,9 +59,9 @@ describe('Error Notification System', () => {
 
     it('renders error toast when error is triggered', async () => {
         render(
-            <ErrorProvider>
+            <NotificationProvider>
                 <TestComponent />
-            </ErrorProvider>
+            </NotificationProvider>
         );
 
         fireEvent.click(screen.getByTestId('error1'));
@@ -71,9 +74,9 @@ describe('Error Notification System', () => {
 
     it('auto-dismisses error after duration', async () => {
         render(
-            <ErrorProvider>
+            <NotificationProvider>
                 <TestComponent />
-            </ErrorProvider>
+            </NotificationProvider>
         );
 
         // Trigger the error
@@ -93,9 +96,9 @@ describe('Error Notification System', () => {
 
     it('allows manual dismiss via close button', async () => {
         render(
-            <ErrorProvider>
+            <NotificationProvider>
                 <TestComponent />
-            </ErrorProvider>
+            </NotificationProvider>
         );
 
         // Trigger the error
@@ -111,9 +114,9 @@ describe('Error Notification System', () => {
 
     it('queues multiple errors but only shows one at a time', async () => {
         render(
-            <ErrorProvider>
+            <NotificationProvider>
                 <TestComponent />
-            </ErrorProvider>
+            </NotificationProvider>
         );
 
         // Trigger first error
@@ -156,9 +159,9 @@ describe('Error Notification System', () => {
         };
 
         render(
-            <ErrorProvider>
+            <NotificationProvider>
                 <ErrorComponent />
-            </ErrorProvider>
+            </NotificationProvider>
         );
 
         // Verify error notification appears
