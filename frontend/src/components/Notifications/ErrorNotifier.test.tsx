@@ -7,6 +7,7 @@ import {vi, describe, it, expect, beforeEach, afterEach} from 'vitest';
 import {NotificationProvider} from './NotificationProvider';
 import {useNotification} from './useNotification';
 
+
 // Simple test component using the real notification hook
 const TestComponent = () => {
     const notifyError = useNotification();
