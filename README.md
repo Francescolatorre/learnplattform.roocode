@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Learning Platform MVP
 
 ## Project Overview
@@ -143,7 +142,6 @@ npm run dev
 ## License
 
 MIT License
-=======
 # Roo Code Modules Documentation
 Version: 1.0.0
 Last Updated: 2025-06-10
@@ -289,4 +287,3 @@ The Roo code modules system is a sophisticated governance framework that manages
 - [Project Status Template](templates/project_status_template.md)
 - [Rule Templates](snippets/rule-templates.md)
 - [Subtask Governance](snippets/subtask_governance_rules.md)
->>>>>>> 47d36b38935d9669388785e2f378c050a0881258
