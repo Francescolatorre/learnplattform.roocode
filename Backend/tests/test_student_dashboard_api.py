@@ -39,6 +39,7 @@ def api_client() -> APIClient:
 
 @pytest.fixture
 def setup_test_data(db: Any) -> Dict[str, Any]:
+    cache.clear()
     # Create test users
     student = User.objects.create_user(
         username="teststudent", email="student@test.com", password="testpass123"

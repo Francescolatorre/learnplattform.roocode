@@ -1,5 +1,4 @@
-p""
-Dashboard endpoint test suite for the Learning Platform.
+"""Dashboard endpoint test suite for the Learning Platform.
 
 This module tests the dashboard endpoints for different user roles (student,
 instructor, admin), ensuring proper data aggregation and access control.

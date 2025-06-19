@@ -1,14 +1,10 @@
-# ruff: noqa: F401 (suppress unused import warnings)
-# ruff: noqa: G004
-
 import logging  # Add a logger for this module
 
-from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache
-from django.db.models import Avg, F  # Explicitly used in analytics methods
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404  # Used in analytics methods
 from django.utils import timezone
-from rest_framework import filters, permissions, viewsets
+from rest_framework import filters, permissions
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated  # Ensure correct import
 from rest_framework.response import Response
@@ -35,46 +31,6 @@ from .serializers import (
     TaskProgressSerializer,
 )
 from .base_viewset import BaseViewSet  # Import the base viewset
-
-
-def _suppress_linter_warnings():
-    """
-    Dummy function to explicitly use imported models, functions, and classes
-    to suppress linter warnings.
-    """
-    # Explicitly reference imported modules and classes
-    _ = (
-        # Django models and functions
-        timezone,
-        get_object_or_404,
-        Avg,
-        F,
-        cache,
-        # DRF modules and classes
-        viewsets,
-        permissions,
-        filters,
-        action,
-        Response,
-        APIView,
-        # Project models
-        Course,
-        CourseEnrollment,
-        TaskProgress,
-        LearningTask,
-        QuizTask,
-        QuizAttempt,
-        QuizResponse,
-        User,
-        QuizQuestion,
-        # Project serializers
-        CourseEnrollmentSerializer,
-        TaskProgressSerializer,
-        QuizAttemptSerializer,
-        QuizResponseSerializer,
-    )
-
-    return None
 
 
 # Custom permissions
