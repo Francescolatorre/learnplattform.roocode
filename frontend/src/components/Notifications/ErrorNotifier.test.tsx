@@ -1,11 +1,17 @@
 import {act, fireEvent, render, screen, waitFor} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import React from 'react';
-import {vi, describe, it, expect, beforeEach, afterEach} from 'vitest';
+import {vi, describe, it, expect, beforeEach, afterEach, beforeAll} from 'vitest';
 
-// Import actual components instead of mocking the entire implementation
-import {ErrorProvider} from './ErrorProvider';
-import {useNotification} from './useNotification';
+let NotificationProvider: React.ComponentType<{children: React.ReactNode}>;
+let useNotification: ReturnType<typeof import('./useNotification')['useNotification']>;
+
+beforeAll(async () => {
+    vi.unmock('./NotificationProvider');
+    vi.unmock('./useNotification');
+    ({NotificationProvider} = await import('./NotificationProvider'));
+    ({useNotification} = await import('./useNotification'));
+});
 
 // Simple test component using the real notification hook
 const TestComponent = () => {
@@ -44,11 +50,6 @@ const TestComponent = () => {
 };
 
 describe('Error Notification System', () => {
-    // Setup fake timers for testing time-based behaviors
-    beforeEach(() => {
-        vi.useFakeTimers();
-    });
-
     afterEach(() => {
         vi.restoreAllMocks();
         vi.useRealTimers();
@@ -56,85 +57,82 @@ describe('Error Notification System', () => {
 
     it('renders error toast when error is triggered', async () => {
         render(
-            <ErrorProvider>
+            <NotificationProvider>
                 <TestComponent />
-            </ErrorProvider>
+            </NotificationProvider>
         );
 
         fireEvent.click(screen.getByTestId('error1'));
 
-        // No need to wait for async behavior - should be synchronous
-        expect(screen.getByRole('alert')).toBeInTheDocument();
-        expect(screen.getByRole('alert')).toHaveTextContent('First error message');
+        // Notification should appear asynchronously
+        const alert = await screen.findByRole('alert');
+        expect(alert).toHaveTextContent('First error message');
         expect(screen.getByText('Error One')).toBeInTheDocument();
     });
 
     it('auto-dismisses error after duration', async () => {
         render(
-            <ErrorProvider>
+            <NotificationProvider>
                 <TestComponent />
-            </ErrorProvider>
+            </NotificationProvider>
         );
 
         // Trigger the error
         fireEvent.click(screen.getByTestId('error1'));
 
         // Verify error is shown
-        expect(screen.getByRole('alert')).toBeInTheDocument();
+        await screen.findByRole('alert');
 
-        // Fast-forward time past the duration
-        act(() => {
-            vi.advanceTimersByTime(2100); // Just past the 2000ms duration
+        // Wait past the duration then expect dismissal
+        await act(async () => {
+            await new Promise((res) => setTimeout(res, 2100));
         });
 
-        // Verify error is removed
-        expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+        });
     });
 
     it('allows manual dismiss via close button', async () => {
         render(
-            <ErrorProvider>
+            <NotificationProvider>
                 <TestComponent />
-            </ErrorProvider>
+            </NotificationProvider>
         );
 
         // Trigger the error
         fireEvent.click(screen.getByTestId('error1'));
 
         // Find and click close button
-        const closeButton = screen.getByLabelText(/close/i);
+        const closeButton = await screen.findByLabelText(/close/i);
         fireEvent.click(closeButton);
 
         // Verify alert is removed
         expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     });
 
-    it('queues multiple errors but only shows one at a time', async () => {
+    it('displays multiple notifications simultaneously', async () => {
         render(
-            <ErrorProvider>
+            <NotificationProvider>
                 <TestComponent />
-            </ErrorProvider>
+            </NotificationProvider>
         );
 
         // Trigger first error
         fireEvent.click(screen.getByTestId('error1'));
 
         // Verify first error is shown
-        expect(screen.getByRole('alert')).toHaveTextContent('First error message');
+        await screen.findByRole('alert');
 
         // Trigger second error while first is still showing
         fireEvent.click(screen.getByTestId('error2'));
 
-        // Verify only the first alert is shown
-        expect(screen.getAllByRole('alert')).toHaveLength(1);
-        expect(screen.getByRole('alert')).toHaveTextContent('First error message');
-
-        // Manually dismiss the first alert
-        const closeButton = screen.getByLabelText(/close/i);
-        fireEvent.click(closeButton);
-
-        // Wait for second error to appear
-        expect(screen.getByRole('alert')).toHaveTextContent('Second error message');
+        // Both alerts should be visible
+        const alerts = await screen.findAllByRole('alert');
+        expect(alerts).toHaveLength(2);
+        const messages = alerts.map((el) => el.textContent || '');
+        expect(messages.join(' ')).toContain('First error message');
+        expect(messages.join(' ')).toContain('Second error message');
     });
 
     it('handles errors thrown during component rendering', async () => {
@@ -156,12 +154,13 @@ describe('Error Notification System', () => {
         };
 
         render(
-            <ErrorProvider>
+            <NotificationProvider>
                 <ErrorComponent />
-            </ErrorProvider>
+            </NotificationProvider>
         );
 
         // Verify error notification appears
-        expect(screen.getByRole('alert')).toHaveTextContent('Error from component');
+        const alert = await screen.findByRole('alert');
+        expect(alert).toHaveTextContent('Error from component');
     });
 });

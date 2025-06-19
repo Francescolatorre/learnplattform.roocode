@@ -1,6 +1,7 @@
 import React from 'react';
 import {BrowserRouter} from 'react-router-dom';
-import {render, screen} from '@testing-library/react';
+import {screen} from '@testing-library/react';
+import {renderWithProviders} from '@/test-utils/renderWithProviders';
 import CourseListView from './CourseListView';
 import {TCourseStatus} from '@/types/course';
 
@@ -11,13 +12,13 @@ describe('CourseListView Component', () => {
     ];
 
     test('renders CourseListView correctly', () => {
-        render(
+        renderWithProviders(
             <BrowserRouter>
                 <CourseListView courses={mockCourses} viewMode="grid" />
             </BrowserRouter>
         );
         const courseElements = screen.getAllByText(/course/i);
-        expect(courseElements).toHaveLength(4); // Adjusted to match the actual rendered elements
+        expect(courseElements).toHaveLength(2);
     });
 
     // Add more tests as needed for integration with InstructorCoursesPage

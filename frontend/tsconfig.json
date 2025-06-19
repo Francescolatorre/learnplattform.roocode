@@ -29,6 +29,9 @@
       "@components/*": [
         "src/components/*"
       ],
+      "@components/ErrorNotifier/*": [
+        "src/components/ErrorNotifier/*"
+      ],
       "@config/*": [
         "src/config/*"
       ],

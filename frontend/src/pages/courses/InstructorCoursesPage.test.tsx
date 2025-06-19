@@ -1,12 +1,19 @@
 import {render, screen, act, waitFor} from '@testing-library/react';
 import {BrowserRouter as Router} from 'react-router-dom';
 import InstructorCoursesPage from './InstructorCoursesPage';
-import {ErrorProvider} from '@/components/Notifications/ErrorProvider';
+import {NotificationProvider} from '@/components/Notifications/NotificationProvider';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {useAuth} from '@/context/auth/AuthContext';
+import {vi} from 'vitest';
 import {courseService} from '@/services/resources/courseService';
 import {fireEvent} from '@testing-library/react';
-import {vi} from 'vitest';
+
+vi.mock('@/services/resources/courseService', () => ({
+    courseService: {fetchInstructorCourses: vi.fn()},
+}));
+
+// Provide a controllable mock for useAuth
+vi.mock('@/context/auth/AuthContext', () => ({useAuth: vi.fn()}));
+import {useAuth} from '@/context/auth/AuthContext';
 
 describe('InstructorCoursesPage', () => {
     const mockUser = {id: '1', role: 'instructor'};
@@ -18,17 +25,17 @@ describe('InstructorCoursesPage', () => {
     };
 
     beforeEach(() => {
-        (useAuth as vi.Mock).mockReturnValue({user: mockUser}); // Mock user only
-        (courseService.fetchInstructorCourses as jest.Mock).mockResolvedValue(mockCoursesData);
+        (useAuth as vi.Mock).mockReturnValue({user: mockUser});
+        (courseService.fetchInstructorCourses as vi.Mock).mockResolvedValue(mockCoursesData);
     });
 
     const renderComponent = () => {
         const queryClient = new QueryClient();
         render(
             <QueryClientProvider client={queryClient}>
-                <ErrorProvider>
+                <NotificationProvider>
                     <InstructorCoursesPage />
-                </ErrorProvider>
+                </NotificationProvider>
             </QueryClientProvider>
         );
     };
@@ -50,7 +57,7 @@ describe('InstructorCoursesPage', () => {
     });
 
     it('handles error during course fetch', async () => {
-        (courseService.fetchInstructorCourses as jest.Mock).mockRejectedValue(new Error('Fetch error'));
+        (courseService.fetchInstructorCourses as vi.Mock).mockRejectedValue(new Error('Fetch error'));
         renderComponent();
         await waitFor(() => expect(screen.findByText(/Failed to load your courses/i)).toBeInTheDocument());
     });
@@ -70,7 +77,7 @@ describe('InstructorCoursesPage', () => {
     });
 
     it('displays no courses message when no courses are available', async () => {
-        (courseService.fetchInstructorCourses as jest.Mock).mockResolvedValue({results: [], count: 0});
+        (courseService.fetchInstructorCourses as vi.Mock).mockResolvedValue({results: [], count: 0});
         renderComponent();
         await waitFor(() => expect(screen.findByText(/No courses available/i)).toBeInTheDocument());
     });

@@ -16,22 +16,11 @@ vi.mock('@/components/common/MarkdownRenderer', () => ({
 }));
 
 // Mock Notifications hooks and context
-vi.mock('../components/Notifications/useNotification', () => {
-  const mockNotify = vi.fn();
-  return {
-    useNotification: () => mockNotify
-  };
-});
+// Use actual notification hook in tests
+vi.unmock('../components/Notifications/useNotification');
 
-vi.mock('../components/Notifications/ErrorProvider', () => {
-  return {
-    ErrorProvider: ({children}: {children: React.ReactNode}) => children,
-    useErrorNotifierContext: vi.fn().mockReturnValue({
-      addError: vi.fn(),
-      dismissError: vi.fn()
-    })
-  };
-});
+// Use the real NotificationProvider implementation in tests
+vi.unmock('../components/Notifications/NotificationProvider');
 
 // Axios Mocking
 const mockAxiosInstance = {
