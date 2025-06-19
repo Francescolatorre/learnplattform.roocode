@@ -20,18 +20,17 @@ Additional Routes:
 
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import (
-    CourseViewSet,
-    LearningTaskViewSet,
-    UserViewSet,
-    CourseVersionViewSet,
+from .views.courses import CourseViewSet, CourseVersionViewSet
+from .views.tasks import LearningTaskViewSet
+from .views.users import UserViewSet
+from .views.quizzes import (
     QuizTaskViewSet,
     QuizQuestionViewSet,
     QuizOptionViewSet,
-    EnrollmentViewSet,
-    health_check,
-    StudentDashboardAPI,
 )
+from .views.enrollments import EnrollmentViewSet
+from .views.misc import health_check
+from .views.dashboards import StudentDashboardAPI
 
 router = DefaultRouter()
 router.register(r"users", UserViewSet, basename="user")
