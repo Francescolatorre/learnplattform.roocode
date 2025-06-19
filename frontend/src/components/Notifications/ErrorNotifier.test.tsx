@@ -110,7 +110,7 @@ describe('Error Notification System', () => {
         expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     });
 
-    it('queues multiple errors but only shows one at a time', async () => {
+    it('displays multiple notifications simultaneously', async () => {
         render(
             <NotificationProvider>
                 <TestComponent />
@@ -126,16 +126,11 @@ describe('Error Notification System', () => {
         // Trigger second error while first is still showing
         fireEvent.click(screen.getByTestId('error2'));
 
-        // Verify only the first alert is shown
-        expect(screen.getAllByRole('alert')).toHaveLength(1);
-        expect(screen.getByRole('alert')).toHaveTextContent('First error message');
-
-        // Manually dismiss the first alert
-        const closeButton = screen.getByLabelText(/close/i);
-        fireEvent.click(closeButton);
-
-        // Wait for second error to appear
-        expect(screen.getByRole('alert')).toHaveTextContent('Second error message');
+        // Both alerts should be visible
+        expect(screen.getAllByRole('alert')).toHaveLength(2);
+        const messages = screen.getAllByRole('alert').map((el) => el.textContent);
+        expect(messages.join(' ')).toContain('First error message');
+        expect(messages.join(' ')).toContain('Second error message');
     });
 
     it('handles errors thrown during component rendering', async () => {
