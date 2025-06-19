@@ -66,11 +66,10 @@ describe('Error Notification System', () => {
 
         fireEvent.click(screen.getByTestId('error1'));
 
-        await waitFor(() => {
-            expect(screen.getByRole('alert')).toBeInTheDocument();
-            expect(screen.getByRole('alert')).toHaveTextContent('First error message');
-            expect(screen.getByText('Error One')).toBeInTheDocument();
-        });
+        const alert = await screen.findByRole('alert', {hidden: true});
+        expect(alert).toBeInTheDocument();
+        expect(alert).toHaveTextContent('First error message');
+        expect(screen.getByText('Error One')).toBeInTheDocument();
     });
 
     it('auto-dismisses error after duration', async () => {
@@ -82,16 +81,14 @@ describe('Error Notification System', () => {
 
         fireEvent.click(screen.getByTestId('error1'));
 
-        await waitFor(() => {
-            expect(screen.getByRole('alert')).toBeInTheDocument();
-        });
+        await screen.findByRole('alert', {hidden: true});
 
         act(() => {
             vi.advanceTimersByTime(2100); // Just past the 2000ms duration
         });
 
         await waitFor(() => {
-            expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+            expect(screen.queryByRole('alert', {hidden: true})).not.toBeInTheDocument();
         });
     });
 
@@ -104,16 +101,14 @@ describe('Error Notification System', () => {
 
         fireEvent.click(screen.getByTestId('error1'));
 
-        await waitFor(() => {
-            expect(screen.getByRole('alert')).toBeInTheDocument();
-        });
+        await screen.findByRole('alert', {hidden: true});
 
         // Find and click close button
-        const closeButton = await screen.findByLabelText(/close/i);
+        const closeButton = await screen.findByLabelText(/close/i, {selector: 'button'});
         fireEvent.click(closeButton);
 
         await waitFor(() => {
-            expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+            expect(screen.queryByRole('alert', {hidden: true})).not.toBeInTheDocument();
         });
     });
 
@@ -125,14 +120,12 @@ describe('Error Notification System', () => {
         );
 
         fireEvent.click(screen.getByTestId('error1'));
-        await waitFor(() => {
-            expect(screen.getByRole('alert')).toHaveTextContent('First error message');
-        });
+        const alert1 = await screen.findByRole('alert', {hidden: true});
+        expect(alert1).toHaveTextContent('First error message');
 
         fireEvent.click(screen.getByTestId('error2'));
-        await waitFor(() => {
-            expect(screen.getByRole('alert')).toHaveTextContent('Second error message');
-        });
+        const alert2 = await screen.findByRole('alert', {hidden: true});
+        expect(alert2).toHaveTextContent('Second error message');
     });
 
     it('handles errors thrown during component rendering', async () => {
@@ -154,8 +147,7 @@ describe('Error Notification System', () => {
                 <ErrorComponent />
             </NotificationProvider>
         );
-        await waitFor(() => {
-            expect(screen.getByRole('alert')).toHaveTextContent('Error from component');
-        });
+        const alert = await screen.findByRole('alert', {hidden: true});
+        expect(alert).toHaveTextContent('Error from component');
     });
 });

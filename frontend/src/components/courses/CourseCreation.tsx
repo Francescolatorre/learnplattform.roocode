@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Box,
   Button,
@@ -11,9 +11,9 @@ import {
   DialogActions,
   CircularProgress,
 } from '@mui/material';
-import { useNotification } from '@/components/Notifications/useNotification';
-import { courseService } from '@/services/resources/courseService';
-import { ICourse } from '@/types/course';
+import useNotification from '@/components/Notifications/useNotification';
+import {courseService} from '@/services/resources/courseService';
+import {ICourse} from '@/types/course';
 import MarkdownEditor from '../shared/MarkdownEditor';
 
 interface CourseCreationProps {
@@ -66,7 +66,7 @@ const CourseCreation: React.FC<CourseCreationProps> = ({
   }, [open, course]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target;
+    const {name, value, type} = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
@@ -127,9 +127,9 @@ const CourseCreation: React.FC<CourseCreationProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth data-testid="course-modal">
-      <DialogTitle sx={{ mb: 2 }}>{isEditing ? 'Edit Course' : 'Create New Course'}</DialogTitle>
+      <DialogTitle sx={{mb: 2}}>{isEditing ? 'Edit Course' : 'Create New Course'}</DialogTitle>
       <DialogContent>
-        <Box component="form" sx={{ mt: 2 }}>
+        <Box component="form" sx={{mt: 2}}>
           <TextField
             fullWidth
             required
@@ -147,7 +147,7 @@ const CourseCreation: React.FC<CourseCreationProps> = ({
             }
           />
 
-          <Box sx={{ mt: 3 }}>
+          <Box sx={{mt: 3}}>
             <MarkdownEditor
               id="course-description"
               label="Description"
@@ -217,11 +217,11 @@ const CourseCreation: React.FC<CourseCreationProps> = ({
               />
             }
             label="Publish Course"
-            sx={{ mt: 2 }}
+            sx={{mt: 2}}
           />
 
           {error && !error.includes('Title') && !error.includes('description') && (
-            <Box sx={{ mt: 2, color: 'error.main' }}>{error}</Box>
+            <Box sx={{mt: 2, color: 'error.main'}}>{error}</Box>
           )}
         </Box>
       </DialogContent>

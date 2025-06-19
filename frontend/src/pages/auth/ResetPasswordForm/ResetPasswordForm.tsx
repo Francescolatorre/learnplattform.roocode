@@ -1,4 +1,4 @@
-import { zodResolver } from '@hookform/resolvers/zod';
+import {zodResolver} from '@hookform/resolvers/zod';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Box from '@mui/material/Box';
@@ -6,17 +6,17 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import React, { useState, useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {useForm, Controller} from 'react-hook-form';
+import {useNavigate, useParams} from 'react-router-dom';
 
 import authService from '@/services/auth/authService';
-import { useNotification } from '@/components/Notifications/useNotification';
-import { resetPasswordSchema, type ResetPasswordSchema } from '@/validation/schemas';
-import { type PasswordStrength, getPasswordStrengthLabel } from '@/utils/passwordValidation';
+import useNotification from '@/components/Notifications/useNotification';
+import {resetPasswordSchema, type ResetPasswordSchema} from '@/validation/schemas';
+import {type PasswordStrength, getPasswordStrengthLabel} from '@/utils/passwordValidation';
 
 const ResetPasswordForm: React.FC = () => {
-  const { token } = useParams<{ token: string }>();
+  const {token} = useParams<{token: string}>();
   const navigate = useNavigate();
   const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
     isValid: false,
@@ -32,7 +32,7 @@ const ResetPasswordForm: React.FC = () => {
     control,
     handleSubmit,
     watch,
-    formState: { errors },
+    formState: {errors},
   } = useForm<ResetPasswordSchema>({
     resolver: zodResolver(resetPasswordSchema),
     mode: 'onChange',
@@ -95,13 +95,13 @@ const ResetPasswordForm: React.FC = () => {
         Reset Password
       </Typography>
       {success && (
-        <Alert severity="success" sx={{ mb: 2 }}>
+        <Alert severity="success" sx={{mb: 2}}>
           <AlertTitle>Password Reset Successful</AlertTitle>
           You will be redirected to login in 3 seconds...
         </Alert>
       )}
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert severity="error" sx={{mb: 2}}>
           <AlertTitle>Error</AlertTitle>
           {error}
         </Alert>
@@ -111,7 +111,7 @@ const ResetPasswordForm: React.FC = () => {
           name="password"
           control={control}
           defaultValue=""
-          render={({ field }) => (
+          render={({field}) => (
             <TextField
               {...field}
               disabled={loading}
@@ -138,12 +138,12 @@ const ResetPasswordForm: React.FC = () => {
                 ? 'warning'
                 : 'success'
           }
-          sx={{ mb: 1, display: 'block' }}
+          sx={{mb: 1, display: 'block'}}
         >
           Password Strength: {getPasswordStrengthLabel(passwordStrength.score)}
         </Typography>
         {passwordStrength.feedback.length > 0 && (
-          <Box sx={{ mt: 1, mb: 2 }}>
+          <Box sx={{mt: 1, mb: 2}}>
             {passwordStrength.feedback.map((item, index) => (
               <Typography key={index} variant="caption" color="error" component="div">
                 • {item}
@@ -155,7 +155,7 @@ const ResetPasswordForm: React.FC = () => {
           name="confirmPassword"
           control={control}
           defaultValue=""
-          render={({ field }) => (
+          render={({field}) => (
             <TextField
               {...field}
               label="Confirm Password"

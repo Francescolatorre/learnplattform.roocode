@@ -2,10 +2,10 @@
 import {vi} from 'vitest';
 import '@testing-library/jest-dom';
 import React from 'react';
-import { configure } from '@testing-library/react';
+import {configure} from '@testing-library/react';
 
 // Ensure MUI Snackbar/Modal portals render into the test container
-configure({ defaultHidden: true });
+configure({defaultHidden: true});
 
 // Mock for MarkdownRenderer component
 vi.mock('@/components/common/MarkdownRenderer', () => ({

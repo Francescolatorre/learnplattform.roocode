@@ -11,12 +11,12 @@ import {
   SelectChangeEvent,
   Pagination,
 } from '@mui/material';
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { ICourse, TCourseStatus } from '@/types/course';
-import { useDebounce } from '@utils/useDebounce';
-import { courseService, CourseFilterOptions } from '@services/resources/courseService';
-import { IPaginatedResponse } from '@/types/paginatedResponse';
+import React, {useState} from 'react';
+import {useQuery} from '@tanstack/react-query';
+import {ICourse, TCourseStatus} from '@/types/course';
+import {useDebounce} from '@utils/useDebounce';
+import {courseService, CourseFilterOptions} from '@services/resources/courseService';
+import {IPaginatedResponse} from '@/types/paginatedResponse';
 import CourseList from './CourseList';
 
 interface FilterableCourseListProps {
@@ -127,8 +127,8 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
   // Show loading state
   if (isLoading && !clientSideFiltering) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
-        <CircularProgress />
+      <Box sx={{display: 'flex', justifyContent: 'center', p: 3}}>
+        <CircularProgress data-testid="course-list-loading-spinner" />
       </Box>
     );
   }
@@ -136,7 +136,7 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
   // Show error state
   if (error && !clientSideFiltering) {
     return (
-      <Box sx={{ p: 3 }}>
+      <Box sx={{p: 3}}>
         <Typography color="error" data-testid="error-message">
           {error instanceof Error ? error.message : 'Failed to load courses'}
         </Typography>
@@ -147,15 +147,15 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
   // Handle no courses
   if (!coursesData?.results?.length && !clientSideFiltering) {
     return (
-      <Box sx={{ p: 3 }} data-testid="no-courses-message">
+      <Box sx={{p: 3}} data-testid="no-courses-message">
         <Typography>{searchTerm ? noResultsMessage : emptyMessage}</Typography>
       </Box>
     );
   }
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Box sx={{ mb: 3 }}>
+    <Box sx={{width: '100%'}}>
+      <Box sx={{mb: 3}}>
         <Typography variant="h5" gutterBottom>
           {title}
         </Typography>
@@ -169,7 +169,7 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
               label="Search courses"
               value={searchTerm}
               onChange={handleSearchChange}
-              // data-testid="course-search"
+            // data-testid="course-search"
             />
           </Grid>
 
@@ -214,7 +214,7 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
       {/* Pagination */}
       {coursesData?.count && Math.ceil(coursesData.count / pageSize) > 1 && (
         <Box
-          sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}
+          sx={{display: 'flex', justifyContent: 'center', mt: 3}}
           data-testid="pagination-controls"
         >
           <Pagination
