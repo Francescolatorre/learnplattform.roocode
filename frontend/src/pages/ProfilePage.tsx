@@ -1,12 +1,11 @@
-import {Typography, Container, Paper, Box} from '@mui/material';
+import { Typography, Container, Paper, Box } from '@mui/material';
 import React from 'react';
-import {Navigate} from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
-import {useAuth} from '@context/auth/AuthContext';
-
+import { useAuth } from '@context/auth/AuthContext';
 
 const ProfilePage: React.FC = () => {
-  const {user, isAuthenticated} = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -17,7 +16,7 @@ const ProfilePage: React.FC = () => {
       <Typography variant="h4" gutterBottom>
         User Profile
       </Typography>
-      <Paper elevation={3} sx={{p: 3}}>
+      <Paper elevation={3} sx={{ p: 3 }}>
         <Typography variant="h6">Profile Details</Typography>
         {user ? (
           <Box>

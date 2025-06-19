@@ -1,9 +1,9 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 
-import {useAuth} from '@context/auth/AuthContext';
+import { useAuth } from '@context/auth/AuthContext';
 
 const LogoutPage: React.FC = () => {
-  const {logout} = useAuth();
+  const { logout } = useAuth();
 
   useEffect(() => {
     const handleLogout = async () => {

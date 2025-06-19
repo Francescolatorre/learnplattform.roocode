@@ -1,13 +1,15 @@
 // filepath: c:\DEVELOPMENT\projects\learnplatfom2\frontend\e2e\tests\course-creation.spec.ts
-import {test, expect, Page} from '@playwright/test';
-import {login, TEST_USERS, takeScreenshot, UserSession} from '../setupTests';
-import {logTestAction} from '../utils/debugHelper';
-import {LoginPage} from '../page-objects/LoginPage';
-import {InstructorDashboardPage} from '../page-objects/DashboardPage';
-import {InstructorCoursesPage} from '../page-objects/courses';
-import {CourseCreationPage, ICourseCreationData} from '../page-objects/courses/CourseCreationPage';
-import {quickLogin} from '../utils/test-login-helper';
-
+import { test, expect, Page } from '@playwright/test';
+import { login, TEST_USERS, takeScreenshot, UserSession } from '../setupTests';
+import { logTestAction } from '../utils/debugHelper';
+import { LoginPage } from '../page-objects/LoginPage';
+import { InstructorDashboardPage } from '../page-objects/DashboardPage';
+import { InstructorCoursesPage } from '../page-objects/courses';
+import {
+  CourseCreationPage,
+  ICourseCreationData,
+} from '../page-objects/courses/CourseCreationPage';
+import { quickLogin } from '../utils/test-login-helper';
 
 /**
  * Test suite for course creation functionality
@@ -15,14 +17,14 @@ import {quickLogin} from '../utils/test-login-helper';
  * Refactored to use Page Object Model for better maintainability
  */
 test.describe('Course Creation Functionality', () => {
-  test.beforeEach(async ({page}) => {
+  test.beforeEach(async ({ page }) => {
     logTestAction('Starting test case - navigating to login page');
     // Using LoginPage page object instead of direct navigation
     const loginPage = new LoginPage(page);
     await loginPage.navigateTo();
   });
 
-  test('Instructor can create a new course using modal', async ({page}) => {
+  test('Instructor can create a new course using modal', async ({ page }) => {
     logTestAction('TEST STARTED: Instructor can create a new course using modal');
 
     // 1. Login as instructor using our simplified login helper
@@ -58,7 +60,8 @@ test.describe('Course Creation Functionality', () => {
     // Add timestamp to ensure uniqueness
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const courseTitle = `Playwright Modal Test Course ${timestamp}`;
-    const courseDescription = 'This is a test course created by Playwright automated testing to verify the modal-based course creation functionality.';
+    const courseDescription =
+      'This is a test course created by Playwright automated testing to verify the modal-based course creation functionality.';
 
     // Using structured course data
     const courseData: ICourseCreationData = {
@@ -66,7 +69,7 @@ test.describe('Course Creation Functionality', () => {
       description: courseDescription,
       category: 'Testing',
       difficulty_level: 'intermediate',
-      is_published: true
+      is_published: true,
     };
 
     // Fill all form fields with our page object
@@ -84,7 +87,9 @@ test.describe('Course Creation Functionality', () => {
       // Only verify optimistic update for modal version
       logTestAction('Verifying optimistic update');
       const hasOptimisticUpdate = await courseCreationPage.verifyOptimisticUpdate(courseData);
-      await expect.soft(hasOptimisticUpdate, 'Course should appear in optimistic update').toBeTruthy();
+      await expect
+        .soft(hasOptimisticUpdate, 'Course should appear in optimistic update')
+        .toBeTruthy();
 
       // 8. Wait for optimistic update confirmation
       logTestAction('Waiting for optimistic update confirmation');
@@ -99,7 +104,7 @@ test.describe('Course Creation Functionality', () => {
 
     // 10. Wait for success notification using the page object
     logTestAction('Waiting for success notification');
-    const {success, courseId} = await courseCreationPage.waitForSuccessNotification(10000);
+    const { success, courseId } = await courseCreationPage.waitForSuccessNotification(10000);
     await expect.soft(success, 'Course creation should succeed').toBeTruthy();
     await expect.soft(courseId, 'Course ID should be present').toBeTruthy();
 
@@ -110,13 +115,13 @@ test.describe('Course Creation Functionality', () => {
     const validationResult = await courseCreationPage.validateCourseDetails(courseId!, courseTitle);
     await expect.soft(validationResult, 'Course validation should pass').toBeTruthy();
 
-    logTestAction('Course details validated successfully');    // 12. Navigate back to courses list and verify the course appears
+    logTestAction('Course details validated successfully'); // 12. Navigate back to courses list and verify the course appears
     logTestAction('Navigating back to courses page to verify course in list');
     await page.goto('/instructor/courses');
 
     // Wait comprehensively for course list to load
-    await page.waitForLoadState('networkidle', {timeout: 10000});
-    await page.waitForLoadState('domcontentloaded', {timeout: 10000});
+    await page.waitForLoadState('networkidle', { timeout: 10000 });
+    await page.waitForLoadState('domcontentloaded', { timeout: 10000 });
 
     // Recreate the page object since we navigated
     const coursesListPage = new InstructorCoursesPage(page);
@@ -142,7 +147,7 @@ test.describe('Course Creation Functionality', () => {
       for (let attempt = 0; attempt < 3; attempt++) {
         try {
           // Wait with a shorter timeout but retry multiple times
-          await page.waitForSelector(`text=${courseTitle}`, {timeout: 2000});
+          await page.waitForSelector(`text=${courseTitle}`, { timeout: 2000 });
           courseExists = true;
           logTestAction(`✅ Found course on attempt ${attempt + 1} using text selector!`);
           break;
@@ -158,7 +163,7 @@ test.describe('Course Creation Functionality', () => {
         logTestAction(`Trying with partial title: "${baseTitle}"`);
 
         // Get all text elements and check if any contain our base title
-        const allTexts = await page.getByText(baseTitle, {exact: false}).all();
+        const allTexts = await page.getByText(baseTitle, { exact: false }).all();
         logTestAction(`Found ${allTexts.length} elements containing the base title`);
 
         for (const element of allTexts) {
@@ -181,7 +186,7 @@ test.describe('Course Creation Functionality', () => {
       courseExists = await coursesListPage.hasCourse(courseTitle, {
         useSearch: true,
         useFilters: false, // Filters are now disabled
-        retryCount: 3  // Increase retries
+        retryCount: 3, // Increase retries
       });
     }
 
@@ -209,7 +214,7 @@ test.describe('Course Creation Functionality', () => {
     logTestAction('TEST COMPLETED SUCCESSFULLY: Course was created and details were verified');
   });
 
-  test('Course creation form validates required fields', async ({page}) => {
+  test('Course creation form validates required fields', async ({ page }) => {
     logTestAction('TEST STARTED: Course creation form validates required fields');
 
     // 1. Login as instructor using our simplified login helper
@@ -236,17 +241,23 @@ test.describe('Course Creation Functionality', () => {
     await courseCreationPage.takeScreenshot('course-form-validation');
 
     const validationErrors = await courseCreationPage.checkValidationErrors();
-    await expect.soft(validationErrors.hasAnyError, 'Form should show validation errors').toBeTruthy();
-    await expect.soft(
-      validationErrors.titleError || validationErrors.descriptionError,
-      'Form should show specific field validation errors'
-    ).toBeTruthy();
+    await expect
+      .soft(validationErrors.hasAnyError, 'Form should show validation errors')
+      .toBeTruthy();
+    await expect
+      .soft(
+        validationErrors.titleError || validationErrors.descriptionError,
+        'Form should show specific field validation errors'
+      )
+      .toBeTruthy();
 
-    logTestAction(`Validation results - Title error: ${validationErrors.titleError}, Description error: ${validationErrors.descriptionError}`);
+    logTestAction(
+      `Validation results - Title error: ${validationErrors.titleError}, Description error: ${validationErrors.descriptionError}`
+    );
     logTestAction('TEST COMPLETED: Form validation works correctly');
   });
 
-  test('Course creation can be cancelled using modal cancel button', async ({page}) => {
+  test('Course creation can be cancelled using modal cancel button', async ({ page }) => {
     logTestAction('TEST STARTED: Course creation can be cancelled using modal cancel button');
 
     // Login using simplified login helper
@@ -270,14 +281,14 @@ test.describe('Course Creation Functionality', () => {
     logTestAction('Opening course creation modal');
     await coursesPage.navigateToCreateCourse();
     const courseCreationPage = new CourseCreationPage(page);
-    await courseCreationPage.waitForModal('visible');    // Fill form with test data
+    await courseCreationPage.waitForModal('visible'); // Fill form with test data
     // Add timestamp to ensure uniqueness
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const courseData: ICourseCreationData = {
       title: `Course To Cancel ${timestamp}`,
       description: 'This course creation should be cancelled.',
       category: 'Testing',
-      is_published: false
+      is_published: false,
     };
     await courseCreationPage.fillCourseForm(courseData);
 
@@ -297,8 +308,7 @@ test.describe('Course Creation Functionality', () => {
     logTestAction('TEST COMPLETED SUCCESSFULLY: Course creation was cancelled as expected');
   });
 
-
-  test('Course creation handles validation errors in modal', async ({page}) => {
+  test('Course creation handles validation errors in modal', async ({ page }) => {
     logTestAction('TEST STARTED: Course creation handles validation errors in modal');
 
     // Login using simplified login helper
@@ -330,7 +340,8 @@ test.describe('Course Creation Functionality', () => {
 
     // Verify validation errors are displayed
     logTestAction('Checking for validation errors after empty save');
-    const hasErrors = await courseCreationPage.hasValidationErrors(); await expect.soft(hasErrors, 'Form should show validation errors').toBeTruthy();
+    const hasErrors = await courseCreationPage.hasValidationErrors();
+    await expect.soft(hasErrors, 'Form should show validation errors').toBeTruthy();
 
     // Fill only required fields except description
     logTestAction('Filling required fields except description and attempting to save');
@@ -338,23 +349,28 @@ test.describe('Course Creation Functionality', () => {
       title: 'Invalid Course',
       description: '', // Empty description should trigger validation
       category: 'Testing',
-      is_published: false
+      is_published: false,
     });
     await courseCreationPage.saveModal();
 
     // Verify validation errors still present
     logTestAction('Checking for validation errors after partial fill');
-    const stillHasErrors = await courseCreationPage.hasValidationErrors(); await expect.soft(stillHasErrors, 'Form should still show validation errors').toBeTruthy();
+    const stillHasErrors = await courseCreationPage.hasValidationErrors();
+    await expect.soft(stillHasErrors, 'Form should still show validation errors').toBeTruthy();
 
     // Modal should remain open
     logTestAction('Verifying modal is still open due to validation errors');
     await courseCreationPage.waitForModal('visible');
 
-    logTestAction('TEST COMPLETED: Course creation modal validation errors are handled as expected');
+    logTestAction(
+      'TEST COMPLETED: Course creation modal validation errors are handled as expected'
+    );
   });
 
-  test('Course creation shows optimistic updates and handles network failure', async ({page}) => {
-    logTestAction('TEST STARTED: Course creation shows optimistic updates and handles network failure');
+  test('Course creation shows optimistic updates and handles network failure', async ({ page }) => {
+    logTestAction(
+      'TEST STARTED: Course creation shows optimistic updates and handles network failure'
+    );
 
     // Login using simplified login helper
     logTestAction('Logging in as instructor (quick login)');
@@ -377,24 +393,24 @@ test.describe('Course Creation Functionality', () => {
     logTestAction('Opening course creation modal');
     await coursesPage.navigateToCreateCourse();
     const courseCreationPage = new CourseCreationPage(page);
-    await courseCreationPage.waitForModal('visible');    // Fill form with test data
+    await courseCreationPage.waitForModal('visible'); // Fill form with test data
     // Add timestamp to ensure uniqueness
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const courseData: ICourseCreationData = {
       title: `Network Test Course ${timestamp}`,
       description: 'Testing network failure handling',
       category: 'Testing',
-      is_published: true
+      is_published: true,
     };
     await courseCreationPage.fillCourseForm(courseData);
 
     // Simulate offline mode before saving - with more comprehensive blocking
-    logTestAction('Simulating network failure by aborting API requests');    // Block all API requests to ensure network failure simulation works
+    logTestAction('Simulating network failure by aborting API requests'); // Block all API requests to ensure network failure simulation works
     // First remove any existing route handlers
     await page.unrouteAll();
 
     // More comprehensive route blocking strategy
-    await page.route('**/*', async (route) => {
+    await page.route('**/*', async route => {
       const request = route.request();
       const url = request.url();
       const method = request.method();
@@ -403,10 +419,12 @@ test.describe('Course Creation Functionality', () => {
       console.log(`Intercepted request: ${method} ${url}`);
 
       // Block all non-GET requests and API requests specifically
-      if (method !== 'GET' ||
+      if (
+        method !== 'GET' ||
         url.includes('/api/') ||
-        url.includes('/courses/') && !url.includes('/courses/new') ||
-        url.includes('/graphql')) {
+        (url.includes('/courses/') && !url.includes('/courses/new')) ||
+        url.includes('/graphql')
+      ) {
         console.log(`⛔ BLOCKING: ${method} ${url}`);
         await route.abort('failed');
       } else {
@@ -418,13 +436,16 @@ test.describe('Course Creation Functionality', () => {
 
     // Attempt to save
     logTestAction('Attempting to save course while offline');
-    await courseCreationPage.saveModal();    // Check if we're on a standalone page or using a modal
+    await courseCreationPage.saveModal(); // Check if we're on a standalone page or using a modal
     const isStandalonePage = page.url().includes('/instructor/courses/new');
 
     if (!isStandalonePage) {
       // Only verify optimistic update for modal version
       logTestAction('Verifying optimistic update is shown despite network failure');
-      const hasOptimisticUpdate = await courseCreationPage.verifyOptimisticUpdate(courseData); await expect.soft(hasOptimisticUpdate, 'Should show optimistic update despite network failure').toBeTruthy();
+      const hasOptimisticUpdate = await courseCreationPage.verifyOptimisticUpdate(courseData);
+      await expect
+        .soft(hasOptimisticUpdate, 'Should show optimistic update despite network failure')
+        .toBeTruthy();
     } else {
       logTestAction('Using standalone page - skipping optimistic update checks');
     }
@@ -433,10 +454,12 @@ test.describe('Course Creation Functionality', () => {
     logTestAction('Checking for error notification due to network failure');
     let errorNotificationShown = false;
     try {
-      const {success, message} = await courseCreationPage.waitForErrorNotification(15000);
+      const { success, message } = await courseCreationPage.waitForErrorNotification(15000);
       errorNotificationShown = !success;
       if (errorNotificationShown) {
-        logTestAction(`Error notification appeared as expected: ${message || 'No message content'}`);
+        logTestAction(
+          `Error notification appeared as expected: ${message || 'No message content'}`
+        );
       } else {
         logTestAction('Unexpected success state from error notification check');
       }
@@ -445,7 +468,12 @@ test.describe('Course Creation Functionality', () => {
     }
 
     // Assert that we did detect an error notification
-    await expect.soft(errorNotificationShown, 'Should show some form of error notification after network failure').toBeTruthy();
+    await expect
+      .soft(
+        errorNotificationShown,
+        'Should show some form of error notification after network failure'
+      )
+      .toBeTruthy();
 
     // Take screenshot for debugging
     await courseCreationPage.takeScreenshot('after-network-failure-submit');
@@ -460,9 +488,10 @@ test.describe('Course Creation Functionality', () => {
 
     const currentUrl = page.url();
     const isOnNewCoursePage = currentUrl.includes('/instructor/courses/new');
-    const isOnSuccessPage = currentUrl.includes('/instructor/courses/')
-      && !currentUrl.includes('/new')
-      && !currentUrl.includes('/edit');
+    const isOnSuccessPage =
+      currentUrl.includes('/instructor/courses/') &&
+      !currentUrl.includes('/new') &&
+      !currentUrl.includes('/edit');
 
     if (isOnSuccessPage) {
       logTestAction('WARNING: Unexpectedly navigated to success page despite network failure');
@@ -477,26 +506,35 @@ test.describe('Course Creation Functionality', () => {
 
     try {
       // Try to get form values - this works if we're still on the form
-      formData = await courseCreationPage.getFormValues(); await expect.soft(formData.title, 'Form title should be retained after network failure').toBe(courseData.title);
+      formData = await courseCreationPage.getFormValues();
+      await expect
+        .soft(formData.title, 'Form title should be retained after network failure')
+        .toBe(courseData.title);
       if (formData.description) {
-        await expect.soft(formData.description, 'Form description should be retained after network failure').toBe(courseData.description);
+        await expect
+          .soft(formData.description, 'Form description should be retained after network failure')
+          .toBe(courseData.description);
       }
       logTestAction('Form data successfully verified after network failure');
     } catch (error) {
       // If we can't get form values, make sure we're not on a success page
       logTestAction('Could not verify form data - checking we did not navigate to success page');
       expect(isOnSuccessPage).toBeFalsy();
-    }    // Final verification that the course was not actually created
+    } // Final verification that the course was not actually created
     logTestAction('Verifying course was not created due to network failure');
     await page.goto('/instructor/courses');
     await page.waitForLoadState('networkidle');
     const coursesPage2 = new InstructorCoursesPage(page);
-    await coursesPage2.waitForPageLoad(); const courseExists = await coursesPage2.hasCourse(courseData.title, {
+    await coursesPage2.waitForPageLoad();
+    const courseExists = await coursesPage2.hasCourse(courseData.title, {
       useSearch: true,
       useFilters: false, // Filters are disabled
-      filterStatus: 'all'
-    }); await expect.soft(courseExists, 'Course should not exist after network failure').toBeFalsy();
+      filterStatus: 'all',
+    });
+    await expect.soft(courseExists, 'Course should not exist after network failure').toBeFalsy();
 
-    logTestAction('TEST COMPLETED: Course creation handles optimistic updates and network failure correctly');
+    logTestAction(
+      'TEST COMPLETED: Course creation handles optimistic updates and network failure correctly'
+    );
   });
 });

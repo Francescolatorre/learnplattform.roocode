@@ -1,6 +1,6 @@
 import React from 'react';
-import {render, screen, fireEvent, waitFor} from '@testing-library/react';
-import {vi} from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import CourseEnrollment from './CourseEnrollment';
 
 // Mock required hooks and services
@@ -22,7 +22,7 @@ vi.mock('react-router-dom', async () => {
 
 vi.mock('@context/auth/AuthContext', () => ({
   useAuth: () => ({
-    user: {id: '1', username: 'testuser'},
+    user: { id: '1', username: 'testuser' },
   }),
 }));
 
@@ -42,14 +42,14 @@ vi.mock('@services/resources/enrollmentService', () => ({
   },
 }));
 
-import {useQuery, useMutation} from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 
 describe('CourseEnrollment Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
     // Default mock implementation for useQuery and useMutation
-    (useQuery as any).mockImplementation(({queryKey}) => {
+    (useQuery as any).mockImplementation(({ queryKey }) => {
       // Mock for course data
       if (queryKey[0] === 'course') {
         return {
@@ -73,7 +73,7 @@ describe('CourseEnrollment Component', () => {
         };
       }
 
-      return {data: null, isLoading: false, error: null};
+      return { data: null, isLoading: false, error: null };
     });
 
     (useMutation as any).mockImplementation(() => ({
@@ -120,7 +120,7 @@ describe('CourseEnrollment Component', () => {
   });
 
   it('shows success message and view tasks button when user is enrolled', () => {
-    (useQuery as any).mockImplementation(({queryKey}) => {
+    (useQuery as any).mockImplementation(({ queryKey }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -136,12 +136,12 @@ describe('CourseEnrollment Component', () => {
 
       if (queryKey[0] === 'enrollment') {
         return {
-          data: {status: 'active'}, // User is enrolled
+          data: { status: 'active' }, // User is enrolled
           isLoading: false,
         };
       }
 
-      return {data: null, isLoading: false};
+      return { data: null, isLoading: false };
     });
 
     render(<CourseEnrollment courseId="1" />);
@@ -152,7 +152,7 @@ describe('CourseEnrollment Component', () => {
   });
 
   it('shows different message when enrollment status is completed', () => {
-    (useQuery as any).mockImplementation(({queryKey}) => {
+    (useQuery as any).mockImplementation(({ queryKey }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -168,11 +168,11 @@ describe('CourseEnrollment Component', () => {
 
       if (queryKey[0] === 'enrollment') {
         return {
-          data: {status: 'completed'},
+          data: { status: 'completed' },
           isLoading: false,
         };
       }
-      return {data: null, isLoading: false};
+      return { data: null, isLoading: false };
     });
 
     render(<CourseEnrollment courseId="1" />);
@@ -183,7 +183,7 @@ describe('CourseEnrollment Component', () => {
   });
 
   it('shows different message when enrollment status is dropped', () => {
-    (useQuery as any).mockImplementation(({queryKey}) => {
+    (useQuery as any).mockImplementation(({ queryKey }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -199,22 +199,24 @@ describe('CourseEnrollment Component', () => {
 
       if (queryKey[0] === 'enrollment') {
         return {
-          data: {status: 'dropped'},
+          data: { status: 'dropped' },
           isLoading: false,
         };
       }
-      return {data: null, isLoading: false};
+      return { data: null, isLoading: false };
     });
 
     render(<CourseEnrollment courseId="1" />);
 
     // Updated to match the new text in the component
     const alertElement = screen.getByRole('alert');
-    expect(alertElement).toHaveTextContent(/You were previously enrolled in this course but have dropped it/i);
+    expect(alertElement).toHaveTextContent(
+      /You were previously enrolled in this course but have dropped it/i
+    );
   });
 
   it('shows warning when course is not published', () => {
-    (useQuery as any).mockImplementation(({queryKey}) => {
+    (useQuery as any).mockImplementation(({ queryKey }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -227,12 +229,14 @@ describe('CourseEnrollment Component', () => {
           isLoading: false,
         };
       }
-      return {data: null, isLoading: false};
+      return { data: null, isLoading: false };
     });
 
     render(<CourseEnrollment courseId="1" />);
 
-    expect(screen.getByText(/This course is not currently published for enrollment/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/This course is not currently published for enrollment/i)
+    ).toBeInTheDocument();
   });
 
   it('calls enrollment mutation when enroll button is clicked', () => {
@@ -278,7 +282,7 @@ describe('CourseEnrollment Component', () => {
   // Unenroll functionality tests
   it('shows unenroll button when user is actively enrolled', () => {
     // Mock the enrollment status as active
-    (useQuery as any).mockImplementation(({queryKey}) => {
+    (useQuery as any).mockImplementation(({ queryKey }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -294,12 +298,12 @@ describe('CourseEnrollment Component', () => {
 
       if (queryKey[0] === 'enrollment') {
         return {
-          data: {status: 'active'}, // User is enrolled
+          data: { status: 'active' }, // User is enrolled
           isLoading: false,
         };
       }
 
-      return {data: null, isLoading: false};
+      return { data: null, isLoading: false };
     });
 
     render(<CourseEnrollment courseId="1" />);
@@ -309,7 +313,7 @@ describe('CourseEnrollment Component', () => {
 
   it('does not show unenroll button when enrollment status is "completed"', () => {
     // Mock the enrollment status as completed
-    (useQuery as any).mockImplementation(({queryKey}) => {
+    (useQuery as any).mockImplementation(({ queryKey }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -325,12 +329,12 @@ describe('CourseEnrollment Component', () => {
 
       if (queryKey[0] === 'enrollment') {
         return {
-          data: {status: 'completed'}, // User completed the course
+          data: { status: 'completed' }, // User completed the course
           isLoading: false,
         };
       }
 
-      return {data: null, isLoading: false};
+      return { data: null, isLoading: false };
     });
 
     render(<CourseEnrollment courseId="1" />);
@@ -340,7 +344,7 @@ describe('CourseEnrollment Component', () => {
 
   it('does not show unenroll button when enrollment status is "dropped"', () => {
     // Mock the enrollment status as dropped
-    (useQuery as any).mockImplementation(({queryKey}) => {
+    (useQuery as any).mockImplementation(({ queryKey }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -356,12 +360,12 @@ describe('CourseEnrollment Component', () => {
 
       if (queryKey[0] === 'enrollment') {
         return {
-          data: {status: 'dropped'}, // User already dropped the course
+          data: { status: 'dropped' }, // User already dropped the course
           isLoading: false,
         };
       }
 
-      return {data: null, isLoading: false};
+      return { data: null, isLoading: false };
     });
 
     render(<CourseEnrollment courseId="1" />);
@@ -371,7 +375,7 @@ describe('CourseEnrollment Component', () => {
 
   it('shows unenroll confirmation dialog when unenroll button is clicked', () => {
     // Mock the enrollment status as active
-    (useQuery as any).mockImplementation(({queryKey}) => {
+    (useQuery as any).mockImplementation(({ queryKey }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -387,12 +391,12 @@ describe('CourseEnrollment Component', () => {
 
       if (queryKey[0] === 'enrollment') {
         return {
-          data: {status: 'active'}, // User is enrolled
+          data: { status: 'active' }, // User is enrolled
           isLoading: false,
         };
       }
 
-      return {data: null, isLoading: false};
+      return { data: null, isLoading: false };
     });
 
     render(<CourseEnrollment courseId="1" />);
@@ -408,7 +412,7 @@ describe('CourseEnrollment Component', () => {
 
   it('calls unenrollment mutation when confirmation is confirmed', () => {
     // Mock the enrollment status as active
-    (useQuery as any).mockImplementation(({queryKey}) => {
+    (useQuery as any).mockImplementation(({ queryKey }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -424,17 +428,17 @@ describe('CourseEnrollment Component', () => {
 
       if (queryKey[0] === 'enrollment') {
         return {
-          data: {status: 'active'}, // User is enrolled
+          data: { status: 'active' }, // User is enrolled
           isLoading: false,
         };
       }
 
-      return {data: null, isLoading: false};
+      return { data: null, isLoading: false };
     });
 
     // Set up the unenroll mutation mock
     const mockUnenrollMutate = vi.fn();
-    (useMutation as any).mockImplementation(({mutationFn}) => {
+    (useMutation as any).mockImplementation(({ mutationFn }) => {
       // Create different mock objects based on the mutation function
       if (mutationFn && String(mutationFn).includes('unenroll')) {
         return {
@@ -458,10 +462,12 @@ describe('CourseEnrollment Component', () => {
 
     // Find the confirm button in the dialog and click it
     // Use a more specific query to find the button in the dialog
-    const confirmButton = screen.getAllByRole('button').find(
-      button => button.textContent === 'Unenroll' &&
-        button.className.includes('MuiButton-containedError')
-    );
+    const confirmButton = screen
+      .getAllByRole('button')
+      .find(
+        button =>
+          button.textContent === 'Unenroll' && button.className.includes('MuiButton-containedError')
+      );
 
     expect(confirmButton).toBeDefined();
     if (confirmButton) {
@@ -473,7 +479,7 @@ describe('CourseEnrollment Component', () => {
 
   it('closes the dialog when cancel button is clicked', () => {
     // Mock the enrollment status as active
-    (useQuery as any).mockImplementation(({queryKey}) => {
+    (useQuery as any).mockImplementation(({ queryKey }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -489,12 +495,12 @@ describe('CourseEnrollment Component', () => {
 
       if (queryKey[0] === 'enrollment') {
         return {
-          data: {status: 'active'}, // User is enrolled
+          data: { status: 'active' }, // User is enrolled
           isLoading: false,
         };
       }
 
-      return {data: null, isLoading: false};
+      return { data: null, isLoading: false };
     });
 
     render(<CourseEnrollment courseId="1" />);
@@ -518,7 +524,7 @@ describe('CourseEnrollment Component', () => {
 
   it('shows a success message after successful unenrollment', () => {
     // Mock the enrollment status as active
-    (useQuery as any).mockImplementation(({queryKey}) => {
+    (useQuery as any).mockImplementation(({ queryKey }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -534,16 +540,16 @@ describe('CourseEnrollment Component', () => {
 
       if (queryKey[0] === 'enrollment') {
         return {
-          data: {status: 'active'}, // User is enrolled
+          data: { status: 'active' }, // User is enrolled
           isLoading: false,
         };
       }
 
-      return {data: null, isLoading: false};
+      return { data: null, isLoading: false };
     });
 
     // Mock successful unenrollment
-    (useMutation as any).mockImplementation(({mutationFn}) => {
+    (useMutation as any).mockImplementation(({ mutationFn }) => {
       // Return different mock based on the mutation function
       if (mutationFn && String(mutationFn).includes('unenroll')) {
         return {
@@ -562,12 +568,14 @@ describe('CourseEnrollment Component', () => {
     render(<CourseEnrollment courseId="1" />);
 
     // Verify success message is shown
-    expect(screen.getByText('You have successfully unenrolled from this course.')).toBeInTheDocument();
+    expect(
+      screen.getByText('You have successfully unenrolled from this course.')
+    ).toBeInTheDocument();
   });
 
   it('shows loading state during unenrollment process', () => {
     // Mock the enrollment status as active
-    (useQuery as any).mockImplementation(({queryKey}) => {
+    (useQuery as any).mockImplementation(({ queryKey }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -583,16 +591,16 @@ describe('CourseEnrollment Component', () => {
 
       if (queryKey[0] === 'enrollment') {
         return {
-          data: {status: 'active'}, // User is enrolled
+          data: { status: 'active' }, // User is enrolled
           isLoading: false,
         };
       }
 
-      return {data: null, isLoading: false};
+      return { data: null, isLoading: false };
     });
 
     // Mock unenrollment in progress
-    (useMutation as any).mockImplementation(({mutationFn}) => {
+    (useMutation as any).mockImplementation(({ mutationFn }) => {
       // Return different mock based on the mutation function
       if (mutationFn && String(mutationFn).includes('unenroll')) {
         return {

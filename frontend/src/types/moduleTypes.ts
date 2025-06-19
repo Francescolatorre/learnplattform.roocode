@@ -1,5 +1,5 @@
-import {TCompletionStatus} from './entities';
-import {ITaskProgress} from './task';
+import { TCompletionStatus } from './entities';
+import { ITaskProgress } from './task';
 
 /**
  * Interface representing a student's progress through a module

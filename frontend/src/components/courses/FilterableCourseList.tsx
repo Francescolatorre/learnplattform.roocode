@@ -1,10 +1,22 @@
-import {Box, Typography, TextField, CircularProgress, MenuItem, Select, FormControl, InputLabel, Grid, SelectChangeEvent, Pagination} from '@mui/material';
-import React, {useState} from 'react';
-import {useQuery} from '@tanstack/react-query';
-import {ICourse, TCourseStatus} from '@/types/course';
-import {useDebounce} from '@utils/useDebounce';
-import {courseService, CourseFilterOptions} from '@services/resources/courseService';
-import {IPaginatedResponse} from '@/types/paginatedResponse';
+import {
+  Box,
+  Typography,
+  TextField,
+  CircularProgress,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  Grid,
+  SelectChangeEvent,
+  Pagination,
+} from '@mui/material';
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { ICourse, TCourseStatus } from '@/types/course';
+import { useDebounce } from '@utils/useDebounce';
+import { courseService, CourseFilterOptions } from '@services/resources/courseService';
+import { IPaginatedResponse } from '@/types/paginatedResponse';
 import CourseList from './CourseList';
 
 interface FilterableCourseListProps {
@@ -50,15 +62,18 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
   const {
     data: coursesData,
     isLoading,
-    error
+    error,
   } = useQuery<IPaginatedResponse<ICourse>, Error>({
-    queryKey: ['courses', {
-      page,
-      pageSize,
-      search: debouncedSearchTerm,
-      status,
-      creator
-    }],
+    queryKey: [
+      'courses',
+      {
+        page,
+        pageSize,
+        search: debouncedSearchTerm,
+        status,
+        creator,
+      },
+    ],
     queryFn: async () => {
       const filterOptions: CourseFilterOptions = {
         page,
@@ -112,7 +127,7 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
   // Show loading state
   if (isLoading && !clientSideFiltering) {
     return (
-      <Box sx={{display: 'flex', justifyContent: 'center', p: 3}}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
         <CircularProgress />
       </Box>
     );
@@ -121,7 +136,7 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
   // Show error state
   if (error && !clientSideFiltering) {
     return (
-      <Box sx={{p: 3}}>
+      <Box sx={{ p: 3 }}>
         <Typography color="error" data-testid="error-message">
           {error instanceof Error ? error.message : 'Failed to load courses'}
         </Typography>
@@ -132,15 +147,15 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
   // Handle no courses
   if (!coursesData?.results?.length && !clientSideFiltering) {
     return (
-      <Box sx={{p: 3}} data-testid="no-courses-message">
+      <Box sx={{ p: 3 }} data-testid="no-courses-message">
         <Typography>{searchTerm ? noResultsMessage : emptyMessage}</Typography>
       </Box>
     );
   }
 
   return (
-    <Box sx={{width: '100%'}}>
-      <Box sx={{mb: 3}}>
+    <Box sx={{ width: '100%' }}>
+      <Box sx={{ mb: 3 }}>
         <Typography variant="h5" gutterBottom>
           {title}
         </Typography>
@@ -154,7 +169,7 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
               label="Search courses"
               value={searchTerm}
               onChange={handleSearchChange}
-            // data-testid="course-search"
+              // data-testid="course-search"
             />
           </Grid>
 
@@ -171,10 +186,18 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
                   data-testid="course-status-filter"
                   data-value={status}
                 >
-                  <MenuItem value="" data-value="">All</MenuItem>
-                  <MenuItem value="draft" data-value="draft">Draft</MenuItem>
-                  <MenuItem value="published" data-value="published">Published</MenuItem>
-                  <MenuItem value="archived" data-value="archived">Archived</MenuItem>
+                  <MenuItem value="" data-value="">
+                    All
+                  </MenuItem>
+                  <MenuItem value="draft" data-value="draft">
+                    Draft
+                  </MenuItem>
+                  <MenuItem value="published" data-value="published">
+                    Published
+                  </MenuItem>
+                  <MenuItem value="archived" data-value="archived">
+                    Archived
+                  </MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -190,7 +213,10 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
 
       {/* Pagination */}
       {coursesData?.count && Math.ceil(coursesData.count / pageSize) > 1 && (
-        <Box sx={{display: 'flex', justifyContent: 'center', mt: 3}} data-testid="pagination-controls">
+        <Box
+          sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}
+          data-testid="pagination-controls"
+        >
           <Pagination
             count={Math.ceil(coursesData.count / pageSize)}
             page={page}

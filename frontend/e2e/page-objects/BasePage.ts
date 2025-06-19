@@ -1,4 +1,4 @@
-import {Page, Locator, expect} from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 
 /**
  * Base page object with common functionality for all pages
@@ -17,7 +17,7 @@ export class BasePage {
    * Navigate to the page
    * @param options Additional navigation options
    */
-  async navigateTo(options?: {waitForNetworkIdle?: boolean}): Promise<void> {
+  async navigateTo(options?: { waitForNetworkIdle?: boolean }): Promise<void> {
     try {
       await this.page.goto(this.basePath);
 
@@ -38,7 +38,7 @@ export class BasePage {
    * Override in child classes to implement page-specific loading checks
    */
   async waitForPageLoad(timeoutMs: number = 30000): Promise<void> {
-    await this.page.waitForLoadState('domcontentloaded', {timeout: timeoutMs});
+    await this.page.waitForLoadState('domcontentloaded', { timeout: timeoutMs });
     console.log('Page loaded');
   }
 
@@ -66,7 +66,7 @@ export class BasePage {
   async findElement(
     selectors: string[],
     elementName: string,
-    options: {timeoutMs?: number} = {}
+    options: { timeoutMs?: number } = {}
   ): Promise<Locator> {
     const timeoutMs = options.timeoutMs || 10000;
     let errors: string[] = [];
@@ -75,7 +75,7 @@ export class BasePage {
     for (const selector of selectors) {
       try {
         const element = this.page.locator(selector);
-        await element.waitFor({timeout: timeoutMs / selectors.length});
+        await element.waitFor({ timeout: timeoutMs / selectors.length });
         return element;
       } catch (error) {
         errors.push(`Selector "${selector}" failed: ${error}`);
@@ -94,7 +94,7 @@ export class BasePage {
   async takeScreenshot(name: string): Promise<void> {
     await this.page.screenshot({
       path: `./test-results/test-artifacts/${name}-${Date.now()}.png`,
-      fullPage: true
+      fullPage: true,
     });
     console.log(`Screenshot saved: ${name}`);
   }
@@ -104,7 +104,7 @@ export class BasePage {
    */
   async elementExists(selector: string, timeoutMs: number = 1000): Promise<boolean> {
     try {
-      await this.page.waitForSelector(selector, {timeout: timeoutMs});
+      await this.page.waitForSelector(selector, { timeout: timeoutMs });
       return true;
     } catch (error) {
       return false;
@@ -116,7 +116,7 @@ export class BasePage {
    */
   async waitForElementVisible(selector: string, timeoutMs: number = 10000): Promise<Locator> {
     try {
-      await this.page.waitForSelector(selector, {state: 'visible', timeout: timeoutMs});
+      await this.page.waitForSelector(selector, { state: 'visible', timeout: timeoutMs });
       return this.page.locator(selector);
     } catch (error) {
       console.error(`Element not visible: ${selector}`, error);
@@ -144,7 +144,7 @@ export class BasePage {
   async fillField(selector: string, value: string): Promise<void> {
     try {
       const field = this.page.locator(selector);
-      await field.waitFor({state: 'visible'});
+      await field.waitFor({ state: 'visible' });
       await field.fill(value);
     } catch (error) {
       console.error(`Failed to fill field ${selector}:`, error);
@@ -158,7 +158,7 @@ export class BasePage {
   async clickElement(selector: string): Promise<void> {
     try {
       const element = this.page.locator(selector);
-      await element.waitFor({state: 'visible'});
+      await element.waitFor({ state: 'visible' });
       await element.click();
     } catch (error) {
       console.error(`Failed to click element ${selector}:`, error);
@@ -172,7 +172,7 @@ export class BasePage {
   async getTextContent(selector: string): Promise<string | null> {
     try {
       const element = this.page.locator(selector);
-      await element.waitFor({state: 'visible'});
+      await element.waitFor({ state: 'visible' });
       return await element.textContent();
     } catch (error) {
       console.error(`Failed to get text content from ${selector}:`, error);

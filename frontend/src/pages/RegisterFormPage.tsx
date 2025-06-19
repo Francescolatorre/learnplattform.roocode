@@ -12,17 +12,16 @@ import {
   SelectChangeEvent,
   Alert,
 } from '@mui/material';
-import React, {useState, useEffect} from 'react';
-import {useNavigate} from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import {useAuth} from '@context/auth/AuthContext';
+import { useAuth } from '@context/auth/AuthContext';
 import PasswordStrengthIndicator from '@components/shared/PasswordStrengthIndicator';
 
-import {validatePassword, type PasswordStrength} from '../utils/passwordValidation';
-
+import { validatePassword, type PasswordStrength } from '../utils/passwordValidation';
 
 const RegisterFormPage: React.FC = () => {
-  const {login} = useAuth(); // Use login after successful registration
+  const { login } = useAuth(); // Use login after successful registration
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -41,7 +40,7 @@ const RegisterFormPage: React.FC = () => {
     if (password) {
       setPasswordStrength(validatePassword(password));
     } else {
-      setPasswordStrength({isValid: false, score: 0, feedback: []});
+      setPasswordStrength({ isValid: false, score: 0, feedback: [] });
     }
   }, [password]);
 
@@ -68,7 +67,8 @@ const RegisterFormPage: React.FC = () => {
       await login(username, password);
       // Navigate to dashboard or home
       navigate('/dashboard');
-    } catch (errorObj) { // Rename 'err' to 'errorObj' and use it
+    } catch (errorObj) {
+      // Rename 'err' to 'errorObj' and use it
       console.error('Registration failed:', errorObj);
       setError('Registration failed. Please try again.');
     } finally {
@@ -82,7 +82,7 @@ const RegisterFormPage: React.FC = () => {
 
   return (
     <Container maxWidth="xs">
-      <Paper elevation={3} sx={{padding: 3, marginTop: 8}}>
+      <Paper elevation={3} sx={{ padding: 3, marginTop: 8 }}>
         <Typography variant="h4" align="center" gutterBottom>
           Register
         </Typography>
@@ -97,7 +97,7 @@ const RegisterFormPage: React.FC = () => {
             onChange={e => setUsername(e.target.value)}
             error={!!error}
             disabled={isLoading}
-            inputProps={{'data-test-id': 'register-username-input'}}
+            inputProps={{ 'data-test-id': 'register-username-input' }}
           />
           <TextField
             variant="outlined"
@@ -110,7 +110,7 @@ const RegisterFormPage: React.FC = () => {
             onChange={e => setEmail(e.target.value)}
             error={!!error}
             disabled={isLoading}
-            inputProps={{'data-test-id': 'register-email-input'}}
+            inputProps={{ 'data-test-id': 'register-email-input' }}
           />
           <TextField
             variant="outlined"
@@ -123,7 +123,7 @@ const RegisterFormPage: React.FC = () => {
             onChange={e => setPassword(e.target.value)}
             error={!!error}
             disabled={isLoading}
-            inputProps={{'data-test-id': 'register-password-input'}}
+            inputProps={{ 'data-test-id': 'register-password-input' }}
           />
           {password && (
             <PasswordStrengthIndicator
@@ -142,7 +142,7 @@ const RegisterFormPage: React.FC = () => {
             onChange={e => setConfirmPassword(e.target.value)}
             error={!!error}
             disabled={isLoading}
-            inputProps={{'data-test-id': 'register-confirm-password-input'}}
+            inputProps={{ 'data-test-id': 'register-confirm-password-input' }}
           />
           <FormControl fullWidth margin="normal" data-test-id="register-role-select">
             <InputLabel>Role</InputLabel>
@@ -151,7 +151,7 @@ const RegisterFormPage: React.FC = () => {
               label="Role"
               onChange={handleRoleChange}
               disabled={isLoading}
-              inputProps={{'data-test-id': 'register-role-select-input'}}
+              inputProps={{ 'data-test-id': 'register-role-select-input' }}
             >
               <MenuItem value="user" data-test-id="register-role-user-option">
                 User
@@ -162,7 +162,7 @@ const RegisterFormPage: React.FC = () => {
             </Select>
           </FormControl>
           {error && (
-            <Alert severity="error" sx={{mt: 2}}>
+            <Alert severity="error" sx={{ mt: 2 }}>
               {error}
             </Alert>
           )}
@@ -171,7 +171,7 @@ const RegisterFormPage: React.FC = () => {
             fullWidth
             variant="contained"
             color="primary"
-            sx={{marginTop: 2}}
+            sx={{ marginTop: 2 }}
             disabled={isLoading || !passwordStrength.isValid}
             data-test-id="register-submit-button"
           >

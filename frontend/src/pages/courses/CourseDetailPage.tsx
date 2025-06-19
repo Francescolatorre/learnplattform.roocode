@@ -1,15 +1,14 @@
-import {Visibility, Person, DateRange} from '@mui/icons-material';
-import {Box, Typography, Chip, Paper, Container, Grid} from '@mui/material';
-import {useQuery} from '@tanstack/react-query';
+import { Visibility, Person, DateRange } from '@mui/icons-material';
+import { Box, Typography, Chip, Paper, Container, Grid } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
 import React from 'react';
-import {useParams} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-import {ICourse} from '@/types/course';
-import {courseService} from 'src/services/resources/courseService';
-
+import { ICourse } from '@/types/course';
+import { courseService } from 'src/services/resources/courseService';
 
 const CourseDetailPage: React.FC = () => {
-  const {id} = useParams() as {id: string | undefined};
+  const { id } = useParams() as { id: string | undefined };
 
   const {
     data: course,
@@ -35,15 +34,18 @@ const CourseDetailPage: React.FC = () => {
 
   return (
     <Container maxWidth="lg">
-      <Paper elevation={2} sx={{p: 3, my: 3}}>
+      <Paper elevation={2} sx={{ p: 3, my: 3 }}>
         <Typography variant="h4" gutterBottom>
           {course.title}
         </Typography>
 
-        <Box sx={{mb: 3, display: 'flex', gap: 1}}>
+        <Box sx={{ mb: 3, display: 'flex', gap: 1 }}>
           <Chip icon={<Person />} label={course.creator_details.display_name} />
           <Chip icon={<Visibility />} label={course.visibility} />
-          <Chip icon={<DateRange />} label={course.created_at ? new Date(course.created_at).toLocaleDateString() : ''} />
+          <Chip
+            icon={<DateRange />}
+            label={course.created_at ? new Date(course.created_at).toLocaleDateString() : ''}
+          />
         </Box>
 
         <Typography variant="h6" gutterBottom>

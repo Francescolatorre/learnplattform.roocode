@@ -8,7 +8,8 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import InstructorCourseDetailPage from './InstructorCourseDetailsPage';
 import {courseService} from '@/services/resources/courseService';
 import learningTaskService, {updateTask} from '@/services/resources/learningTaskService';
-import {useNotification} from '@/components/Notifications/useNotification';
+import useNotification from '@/components/Notifications/useNotification';
+import {courseFactory} from '@test-utils/factories/courseFactory';
 
 // Mock the required dependencies
 vi.mock('react-router-dom', async () => {
@@ -37,9 +38,18 @@ vi.mock('@/services/resources/learningTaskService', () => ({
     updateTask: vi.fn(),
 }));
 
-vi.mock('@components/Notifications/useNotification', () => ({
-    useNotification: vi.fn(),
-}));
+vi.mock('@components/Notifications/useNotification', () => {
+    const notify = Object.assign(vi.fn(), {
+        success: vi.fn(),
+        error: vi.fn(),
+        info: vi.fn(),
+        warning: vi.fn(),
+    });
+    return {
+        __esModule: true,
+        default: () => notify,
+    };
+});
 
 vi.mock('@/components/shared/MarkdownRenderer', () => ({
     default: ({content}: {content: string}) => (
@@ -50,7 +60,7 @@ vi.mock('@/components/shared/MarkdownRenderer', () => ({
 // Mock the TaskCreation component fully to avoid hanging issues
 vi.mock('@/components/taskCreation/TaskCreation', () => ({
     default: ({open, onClose, courseId, task, isEditing, onSave}: any) => (
-        <div data-testid={isEditing ? "task-edit-modal" : "task-creation-modal"}>
+        <div data-testid={isEditing ? 'task-edit-modal' : 'task-creation-modal'}>
             {isEditing ? 'Task Editing Modal' : 'Task Creation Modal'}
             {open && <span>Modal is open</span>}
             <button onClick={onClose}>Close Modal</button>
@@ -77,16 +87,13 @@ vi.mock('@/components/shared/InfoCard', () => ({
 
 describe('InstructorCourseDetailsPage', () => {
     const mockCourseId = '123';
-    const mockCourse = {
+    const mockCourse = courseFactory.build({
         id: 123,
         title: 'Test Course',
         description: 'This is a test course description',
-        description_html: true,
         instructor_name: 'Test Instructor',
         status: 'published',
-        prerequisites: ['Prerequisite 1', 'Prerequisite 2'],
-        learning_objectives: ['Objective 1', 'Objective 2'],
-    };
+    });
 
     const mockTasks = [
         {

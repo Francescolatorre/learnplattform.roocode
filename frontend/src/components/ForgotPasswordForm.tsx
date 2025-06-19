@@ -8,8 +8,8 @@ import {
   Alert,
   Snackbar,
 } from '@mui/material';
-import {AxiosError} from 'axios';
-import React, {useState} from 'react';
+import { AxiosError } from 'axios';
+import React, { useState } from 'react';
 
 import authService from '@services/auth/authService'; // Adjust the import path as necessary
 
@@ -33,7 +33,7 @@ const ForgotPasswordForm: React.FC = () => {
       if (err instanceof Error) {
         const axiosError = err as AxiosError;
         const errorMessage = axiosError.response?.data
-          ? (axiosError.response.data as {detail?: string}).detail || 'Failed to send reset email'
+          ? (axiosError.response.data as { detail?: string }).detail || 'Failed to send reset email'
           : 'An error occurred while requesting password reset.';
         setError(errorMessage);
       } else {
@@ -46,11 +46,11 @@ const ForgotPasswordForm: React.FC = () => {
 
   return (
     <Container maxWidth="xs">
-      <Paper elevation={3} sx={{padding: 3, marginTop: 8}}>
+      <Paper elevation={3} sx={{ padding: 3, marginTop: 8 }}>
         <Typography variant="h4" align="center" gutterBottom>
           Forgot Password
         </Typography>
-        <Typography variant="body1" align="center" color="textSecondary" sx={{mb: 3}}>
+        <Typography variant="body1" align="center" color="textSecondary" sx={{ mb: 3 }}>
           Enter your email address and we'll send you instructions to reset your password.
         </Typography>
         <Typography variant="body2" gutterBottom>
@@ -71,7 +71,7 @@ const ForgotPasswordForm: React.FC = () => {
             autoFocus
           />
           {error && (
-            <Alert severity="error" sx={{mt: 2}}>
+            <Alert severity="error" sx={{ mt: 2 }}>
               {error}
             </Alert>
           )}
@@ -80,7 +80,7 @@ const ForgotPasswordForm: React.FC = () => {
             fullWidth
             variant="contained"
             color="primary"
-            sx={{mt: 3, mb: 2}}
+            sx={{ mt: 3, mb: 2 }}
             disabled={isLoading || !email}
           >
             {isLoading ? 'Sending...' : 'Reset Password'}
@@ -91,9 +91,9 @@ const ForgotPasswordForm: React.FC = () => {
         open={!!successMessage}
         autoHideDuration={6000}
         onClose={() => setSuccessMessage('')}
-        anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert onClose={() => setSuccessMessage('')} severity="success" sx={{width: '100%'}}>
+        <Alert onClose={() => setSuccessMessage('')} severity="success" sx={{ width: '100%' }}>
           {successMessage}
         </Alert>
       </Snackbar>

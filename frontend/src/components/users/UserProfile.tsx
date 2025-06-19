@@ -10,7 +10,7 @@ interface UserProfileProps {
   };
 }
 
-const UserProfile: React.FC<UserProfileProps> = ({user}) => {
+const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
   return (
     <div>
       <h1>{user.display_name || user.username}</h1>

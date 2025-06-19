@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Tabs,
@@ -6,7 +6,6 @@ import {
   TextField,
   Paper,
   Typography,
-
   IconButton,
   Tooltip,
   Theme,
@@ -14,9 +13,9 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button
+  Button,
 } from '@mui/material';
-import {SxProps} from '@mui/system';
+import { SxProps } from '@mui/system';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import MarkdownRenderer from './MarkdownRenderer';
 
@@ -87,7 +86,7 @@ const MarkdownEditor: React.FC<IMarkdownEditorProps> = ({
   error = false,
   helperText,
   sx = {},
-  disabled = false
+  disabled = false,
 }) => {
   const [currentTab, setCurrentTab] = useState<'write' | 'preview'>('write');
   const [showHelp, setShowHelp] = useState<boolean>(false);
@@ -101,9 +100,13 @@ const MarkdownEditor: React.FC<IMarkdownEditorProps> = ({
   };
 
   return (
-    <Box sx={{width: '100%', ...sx}} data-testid="markdown-editor" className="markdown-editor">
-      <Box sx={{display: 'flex', alignItems: 'center', mb: 1}}>
-        {label && <Typography variant="subtitle1" sx={{mr: 1}}>{label}</Typography>}
+    <Box sx={{ width: '100%', ...sx }} data-testid="markdown-editor" className="markdown-editor">
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+        {label && (
+          <Typography variant="subtitle1" sx={{ mr: 1 }}>
+            {label}
+          </Typography>
+        )}
         <Tooltip title="Markdown Help">
           <IconButton
             size="small"
@@ -117,8 +120,8 @@ const MarkdownEditor: React.FC<IMarkdownEditorProps> = ({
         </Tooltip>
       </Box>
 
-      <Paper variant="outlined" sx={{mb: 1}}>
-        <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
+      <Paper variant="outlined" sx={{ mb: 1 }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs
             value={currentTab}
             onChange={handleTabChange}
@@ -137,7 +140,7 @@ const MarkdownEditor: React.FC<IMarkdownEditorProps> = ({
             multiline
             minRows={minRows}
             value={value}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={e => onChange(e.target.value)}
             placeholder={placeholder}
             variant="outlined"
             error={error}
@@ -147,30 +150,30 @@ const MarkdownEditor: React.FC<IMarkdownEditorProps> = ({
               '& .MuiOutlinedInput-root': {
                 borderRadius: 0,
                 '& fieldset': {
-                  border: 'none'
-                }
+                  border: 'none',
+                },
               },
               '& .MuiInputBase-root': {
                 fontFamily: 'monospace',
-                fontSize: '0.9rem'
-              }
+                fontSize: '0.9rem',
+              },
             }}
             name="markdown-content"
             inputProps={{
               'data-testid': 'markdown-editor-textarea',
-              className: 'markdown-editor-textarea'
+              className: 'markdown-editor-textarea',
             }}
           />
         ) : (
           <Box
-            sx={{p: 2, minHeight: `${minRows * 1.5}em`}}
+            sx={{ p: 2, minHeight: `${minRows * 1.5}em` }}
             data-testid="markdown-preview-container"
             className="markdown-preview-container"
           >
             {value ? (
               <MarkdownRenderer content={value} />
             ) : (
-              <Typography color="text.secondary" sx={{fontStyle: 'italic'}}>
+              <Typography color="text.secondary" sx={{ fontStyle: 'italic' }}>
                 No content to preview
               </Typography>
             )}
@@ -189,10 +192,12 @@ const MarkdownEditor: React.FC<IMarkdownEditorProps> = ({
       >
         <DialogTitle id="markdown-help-dialog-title">Markdown Reference</DialogTitle>
         <DialogContent dividers>
-          <Typography variant="subtitle2" data-testid="markdown-help-headers">Headers</Typography>
+          <Typography variant="subtitle2" data-testid="markdown-help-headers">
+            Headers
+          </Typography>
           <Box
             component="pre"
-            sx={{backgroundColor: '#f6f8fa', p: 1, borderRadius: 1, mb: 2}}
+            sx={{ backgroundColor: '#f6f8fa', p: 1, borderRadius: 1, mb: 2 }}
             data-testid="markdown-help-headers-example"
           >
             # Heading 1{'\n'}
@@ -200,10 +205,12 @@ const MarkdownEditor: React.FC<IMarkdownEditorProps> = ({
             ### Heading 3
           </Box>
 
-          <Typography variant="subtitle2" data-testid="markdown-help-emphasis">Emphasis</Typography>
+          <Typography variant="subtitle2" data-testid="markdown-help-emphasis">
+            Emphasis
+          </Typography>
           <Box
             component="pre"
-            sx={{backgroundColor: '#f6f8fa', p: 1, borderRadius: 1, mb: 2}}
+            sx={{ backgroundColor: '#f6f8fa', p: 1, borderRadius: 1, mb: 2 }}
             data-testid="markdown-help-emphasis-example"
           >
             *italic* or _italic_{'\n'}
@@ -211,41 +218,48 @@ const MarkdownEditor: React.FC<IMarkdownEditorProps> = ({
             **_bold and italic_**
           </Box>
 
-          <Typography variant="subtitle2" data-testid="markdown-help-lists">Lists</Typography>
+          <Typography variant="subtitle2" data-testid="markdown-help-lists">
+            Lists
+          </Typography>
           <Box
             component="pre"
-            sx={{backgroundColor: '#f6f8fa', p: 1, borderRadius: 1, mb: 2}}
+            sx={{ backgroundColor: '#f6f8fa', p: 1, borderRadius: 1, mb: 2 }}
             data-testid="markdown-help-lists-example"
           >
-            - Item 1{'\n'}
-            - Item 2{'\n'}
+            - Item 1{'\n'}- Item 2{'\n'}
             {'  '}- Subitem{'\n\n'}
             1. Numbered Item 1{'\n'}
             2. Numbered Item 2
           </Box>
 
-          <Typography variant="subtitle2" data-testid="markdown-help-links">Links</Typography>
+          <Typography variant="subtitle2" data-testid="markdown-help-links">
+            Links
+          </Typography>
           <Box
             component="pre"
-            sx={{backgroundColor: '#f6f8fa', p: 1, borderRadius: 1, mb: 2}}
+            sx={{ backgroundColor: '#f6f8fa', p: 1, borderRadius: 1, mb: 2 }}
             data-testid="markdown-help-links-example"
           >
             [Link text](https://example.com)
           </Box>
 
-          <Typography variant="subtitle2" data-testid="markdown-help-images">Images</Typography>
+          <Typography variant="subtitle2" data-testid="markdown-help-images">
+            Images
+          </Typography>
           <Box
             component="pre"
-            sx={{backgroundColor: '#f6f8fa', p: 1, borderRadius: 1, mb: 2}}
+            sx={{ backgroundColor: '#f6f8fa', p: 1, borderRadius: 1, mb: 2 }}
             data-testid="markdown-help-images-example"
           >
             ![Alt text](https://example.com/image.jpg)
           </Box>
 
-          <Typography variant="subtitle2" data-testid="markdown-help-code">Code</Typography>
+          <Typography variant="subtitle2" data-testid="markdown-help-code">
+            Code
+          </Typography>
           <Box
             component="pre"
-            sx={{backgroundColor: '#f6f8fa', p: 1, borderRadius: 1, mb: 2}}
+            sx={{ backgroundColor: '#f6f8fa', p: 1, borderRadius: 1, mb: 2 }}
             data-testid="markdown-help-code-example"
           >
             `inline code`{'\n\n'}
@@ -253,34 +267,40 @@ const MarkdownEditor: React.FC<IMarkdownEditorProps> = ({
             // Code block{'\n'}
             function example() {'{'}
             return 'Hello World';
-            {'}'}{'\n'}
+            {'}'}
+            {'\n'}
             ```
           </Box>
 
-          <Typography variant="subtitle2" data-testid="markdown-help-tables">Tables</Typography>
+          <Typography variant="subtitle2" data-testid="markdown-help-tables">
+            Tables
+          </Typography>
           <Box
             component="pre"
-            sx={{backgroundColor: '#f6f8fa', p: 1, borderRadius: 1, mb: 2}}
+            sx={{ backgroundColor: '#f6f8fa', p: 1, borderRadius: 1, mb: 2 }}
             data-testid="markdown-help-tables-example"
           >
-            | Header 1 | Header 2 |{'\n'}
-            | -------- | -------- |{'\n'}
-            | Cell 1   | Cell 2   |{'\n'}
-            | Cell 3   | Cell 4   |
+            | Header 1 | Header 2 |{'\n'}| -------- | -------- |{'\n'}| Cell 1 | Cell 2 |{'\n'}|
+            Cell 3 | Cell 4 |
           </Box>
 
-          <Typography variant="subtitle2" data-testid="markdown-help-blockquotes">Blockquotes</Typography>
+          <Typography variant="subtitle2" data-testid="markdown-help-blockquotes">
+            Blockquotes
+          </Typography>
           <Box
             component="pre"
-            sx={{backgroundColor: '#f6f8fa', p: 1, borderRadius: 1, mb: 2}}
+            sx={{ backgroundColor: '#f6f8fa', p: 1, borderRadius: 1, mb: 2 }}
             data-testid="markdown-help-blockquotes-example"
           >
-            {'> This is a blockquote'}{'\n'}
+            {'> This is a blockquote'}
+            {'\n'}
             {'> It can span multiple lines'}
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseHelp} data-testid="markdown-help-close-button">Close</Button>
+          <Button onClick={handleCloseHelp} data-testid="markdown-help-close-button">
+            Close
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>

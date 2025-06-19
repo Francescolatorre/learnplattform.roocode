@@ -1,21 +1,21 @@
 /*
-  * EnrollmentService.ts
-  * Service for managing course enrollments, including CRU operations, user enrollments, and course-specific queries.
-  * All methods are asynchronous, strictly typed, and use centralized API_CONFIG endpoints.
-  *
-  * @module EnrollmentService
-  * @description Provides a comprehensive interface for working with course enrollments in the Learning Platform.
-  *
-  * Relevant Design decisions:
-  * - no Delete method is provided, as enrollments should not be deleted but rather marked as inactive or unenrolled.
-  */
+ * EnrollmentService.ts
+ * Service for managing course enrollments, including CRU operations, user enrollments, and course-specific queries.
+ * All methods are asynchronous, strictly typed, and use centralized API_CONFIG endpoints.
+ *
+ * @module EnrollmentService
+ * @description Provides a comprehensive interface for working with course enrollments in the Learning Platform.
+ *
+ * Relevant Design decisions:
+ * - no Delete method is provided, as enrollments should not be deleted but rather marked as inactive or unenrolled.
+ */
 
-import {ICourseEnrollment, IEnrollmentStatus} from '@/types/entities';
-import {API_CONFIG} from 'src/services/api/apiConfig';
-import {ApiService} from 'src/services/api/apiService';
-import {IPaginatedResponse} from 'src/types/paginatedResponse';
-import {authEventService} from '@context/auth/AuthEventService';
-import {AuthEventType} from '@context/auth/types';
+import { ICourseEnrollment, IEnrollmentStatus } from '@/types/entities';
+import { API_CONFIG } from 'src/services/api/apiConfig';
+import { ApiService } from 'src/services/api/apiService';
+import { IPaginatedResponse } from 'src/types/paginatedResponse';
+import { authEventService } from '@context/auth/AuthEventService';
+import { AuthEventType } from '@context/auth/types';
 
 /**
  * Interface for enrollment response data
@@ -74,14 +74,14 @@ class EnrollmentService {
   async getEnrollmentStatus(courseId: string | number): Promise<IEnrollmentStatus> {
     try {
       // Find enrollments for this course
-      const enrollments = await this.findByFilter({course: Number(courseId)});
+      const enrollments = await this.findByFilter({ course: Number(courseId) });
       const enrollment = enrollments.find(e => e.course === Number(courseId));
 
       if (!enrollment) {
         return {
           enrolled: false,
           enrollmentDate: null,
-          enrollmentId: null
+          enrollmentId: null,
         };
       }
 
@@ -89,7 +89,7 @@ class EnrollmentService {
       return {
         enrolled: enrollment.status === 'active',
         enrollmentDate: enrollment.enrollment_date || null,
-        enrollmentId: enrollment.id
+        enrollmentId: enrollment.id,
       };
     } catch (error) {
       console.error('Failed to get enrollment status:', error);
@@ -142,7 +142,7 @@ class EnrollmentService {
       // This ensures required fields like user and course are included
       const completeData = {
         ...currentEnrollment,
-        ...data
+        ...data,
       };
 
       console.info(`EnrollmentService: Updating enrollment ${id} with data:`, data);
@@ -199,7 +199,7 @@ class EnrollmentService {
       const enrollmentData = {
         user: profile.id,
         course: courseId,
-        status: 'active' // Default status for new enrollments
+        status: 'active', // Default status for new enrollments
       };
 
       console.info('Enrolling in course:', courseId, 'for user:', profile.id);
@@ -215,8 +215,8 @@ class EnrollmentService {
       authEventService.publish({
         type: AuthEventType.ENROLLMENT_SUCCESS,
         payload: {
-          message: `Successfully enrolled in course ${courseId}`
-        }
+          message: `Successfully enrolled in course ${courseId}`,
+        },
       });
 
       return response;
@@ -230,7 +230,8 @@ class EnrollmentService {
         // Check for specific error conditions
         if (error.response.status === 400) {
           // If we have detailed validation errors, include them in the message
-          const detailedMessage = error.response.data.detail ||
+          const detailedMessage =
+            error.response.data.detail ||
             Object.entries(error.response.data)
               .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
               .join(', ');
@@ -248,7 +249,6 @@ class EnrollmentService {
     }
   }
 
-
   /**
    * Unenroll from a course by course ID
    * Updates enrollment status to "dropped" instead of deleting records
@@ -261,12 +261,14 @@ class EnrollmentService {
       console.log(`Unenrolling from course ID: ${courseId}`);
 
       // Call the primary enrollments unenroll endpoint
-      const response = await this.apiAny.post(
+      const response = (await this.apiAny.post(
         API_CONFIG.endpoints.enrollments.unenroll(courseId),
         {}
-      ) as Record<string, any>;
+      )) as Record<string, any>;
 
-      console.log(`Successfully unenrolled from course ${courseId} using enrollments unenroll endpoint`);
+      console.log(
+        `Successfully unenrolled from course ${courseId} using enrollments unenroll endpoint`
+      );
 
       // Special handling for "not enrolled" case from backend
       if (response?.message?.includes('not enrolled')) {
@@ -274,7 +276,7 @@ class EnrollmentService {
           success: true,
           message: 'You are not enrolled in this course',
           courseId: String(courseId),
-          status: 'not_enrolled'
+          status: 'not_enrolled',
         };
       }
 
@@ -283,21 +285,23 @@ class EnrollmentService {
         message: response?.message || 'Successfully unenrolled from course',
         courseId: String(courseId),
         status: response?.status || 'dropped',
-        enrollmentId: response?.enrollmentId
+        enrollmentId: response?.enrollmentId,
       };
     } catch (error) {
       console.error(`Error during unenrollment from course ${courseId}:`, error);
 
       // For not enrolled cases in errors, return a formatted response
-      if (error instanceof Error &&
+      if (
+        error instanceof Error &&
         (error.message.includes('not enrolled') ||
           (error as any)?.response?.data?.detail?.includes('not enrolled') ||
-          (error as any)?.response?.data?.message?.includes('not enrolled'))) {
+          (error as any)?.response?.data?.message?.includes('not enrolled'))
+      ) {
         return {
           success: true,
           message: 'You are not enrolled in this course',
           courseId: String(courseId),
-          status: 'not_enrolled'
+          status: 'not_enrolled',
         };
       }
 
@@ -314,7 +318,10 @@ class EnrollmentService {
    * @param {Partial<ICourseEnrollment>} data - Enrollment data to update.
    * @returns {Promise<ICourseEnrollment>} Promise resolving to the updated enrollment.
    */
-  async updateEnrollment(id: string | number, data: Partial<ICourseEnrollment>): Promise<ICourseEnrollment> {
+  async updateEnrollment(
+    id: string | number,
+    data: Partial<ICourseEnrollment>
+  ): Promise<ICourseEnrollment> {
     return this.update(id, data);
   }
 
@@ -344,7 +351,9 @@ class EnrollmentService {
         ? `${API_CONFIG.endpoints.enrollments.list}?${queryParams}`
         : API_CONFIG.endpoints.enrollments.list;
 
-      const response = await this.apiAny.get(endpoint) as ICourseEnrollment[] | IPossiblyPaginatedResponse<ICourseEnrollment>;
+      const response = (await this.apiAny.get(endpoint)) as
+        | ICourseEnrollment[]
+        | IPossiblyPaginatedResponse<ICourseEnrollment>;
 
       // Handle different API response formats - some return direct arrays, some have a results property
       if (Array.isArray(response)) {
@@ -395,22 +404,24 @@ export const fetchUserEnrollments = async () => enrollmentService.fetchUserEnrol
  * @param {string | number} courseId - Course ID to enroll in.
  * @returns {Promise<ICourseEnrollment>} Promise resolving to the created enrollment.
  */
-export const enrollInCourse = async (courseId: string | number) => enrollmentService.enrollInCourse(courseId);
-
+export const enrollInCourse = async (courseId: string | number) =>
+  enrollmentService.enrollInCourse(courseId);
 
 /**
  * @deprecated Use enrollmentService.fetchEnrolledStudents() instead.
  * @param {string | number} courseId - Course ID.
  * @returns {Promise<ICourseEnrollment[]>} Promise resolving to enrolled students.
  */
-export const fetchEnrolledStudents = async (courseId: string | number) => enrollmentService.fetchEnrolledStudents(courseId);
+export const fetchEnrolledStudents = async (courseId: string | number) =>
+  enrollmentService.fetchEnrolledStudents(courseId);
 
 /**
  * @deprecated Use enrollmentService.findByFilter() instead.
  * @param {Record<string, unknown>} filter - Key-value filter object.
  * @returns {Promise<ICourseEnrollment[]>} Promise resolving to filtered enrollments.
  */
-export const findByFilter = async (filter: Record<string, unknown>) => enrollmentService.findByFilter(filter);
+export const findByFilter = async (filter: Record<string, unknown>) =>
+  enrollmentService.findByFilter(filter);
 
 /**
  * @deprecated Use the enrollmentService singleton export instead.

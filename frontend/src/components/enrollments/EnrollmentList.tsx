@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
-import {ICourseEnrollment} from '@/types/entities'
+import { ICourseEnrollment } from '@/types/entities';
 import EnrollmentService from '@services/resources/enrollmentService';
 
 const EnrollmentList: React.FC = () => {

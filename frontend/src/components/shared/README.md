@@ -33,7 +33,7 @@ import {
   PasswordStrengthIndicator,
   ErrorBoundary,
   TokenRefreshHandler,
-  ProgressOverview
+  ProgressOverview,
 } from '../components/shared';
 ```
 
@@ -42,6 +42,7 @@ import {
 ### DataTable
 
 A flexible data table component that supports:
+
 - Custom column configurations
 - Sorting and filtering
 - Pagination
@@ -51,12 +52,14 @@ A flexible data table component that supports:
 ### StatusChip
 
 A component for displaying status values as colored chips with appropriate visual indicators.
+
 - Supports custom color and label mappings
 - Pre-configured for common statuses (completed, active, pending, etc.)
 
 ### ErrorMessage
 
 Standardized error message component with consistent styling.
+
 - Supports different severity levels (error, warning, info)
 - Can display a title and detailed message
 
@@ -67,6 +70,7 @@ A centered loading spinner for consistent loading state display.
 ### ProgressIndicator
 
 Visual indicator for progress values, supporting:
+
 - Linear or circular display
 - Custom thresholds for color changes
 - Percentage display options
@@ -78,6 +82,7 @@ Grid layout for displaying progress metrics in a standardized format.
 ### PasswordStrengthIndicator
 
 Visual indicator for password strength with:
+
 - Color-coded strength indicator
 - Strength label (Weak, Medium, Strong)
 - Validation feedback messages
@@ -85,6 +90,7 @@ Visual indicator for password strength with:
 ### ErrorBoundary
 
 React error boundary for catching and displaying runtime errors.
+
 - Prevents full application crashes
 - Provides user-friendly error messages
 - Includes retry functionality
@@ -92,6 +98,7 @@ React error boundary for catching and displaying runtime errors.
 ### TokenRefreshHandler
 
 Invisible component that manages JWT token refreshing:
+
 - Automatically refreshes tokens before expiry
 - Handles refresh failures
 - Publishes auth events for components to react to

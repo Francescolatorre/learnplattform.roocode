@@ -1,10 +1,10 @@
-import {test, expect} from '@playwright/test';
-import {takeScreenshot, TEST_USERS} from '../../setupTests';
-import {LoginPage} from '../../page-objects/LoginPage';
-import {InstructorDashboardPage} from '../../page-objects/DashboardPage';
-import {InstructorCoursesPage} from '../../page-objects/courses';
-import {CourseCreationPage} from '../../page-objects/courses/CourseCreationPage';
-import {MarkdownEditorPage} from '../../page-objects/MarkdownEditorPage';
+import { test, expect } from '@playwright/test';
+import { takeScreenshot, TEST_USERS } from '../../setupTests';
+import { LoginPage } from '../../page-objects/LoginPage';
+import { InstructorDashboardPage } from '../../page-objects/DashboardPage';
+import { InstructorCoursesPage } from '../../page-objects/courses';
+import { CourseCreationPage } from '../../page-objects/courses/CourseCreationPage';
+import { MarkdownEditorPage } from '../../page-objects/MarkdownEditorPage';
 
 /**
  * Simple test to verify that the markdown editor component is working correctly.
@@ -15,7 +15,7 @@ test.describe('Markdown Editor Basic Functionality', () => {
   // Increase timeout for the entire test
   test.setTimeout(120000);
 
-  test('editor should render markdown content', async ({page}) => {
+  test('editor should render markdown content', async ({ page }) => {
     // Log test start
     console.log('Starting markdown editor test');
 
@@ -63,7 +63,8 @@ test.describe('Markdown Editor Basic Functionality', () => {
       const markdownEditor = new MarkdownEditorPage(page);
 
       // Create test markdown content
-      const markdownContent = '# Test Heading\n\nThis is a **bold** test paragraph.\n\n* List item 1\n* List item 2';
+      const markdownContent =
+        '# Test Heading\n\nThis is a **bold** test paragraph.\n\n* List item 1\n* List item 2';
 
       // Fill markdown content using the page object
       console.log('Filling markdown content');
@@ -82,9 +83,7 @@ test.describe('Markdown Editor Basic Functionality', () => {
         await takeScreenshot(page, 'preview-mode');
 
         // Check if specific markdown elements are rendered using the page object
-        const hasElements = await markdownEditor.hasRenderedElements([
-          'heading', 'bold', 'list'
-        ]);
+        const hasElements = await markdownEditor.hasRenderedElements(['heading', 'bold', 'list']);
 
         console.log(`Found markdown elements: ${hasElements}`);
         expect(hasElements, 'Expected to find rendered markdown elements').toBeTruthy();
@@ -96,7 +95,6 @@ test.describe('Markdown Editor Basic Functionality', () => {
         // Switch back to edit mode
         await markdownEditor.switchToEdit();
         console.log('Switched back to edit mode');
-
       } catch (error) {
         console.log('Error during preview testing:', error.message);
         console.log('Checking if markdown renders directly without preview tab');
@@ -120,7 +118,7 @@ test.describe('Markdown Editor Basic Functionality', () => {
         await takeScreenshot(page, 'markdown-help-dialog');
 
         // Close help dialog if it was opened
-        await markdownEditor.closeHelpDialog().catch(() => { });
+        await markdownEditor.closeHelpDialog().catch(() => {});
 
         console.log('Markdown editor additional functionality test completed');
       } catch (error) {
@@ -128,7 +126,6 @@ test.describe('Markdown Editor Basic Functionality', () => {
       }
 
       console.log('Markdown editor test completed successfully');
-
     } catch (error) {
       console.error('Test failed with exception:', error);
 
@@ -144,7 +141,7 @@ test.describe('Markdown Editor Basic Functionality', () => {
     }
   });
 
-  test('markdown editor sanitizes unsafe content', async ({page}) => {
+  test('markdown editor sanitizes unsafe content', async ({ page }) => {
     console.log('Starting markdown sanitization test');
 
     try {
@@ -208,7 +205,6 @@ Normal paragraph here
       expect(isSanitized).toBeTruthy('Markdown preview should sanitize unsafe HTML content');
 
       console.log('Sanitization test completed successfully');
-
     } catch (error) {
       console.error('Sanitization test failed with exception:', error);
       await takeScreenshot(page, 'sanitization-test-failure');

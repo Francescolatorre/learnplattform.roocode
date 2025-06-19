@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Grid,
   Paper,
@@ -12,8 +12,8 @@ import {
   LinearProgress,
 } from '@mui/material';
 
-import {IProgressResponse} from '@/types/progress';
-import {useApiService} from '@/services/api/apiClientContext';
+import { IProgressResponse } from '@/types/progress';
+import { useApiService } from '@/services/api/apiClientContext';
 
 interface StudentDashboardProps {
   userId: string;
@@ -22,7 +22,7 @@ interface StudentDashboardProps {
 /**
  * Displays the student dashboard with progress information
  */
-const StudentDashboard: React.FC<StudentDashboardProps> = ({userId}) => {
+const StudentDashboard: React.FC<StudentDashboardProps> = ({ userId }) => {
   const [progressData, setProgressData] = useState<IProgressResponse | null>(null);
   const apiService = useApiService<IProgressResponse>();
 
@@ -43,7 +43,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({userId}) => {
     return <Typography>Loading...</Typography>;
   }
 
-  const {user_info, overall_stats, courses} = progressData;
+  const { user_info, overall_stats, courses } = progressData;
 
   const courseProgress = courses.map(course => ({
     completedTasks: course.completedTasks,
@@ -55,7 +55,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({userId}) => {
     <Grid container spacing={3}>
       {/* Overview Section */}
       <Grid item xs={12}>
-        <Paper sx={{p: 3, mb: 2}}>
+        <Paper sx={{ p: 3, mb: 2 }}>
           <Typography variant="h5" gutterBottom>
             Welcome, {user_info?.display_name || user_info?.username || 'Student'}
           </Typography>
@@ -65,7 +65,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({userId}) => {
           <LinearProgress
             variant="determinate"
             value={overall_stats?.completion_percentage || 0}
-            sx={{mt: 1, mb: 3, height: 10, borderRadius: 5}}
+            sx={{ mt: 1, mb: 3, height: 10, borderRadius: 5 }}
           />
 
           <Grid container spacing={3}>
@@ -84,7 +84,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({userId}) => {
 
       {/* Course List */}
       <Grid item xs={12} md={8}>
-        <Paper sx={{p: 3}}>
+        <Paper sx={{ p: 3 }}>
           <Typography variant="h6" gutterBottom>
             Your Courses
           </Typography>
@@ -103,7 +103,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({userId}) => {
                           <LinearProgress
                             variant="determinate"
                             value={course.averageScore || 0}
-                            sx={{mt: 1, height: 6, borderRadius: 3}}
+                            sx={{ mt: 1, height: 6, borderRadius: 3 }}
                           />
                         </>
                       }
@@ -123,7 +123,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({userId}) => {
 
       {/* Activities and Recommendations */}
       <Grid item xs={12} md={4}>
-        <Paper sx={{p: 3, mb: 3}}>
+        <Paper sx={{ p: 3, mb: 3 }}>
           <Typography variant="h6" gutterBottom>
             Recent Activity
           </Typography>
@@ -136,27 +136,30 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({userId}) => {
                 />
               </ListItem>
             )) || (
-                <ListItem>
-                  <ListItemText primary="No recent activity." />
-                </ListItem>
-              )}
+              <ListItem>
+                <ListItemText primary="No recent activity." />
+              </ListItem>
+            )}
           </List>
         </Paper>
 
-        <Paper sx={{p: 3}}>
+        <Paper sx={{ p: 3 }}>
           <Typography variant="h6" gutterBottom>
             Recommendations
           </Typography>
           <List dense>
             {progressData.courses.slice(0, 3).map((course, index) => (
               <ListItem key={index}>
-                <ListItemText primary={`Course: ${course.studentId}`} secondary={`Average Score: ${course.averageScore}`} />
+                <ListItemText
+                  primary={`Course: ${course.studentId}`}
+                  secondary={`Average Score: ${course.averageScore}`}
+                />
               </ListItem>
             )) || (
-                <ListItem>
-                  <ListItemText primary="No recommendations available." />
-                </ListItem>
-              )}
+              <ListItem>
+                <ListItemText primary="No recommendations available." />
+              </ListItem>
+            )}
           </List>
         </Paper>
       </Grid>
@@ -165,7 +168,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({userId}) => {
 };
 
 // Helper component for statistic cards
-const StatCard: React.FC<{title: string; value: number | string}> = ({title, value}) => (
+const StatCard: React.FC<{ title: string; value: number | string }> = ({ title, value }) => (
   <Card>
     <CardContent>
       <Typography color="textSecondary" gutterBottom>

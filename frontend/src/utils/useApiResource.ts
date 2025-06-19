@@ -1,8 +1,8 @@
-import {useQuery} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
-import {IPaginatedResponse} from '@/types/paginatedResponse';
-import {courseService, CourseFilterOptions} from 'src/services/resources/courseService';
-import {ICourse} from 'src/types/course';
+import { IPaginatedResponse } from '@/types/paginatedResponse';
+import { courseService, CourseFilterOptions } from 'src/services/resources/courseService';
+import { ICourse } from 'src/types/course';
 
 /**
  * React hook for fetching a paginated list of courses using the standardized courseService.
@@ -29,7 +29,6 @@ export function useCourse(courseId: string | undefined) {
     enabled: !!courseId,
   });
 }
-
 
 /*
 TODO: Implement useTasks, useModules, and other resource hooks using their respective service modules.

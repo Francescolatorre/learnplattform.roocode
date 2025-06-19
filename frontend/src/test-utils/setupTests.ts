@@ -2,6 +2,10 @@
 import {vi} from 'vitest';
 import '@testing-library/jest-dom';
 import React from 'react';
+import { configure } from '@testing-library/react';
+
+// Ensure MUI Snackbar/Modal portals render into the test container
+configure({ defaultHidden: true });
 
 // Mock for MarkdownRenderer component
 vi.mock('@/components/common/MarkdownRenderer', () => ({
@@ -10,28 +14,10 @@ vi.mock('@/components/common/MarkdownRenderer', () => ({
     return React.createElement('div', {
       className: 'markdown-content',
       'data-testid': 'markdown-content',
-      dangerouslySetInnerHTML: {__html: content || ''}
+      dangerouslySetInnerHTML: {__html: content || ''},
     });
-  })
+  }),
 }));
-
-// Mock Notifications hooks and context
-vi.mock('../components/Notifications/useNotification', () => {
-  const mockNotify = vi.fn();
-  return {
-    useNotification: () => mockNotify
-  };
-});
-
-vi.mock('../components/Notifications/NotificationProvider', () => {
-  return {
-    NotificationProvider: ({children}: {children: React.ReactNode}) => children,
-    useNotificationContext: vi.fn().mockReturnValue({
-      addNotification: vi.fn(),
-      dismissNotification: vi.fn()
-    })
-  };
-});
 
 // Axios Mocking
 const mockAxiosInstance = {
@@ -77,14 +63,21 @@ const localStorageMock = (() => {
 Object.defineProperty(window, 'localStorage', {value: localStorageMock});
 
 // Auth Kontext Mock
+const useAuth = vi.fn(() => ({
+  user: null,
+  isAuthenticated: false,
+  isRestoring: false,
+  error: null,
+  login: vi.fn(),
+  logout: vi.fn(),
+  register: vi.fn(),
+  getUserRole: () => 'guest',
+  redirectToDashboard: vi.fn(),
+}));
 vi.mock('@context/auth/AuthContext', () => ({
-  useAuth: () => ({
-    isAuthenticated: true,
-    user: {id: '1', username: 'testuser', role: 'user'},
-    login: vi.fn(),
-    logout: vi.fn(),
-    getUserRole: vi.fn().mockReturnValue('user'),
-  }),
+  __esModule: true,
+  AuthContext: React.createContext({}),
+  useAuth,
 }));
 
 // Expose mocks for tests

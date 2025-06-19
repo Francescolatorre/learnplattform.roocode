@@ -1,8 +1,8 @@
-import type {Config} from '@playwright/test';
-import {defineConfig, devices} from '@playwright/test';
+import type { Config } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 import path from 'path';
 import fs from 'fs';
-import {fileURLToPath} from 'url';
+import { fileURLToPath } from 'url';
 
 // Get the directory name equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -21,7 +21,7 @@ const outputDir = path.join(__dirname, 'test-results');
 
 // Ensure directories exist
 if (!fs.existsSync(outputDir)) {
-  fs.mkdirSync(outputDir, {recursive: true});
+  fs.mkdirSync(outputDir, { recursive: true });
 }
 
 const config: Config = defineConfig({
@@ -38,8 +38,8 @@ const config: Config = defineConfig({
   retries: process.env.CI === 'true' ? 2 : 0, // Added 1 retry for local development
   workers: process.env.CI === 'true' ? 1 : undefined,
   reporter: [
-    ['html', {outputFolder: path.join(outputDir, 'playwright-report'), open: 'never'}],
-    ['junit', {outputFile: path.join(outputDir, 'junit-report.xml')}],
+    ['html', { outputFolder: path.join(outputDir, 'playwright-report'), open: 'never' }],
+    ['junit', { outputFile: path.join(outputDir, 'junit-report.xml') }],
   ],
 
   // Configure outputDir for all test artifacts including screenshots
@@ -57,7 +57,7 @@ const config: Config = defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: {...devices['Desktop Chrome']},
+      use: { ...devices['Desktop Chrome'] },
     },
   ],
   webServer: {

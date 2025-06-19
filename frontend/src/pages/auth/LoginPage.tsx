@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {Box, TextField, Button, Typography, CircularProgress} from '@mui/material';
-import {useForm, SubmitHandler} from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { Box, TextField, Button, Typography, CircularProgress } from '@mui/material';
+import { useForm, SubmitHandler } from 'react-hook-form';
 
-import {useNotification} from '@/components/Notifications/useNotification';
-import {useAuth} from '@context/auth/AuthContext';
-import {TUserRole} from '@/types';
+import { useNotification } from '@/components/Notifications/useNotification';
+import { useAuth } from '@context/auth/AuthContext';
+import { TUserRole } from '@/types';
 
 interface ILoginFormInputs {
   username: string;
@@ -29,9 +29,9 @@ const LoginPage: React.FC = () => {
   const {
     register,
     handleSubmit,
-    formState: {errors, isSubmitting},
+    formState: { errors, isSubmitting },
   } = useForm<ILoginFormInputs>();
-  const {login, redirectToDashboard, getUserRole, user} = useAuth();
+  const { login, redirectToDashboard, getUserRole, user } = useAuth();
   const notify = useNotification();
 
   // Track login state to know when to watch for user data
@@ -81,11 +81,12 @@ const LoginPage: React.FC = () => {
 
       notify({
         title: 'Login Failed',
-        message: 'response' in apiError
-          ? apiError.response?.data?.detail || 'An error occurred during login'
-          : 'An error occurred during login',
+        message:
+          'response' in apiError
+            ? apiError.response?.data?.detail || 'An error occurred during login'
+            : 'An error occurred during login',
         severity: 'error',
-        duration: 5000
+        duration: 5000,
       });
     }
   };
@@ -96,7 +97,7 @@ const LoginPage: React.FC = () => {
 
   // Render form component (unchanged)
   return (
-    <Box sx={{maxWidth: 400, mx: 'auto', mt: 8, p: 3, border: '1px solid #ccc', borderRadius: 2}}>
+    <Box sx={{ maxWidth: 400, mx: 'auto', mt: 8, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
       <Typography variant="h5" gutterBottom>
         Login
       </Typography>
@@ -108,8 +109,8 @@ const LoginPage: React.FC = () => {
           margin="normal"
           error={!!errors.username}
           helperText={errors.username?.message}
-          InputProps={{inputProps: {'data-testid': 'login-username-input'}}}
-          {...register('username', {required: 'Username is required'})}
+          InputProps={{ inputProps: { 'data-testid': 'login-username-input' } }}
+          {...register('username', { required: 'Username is required' })}
         />
         <TextField
           label="Password"
@@ -117,12 +118,12 @@ const LoginPage: React.FC = () => {
           fullWidth
           margin="normal"
           autoComplete="current-password"
-          InputProps={{inputProps: {'data-testid': 'login-password-input'}}}
-          {...register('password', {required: 'Password is required'})}
+          InputProps={{ inputProps: { 'data-testid': 'login-password-input' } }}
+          {...register('password', { required: 'Password is required' })}
           error={!!errors.password}
           helperText={errors.password?.message}
         />
-        <Box sx={{mt: 2, textAlign: 'center'}}>
+        <Box sx={{ mt: 2, textAlign: 'center' }}>
           <Button
             type="submit"
             variant="contained"

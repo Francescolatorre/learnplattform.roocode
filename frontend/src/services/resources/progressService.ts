@@ -5,7 +5,7 @@ import {
   ICourseStructureAnalytics,
   IGradingData,
   ITaskProgressUpdateData,
-  ITaskSubmissionData
+  ITaskSubmissionData,
 } from '@/types';
 import {
   IUserProgress,
@@ -16,12 +16,11 @@ import {
   ITaskProgress,
   IEnrollmentStatus,
   IEnrollmentResponse,
-  IUserProgressDetails
+  IUserProgressDetails,
 } from '@/types';
 
-
-import {API_CONFIG} from '../api/apiConfig';
-import {ApiService} from '../api/apiService';
+import { API_CONFIG } from '../api/apiConfig';
+import { ApiService } from '../api/apiService';
 
 /**
  * Service for managing progress-related operations, including student progress, quiz history,
@@ -56,7 +55,7 @@ class ProgressService {
    */
   async fetchStudentProgressByCourse(
     courseId: string,
-    studentId: string,
+    studentId: string
   ): Promise<IUserProgress | null> {
     console.log('Fetching student progress by course:', courseId, studentId);
     const endpoint = API_CONFIG.endpoints.courses.studentProgressDetail(courseId, studentId);
@@ -68,9 +67,7 @@ class ProgressService {
    * @param courseId The ID of the course.
    * @returns A promise that resolves to an object containing the count, next page, previous page, and results.
    */
-  async fetchAllStudentsProgress(
-    courseId: string
-  ): Promise<IPaginatedResponse<IUserProgress>> {
+  async fetchAllStudentsProgress(courseId: string): Promise<IPaginatedResponse<IUserProgress>> {
     console.log('Fetching all students progress for course:', courseId);
     const endpoint = API_CONFIG.endpoints.courses.studentProgress(courseId);
     return this.apiAny.get(endpoint) as Promise<IPaginatedResponse<IUserProgress>>;
@@ -82,10 +79,7 @@ class ProgressService {
    * @param studentId The ID of the student (optional).
    * @returns A promise that resolves to an array of QuizAttempt objects.
    */
-  async getIQuizHistory(
-    courseId: string,
-    studentId?: string
-  ): Promise<IQuizAttempt[]> {
+  async getIQuizHistory(courseId: string, studentId?: string): Promise<IQuizAttempt[]> {
     console.log('Getting quiz history for course:', courseId, 'and student:', studentId);
     const endpoint = API_CONFIG.endpoints.quizzes.attemptsList;
     // If studentId is provided, filter by studentId (assuming API supports query param)
@@ -190,7 +184,6 @@ class ProgressService {
       throw new Error('Instructor dashboard data not found');
     }
   }
-
 
   /**
    * Fetches analytics data related to the structure of a course.
@@ -316,8 +309,8 @@ class ProgressService {
             completion_status: 'completed',
             answers: [],
             feedback: '',
-            graded: true
-          } as unknown as IQuizAttempt
+            graded: true,
+          } as unknown as IQuizAttempt,
         ];
       }
 
@@ -334,22 +327,39 @@ const progressService = new ProgressService();
 export const fetchStudentProgressByUser = async (studentId: string): Promise<IUserProgress[]> =>
   progressService.fetchStudentProgressByUser(studentId);
 
-export const fetchStudentProgressByCourse = async (courseId: string, studentId: string): Promise<IUserProgress | null> =>
+export const fetchStudentProgressByCourse = async (
+  courseId: string,
+  studentId: string
+): Promise<IUserProgress | null> =>
   progressService.fetchStudentProgressByCourse(courseId, studentId);
 
-export const fetchAllStudentsProgress = async (courseId: string): Promise<IPaginatedResponse<IUserProgress>> =>
-  progressService.fetchAllStudentsProgress(courseId);
+export const fetchAllStudentsProgress = async (
+  courseId: string
+): Promise<IPaginatedResponse<IUserProgress>> => progressService.fetchAllStudentsProgress(courseId);
 
-export const getIQuizHistory = async (courseId: string, studentId?: string): Promise<IQuizAttempt[]> =>
-  progressService.getIQuizHistory(courseId, studentId);
+export const getIQuizHistory = async (
+  courseId: string,
+  studentId?: string
+): Promise<IQuizAttempt[]> => progressService.getIQuizHistory(courseId, studentId);
 
-export const updateTaskProgress = async (courseId: string, taskId: string, progressData: ITaskProgressUpdateData): Promise<ITaskProgress> =>
-  progressService.updateTaskProgress(courseId, taskId, progressData);
+export const updateTaskProgress = async (
+  courseId: string,
+  taskId: string,
+  progressData: ITaskProgressUpdateData
+): Promise<ITaskProgress> => progressService.updateTaskProgress(courseId, taskId, progressData);
 
-export const submitTask = async (courseId: string, taskId: string, submissionData: ITaskSubmissionData): Promise<ITaskProgress> =>
-  progressService.submitTask(courseId, taskId, submissionData);
+export const submitTask = async (
+  courseId: string,
+  taskId: string,
+  submissionData: ITaskSubmissionData
+): Promise<ITaskProgress> => progressService.submitTask(courseId, taskId, submissionData);
 
-export const gradeSubmission = async (courseId: string, taskId: string, studentId: string, gradingData: IGradingData): Promise<ITaskProgress> =>
+export const gradeSubmission = async (
+  courseId: string,
+  taskId: string,
+  studentId: string,
+  gradingData: IGradingData
+): Promise<ITaskProgress> =>
   progressService.gradeSubmission(courseId, taskId, studentId, gradingData);
 
 export const fetchCourseDetails = async (courseId: string): Promise<ICourse> =>
@@ -358,8 +368,9 @@ export const fetchCourseDetails = async (courseId: string): Promise<ICourse> =>
 export const fetchProgressAnalytics = async (courseId: string): Promise<IProgressAnalytics> =>
   progressService.fetchProgressAnalytics(courseId);
 
-export const fetchStudentProgressSummary = async (studentId: string): Promise<IStudentProgressSummary> =>
-  progressService.fetchStudentProgressSummary(studentId);
+export const fetchStudentProgressSummary = async (
+  studentId: string
+): Promise<IStudentProgressSummary> => progressService.fetchStudentProgressSummary(studentId);
 
 export const fetchInstructorDashboardData = async (): Promise<IInstructorDashboardData> =>
   progressService.fetchInstructorDashboardData();
@@ -367,7 +378,9 @@ export const fetchInstructorDashboardData = async (): Promise<IInstructorDashboa
 export const fetchCourseStructure = async (courseId: string): Promise<ICourseStructureAnalytics> =>
   progressService.fetchCourseStructure(courseId);
 
-export const getStudentDashboard = async (studentId?: number | string | null): Promise<IDashboardResponse> => {
+export const getStudentDashboard = async (
+  studentId?: number | string | null
+): Promise<IDashboardResponse> => {
   if (!studentId) {
     throw new Error('Student ID is required');
   }

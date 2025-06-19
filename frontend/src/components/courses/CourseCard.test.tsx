@@ -1,8 +1,8 @@
-import React from 'react';
-import {screen, fireEvent} from '../tests/testUtils';
-import {render} from '../tests/testUtils';
+import { renderWithProviders, screen, fireEvent } from '@/test-utils/renderWithProviders';
 import CourseCard from './CourseCard';
-import {describe, it, expect, vi} from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+import { BrowserRouter } from 'react-router-dom';
+import { createCourse } from '@/test-utils/factories/courseFactory';
 
 // Mock react-router-dom's useNavigate
 const mockedNavigate = vi.fn();
@@ -14,45 +14,29 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-// Test course data
-const mockCourse = {
-  id: 1,
-  title: 'Test Course',
-  description: 'This is a test course description',
-  image_url: 'https://example.com/image.jpg',
-  isEnrolled: false,
-  isCompleted: false,
-  instructor_name: 'Test Instructor',
-  status: 'published',
-  visibility: 'public',
-  created_at: '2023-01-01T12:00:00Z',
-  updated_at: '2023-01-02T12:00:00Z',
-};
-
 describe('CourseCard Component', () => {
+  mockCourse = createCourse();
+
   beforeEach(() => {
     mockedNavigate.mockClear();
   });
   it('renders the course card with title and description', () => {
-    render(<CourseCard course={mockCourse} isInstructorView={false} />);
+    renderWithProviders(<CourseCard course={mockCourse} isInstructorView={false} />);
 
     expect(screen.getByText('Test Course')).toBeInTheDocument();
     expect(screen.getByText('This is a test course description')).toBeInTheDocument();
   });
 
   it('handles missing image by showing placeholder', () => {
-    const courseWithoutImage = {...mockCourse, image_url: null};
-    render(
-      <CourseCard course={courseWithoutImage} />
-      </BrowserRouter >
-    );
+    const courseWithoutImage = { ...mockCourse, image_url: null };
+    renderWithProviders(<CourseCard course={courseWithoutImage} />);
 
     expect(screen.getByText('No image available')).toBeInTheDocument();
   });
 
   it('handles null description by showing default text', () => {
-    const courseWithoutDescription = {...mockCourse, description: null};
-    render(
+    const courseWithoutDescription = { ...mockCourse, description: null };
+    renderWithProviders(
       <BrowserRouter>
         <CourseCard course={courseWithoutDescription} />
       </BrowserRouter>
@@ -63,9 +47,9 @@ describe('CourseCard Component', () => {
 
   it('truncates long descriptions', () => {
     const longDesc = 'A'.repeat(150); // Creates a string longer than 120 chars
-    const courseWithLongDesc = {...mockCourse, description: longDesc};
+    const courseWithLongDesc = { ...mockCourse, description: longDesc };
 
-    render(
+    renderWithProviders(
       <BrowserRouter>
         <CourseCard course={courseWithLongDesc} />
       </BrowserRouter>
@@ -76,7 +60,7 @@ describe('CourseCard Component', () => {
   });
 
   it('shows loading skeleton when isLoading is true', () => {
-    const {container} = render(
+    const { container } = renderWithProviders(
       <BrowserRouter>
         <CourseCard course={mockCourse} isLoading={true} />
       </BrowserRouter>
@@ -86,7 +70,7 @@ describe('CourseCard Component', () => {
   });
 
   it('navigates to course page when View Course button is clicked', () => {
-    render(
+    renderWithProviders(
       <BrowserRouter>
         <CourseCard course={mockCourse} />
       </BrowserRouter>
@@ -99,8 +83,8 @@ describe('CourseCard Component', () => {
   });
 
   it('shows Continue Learning button for enrolled courses', () => {
-    const enrolledCourse = {...mockCourse, isEnrolled: true};
-    render(
+    const enrolledCourse = { ...mockCourse, isEnrolled: true };
+    renderWithProviders(
       <BrowserRouter>
         <CourseCard course={enrolledCourse} />
       </BrowserRouter>
@@ -110,7 +94,7 @@ describe('CourseCard Component', () => {
   });
 
   it('shows instructor actions when isInstructorView is true', () => {
-    render(
+    renderWithProviders(
       <BrowserRouter>
         <CourseCard course={mockCourse} isInstructorView={true} />
       </BrowserRouter>

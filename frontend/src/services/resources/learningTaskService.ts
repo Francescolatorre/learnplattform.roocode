@@ -1,9 +1,9 @@
-import {IPaginatedResponse} from '@/types';
-import {ILearningTask, ITaskCreationData} from '@/types/task';
-import {ApiService} from 'src/services/api/apiService';
-import {logger} from 'src/utils/logger';
+import { IPaginatedResponse } from '@/types';
+import { ILearningTask, ITaskCreationData } from '@/types/task';
+import { ApiService } from 'src/services/api/apiService';
+import { logger } from 'src/utils/logger';
 
-import {API_CONFIG} from '../api/apiConfig';
+import { API_CONFIG } from '../api/apiConfig';
 
 class LearningTaskServiceError extends Error {
   statusCode?: number;
@@ -68,10 +68,7 @@ class LearningTaskService {
    * @param notifyUsers Whether to notify users about the new task.
    * @returns Promise resolving to the created LearningTask object.
    */
-  async create(
-    taskData: ITaskCreationData,
-    notifyUsers = false
-  ): Promise<ILearningTask> {
+  async create(taskData: ITaskCreationData, notifyUsers = false): Promise<ILearningTask> {
     try {
       const formData = this.prepareFormData(taskData);
       formData.append('notifyUsers', String(notifyUsers));
@@ -89,10 +86,7 @@ class LearningTaskService {
    * @param updatedData Partial data to update the task.
    * @returns Promise resolving to the updated LearningTask object.
    */
-  async update(
-    taskId: string,
-    updatedData: Partial<ILearningTask>
-  ): Promise<ILearningTask> {
+  async update(taskId: string, updatedData: Partial<ILearningTask>): Promise<ILearningTask> {
     return this.apiTask.patch(API_CONFIG.endpoints.tasks.update(taskId), updatedData);
   }
 
@@ -115,8 +109,10 @@ class LearningTaskService {
    */
   async getByStudentId(studentId: string): Promise<ILearningTask[]> {
     try {
-      const params = {student: studentId};
-      const response = await this.apiTasksResults.get(`${API_CONFIG.endpoints.tasks.list}?${new URLSearchParams(params).toString()}`);
+      const params = { student: studentId };
+      const response = await this.apiTasksResults.get(
+        `${API_CONFIG.endpoints.tasks.list}?${new URLSearchParams(params).toString()}`
+      );
       if (!response || !Array.isArray(response.results) || response.results.length === 0) {
         throw new LearningTaskServiceError('Tasks not found');
       }
@@ -134,7 +130,9 @@ class LearningTaskService {
    */
   async getByCourseId(courseId: string): Promise<ILearningTask[]> {
     try {
-      const response = await this.apiTasksResults.get(API_CONFIG.endpoints.tasks.byCourse(courseId));
+      const response = await this.apiTasksResults.get(
+        API_CONFIG.endpoints.tasks.byCourse(courseId)
+      );
 
       // Prüfen, ob response direkt ein Array ist
       if (Array.isArray(response)) {
@@ -155,17 +153,17 @@ class LearningTaskService {
   }
 
   /**
- * Fetch all learning tasks for a specific course with a large page size to get all results.
- * @param courseId The ID of the course.
- * @returns Promise resolving to an array of all LearningTask objects for the course.
- */
+   * Fetch all learning tasks for a specific course with a large page size to get all results.
+   * @param courseId The ID of the course.
+   * @returns Promise resolving to an array of all LearningTask objects for the course.
+   */
   async getAllTasksByCourseId(courseId: string): Promise<ILearningTask[]> {
     try {
       // Parameter für große Ergebnismenge setzen
       const params = {
         course: courseId,
         page_size: '999', // Hoher Wert für maximale Ergebnisse pro Seite
-        page: '1'         // Erste Seite abfragen
+        page: '1', // Erste Seite abfragen
       };
 
       const queryString = new URLSearchParams(params).toString();
@@ -192,7 +190,10 @@ class LearningTaskService {
   /**
    * Alternativer Fallback-Ansatz: Iterativer Abruf aller Seiten, falls große page_size nicht funktioniert
    */
-  async getAllTasksByCourseIdPaginated(courseId: string, pageSize: number = 50): Promise<ILearningTask[]> {
+  async getAllTasksByCourseIdPaginated(
+    courseId: string,
+    pageSize: number = 50
+  ): Promise<ILearningTask[]> {
     try {
       let allTasks: ILearningTask[] = [];
       let currentPage = 1;
@@ -202,7 +203,7 @@ class LearningTaskService {
         const params = {
           course: courseId,
           page_size: pageSize.toString(),
-          page: currentPage.toString()
+          page: currentPage.toString(),
         };
 
         const queryString = new URLSearchParams(params).toString();
@@ -275,9 +276,13 @@ export default learningTaskService;
 // For backward compatibility, export the old function names as references to methods
 export const fetchCourseTasks = async (courseId: string): Promise<ILearningTask[]> =>
   learningTaskService.getByCourseId(courseId);
-export const createTask = async (taskData: ITaskCreationData, notifyUsers = false): Promise<ILearningTask> =>
-  learningTaskService.create(taskData, notifyUsers);
-export const updateTask = async (taskId: string, updatedData: Partial<ILearningTask>): Promise<ILearningTask> =>
-  learningTaskService.update(taskId, updatedData);
+export const createTask = async (
+  taskData: ITaskCreationData,
+  notifyUsers = false
+): Promise<ILearningTask> => learningTaskService.create(taskData, notifyUsers);
+export const updateTask = async (
+  taskId: string,
+  updatedData: Partial<ILearningTask>
+): Promise<ILearningTask> => learningTaskService.update(taskId, updatedData);
 export const deleteTask = async (taskId: string): Promise<void> =>
   learningTaskService.delete(taskId);

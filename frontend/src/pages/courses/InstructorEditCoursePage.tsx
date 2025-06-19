@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import {
   Container,
   TextField,
@@ -8,16 +8,16 @@ import {
   Box,
   CircularProgress,
   FormControlLabel,
-  Switch
+  Switch,
 } from '@mui/material';
-import {useForm, Controller, SubmitHandler} from 'react-hook-form';
-import {useNavigate, useParams} from 'react-router-dom';
-import {useMutation, useQueryClient, useQuery} from '@tanstack/react-query';
+import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 
-import {useAuth} from '@context/auth/AuthContext';
-import {courseService} from '@services/resources/courseService';
-import {useNotification} from '@/components/Notifications/useNotification';
-import {ICourse} from '@/types/course';
+import { useAuth } from '@context/auth/AuthContext';
+import { courseService } from '@services/resources/courseService';
+import { useNotification } from '@/components/Notifications/useNotification';
+import { ICourse } from '@/types/course';
 import MarkdownEditor from '@/components/shared/MarkdownEditor';
 
 interface IEditCourseProps {
@@ -39,11 +39,14 @@ interface ICourseFormData {
  * Supports both new course creation and existing course editing
  * Works for both admin and instructor user roles
  */
-const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, isInstructorView = false}) => {
-  const {courseId} = useParams<{courseId: string}>();
+const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
+  isNew = false,
+  isInstructorView = false,
+}) => {
+  const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const {user} = useAuth();
+  const { user } = useAuth();
   const notify = useNotification();
 
   const {
@@ -51,7 +54,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, is
     register,
     handleSubmit,
     reset,
-    formState: {errors, isValid}
+    formState: { errors, isValid },
   } = useForm<ICourseFormData>({
     mode: 'onChange',
     defaultValues: {
@@ -60,8 +63,8 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, is
       is_published: false,
       image_url: '',
       category: '',
-      difficulty_level: 'beginner'
-    }
+      difficulty_level: 'beginner',
+    },
   });
 
   // Role-based access control
@@ -73,13 +76,13 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, is
   }, [user, navigate, notify]);
 
   // Fetch course data if editing an existing course
-  const {data: courseData, isLoading: isLoadingCourse} = useQuery({
+  const { data: courseData, isLoading: isLoadingCourse } = useQuery({
     queryKey: ['course', courseId],
     queryFn: () => courseService.getCourseDetails(courseId as string) as Promise<ICourse>,
     enabled: !isNew && !!courseId,
     onError: (error: any) => {
       notify(error.message || 'Failed to load course data', 'error');
-    }
+    },
   });
 
   // Reset form when course data is loaded
@@ -91,7 +94,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, is
         description: courseDetails.description || '',
         image_url: courseDetails.image_url || '',
         category: courseDetails.category || '',
-        difficulty_level: courseDetails.difficulty_level || 'beginner'
+        difficulty_level: courseDetails.difficulty_level || 'beginner',
       });
     }
   }, [courseData, reset, isNew]);
@@ -106,7 +109,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, is
           status: data.is_published ? 'published' : 'draft',
           visibility: 'public',
           // Add creator ID if available from user context
-          ...(user?.id && {creator: Number(user.id)})
+          ...(user?.id && { creator: Number(user.id) }),
         };
 
         console.debug('Creating course with enhanced data:', enhancedData);
@@ -115,18 +118,15 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, is
         return courseService.updateCourse(courseId as string, data);
       }
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       // Invalidate queries to refetch course data
-      queryClient.invalidateQueries({queryKey: ['courses']});
-      queryClient.invalidateQueries({queryKey: ['course', courseId]});
+      queryClient.invalidateQueries({ queryKey: ['courses'] });
+      queryClient.invalidateQueries({ queryKey: ['course', courseId] });
       // Also invalidate instructor courses to ensure the dashboard is updated
-      queryClient.invalidateQueries({queryKey: ['instructorCourses']});
+      queryClient.invalidateQueries({ queryKey: ['instructorCourses'] });
 
       // Show success notification
-      notify(
-        isNew ? 'Course created successfully!' : 'Course updated successfully!',
-        'success'
-      );
+      notify(isNew ? 'Course created successfully!' : 'Course updated successfully!', 'success');
 
       // Navigate to appropriate page based on user role/view
       if (isNew && data?.id) {
@@ -162,11 +162,11 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, is
       }
 
       notify(errorMessage, 'error');
-    }
+    },
   });
 
   // Form submission handler
-  const onSubmit: SubmitHandler<ICourseFormData> = (data) => {
+  const onSubmit: SubmitHandler<ICourseFormData> = data => {
     mutation.mutate(data);
   };
 
@@ -174,9 +174,12 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, is
   const handleFormSubmit = (e: React.FormEvent) => {
     // Use this approach instead of DOM manipulation to ensure proper integration with Material UI
     const formValues = {
-      title: (document.querySelector('[data-testid="course-title-input"]') as HTMLInputElement)?.value,
+      title: (document.querySelector('[data-testid="course-title-input"]') as HTMLInputElement)
+        ?.value,
       // Use the correct selector for the markdown editor textarea
-      description: (document.querySelector('[data-testid="markdown-editor-textarea"]') as HTMLTextAreaElement)?.value
+      description: (
+        document.querySelector('[data-testid="markdown-editor-textarea"]') as HTMLTextAreaElement
+      )?.value,
     };
 
     // If fields are empty, apply proper Material UI error classes
@@ -212,7 +215,8 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, is
           // For markdown editor, we need to find the parent container a bit differently
           const editorContainer = descField.closest('.MuiTextField-root');
           if (editorContainer) {
-            const helperText = editorContainer.parentElement?.querySelector('.MuiFormHelperText-root');
+            const helperText =
+              editorContainer.parentElement?.querySelector('.MuiFormHelperText-root');
             if (helperText) {
               helperText.textContent = 'Description is required';
               helperText.classList.add('Mui-error');
@@ -243,18 +247,18 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, is
 
   if (isLoadingCourse && !isNew) {
     return (
-      <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
         <CircularProgress />
       </Box>
     );
   }
 
   // Determine container size based on view mode
-  const containerMaxWidth = isInstructorView ? "sm" : "md";
+  const containerMaxWidth = isInstructorView ? 'sm' : 'md';
 
   return (
-    <Container maxWidth={containerMaxWidth as "sm" | "md"}>
-      <Paper sx={{p: 4, mt: 3}}>
+    <Container maxWidth={containerMaxWidth as 'sm' | 'md'}>
+      <Paper sx={{ p: 4, mt: 3 }}>
         <Typography variant="h5" gutterBottom>
           {isNew ? 'Create New Course' : 'Edit Course'}
         </Typography>
@@ -262,7 +266,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, is
         <form onSubmit={handleFormSubmit}>
           <TextField
             {...register('title', {
-              required: 'Title is required'
+              required: 'Title is required',
             })}
             name="title"
             id="course-title"
@@ -272,16 +276,16 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, is
             error={!!errors.title}
             helperText={errors.title?.message || ' '}
             disabled={mutation.isPending}
-            inputProps={{'data-testid': 'course-title-input'}}
+            inputProps={{ 'data-testid': 'course-title-input' }}
           />
 
           {/* Use MarkdownEditor for course description instead of TextField */}
           <Controller
             name="description"
             control={control}
-            rules={{required: 'Description is required'}}
-            render={({field}) => (
-              <Box sx={{mt: 2, mb: 2}}>
+            rules={{ required: 'Description is required' }}
+            render={({ field }) => (
+              <Box sx={{ mt: 2, mb: 2 }}>
                 <MarkdownEditor
                   id="course-description"
                   label="Course Description"
@@ -307,10 +311,10 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, is
                 error={!!errors.image_url}
                 helperText={errors.image_url?.message}
                 disabled={mutation.isPending}
-                inputProps={{'data-testid': 'course-image-url-input'}}
+                inputProps={{ 'data-testid': 'course-image-url-input' }}
               />
 
-              <Box sx={{display: 'flex', gap: 2, mt: 2}}>
+              <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
                 <TextField
                   {...register('category')}
                   label="Category"
@@ -319,7 +323,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, is
                   error={!!errors.category}
                   helperText={errors.category?.message}
                   disabled={mutation.isPending}
-                  inputProps={{'data-testid': 'course-category-input'}}
+                  inputProps={{ 'data-testid': 'course-category-input' }}
                 />
 
                 <TextField
@@ -330,7 +334,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, is
                   select
                   SelectProps={{
                     native: true,
-                    inputProps: {'data-testid': 'course-difficulty-select'}
+                    inputProps: { 'data-testid': 'course-difficulty-select' },
                   }}
                   disabled={mutation.isPending}
                 >
@@ -345,14 +349,14 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, is
           <Controller
             name="is_published"
             control={control}
-            render={({field}) => (
+            render={({ field }) => (
               <FormControlLabel
                 control={
                   <Switch
                     checked={field.value}
                     onChange={field.onChange}
                     disabled={mutation.isPending}
-                    inputProps={{'data-testid': 'course-publish-switch'}}
+                    inputProps={{ 'data-testid': 'course-publish-switch' }}
                   />
                 }
                 label="Publish Course"
@@ -360,7 +364,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, is
             )}
           />
 
-          <Box sx={{display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3}}>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
             <Button
               variant="outlined"
               onClick={() => navigate(-1)}
@@ -382,7 +386,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({isNew = false, is
           </Box>
         </form>
       </Paper>
-    </Container >
+    </Container>
   );
 };
 

@@ -1,8 +1,8 @@
-import {useQuery} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
-import {ICourse} from '@/types/course'; // Import existing interface
-import {IPaginatedResponse} from '@/types/paginatedResponse'; // Import existing interface
-import {courseService} from '@services/resources/courseService';
+import { ICourse } from '@/types/course'; // Import existing interface
+import { IPaginatedResponse } from '@/types/paginatedResponse'; // Import existing interface
+import { courseService } from '@services/resources/courseService';
 
 export const useCourses = () => {
   const query = useQuery<IPaginatedResponse<ICourse>, Error>({

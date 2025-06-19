@@ -1,5 +1,5 @@
 import React from 'react';
-import {Box} from '@mui/material';
+import { Box } from '@mui/material';
 import FilterableCourseList from '@/components/courses/FilterableCourseList';
 
 /**
@@ -8,7 +8,7 @@ import FilterableCourseList from '@/components/courses/FilterableCourseList';
  */
 const StudentCoursesPage: React.FC = () => {
   return (
-    <Box sx={{p: 3}}>
+    <Box sx={{ p: 3 }}>
       <FilterableCourseList
         title="Available Courses"
         showStatusFilter={false}

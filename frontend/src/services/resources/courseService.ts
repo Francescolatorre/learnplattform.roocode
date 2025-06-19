@@ -1,12 +1,12 @@
-import {IUserProgress} from '@/types/progress';
-import {IStudentProgressSummary} from '@/types';
+import { IUserProgress } from '@/types/progress';
+import { IStudentProgressSummary } from '@/types';
 
-import {ApiService} from '@/services/api/apiService';
-import {ICourse, TCourseStatus} from '@/types/course';
-import {ILearningTask, ITaskProgress} from '@/types/task';
-import {IPaginatedResponse} from 'src/types/paginatedResponse';
+import { ApiService } from '@/services/api/apiService';
+import { ICourse, TCourseStatus } from '@/types/course';
+import { ILearningTask, ITaskProgress } from '@/types/task';
+import { IPaginatedResponse } from 'src/types/paginatedResponse';
 
-import {API_CONFIG} from '../api/apiConfig';
+import { API_CONFIG } from '../api/apiConfig';
 
 /**
  * Options for filtering courses in API requests
@@ -41,13 +41,15 @@ class CourseService {
   private apiCourses = new ApiService<IPaginatedResponse<ICourse>>();
   private apiVoid = new ApiService<void>();
   private apiAny = new ApiService<unknown>();
-  private transformUserProgressToStudentSummary(userProgress: IUserProgress[]): IStudentProgressSummary[] {
+  private transformUserProgressToStudentSummary(
+    userProgress: IUserProgress[]
+  ): IStudentProgressSummary[] {
     return userProgress.map(progress => ({
       user_id: progress.id,
       username: progress.label || 'Unknown',
       overall_progress: progress.percentage,
       courses_enrolled: 1,
-      progress: progress.percentage // Assuming 'percentage' corresponds to 'progress'
+      progress: progress.percentage, // Assuming 'percentage' corresponds to 'progress'
     }));
   }
 
@@ -60,7 +62,7 @@ class CourseService {
   async enrollStudent(courseId: string | number, studentId: string | number): Promise<any> {
     try {
       this.ensureAuthToken();
-      const body = {course: courseId, student: studentId};
+      const body = { course: courseId, student: studentId };
       const response = await this.apiAny.post(API_CONFIG.endpoints.enrollments.create, body);
       return response;
     } catch (error) {
@@ -93,7 +95,7 @@ class CourseService {
       const response = await this.apiCourses.get(url);
       console.info('CourseService: fetchCourses succeeded', {
         count: response.count,
-        resultsLength: response.results?.length || 0
+        resultsLength: response.results?.length || 0,
       });
       return response;
     } catch (error) {
@@ -115,7 +117,7 @@ class CourseService {
       const course = await this.apiCourse.post(API_CONFIG.endpoints.courses.create, courseData);
       console.info('CourseService: Course created successfully:', {
         id: course.id,
-        title: course.title
+        title: course.title,
       });
       return course;
     } catch (error) {
@@ -126,7 +128,7 @@ class CourseService {
         if (response) {
           console.error('CourseService: Error response:', {
             status: response.status,
-            data: response.data
+            data: response.data,
           });
         }
       }
@@ -148,7 +150,7 @@ class CourseService {
       }
       console.info(`CourseService: Successfully retrieved course ${courseId}`, {
         title: response.title,
-        status: response.status
+        status: response.status,
       });
       return response;
     } catch (error) {
@@ -198,9 +200,11 @@ class CourseService {
    */
 
   /**
-     * Fetches courses where the current user is an instructor
-     * @param options Optional pagination and filtering options
-     */  async fetchInstructorCourses(options: CourseFilterOptions = {}): Promise<IPaginatedResponse<ICourse>> {
+   * Fetches courses where the current user is an instructor
+   * @param options Optional pagination and filtering options
+   */ async fetchInstructorCourses(
+    options: CourseFilterOptions = {}
+  ): Promise<IPaginatedResponse<ICourse>> {
     console.info('CourseService: Fetching instructor courses with options:', options);
     try {
       // Prepare query parameters
@@ -222,7 +226,10 @@ class CourseService {
 
       // Get the current token for debugging
       const token = localStorage.getItem('accessToken');
-      console.debug('CourseService: Using access token:', token ? `${token.substring(0, 10)}...` : 'No token found');
+      console.debug(
+        'CourseService: Using access token:',
+        token ? `${token.substring(0, 10)}...` : 'No token found'
+      );
 
       // Make the request
       const response = await this.apiAny.get(url);
@@ -238,11 +245,16 @@ class CourseService {
           count: response.length,
           next: null,
           previous: null,
-          results: response
+          results: response,
         };
       } else if (response && typeof response === 'object') {
         // If it's already in paginated format or some other format
-        if (response && typeof response === 'object' && 'results' in response && Array.isArray((response as any).results)) {
+        if (
+          response &&
+          typeof response === 'object' &&
+          'results' in response &&
+          Array.isArray((response as any).results)
+        ) {
           // It's already in the expected paginated format
           formattedResponse = response as IPaginatedResponse<ICourse>;
         } else {
@@ -253,7 +265,7 @@ class CourseService {
             count: (response as any).count || 0,
             next: (response as any).next || null,
             previous: (response as any).previous || null,
-            results: (response as any).results || []
+            results: (response as any).results || [],
           };
         }
       } else {
@@ -263,7 +275,7 @@ class CourseService {
           count: 0,
           next: null,
           previous: null,
-          results: []
+          results: [],
         };
       }
 
@@ -273,7 +285,7 @@ class CourseService {
         courseCount: formattedResponse.results?.length || 0,
         totalCount: formattedResponse.count || 0,
         hasNextPage: !!formattedResponse.next,
-        hasPrevPage: !!formattedResponse.previous
+        hasPrevPage: !!formattedResponse.previous,
       });
 
       // Log first course details for debugging (if available)
@@ -283,7 +295,7 @@ class CourseService {
           id: firstCourse.id,
           title: firstCourse.title,
           status: firstCourse.status,
-          createdAt: firstCourse.created_at
+          createdAt: firstCourse.created_at,
         });
       } else {
         console.debug('CourseService: No instructor courses found in response');
@@ -300,13 +312,13 @@ class CourseService {
             status: (error as any).response.status,
             statusText: (error as any).response.statusText,
             data: (error as any).response.data,
-            headers: (error as any).response.headers
+            headers: (error as any).response.headers,
           });
         } else if ((error as any).request) {
           console.error('CourseService: No response received, request details:', {
             method: (error as any).request.method,
             url: (error as any).request.url,
-            headers: (error as any).request.headers
+            headers: (error as any).request.headers,
           });
         } else {
           console.error('CourseService: Error setting up request:', error.message);
@@ -325,7 +337,10 @@ class CourseService {
   async updateCourseStatus(courseId: string, status: TCourseStatus): Promise<ICourse> {
     console.info(`CourseService: Updating course ${courseId} status to ${status}`);
     try {
-      const response = await this.apiCourse.patch(`${API_CONFIG.endpoints.courses.updateStatus}/${courseId}`, {status});
+      const response = await this.apiCourse.patch(
+        `${API_CONFIG.endpoints.courses.updateStatus}/${courseId}`,
+        { status }
+      );
       console.info(`CourseService: Successfully updated course ${courseId} status to ${status}`);
       return response;
     } catch (error) {
@@ -360,8 +375,12 @@ class CourseService {
   async fetchCourseProgress(courseId: string): Promise<ITaskProgress[]> {
     console.info(`CourseService: Fetching progress for course ${courseId}`);
     try {
-      const response = await this.apiTaskProgressArray.get(`${API_CONFIG.endpoints.courses.progress}/${courseId}`);
-      console.info(`CourseService: Retrieved progress for course ${courseId}`, {itemCount: response.length});
+      const response = await this.apiTaskProgressArray.get(
+        `${API_CONFIG.endpoints.courses.progress}/${courseId}`
+      );
+      console.info(`CourseService: Retrieved progress for course ${courseId}`, {
+        itemCount: response.length,
+      });
       return response;
     } catch (error) {
       console.error(`CourseService: Failed to fetch progress for course ${courseId}`, error);
@@ -377,19 +396,21 @@ class CourseService {
   async getCourseTasks(courseId: string): Promise<IPaginatedResponse<ILearningTask>> {
     console.info(`CourseService: Fetching tasks for course ${courseId}`);
     try {
-      const response = await this.apiLearningTasks.get(API_CONFIG.endpoints.tasks.byCourse(courseId));
+      const response = await this.apiLearningTasks.get(
+        API_CONFIG.endpoints.tasks.byCourse(courseId)
+      );
 
       // Ensure response is in the correct format
       const formattedResponse: IPaginatedResponse<ILearningTask> = {
         count: Array.isArray(response) ? response.length : (response.count ?? 0),
         next: response.next || null,
         previous: response.previous || null,
-        results: Array.isArray(response) ? response : (response.results || [])
+        results: Array.isArray(response) ? response : response.results || [],
       };
 
       console.info(`CourseService: Retrieved tasks for course ${courseId}`, {
         count: formattedResponse.count,
-        taskCount: formattedResponse.results?.length || 0
+        taskCount: formattedResponse.results?.length || 0,
       });
 
       return formattedResponse;

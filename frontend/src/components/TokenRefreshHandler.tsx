@@ -1,7 +1,7 @@
-import React, {useEffect, useCallback} from 'react';
-import {useAuth} from '@context/auth/AuthContext';
-import {authEventService} from '@context/auth/AuthEventService';
-import {AuthEventType} from '@context/auth/types';
+import React, { useEffect, useCallback } from 'react';
+import { useAuth } from '@context/auth/AuthContext';
+import { authEventService } from '@context/auth/AuthEventService';
+import { AuthEventType } from '@context/auth/types';
 
 /**
  * TokenRefreshHandler Component
@@ -12,7 +12,7 @@ import {AuthEventType} from '@context/auth/types';
  */
 const TokenRefreshHandler: React.FC = () => {
   // We only need the refreshToken function from context since we'll handle actual refresh logic here
-  const {isAuthenticated} = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const refreshAccessToken = useCallback(async () => {
     try {
@@ -21,7 +21,7 @@ const TokenRefreshHandler: React.FC = () => {
       if (refreshToken && isAuthenticated) {
         // Use authService directly to refresh the token
         const authService = (await import('@services/auth/authService')).default;
-        const {access} = await authService.refreshToken(refreshToken);
+        const { access } = await authService.refreshToken(refreshToken);
 
         // Update localStorage with new access token
         localStorage.setItem('accessToken', access);
@@ -29,7 +29,7 @@ const TokenRefreshHandler: React.FC = () => {
         // Publish token refresh event
         authEventService.publish({
           type: AuthEventType.TOKEN_REFRESH,
-          payload: {token: access}
+          payload: { token: access },
         });
 
         console.log('Token refreshed successfully');
@@ -38,7 +38,7 @@ const TokenRefreshHandler: React.FC = () => {
       console.error('Token refresh failed:', err);
       authEventService.publish({
         type: AuthEventType.AUTH_ERROR,
-        payload: {error: {message: 'Token refresh failed'}}
+        payload: { error: { message: 'Token refresh failed' } },
       });
     }
   }, [isAuthenticated]);

@@ -10,9 +10,7 @@ const darkTheme = createTheme({ palette: { mode: 'dark' } });
 
 // Helper component to provide theme
 const TestWrapper: React.FC<{ theme: any; children: React.ReactNode }> = ({ theme, children }) => (
-  <ThemeProvider theme={theme}>
-    {children}
-  </ThemeProvider>
+  <ThemeProvider theme={theme}>{children}</ThemeProvider>
 );
 
 describe('EnrollmentStatusIndicator', () => {

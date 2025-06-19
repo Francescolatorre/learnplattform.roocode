@@ -1,12 +1,12 @@
 import React from 'react';
 
-import {ICourseVersion} from '@/types/course';
+import { ICourseVersion } from '@/types/course';
 
 interface CourseVersionListProps {
   versions: ICourseVersion[];
 }
 
-const CourseVersionList: React.FC<CourseVersionListProps> = ({versions}) => {
+const CourseVersionList: React.FC<CourseVersionListProps> = ({ versions }) => {
   return (
     <div>
       <h2>Course Versions</h2>

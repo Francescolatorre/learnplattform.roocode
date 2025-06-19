@@ -1,7 +1,7 @@
-import {Page, Locator, expect} from '@playwright/test';
-import {BasePage} from './BasePage';
-import {takeScreenshot} from '../setupTests';
-import {NavigationHelper} from './NavigationHelper';
+import { Page, Locator, expect } from '@playwright/test';
+import { BasePage } from './BasePage';
+import { takeScreenshot } from '../setupTests';
+import { NavigationHelper } from './NavigationHelper';
 
 /**
  * Page object for the login page
@@ -16,7 +16,7 @@ export class LoginPage extends BasePage {
     'input[type="email"]',
     'input[placeholder*="Email"]',
     'input[placeholder*="Username"]',
-    '.login-form input:nth-child(1)'
+    '.login-form input:nth-child(1)',
   ];
 
   // Selektoren für Passwortfeld
@@ -27,7 +27,7 @@ export class LoginPage extends BasePage {
     'input[type="password"]',
     'input[placeholder*="Password"]',
     '.login-form input:nth-child(2)',
-    '.login-form input[type="password"]'
+    '.login-form input[type="password"]',
   ];
 
   // Selektoren für Login-Button
@@ -36,7 +36,7 @@ export class LoginPage extends BasePage {
     'button:has-text("Login")',
     'button:has-text("Sign in")',
     'button[data-testid="login-button"]',
-    '.login-form button'
+    '.login-form button',
   ];
 
   // Selektoren für Fehlermeldungen
@@ -45,7 +45,7 @@ export class LoginPage extends BasePage {
     '.login-error',
     '[data-testid="login-error"]',
     '.alert-error',
-    '.text-danger'
+    '.text-danger',
   ];
 
   // Eigenschaften für Elemente auf der Seite
@@ -70,7 +70,7 @@ export class LoginPage extends BasePage {
    */
   async waitForPageLoad(): Promise<void> {
     console.log('Navigated to login page');
-    await this.page.waitForURL('**/login**', {timeout: 10000});
+    await this.page.waitForURL('**/login**', { timeout: 10000 });
 
     // Überprüfen ob die Seite geladen ist
     const currentUrl = this.page.url();
@@ -87,16 +87,10 @@ export class LoginPage extends BasePage {
       );
 
       // Versuchen, das Passwortfeld zu finden
-      this._passwordInput = await this.findElement(
-        this.passwordSelectors,
-        'password input'
-      );
+      this._passwordInput = await this.findElement(this.passwordSelectors, 'password input');
 
       // Versuchen, den Login-Button zu finden
-      this._loginButton = await this.findElement(
-        this.loginButtonSelectors,
-        'login button'
-      );
+      this._loginButton = await this.findElement(this.loginButtonSelectors, 'login button');
     } catch (error) {
       console.error('Login page did not load properly:', error);
       await takeScreenshot(this.page, 'login-page-load-failed');
@@ -125,10 +119,7 @@ export class LoginPage extends BasePage {
       if (this._passwordInput) {
         await this._passwordInput.fill(password);
       } else {
-        this._passwordInput = await this.findElement(
-          this.passwordSelectors,
-          'password input'
-        );
+        this._passwordInput = await this.findElement(this.passwordSelectors, 'password input');
         await this._passwordInput.fill(password);
       }
 
@@ -136,10 +127,7 @@ export class LoginPage extends BasePage {
       if (this._loginButton) {
         await this._loginButton.click();
       } else {
-        this._loginButton = await this.findElement(
-          this.loginButtonSelectors,
-          'login button'
-        );
+        this._loginButton = await this.findElement(this.loginButtonSelectors, 'login button');
         await this._loginButton.click();
       }
 
@@ -176,7 +164,6 @@ export class LoginPage extends BasePage {
       // The setAuthTokens method doesn't exist in NavigationHelper
       // Just store the tokens locally in this class
       // No need to share with NavigationHelper anymore
-
     } catch (error) {
       console.error('Login failed:', error);
       await takeScreenshot(this.page, 'login-failed');
@@ -209,10 +196,12 @@ export class LoginPage extends BasePage {
 
     // Prüfen, ob bereits ein Token im localStorage vorhanden ist
     const existingToken = await this.page.evaluate(() => {
-      return localStorage.getItem('accessToken') ||
+      return (
+        localStorage.getItem('accessToken') ||
         localStorage.getItem('authToken') ||
         localStorage.getItem('token') ||
-        localStorage.getItem('jwt');
+        localStorage.getItem('jwt')
+      );
     });
 
     if (existingToken) {
@@ -233,19 +222,20 @@ export class LoginPage extends BasePage {
             response.status() === 200
           );
         },
-        {timeout: 5000}
+        { timeout: 5000 }
       );
 
       // Token aus der Response extrahieren
       const responseData = await response.json().catch(() => ({}));
-      const token = responseData.access || responseData.token || responseData.accessToken || responseData.jwt;
+      const token =
+        responseData.access || responseData.token || responseData.accessToken || responseData.jwt;
 
       if (token) {
         console.log('Retrieved auth token from network response');
         this._authToken = token;
 
         // Token im localStorage speichern für weitere Requests
-        await this.page.evaluate((token) => {
+        await this.page.evaluate(token => {
           // Verschiedene gängige Token-Keys versuchen
           localStorage.setItem('accessToken', token);
           localStorage.setItem('authToken', token);
@@ -278,10 +268,12 @@ export class LoginPage extends BasePage {
 
     // Token im localStorage überprüfen
     const token = await this.page.evaluate(() => {
-      return localStorage.getItem('accessToken') ||
+      return (
+        localStorage.getItem('accessToken') ||
         localStorage.getItem('authToken') ||
         localStorage.getItem('token') ||
-        localStorage.getItem('jwt');
+        localStorage.getItem('jwt')
+      );
     });
 
     if (token) {
@@ -321,29 +313,34 @@ export class LoginPage extends BasePage {
     const currentUrl = this.page.url();
 
     // Wenn wir auf einer geschützten Route sind, sind wir wahrscheinlich eingeloggt
-    if (!currentUrl.includes('/login') &&
+    if (
+      !currentUrl.includes('/login') &&
       (currentUrl.includes('/dashboard') ||
         currentUrl.includes('/courses') ||
         currentUrl.includes('/profile') ||
         currentUrl.includes('/instructor') ||
         currentUrl.includes('/admin') ||
-        currentUrl === this.page.url().split('/').slice(0, 3).join('/') + '/')) {
+        currentUrl === this.page.url().split('/').slice(0, 3).join('/') + '/')
+    ) {
       console.log('User appears to be logged in based on URL');
       return true;
     }
 
     // Prüfen auf UI-Elemente, die auf einen eingeloggten Zustand hindeuten
-    const logoutButtonVisible = await this.page.locator(
-      'button:has-text("Logout"), a:has-text("Logout"), [data-testid="logout-button"]'
-    ).isVisible().catch(() => false);
+    const logoutButtonVisible = await this.page
+      .locator('button:has-text("Logout"), a:has-text("Logout"), [data-testid="logout-button"]')
+      .isVisible()
+      .catch(() => false);
 
-    const userInfoVisible = await this.page.locator(
-      '.user-info, .user-avatar, .username, [data-testid="user-info"]'
-    ).isVisible().catch(() => false);
+    const userInfoVisible = await this.page
+      .locator('.user-info, .user-avatar, .username, [data-testid="user-info"]')
+      .isVisible()
+      .catch(() => false);
 
-    const dashboardLinkVisible = await this.page.locator(
-      'a:has-text("Dashboard"), [data-testid="dashboard-link"]'
-    ).isVisible().catch(() => false);
+    const dashboardLinkVisible = await this.page
+      .locator('a:has-text("Dashboard"), [data-testid="dashboard-link"]')
+      .isVisible()
+      .catch(() => false);
 
     if (logoutButtonVisible || userInfoVisible || dashboardLinkVisible) {
       console.log('User appears to be logged in based on UI elements');
@@ -371,7 +368,10 @@ export class LoginPage extends BasePage {
     if (role === 'instructor' && currentUrl.includes('/instructor')) {
       console.log(`Authentication verified for ${role}`);
       return;
-    } else if (role === 'student' && (currentUrl.includes('/dashboard') || currentUrl.includes('/courses'))) {
+    } else if (
+      role === 'student' &&
+      (currentUrl.includes('/dashboard') || currentUrl.includes('/courses'))
+    ) {
       console.log(`Authentication verified for ${role}`);
       return;
     } else if (role === 'admin' && currentUrl.includes('/admin')) {
@@ -407,11 +407,12 @@ export class LoginPage extends BasePage {
         // Check for tokens in localStorage
         const tokens = await this.page.evaluate(() => {
           return {
-            access: localStorage.getItem('accessToken') ||
+            access:
+              localStorage.getItem('accessToken') ||
               localStorage.getItem('authToken') ||
               localStorage.getItem('token') ||
               localStorage.getItem('jwt'),
-            refresh: localStorage.getItem('refreshToken')
+            refresh: localStorage.getItem('refreshToken'),
           };
         });
 
@@ -424,21 +425,24 @@ export class LoginPage extends BasePage {
 
         // Check if we've been redirected to dashboard or home page
         const currentUrl = this.page.url();
-        if (currentUrl.includes('/dashboard') ||
+        if (
+          currentUrl.includes('/dashboard') ||
           currentUrl.includes('/student') ||
           currentUrl.includes('/instructor') ||
           currentUrl.includes('/admin') ||
-          (currentUrl.endsWith('/') && !currentUrl.includes('/login'))) {
+          (currentUrl.endsWith('/') && !currentUrl.includes('/login'))
+        ) {
           console.log('Redirected to dashboard or home page');
 
           // Try once more to get tokens
           const tokens = await this.page.evaluate(() => {
             return {
-              access: localStorage.getItem('accessToken') ||
+              access:
+                localStorage.getItem('accessToken') ||
                 localStorage.getItem('authToken') ||
                 localStorage.getItem('token') ||
                 localStorage.getItem('jwt'),
-              refresh: localStorage.getItem('refreshToken')
+              refresh: localStorage.getItem('refreshToken'),
             };
           });
 
@@ -489,14 +493,16 @@ export class LoginPage extends BasePage {
                 this._refreshToken = data.refresh || data.refreshToken || null;
 
                 // Store tokens in localStorage
-                await this.page.evaluate(({access, refresh}) => {
-                  localStorage.setItem('accessToken', access || "");
-                  if (refresh) localStorage.setItem('refreshToken', refresh);
-                }, {
-                  access: this._authToken,
-                  refresh: this._refreshToken
-                });
-
+                await this.page.evaluate(
+                  ({ access, refresh }) => {
+                    localStorage.setItem('accessToken', access || '');
+                    if (refresh) localStorage.setItem('refreshToken', refresh);
+                  },
+                  {
+                    access: this._authToken,
+                    refresh: this._refreshToken,
+                  }
+                );
               }
             }
           } catch (error) {

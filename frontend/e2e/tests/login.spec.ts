@@ -1,9 +1,9 @@
-import {test, expect} from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
-import {TEST_USERS, waitForGlobalLoadingToDisappear} from '../setupTests';
+import { TEST_USERS, waitForGlobalLoadingToDisappear } from '../setupTests';
 
 test.describe('Login Functionality', () => {
-  test('should log in successfully with valid credentials', async ({page}) => {
+  test('should log in successfully with valid credentials', async ({ page }) => {
     await page.goto('/login');
 
     // Fill in the login form with credentials from the centralized configuration
@@ -23,7 +23,7 @@ test.describe('Login Functionality', () => {
     expect(dashboardTitle).toContain('Dashboard');
   });
 
-  test('should show an error message for invalid credentials', async ({page}) => {
+  test('should show an error message for invalid credentials', async ({ page }) => {
     await page.goto('/login');
 
     // Fill in the login form with invalid credentials
@@ -35,16 +35,19 @@ test.describe('Login Functionality', () => {
 
     // Check for the centralized error notification using multiple possible selectors
     // to account for different implementation details
-    const errorNotification = await page.waitForSelector([
-      '[role="alert"]',
-      '[data-testid^="notification-error"]',
-      '.MuiAlert-standardError',
-      '.MuiAlert-filledError',
-      '.error-message',
-      '.MuiSnackbar-root .MuiAlert-root'
-    ].join(', '), {
-      timeout: 5000
-    });
+    const errorNotification = await page.waitForSelector(
+      [
+        '[role="alert"]',
+        '[data-testid^="notification-error"]',
+        '.MuiAlert-standardError',
+        '.MuiAlert-filledError',
+        '.error-message',
+        '.MuiSnackbar-root .MuiAlert-root',
+      ].join(', '),
+      {
+        timeout: 5000,
+      }
+    );
 
     expect(await errorNotification.isVisible()).toBeTruthy();
 

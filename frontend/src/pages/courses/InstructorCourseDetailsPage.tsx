@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   Dialog,
@@ -16,20 +16,20 @@ import {
   Chip,
   Divider,
   CircularProgress,
-  Alert
+  Alert,
 } from '@mui/material';
-import {useParams, useNavigate} from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
-import {ICourse} from '@/types/course';
-import {ILearningTask} from '@/types/task';
-import {courseService} from '@/services/resources/courseService';
-import learningTaskService, {updateTask} from '@/services/resources/learningTaskService';
+import { ICourse } from '@/types/course';
+import { ILearningTask } from '@/types/task';
+import { courseService } from '@/services/resources/courseService';
+import learningTaskService, { updateTask } from '@/services/resources/learningTaskService';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import InfoCard from '@/components/shared/InfoCard';
 import TaskCreation from '@/components/taskCreation/TaskCreation';
 import CourseCreation from '@/components/courses/CourseCreation';
-import {useNotification} from '@/components/Notifications/useNotification';
-import {useQueryClient} from '@tanstack/react-query';
+import { useNotification } from '@/components/Notifications/useNotification';
+import { useQueryClient } from '@tanstack/react-query';
 
 // Hauptkomponente
 const InstructorCourseDetailPage: React.FC = () => {
@@ -96,12 +96,12 @@ const InstructorCourseDetailPage: React.FC = () => {
       const savedTask = await updateTask(String(updatedTask.id), updatedTask);
 
       // Update the tasks list with the saved task
-      setTasks(tasks.map(task => task.id === savedTask.id ? savedTask : task));
+      setTasks(tasks.map(task => (task.id === savedTask.id ? savedTask : task)));
 
       // Invalidate related queries so other views stay in sync
       if (courseId) {
-        queryClient.invalidateQueries({queryKey: ['courseTasks', courseId]});
-        queryClient.invalidateQueries({queryKey: ['learningTasks', courseId]});
+        queryClient.invalidateQueries({ queryKey: ['courseTasks', courseId] });
+        queryClient.invalidateQueries({ queryKey: ['learningTasks', courseId] });
       }
 
       notify('Task updated successfully', 'success');
@@ -129,8 +129,8 @@ const InstructorCourseDetailPage: React.FC = () => {
       // Update local state
       setCourse(updatedCourse);
       // Invalidate queries to refresh data
-      queryClient.invalidateQueries({queryKey: ['courses']});
-      queryClient.invalidateQueries({queryKey: ['course', courseId]});
+      queryClient.invalidateQueries({ queryKey: ['courses'] });
+      queryClient.invalidateQueries({ queryKey: ['course', courseId] });
 
       notify('Course updated successfully', 'success');
       handleCloseCourseEdit();
@@ -140,7 +140,7 @@ const InstructorCourseDetailPage: React.FC = () => {
     }
   };
 
-  const {courseId} = useParams<{courseId: string}>();
+  const { courseId } = useParams<{ courseId: string }>();
   const [course, setCourse] = useState<ICourse | null>(null);
   const [tasks, setTasks] = useState<ILearningTask[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -169,10 +169,9 @@ const InstructorCourseDetailPage: React.FC = () => {
     fetchCourseDetails();
   }, [courseId]);
 
-
   if (isLoading) {
     return (
-      <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -180,7 +179,7 @@ const InstructorCourseDetailPage: React.FC = () => {
 
   if (error || !course) {
     return (
-      <Alert severity="error" sx={{mt: 2}}>
+      <Alert severity="error" sx={{ mt: 2 }}>
         Error: {error || 'Course not found'}
       </Alert>
     );
@@ -188,11 +187,13 @@ const InstructorCourseDetailPage: React.FC = () => {
 
   return (
     <Container maxWidth="lg">
-      <Paper elevation={2} sx={{p: 3, mt: 3, mb: 3}}>
+      <Paper elevation={2} sx={{ p: 3, mt: 3, mb: 3 }}>
         {/* Header Section */}
-        <Box sx={{mb: 3}}>
-          <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2}}>
-            <Typography variant="h4" component="h1" sx={{fontWeight: 'bold'}}>
+        <Box sx={{ mb: 3 }}>
+          <Box
+            sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}
+          >
+            <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
               {course.title}
             </Typography>
             <Button
@@ -207,7 +208,7 @@ const InstructorCourseDetailPage: React.FC = () => {
 
           {/* Course Description */}
           {course.description_html ? (
-            <Box sx={{my: 2}}>
+            <Box sx={{ my: 2 }}>
               <MarkdownRenderer content={course.description || ''} />
             </Box>
           ) : (
@@ -219,16 +220,12 @@ const InstructorCourseDetailPage: React.FC = () => {
 
         {/* Course Info Section */}
         {course && (
-          <Grid container spacing={2} sx={{mb: 4}}>
+          <Grid container spacing={2} sx={{ mb: 4 }}>
             <Grid item xs={12} sm={6} md={3}>
-              <InfoCard title="Created By">
-                {course.instructor_name || 'Unknown'}
-              </InfoCard>
+              <InfoCard title="Created By">{course.instructor_name || 'Unknown'}</InfoCard>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <InfoCard title="Status">
-                {course.status || 'Not specified'}
-              </InfoCard>
+              <InfoCard title="Status">{course.status || 'Not specified'}</InfoCard>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
               <InfoCard title="Prerequisites">
@@ -248,8 +245,10 @@ const InstructorCourseDetailPage: React.FC = () => {
         )}
 
         {/* Tasks Section */}
-        <Box sx={{mt: 4}}>
-          <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2}}>
+        <Box sx={{ mt: 4 }}>
+          <Box
+            sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}
+          >
             <Typography variant="h5" component="h2">
               Course Tasks
             </Typography>
@@ -263,7 +262,7 @@ const InstructorCourseDetailPage: React.FC = () => {
               Create Task
             </Button>
           </Box>
-          <Divider sx={{mb: 2}} />
+          <Divider sx={{ mb: 2 }} />
 
           {tasks.length > 0 ? (
             <List disablePadding>
@@ -278,8 +277,8 @@ const InstructorCourseDetailPage: React.FC = () => {
                     borderColor: 'divider',
                     cursor: 'pointer',
                     '&:hover': {
-                      bgcolor: 'action.hover'
-                    }
+                      bgcolor: 'action.hover',
+                    },
                   }}
                   onClick={() => handleOpenTaskDetails(task)}
                 >
@@ -291,12 +290,12 @@ const InstructorCourseDetailPage: React.FC = () => {
                     }
                     secondary={
                       <>
-                        <Typography variant="body2" color="text.secondary" sx={{mb: 1}}>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                           {task.description && task.description.length > 100
                             ? `${task.description.substring(0, 100)}...`
                             : task.description}
                         </Typography>
-                        <Box sx={{mt: 1, display: 'flex', gap: 1, flexWrap: 'wrap'}}>
+                        <Box sx={{ mt: 1, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                           <Chip
                             size="small"
                             label={`Order: ${task.order}`}
@@ -317,16 +316,11 @@ const InstructorCourseDetailPage: React.FC = () => {
               ))}
             </List>
           ) : (
-            <Paper elevation={0} variant="outlined" sx={{p: 3, textAlign: 'center'}}>
+            <Paper elevation={0} variant="outlined" sx={{ p: 3, textAlign: 'center' }}>
               <Typography variant="body1" color="text.secondary">
                 No tasks available for this course.
               </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleOpenModal}
-                sx={{mt: 2}}
-              >
+              <Button variant="contained" color="primary" onClick={handleOpenModal} sx={{ mt: 2 }}>
                 Create Your First Task
               </Button>
             </Paper>
@@ -344,11 +338,7 @@ const InstructorCourseDetailPage: React.FC = () => {
       />
 
       {/* TaskCreation modal for creating new tasks */}
-      <TaskCreation
-        open={isModalOpen}
-        onClose={handleCloseModal}
-        courseId={courseId}
-      />
+      <TaskCreation open={isModalOpen} onClose={handleCloseModal} courseId={courseId} />
 
       {/* TaskCreation modal for editing existing tasks */}
       <TaskCreation
@@ -367,15 +357,13 @@ const InstructorCourseDetailPage: React.FC = () => {
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle>
-          {selectedTask?.title || 'Task Details'}
-        </DialogTitle>
+        <DialogTitle>{selectedTask?.title || 'Task Details'}</DialogTitle>
         <DialogContent dividers>
           {selectedTask && (
             <Box>
               {/* Task Description */}
               {selectedTask.description_html ? (
-                <Box sx={{my: 2}}>
+                <Box sx={{ my: 2 }}>
                   <MarkdownRenderer content={selectedTask.description || ''} />
                 </Box>
               ) : (
@@ -385,7 +373,7 @@ const InstructorCourseDetailPage: React.FC = () => {
               )}
 
               {/* Task Metadata */}
-              <Box sx={{mt: 4}}>
+              <Box sx={{ mt: 4 }}>
                 <Typography variant="subtitle2" color="text.secondary">
                   <strong>Order:</strong> {selectedTask.order}
                 </Typography>
@@ -394,12 +382,14 @@ const InstructorCourseDetailPage: React.FC = () => {
                 </Typography>
                 {selectedTask.created_at && (
                   <Typography variant="subtitle2" color="text.secondary">
-                    <strong>Created At:</strong> {new Date(selectedTask.created_at).toLocaleString()}
+                    <strong>Created At:</strong>{' '}
+                    {new Date(selectedTask.created_at).toLocaleString()}
                   </Typography>
                 )}
                 {selectedTask.updated_at && (
                   <Typography variant="subtitle2" color="text.secondary">
-                    <strong>Updated At:</strong> {new Date(selectedTask.updated_at).toLocaleString()}
+                    <strong>Updated At:</strong>{' '}
+                    {new Date(selectedTask.updated_at).toLocaleString()}
                   </Typography>
                 )}
               </Box>

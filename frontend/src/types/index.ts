@@ -5,26 +5,64 @@
  */
 
 // Re-export all types from their respective files
-export type {TUserRole, IUser, IAuthState, IRegisterRequest} from './userTypes';
-export type {TCourseStatus, ICourseVersion, ICourse, ICourseStructure, ICourseCreationData} from './course';
-export type {TTaskStatus, ILearningTask, ITaskCreationData, IBaseTaskProgress, ITaskProgress, ITaskProgressUpdateData, ITaskSubmissionData, IQuizHistory, ITaskProgressBase} from './task';
-export type {TCompletionStatus, TQuizCompletionStatus, ICourseEnrollment, IQuizOption, IQuizQuestion, IQuizTask, IQuizResponse, IQuizAttempt} from './entities';
-export type {IGradingData, IProgressAnalytics, IStudentProgressSummary, IInstructorDashboardData, ICourseStructureAnalytics, IProgressChartData, ITaskEffectivenessData, IAdminDashboardSummary} from './gradingTypes';
-export type {IActivityEntry, IDetailedCourseProgress, ICourseProgressSummary, ICourseProgressResponse, IDashboardUserInfo, IDashboardOverallStats, IDashboardCourseInfo, IDashboardResponse, IProgressResponse, IUserProgressDetails, ICourseProgress} from './progress';
-export type {IPaginatedResponse} from './paginatedResponse';
-export type {ILoginRequest, ILoginResponse, ITokenRefreshResponse, ITokenRefresh, ICustomTokenObtainPair, IRegister} from './authTypes';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export type { UserRoleEnum, IUser, IAuthState, IRegisterRequest } from './userTypes';
+export type {
+  TCourseStatus,
+  ICourseVersion,
+  ICourse,
+  ICourseStructure,
+  ICourseCreationData,
+} from './course';
+export type {
+  TTaskStatus,
+  ILearningTask,
+  ITaskCreationData,
+  IBaseTaskProgress,
+  ITaskProgress,
+  ITaskProgressUpdateData,
+  ITaskSubmissionData,
+  IQuizHistory,
+  ITaskProgressBase,
+} from './task';
+export type {
+  TCompletionStatus,
+  TQuizCompletionStatus,
+  ICourseEnrollment,
+  IQuizOption,
+  IQuizQuestion,
+  IQuizTask,
+  IQuizResponse,
+  IQuizAttempt,
+} from './entities';
+export type {
+  IGradingData,
+  IProgressAnalytics,
+  IStudentProgressSummary,
+  IInstructorDashboardData,
+  ICourseStructureAnalytics,
+  IProgressChartData,
+  ITaskEffectivenessData,
+  IAdminDashboardSummary,
+} from './gradingTypes';
+export type {
+  IActivityEntry,
+  IDetailedCourseProgress,
+  ICourseProgressSummary,
+  ICourseProgressResponse,
+  IDashboardUserInfo,
+  IDashboardOverallStats,
+  IDashboardCourseInfo,
+  IDashboardResponse,
+  IProgressResponse,
+  IUserProgressDetails,
+  ICourseProgress,
+} from './progress';
+export type { IPaginatedResponse } from './paginatedResponse';
+export type {
+  ILoginRequest,
+  ILoginResponse,
+  ITokenRefreshResponse,
+  ITokenRefresh,
+  ICustomTokenObtainPair,
+  IRegister,
+} from './authTypes';

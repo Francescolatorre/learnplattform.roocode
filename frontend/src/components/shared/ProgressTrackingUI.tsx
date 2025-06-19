@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ICourseStructure} from '@/types/course';
+import { ICourseStructure } from '@/types/course';
 
 interface ProgressTrackingUIProps {
   courseStructure: ICourseStructure;

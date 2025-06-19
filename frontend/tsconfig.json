@@ -1,15 +1,8 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "lib": [
-      "ESNext",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "types": [
-      "vitest/globals",
-      "node"
-    ],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "types": ["vitest/globals", "node"],
     "module": "ESNext",
     "moduleResolution": "node",
     "strict": true,
@@ -20,48 +13,21 @@
     "jsx": "react-jsx",
     "baseUrl": "./",
     "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@assets/*": [
-        "src/assets/*"
-      ],
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@components/ErrorNotifier/*": [
-        "src/components/ErrorNotifier/*"
-      ],
-      "@config/*": [
-        "src/config/*"
-      ],
-      "@constants/*": [
-        "src/constants/*"
-      ],
-      "@context/*": [
-        "src/context/*"
-      ],
-      "@hooks/*": [
-        "src/hooks/*"
-      ],
-      "@pages/*": [
-        "src/pages/*"
-      ],
-      "@routes/*": [
-        "src/routes/*"
-      ],
-      "@services/*": [
-        "src/services/*"
-      ],
-      "@store/*": [
-        "src/store/*"
-      ],
-      "@styles/*": [
-        "src/styles/*"
-      ],
-      "@utils/*": [
-        "src/utils/*"
-      ]
+      "@/*": ["src/*"],
+      "@assets/*": ["src/assets/*"],
+      "@components/*": ["src/components/*"],
+      "@components/ErrorNotifier/*": ["src/components/ErrorNotifier/*"],
+      "@config/*": ["src/config/*"],
+      "@constants/*": ["src/constants/*"],
+      "@context/*": ["src/context/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@pages/*": ["src/pages/*"],
+      "@routes/*": ["src/routes/*"],
+      "@services/*": ["src/services/*"],
+      "@store/*": ["src/store/*"],
+      "@styles/*": ["src/styles/*"],
+      "@utils/*": ["src/utils/*"],
+      "@test-utils/*": ["src/test-utils/*"]
     },
     "isolatedModules": true,
     "noUnusedLocals": true,
@@ -77,7 +43,5 @@
     "playwright-api.config.ts",
     "e2e/setupTests.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

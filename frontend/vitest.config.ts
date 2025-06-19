@@ -1,6 +1,6 @@
 // vitest.config.ts
 import tsconfigPaths from 'vite-tsconfig-paths';
-import {defineConfig} from 'vitest/config';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [tsconfigPaths()],
@@ -15,7 +15,7 @@ export default defineConfig({
       '**/*.e2e.{ts,tsx,js,jsx}',
       'playwright.config.ts',
       'playwright-api.config.ts',
-      'node_modules/**'
+      'node_modules/**',
     ],
   },
 });

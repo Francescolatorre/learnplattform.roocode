@@ -1,9 +1,9 @@
-import {Container, Typography} from '@mui/material';
-import React, {useEffect} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {useAuth} from '@/context/auth/AuthContext';
-import {ROUTE_CONFIG} from '@/config/appConfig';
-import {TUserRole} from '@/types';
+import { Container, Typography } from '@mui/material';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/auth/AuthContext';
+import { ROUTE_CONFIG } from '@/config/appConfig';
+import { TUserRole } from '@/types';
 
 type DashboardPaths = {
   [key in TUserRole]: string;
@@ -11,7 +11,7 @@ type DashboardPaths = {
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const {isAuthenticated, getUserRole} = useAuth();
+  const { isAuthenticated, getUserRole } = useAuth();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -27,7 +27,7 @@ const HomePage: React.FC = () => {
 
   // Show loading state while redirecting
   return (
-    <Container maxWidth="md" sx={{textAlign: 'center', mt: 5}}>
+    <Container maxWidth="md" sx={{ textAlign: 'center', mt: 5 }}>
       <Typography variant="h3" gutterBottom>
         Welcome to the Learning Platform
       </Typography>

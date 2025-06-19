@@ -3,7 +3,7 @@
  * Ensure the Django backend is started before running this test suite.
  */
 
-import {describe, it, expect} from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 /**
  * Test user credentials
@@ -99,7 +99,7 @@ describe('Backend API Tests (no frontend)', () => {
         // Authenticate as student
         const loginResponse = await fetch(`${API_URL}/auth/login/`, {
           method: 'POST',
-          headers: {'Content-Type': 'application/json'},
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             username: TEST_USERS.student.username,
             password: TEST_USERS.student.password,
@@ -134,7 +134,7 @@ describe('Backend API Tests (no frontend)', () => {
 
         // Fetch details
         const detailResponse = await fetch(`${API_URL}/api/v1/courses/${createdCourseId}/`, {
-          headers: {Authorization: `Bearer ${token}`},
+          headers: { Authorization: `Bearer ${token}` },
         });
         expect(detailResponse.status).toBe(200);
         const detail = await detailResponse.json();
@@ -159,14 +159,12 @@ describe('Backend API Tests (no frontend)', () => {
         // Delete
         const deleteResponse = await fetch(`${API_URL}/api/v1/courses/${createdCourseId}/`, {
           method: 'DELETE',
-          headers: {Authorization: `Bearer ${token}`},
+          headers: { Authorization: `Bearer ${token}` },
         });
         expect([200, 204]).toContain(deleteResponse.status);
       });
     });
-
   });
-
 
   describe('Learning Tasks API Integration', () => {
     let token: string;
@@ -176,7 +174,7 @@ describe('Backend API Tests (no frontend)', () => {
       // Authenticate as student
       const loginResponse = await fetch(`${API_URL}/auth/login/`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           username: TEST_USERS.student.username,
           password: TEST_USERS.student.password,
@@ -207,7 +205,7 @@ describe('Backend API Tests (no frontend)', () => {
 
       // Fetch
       const fetchResponse = await fetch(`${API_URL}/api/v1/learning-tasks/${createdTaskId}/`, {
-        headers: {Authorization: `Bearer ${token}`},
+        headers: { Authorization: `Bearer ${token}` },
       });
       expect(fetchResponse.status).toBe(200);
       const fetchedTask = await fetchResponse.json();
@@ -233,16 +231,15 @@ describe('Backend API Tests (no frontend)', () => {
       // Delete
       const deleteResponse = await fetch(`${API_URL}/api/v1/learning-tasks/${createdTaskId}/`, {
         method: 'DELETE',
-        headers: {Authorization: `Bearer ${token}`},
+        headers: { Authorization: `Bearer ${token}` },
       });
       expect(deleteResponse.status).toBe(204);
 
       // Confirm deletion
       const confirmResponse = await fetch(`${API_URL}/api/v1/learning-tasks/${createdTaskId}/`, {
-        headers: {Authorization: `Bearer ${token}`},
+        headers: { Authorization: `Bearer ${token}` },
       });
       expect(confirmResponse.status).toBe(404);
     });
   });
-
 });

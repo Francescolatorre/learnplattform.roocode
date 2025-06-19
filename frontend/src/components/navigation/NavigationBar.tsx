@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {Link, useLocation} from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import {
   AppBar,
   Toolbar,
@@ -15,21 +15,21 @@ import {
   Box,
   Divider,
   useMediaQuery,
-  useTheme
+  useTheme,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
-import {useAuth} from '@/context/auth/AuthContext';
-import {menuConfig} from '@/config/menuConfig';
-import {TUserRole} from '@/types';
+import { useAuth } from '@/context/auth/AuthContext';
+import { menuConfig } from '@/config/menuConfig';
+import { TUserRole } from '@/types';
 
 /**
  * Main NavigationBar component for the application
  * Displays navigation links based on user role and provides login/logout functionality
  */
 const NavigationBar: React.FC = () => {
-  const {user, getUserRole, logout, isAuthenticated} = useAuth();
+  const { user, getUserRole, logout, isAuthenticated } = useAuth();
   const userRole = getUserRole();
   const location = useLocation();
   const theme = useTheme();
@@ -37,9 +37,7 @@ const NavigationBar: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Filter menu based on user role
-  const filteredMenu = menuConfig.filter(menu =>
-    menu.roles.includes(userRole as TUserRole)
-  );
+  const filteredMenu = menuConfig.filter(menu => menu.roles.includes(userRole as TUserRole));
 
   console.info('MainNavigation rendered');
   console.info('menuConfig:', menuConfig);
@@ -74,9 +72,9 @@ const NavigationBar: React.FC = () => {
 
   // Drawer content for mobile view
   const drawerContent = (
-    <Box sx={{width: 250}} role="presentation">
+    <Box sx={{ width: 250 }} role="presentation">
       <List>
-        {filteredMenu.map((menu) => (
+        {filteredMenu.map(menu => (
           <ListItem
             button
             key={menu.text}
@@ -87,7 +85,7 @@ const NavigationBar: React.FC = () => {
               backgroundColor: isActive(menu.path) ? 'rgba(0, 0, 0, 0.08)' : 'transparent',
               '&:hover': {
                 backgroundColor: 'rgba(0, 0, 0, 0.04)',
-              }
+              },
             }}
           >
             {menu.icon && (
@@ -129,13 +127,13 @@ const NavigationBar: React.FC = () => {
               aria-label="open drawer"
               edge="start"
               onClick={toggleDrawer}
-              sx={{mr: 2}}
+              sx={{ mr: 2 }}
             >
               <MenuIcon />
             </IconButton>
           )}
 
-          <Typography variant="h6" sx={{flexGrow: 1}}>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Learning Platform
             {user && (
               <Typography variant="caption" display="block">
@@ -159,8 +157,8 @@ const NavigationBar: React.FC = () => {
                         margin: '0 8px',
                         ...(isActive(menu.path) && {
                           borderBottom: '2px solid',
-                          borderRadius: 0
-                        })
+                          borderRadius: 0,
+                        }),
                       }}
                       startIcon={menu.icon && <menu.icon />}
                     >
@@ -172,7 +170,7 @@ const NavigationBar: React.FC = () => {
                     <Chip
                       label={`Role: ${userRole}`}
                       color="secondary"
-                      sx={{ml: 2}}
+                      sx={{ ml: 2 }}
                       size="small"
                     />
                   )}
@@ -180,7 +178,7 @@ const NavigationBar: React.FC = () => {
                   <Button
                     color="inherit"
                     onClick={logout}
-                    sx={{ml: 2}}
+                    sx={{ ml: 2 }}
                     startIcon={<ExitToAppIcon />}
                   >
                     Logout
@@ -188,11 +186,7 @@ const NavigationBar: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <Button
-                    color="inherit"
-                    component={Link}
-                    to="/login"
-                  >
+                  <Button color="inherit" component={Link} to="/login">
                     Login
                   </Button>
                   <Button
@@ -200,7 +194,7 @@ const NavigationBar: React.FC = () => {
                     component={Link}
                     to="/register"
                     variant="outlined"
-                    sx={{ml: 1}}
+                    sx={{ ml: 1 }}
                   >
                     Register
                   </Button>
@@ -212,11 +206,7 @@ const NavigationBar: React.FC = () => {
       </AppBar>
 
       {/* Mobile navigation drawer */}
-      <Drawer
-        anchor="left"
-        open={drawerOpen}
-        onClose={toggleDrawer}
-      >
+      <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer}>
         {drawerContent}
       </Drawer>
     </>

@@ -9,6 +9,7 @@ This document outlines the architectural improvements made to the frontend React
 This project enforces the [TypeScript Services Standardization Initiative](../memory_bank/tasks/Task_TYPESCRIPT-SERVICES-STANDARDIZATION-001.md) to ensure all TypeScript service modules are consistent, maintainable, and well-documented.
 
 ### Key Requirements
+
 - **Naming:** Service files/folders must follow the `*Service.ts` convention.
 - **API:** All public service methods must be async, have explicit return types, and follow a unified API signature.
 - **Documentation:** All public classes and methods in services require JSDoc/TSDoc.
@@ -19,6 +20,7 @@ This project enforces the [TypeScript Services Standardization Initiative](../me
 - **Lint/Format:** Code must pass all linting and formatting checks.
 
 ### Enforcement
+
 - **Linting:** Automated via ESLint rules (see `eslint.config.js`).
 - **Code Review:** Enforced via [Pull Request Checklist](../../.github/PULL_REQUEST_TEMPLATE.md).
 - **Full Standard:** See [memory_bank/drafts/typescript_services_standardization.md](../memory_bank/drafts/typescript_services_standardization.md) for detailed guidelines and migration instructions.

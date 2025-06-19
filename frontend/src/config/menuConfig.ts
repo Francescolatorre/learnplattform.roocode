@@ -7,10 +7,10 @@ import {
   People as PeopleIcon,
   Settings as SettingsIcon,
   Analytics as AnalyticsIcon,
-  ExitToApp as ExitToAppIcon
+  ExitToApp as ExitToAppIcon,
 } from '@mui/icons-material';
 
-import {TUserRole} from '@/types';
+import { TUserRole } from '@/types';
 
 /**
  * Menuconfig structure for the navigation bar
@@ -35,21 +35,21 @@ export const menuConfig: IMenuItem[] = [
     path: '/dashboard',
     roles: ['student'],
     icon: DashboardIcon,
-    description: 'View your personalized dashboard'
+    description: 'View your personalized dashboard',
   },
   {
     text: 'Courses',
     path: '/courses',
     roles: ['student'],
     icon: SchoolIcon,
-    description: 'Browse available courses'
+    description: 'Browse available courses',
   },
   {
     text: 'Tasks',
     path: '/tasks',
     roles: ['student'],
     icon: AssignmentIcon,
-    description: 'View your assigned learning tasks'
+    description: 'View your assigned learning tasks',
   },
 
   // Instructor menu items
@@ -58,14 +58,14 @@ export const menuConfig: IMenuItem[] = [
     path: '/instructor/dashboard',
     roles: ['instructor', 'admin'],
     icon: DashboardIcon,
-    description: 'Instructor-specific dashboard'
+    description: 'Instructor-specific dashboard',
   },
   {
     text: 'Manage Courses',
     path: '/instructor/courses',
     roles: ['instructor', 'admin'],
     icon: SchoolIcon,
-    description: 'Create and manage courses'
+    description: 'Create and manage courses',
   },
 
   // Admin menu items
@@ -74,28 +74,28 @@ export const menuConfig: IMenuItem[] = [
     path: '/admin/dashboard',
     roles: ['admin'],
     icon: AdminPanelSettingsIcon,
-    description: 'Administrative overview dashboard'
+    description: 'Administrative overview dashboard',
   },
   {
     text: 'User Management',
     path: '/admin/users',
     roles: ['admin'],
     icon: PeopleIcon,
-    description: 'Manage users and permissions'
+    description: 'Manage users and permissions',
   },
   {
     text: 'Analytics',
     path: '/admin/analytics',
     roles: ['admin'],
     icon: AnalyticsIcon,
-    description: 'View platform analytics'
+    description: 'View platform analytics',
   },
   {
     text: 'Settings',
     path: '/admin/settings',
     roles: ['admin'],
     icon: SettingsIcon,
-    description: 'Configure platform settings'
+    description: 'Configure platform settings',
   },
 
   // Common menu items
@@ -104,8 +104,8 @@ export const menuConfig: IMenuItem[] = [
     path: '/profile',
     roles: ['student', 'instructor', 'admin'],
     icon: AccountCircleIcon,
-    description: 'Manage your profile'
-  }
+    description: 'Manage your profile',
+  },
 ];
 
 export default menuConfig;

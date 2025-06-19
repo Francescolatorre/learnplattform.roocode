@@ -1,13 +1,13 @@
-import {CircularProgress, Typography, Button, Box} from '@mui/material';
+import { CircularProgress, Typography, Button, Box } from '@mui/material';
 import React from 'react';
-import {useParams} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-import {useTaskData} from 'src/services/useTaskData';
-import {useTaskProgress, useUpdateTaskProgress} from 'src/services/useTaskProgress';
+import { useTaskData } from 'src/services/useTaskData';
+import { useTaskProgress, useUpdateTaskProgress } from 'src/services/useTaskProgress';
 
 const TaskViewPage: React.FC = () => {
-  const {id} = useParams<{id: string}>();
-  const {data: taskRaw, isLoading, error} = useTaskData(String(id));
+  const { id } = useParams<{ id: string }>();
+  const { data: taskRaw, isLoading, error } = useTaskData(String(id));
   const task = taskRaw as import('@/types/task').ILearningTask | undefined;
   const {
     data: progress,
@@ -18,7 +18,7 @@ const TaskViewPage: React.FC = () => {
   const updateTaskProgress = useUpdateTaskProgress(id ?? '');
 
   const handleTaskCompletion = () => {
-    updateTaskProgress.mutate({status: 'completed'});
+    updateTaskProgress.mutate({ status: 'completed' });
   };
 
   if (isLoading || progressLoading) return <CircularProgress />;
@@ -53,7 +53,7 @@ const TaskViewPage: React.FC = () => {
         variant="contained"
         onClick={handleTaskCompletion}
         disabled={progress?.status === 'completed' || updateTaskProgress.isPending}
-        sx={{mt: 2}}
+        sx={{ mt: 2 }}
       >
         {progress?.status === 'completed' ? 'Completed' : 'Mark as Completed'}
       </Button>

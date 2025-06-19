@@ -1,6 +1,6 @@
 //src/store/quizStore.ts
 
-import {create} from 'zustand';
+import { create } from 'zustand';
 
 interface Quiz {
   id: string;
@@ -32,7 +32,7 @@ const useQuizStore = create<QuizState>((set: (fn: (state: QuizState) => QuizStat
     set((state: QuizState) => ({
       ...state,
       quizzes: state.quizzes.map(quiz =>
-        quiz.id === quizId ? {...quiz, completed: !quiz.completed} : quiz
+        quiz.id === quizId ? { ...quiz, completed: !quiz.completed } : quiz
       ),
     })),
 }));

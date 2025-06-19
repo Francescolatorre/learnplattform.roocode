@@ -5,22 +5,22 @@
  * This component handles the integration between AuthContext and the axios interceptors.
  */
 import React from 'react';
-import {AuthInterceptor} from './AuthInterceptor';
-import {useAuthInterceptor} from './useAuthInterceptor';
+import { AuthInterceptor } from './AuthInterceptor';
+import { useAuthInterceptor } from './useAuthInterceptor';
 
 interface IAuthInterceptorProviderProps {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }
 
-export const AuthInterceptorProvider: React.FC<IAuthInterceptorProviderProps> = ({children}) => {
-    // Get the interceptor props from our custom hook
-    const interceptorProps = useAuthInterceptor();
+export const AuthInterceptorProvider: React.FC<IAuthInterceptorProviderProps> = ({ children }) => {
+  // Get the interceptor props from our custom hook
+  const interceptorProps = useAuthInterceptor();
 
-    return (
-        <>
-            {/* AuthInterceptor doesn't render anything visible, just sets up the interceptors */}
-            <AuthInterceptor {...interceptorProps} />
-            {children}
-        </>
-    );
+  return (
+    <>
+      {/* AuthInterceptor doesn't render anything visible, just sets up the interceptors */}
+      <AuthInterceptor {...interceptorProps} />
+      {children}
+    </>
+  );
 };

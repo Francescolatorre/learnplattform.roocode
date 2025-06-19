@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {AUTH_CONFIG} from '@/config/appConfig';
+import { AUTH_CONFIG } from '@/config/appConfig';
 
 const apiClient = axios.create({
   baseURL: 'http://localhost:8000/', // Ensure this matches the backend API base URL
@@ -44,8 +44,8 @@ const authService = {
   /**
    * Authenticates a user and returns access and refresh tokens
    */
-  async login(username: string, password: string): Promise<{access: string; refresh: string}> {
-    const response = await apiClient.post('/auth/login/', {username, password}); // Added trailing slash to handle APPEND_SLASH setting
+  async login(username: string, password: string): Promise<{ access: string; refresh: string }> {
+    const response = await apiClient.post('/auth/login/', { username, password }); // Added trailing slash to handle APPEND_SLASH setting
     if (!response || typeof response !== 'object' || !('data' in response) || !response.data) {
       throw new Error('Login failed: No response data received from server.');
     }
@@ -69,7 +69,7 @@ const authService = {
         // Only call logout API if we have tokens
         await apiClient.post<void>(
           '/auth/logout/',
-          {refresh: refreshToken},
+          { refresh: refreshToken },
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -97,7 +97,7 @@ const authService = {
   /**
    * Refreshes the access token using a refresh token
    */
-  async refreshToken(): Promise<{access: string}> {
+  async refreshToken(): Promise<{ access: string }> {
     try {
       // Get refresh token from localStorage
       const refreshToken = localStorage.getItem(AUTH_CONFIG.refreshTokenStorageKey);
@@ -106,7 +106,7 @@ const authService = {
         throw new Error('No refresh token found');
       }
 
-      const response = await apiClient.post<{access: string}>('/auth/token/refresh/', {
+      const response = await apiClient.post<{ access: string }>('/auth/token/refresh/', {
         refresh: refreshToken,
       });
 
@@ -123,7 +123,14 @@ const authService = {
 
       return response.data;
     } catch (error: unknown) {
-      if (typeof error === 'object' && error !== null && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response) {
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'response' in error &&
+        error.response &&
+        typeof error.response === 'object' &&
+        'data' in error.response
+      ) {
         console.error('Failed to refresh token:', error.response.data);
       } else if (error instanceof Error) {
         console.error('Failed to refresh token:', error.message);
@@ -159,7 +166,7 @@ const authService = {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-            signal: controller.signal
+            signal: controller.signal,
           }
         );
 

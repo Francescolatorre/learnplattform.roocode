@@ -1,6 +1,6 @@
-import {Page, Locator, expect} from '@playwright/test';
-import {BasePage} from './BasePage';
-import {NavigationHelper} from './NavigationHelper';
+import { Page, Locator, expect } from '@playwright/test';
+import { BasePage } from './BasePage';
+import { NavigationHelper } from './NavigationHelper';
 
 /**
  * Page object representing the Markdown Editor component
@@ -42,15 +42,15 @@ export class MarkdownEditorPage extends BasePage {
       '[data-testid="markdown-preview-content"]',
       '.markdown-editor-preview',
       '.markdown-preview',
-      '.preview-content'
+      '.preview-content',
     ],
     // Course description selectors ordered by priority
     descriptionSelectors: [
       '[data-testid="course-description"]',
       '.course-description',
       '[data-testid="course-description-container"]',
-      '.course-description-container'
-    ]
+      '.course-description-container',
+    ],
   };
 
   constructor(page: Page) {
@@ -70,7 +70,7 @@ export class MarkdownEditorPage extends BasePage {
         try {
           await this.page.waitForSelector(this.selectors.container, {
             state: 'visible',
-            timeout: 5000
+            timeout: 5000,
           });
           break;
         } catch (e) {
@@ -81,23 +81,23 @@ export class MarkdownEditorPage extends BasePage {
 
       // Wait for textarea to be ready
       const textarea = this.page.locator(this.selectors.textarea);
-      await textarea.waitFor({state: 'visible', timeout: 5000});
+      await textarea.waitFor({ state: 'visible', timeout: 5000 });
 
       // Ensure textarea is interactive
       await this.page.waitForFunction(
-        (selector) => {
+        selector => {
           const el = document.querySelector(selector) as HTMLTextAreaElement;
           return el && !el.disabled;
         },
         this.selectors.textarea,
-        {timeout: 5000}
+        { timeout: 5000 }
       );
 
       // Check for editor tabs if present
       if (await this.page.locator(this.selectors.editorTabs).isVisible()) {
         await this.page.waitForSelector(this.selectors.editorTabs, {
           state: 'visible',
-          timeout: 5000
+          timeout: 5000,
         });
       }
 
@@ -146,7 +146,7 @@ export class MarkdownEditorPage extends BasePage {
       // Wait for preview mode with retries
       await expect(async () => {
         expect(await this.isInPreviewMode()).toBeTruthy();
-      }).toPass({timeout: 5000});
+      }).toPass({ timeout: 5000 });
 
       // Wait for preview content
       await this.waitForPreviewContent();
@@ -171,7 +171,7 @@ export class MarkdownEditorPage extends BasePage {
       // Wait for write mode with retries
       await expect(async () => {
         expect(await this.isInWriteMode()).toBeTruthy();
-      }).toPass({timeout: 5000});
+      }).toPass({ timeout: 5000 });
 
       // Ensure textarea is focused and ready
       const textarea = this.page.locator(this.selectors.textarea);
@@ -237,7 +237,9 @@ export class MarkdownEditorPage extends BasePage {
    * Improved with retry logic and better error handling
    */
   async hasRenderedElements(
-    elements: Array<'heading' | 'paragraph' | 'bold' | 'list' | 'link' | 'image' | 'blockquote' | 'code'>
+    elements: Array<
+      'heading' | 'paragraph' | 'bold' | 'list' | 'link' | 'image' | 'blockquote' | 'code'
+    >
   ): Promise<boolean> {
     await this.switchToPreview();
 
@@ -249,7 +251,7 @@ export class MarkdownEditorPage extends BasePage {
       link: 'a',
       image: 'img',
       blockquote: 'blockquote',
-      code: 'pre, code'
+      code: 'pre, code',
     };
 
     // Try all possible preview containers
@@ -276,7 +278,7 @@ export class MarkdownEditorPage extends BasePage {
   async openHelpDialog(): Promise<void> {
     const helpButton = this.page.locator(this.selectors.helpButton);
     await helpButton.click();
-    await this.page.locator(this.selectors.helpDialog).waitFor({state: 'visible'});
+    await this.page.locator(this.selectors.helpDialog).waitFor({ state: 'visible' });
   }
 
   /**
@@ -285,7 +287,7 @@ export class MarkdownEditorPage extends BasePage {
   async closeHelpDialog(): Promise<void> {
     const closeButton = this.page.locator(this.selectors.helpClose);
     await closeButton.click();
-    await this.page.locator(this.selectors.helpDialog).waitFor({state: 'hidden'});
+    await this.page.locator(this.selectors.helpDialog).waitFor({ state: 'hidden' });
   }
 
   /**
@@ -356,7 +358,7 @@ export class MarkdownEditorPage extends BasePage {
   async openHelp(): Promise<void> {
     const helpButton = this.page.locator(this.selectors.helpButton);
     await helpButton.click();
-    await this.page.locator(this.selectors.helpDialog).waitFor({state: 'visible'});
+    await this.page.locator(this.selectors.helpDialog).waitFor({ state: 'visible' });
   }
 
   /**
@@ -365,6 +367,6 @@ export class MarkdownEditorPage extends BasePage {
   async closeHelp(): Promise<void> {
     const closeButton = this.page.locator(this.selectors.helpClose);
     await closeButton.click();
-    await this.page.locator(this.selectors.helpDialog).waitFor({state: 'hidden'});
+    await this.page.locator(this.selectors.helpDialog).waitFor({ state: 'hidden' });
   }
 }

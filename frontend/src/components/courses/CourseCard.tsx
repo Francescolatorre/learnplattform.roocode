@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   Card,
   CardContent,
@@ -8,12 +8,12 @@ import {
   Button,
   Box,
   Chip,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material';
-import {useQuery} from '@tanstack/react-query';
-import {useAuth} from '@/context/auth/AuthContext';
+import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@/context/auth/AuthContext';
 import enrollmentService from '@/services/resources/enrollmentService';
-import {ICourse} from '@/types';
+import { ICourse } from '@/types';
 
 /**
  * Interface for CourseCard component props
@@ -33,11 +33,11 @@ interface ICourseCardProps {
  *
  * @returns A card component displaying course information
  */
-const CourseCard: React.FC<ICourseCardProps> = ({course, isInstructorView}) => {
-  const {isAuthenticated} = useAuth();
+const CourseCard: React.FC<ICourseCardProps> = ({ course, isInstructorView }) => {
+  const { isAuthenticated } = useAuth();
 
   // Enhanced query configuration for more reliable data fetching
-  const {data: enrollment, isLoading: enrollmentLoading} = useQuery({
+  const { data: enrollment, isLoading: enrollmentLoading } = useQuery({
     queryKey: ['enrollment', course.id],
     queryFn: () => enrollmentService.getEnrollmentStatus(course.id),
     enabled: Boolean(course.id) && Boolean(isAuthenticated),
@@ -47,24 +47,31 @@ const CourseCard: React.FC<ICourseCardProps> = ({course, isInstructorView}) => {
     gcTime: 1000 * 60 * 5, // Keep in cache for 5 minutes
     refetchOnMount: true,
     refetchOnWindowFocus: true,
-    refetchOnReconnect: true
+    refetchOnReconnect: true,
   });
 
   return (
-    <Card sx={{display: 'flex', flexDirection: 'column', height: '100%'}} data-testid={`course-card-${course.id}`}>
-      <CardContent sx={{flexGrow: 1}}>
+    <Card
+      sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+      data-testid={`course-card-${course.id}`}
+    >
+      <CardContent sx={{ flexGrow: 1 }}>
         <Typography variant="h6" component="h2" gutterBottom>
           {course.title}
         </Typography>
 
         {/* Status indicators */}
-        <Box sx={{mb: 2, minHeight: 32, display: 'flex', alignItems: 'center', gap: 1}}>
+        <Box sx={{ mb: 2, minHeight: 32, display: 'flex', alignItems: 'center', gap: 1 }}>
           <Chip
             label={course.status}
             color={
-              course.status === 'published' ? 'success' :
-                course.status === 'draft' ? 'warning' :
-                  course.status === 'archived' ? 'default' : 'primary'
+              course.status === 'published'
+                ? 'success'
+                : course.status === 'draft'
+                  ? 'warning'
+                  : course.status === 'archived'
+                    ? 'default'
+                    : 'primary'
             }
             size="small"
             data-testid="course-status-indicator"
@@ -77,15 +84,10 @@ const CourseCard: React.FC<ICourseCardProps> = ({course, isInstructorView}) => {
               color="primary"
               size="small"
               data-testid="enrolled-badge"
-              sx={{mr: 1}}
+              sx={{ mr: 1 }}
             />
           ) : null}
-          <Chip
-            label={course.visibility}
-            color="default"
-            size="small"
-            variant="outlined"
-          />
+          <Chip label={course.visibility} color="default" size="small" variant="outlined" />
         </Box>
 
         <Typography
@@ -96,7 +98,7 @@ const CourseCard: React.FC<ICourseCardProps> = ({course, isInstructorView}) => {
             display: '-webkit-box',
             WebkitLineClamp: 3,
             WebkitBoxOrient: 'vertical',
-            overflow: 'hidden'
+            overflow: 'hidden',
           }}
         >
           {course.description}
@@ -104,13 +106,7 @@ const CourseCard: React.FC<ICourseCardProps> = ({course, isInstructorView}) => {
       </CardContent>
 
       <CardActions>
-        <Button
-          component={Link}
-          to={`/courses/${course.id}`}
-          size="small"
-          color="primary"
-
-        >
+        <Button component={Link} to={`/courses/${course.id}`} size="small" color="primary">
           {enrollment?.enrolled ? 'Continue Learning' : 'View Details'}
         </Button>
       </CardActions>

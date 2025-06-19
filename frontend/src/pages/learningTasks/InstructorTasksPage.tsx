@@ -1,21 +1,20 @@
-import {Container, Typography, Paper, Button, CircularProgress} from '@mui/material';
+import { Container, Typography, Paper, Button, CircularProgress } from '@mui/material';
 import React from 'react';
-import {useParams, useNavigate} from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
-import {ILearningTask} from '@/types';
-import {useCourseTasks} from '@services/useCourseTasks';
-import {DataTable} from 'src/components/shared';
-
+import { ILearningTask } from '@/types';
+import { useCourseTasks } from '@services/useCourseTasks';
+import { DataTable } from 'src/components/shared';
 
 const InstructorTasksPage: React.FC = () => {
-  const {courseId} = useParams();
+  const { courseId } = useParams();
   const navigate = useNavigate();
-  const {data, isLoading, error} = useCourseTasks(courseId || '');
+  const { data, isLoading, error } = useCourseTasks(courseId || '');
 
   if (!courseId) {
     return (
       <Container maxWidth="lg">
-        <Paper sx={{p: 3, mt: 3}}>
+        <Paper sx={{ p: 3, mt: 3 }}>
           <Typography variant="h5" gutterBottom>
             Course Not Found
           </Typography>
@@ -36,7 +35,7 @@ const InstructorTasksPage: React.FC = () => {
         variant="contained"
         color="primary"
         onClick={() => navigate(`/instructor/courses/${courseId}/tasks/new`)}
-        sx={{mb: 2}}
+        sx={{ mb: 2 }}
       >
         Add New Task
       </Button>
@@ -50,9 +49,9 @@ const InstructorTasksPage: React.FC = () => {
         <DataTable
           data={data || []}
           columns={[
-            {id: 'title', label: 'Title'},
-            {id: 'description', label: 'Description'},
-            {id: 'order', label: 'Order'},
+            { id: 'title', label: 'Title' },
+            { id: 'description', label: 'Description' },
+            { id: 'order', label: 'Order' },
             {
               id: 'actions',
               label: 'Actions',

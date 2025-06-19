@@ -1,24 +1,24 @@
 //src/context/auth/authinerceptor.tsx
 
-import React, {useEffect} from 'react';
-import {AxiosInstance} from 'axios';
-import {authEventService} from './AuthEventService';
-import {AuthEventType} from './types';
+import React, { useEffect } from 'react';
+import { AxiosInstance } from 'axios';
+import { authEventService } from './AuthEventService';
+import { AuthEventType } from './types';
 import axiosInstance from '../../services/api/axiosConfig';
-import {AUTH_CONFIG} from '../../config/appConfig';
-import {useAuth} from './AuthContext';
+import { AUTH_CONFIG } from '../../config/appConfig';
+import { useAuth } from './AuthContext';
 
 // Extend Window interface to include apiClient
 declare global {
-    interface Window {
-        apiClient: AxiosInstance;
-    }
+  interface Window {
+    apiClient: AxiosInstance;
+  }
 }
 
 export interface IAuthInterceptorProps {
-    onAuthFailure?: () => void;
-    onRefreshToken: () => Promise<string | null>;
-    getAccessToken: () => string | null;
+  onAuthFailure?: () => void;
+  onRefreshToken: () => Promise<string | null>;
+  getAccessToken: () => string | null;
 }
 
 /**
@@ -26,43 +26,43 @@ export interface IAuthInterceptorProps {
  * Works with the centralized axiosInstance that already has interceptors
  */
 export const AuthInterceptor: React.FC<IAuthInterceptorProps> = ({
-    onAuthFailure,
-    onRefreshToken,
-    getAccessToken
+  onAuthFailure,
+  onRefreshToken,
+  getAccessToken,
 }) => {
-    const {logout} = useAuth();
+  const { logout } = useAuth();
 
-    // Subscribe to auth events
-    useEffect(() => {
-        // Make API client available globally for debugging
-        window.apiClient = axiosInstance;
+  // Subscribe to auth events
+  useEffect(() => {
+    // Make API client available globally for debugging
+    window.apiClient = axiosInstance;
 
-        // Subscribe to auth events to handle authentication failures
-        const unsubscribe = authEventService.subscribe((event) => {
-            if (event.type === AuthEventType.AUTH_ERROR) {
-                console.log('AuthInterceptor: Handling auth error event');
-                if (onAuthFailure) {
-                    onAuthFailure();
-                } else {
-                    // Default behavior: logout the user
-                    logout();
-                }
-            }
-        });
+    // Subscribe to auth events to handle authentication failures
+    const unsubscribe = authEventService.subscribe(event => {
+      if (event.type === AuthEventType.AUTH_ERROR) {
+        console.log('AuthInterceptor: Handling auth error event');
+        if (onAuthFailure) {
+          onAuthFailure();
+        } else {
+          // Default behavior: logout the user
+          logout();
+        }
+      }
+    });
 
-        return () => {
-            // Clean up the subscription when the component unmounts
-            unsubscribe();
-        };
-    }, [onAuthFailure, logout]);
+    return () => {
+      // Clean up the subscription when the component unmounts
+      unsubscribe();
+    };
+  }, [onAuthFailure, logout]);
 
-    return null;
+  return null;
 };
 
 /**
  * Returns the API base URL from environment variables
  */
 export const getApiBaseUrl = (): string => {
-    // Using Vite's import.meta.env instead of process.env
-    return import.meta.env.VITE_API_URL || '/api';
+  // Using Vite's import.meta.env instead of process.env
+  return import.meta.env.VITE_API_URL || '/api';
 };

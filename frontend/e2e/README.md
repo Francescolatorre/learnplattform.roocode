@@ -36,6 +36,7 @@ npm run test:e2e:markdown:editor
 ### Test Results and Analysis
 
 The tests use two reporters:
+
 1. Standard HTML reporter (results in `playwright-report/`)
 2. Custom LLM-friendly Markdown reporter (results in `test-results/markdown-test-results.md`)
 
@@ -44,11 +45,13 @@ The LLM-friendly report provides a concise summary and detailed results that can
 ### What the Tests Verify
 
 1. **Course Description Tests**
+
    - Markdown rendering in course creation and editing
    - Markdown preview in course lists
    - Proper sanitization of unsafe Markdown content
 
 2. **Learning Task Tests**
+
    - Markdown rendering in task creation and editing
    - Markdown preview in task lists
    - Proper display of task descriptions to students
@@ -61,12 +64,14 @@ The LLM-friendly report provides a concise summary and detailed results that can
 ### Testing Utilities
 
 The tests use helper utilities from:
+
 - `utils/markdown-test-utils.ts` - Utilities for testing Markdown rendering
 - `utils/auth-helpers.ts` - Authentication helpers for different user roles
 
 ### Common Test Patterns
 
 The tests follow these common patterns:
+
 1. Login as the appropriate user role (instructor/student)
 2. Perform actions to create, edit, or view content with Markdown
 3. Verify the Markdown is rendered correctly with expected HTML elements
@@ -75,6 +80,7 @@ The tests follow these common patterns:
 ### Troubleshooting
 
 If tests fail, check:
+
 1. If selectors have changed (multiple selector fallbacks are included)
 2. If authentication credentials are correct
 3. If the application's route structure has changed
@@ -83,6 +89,7 @@ If tests fail, check:
 ### Extending the Tests
 
 When adding new Markdown features:
+
 1. Add appropriate test cases to the relevant spec files
 2. Update the `MarkdownTestUtils` class if needed
 3. Ensure both success and error cases are covered

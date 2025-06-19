@@ -1,6 +1,6 @@
-import {test, expect, request} from '@playwright/test';
+import { test, expect, request } from '@playwright/test';
 
-import {TEST_USERS} from '../setupTests';
+import { TEST_USERS } from '../setupTests';
 
 /**
  * Base API URL
@@ -90,7 +90,7 @@ export class ApiHelper {
     });
 
     const response = await requestContext.get(`/api/v1/learning-tasks/`, {
-      params: {course: courseId},
+      params: { course: courseId },
     });
     return response;
   }
@@ -239,7 +239,9 @@ export class ApiHelper {
     });
 
     // Assuming the API supports DELETE with course and user as params
-    const response = await requestContext.delete(`/api/enrollments/?course=${courseId}&user=${studentId}`);
+    const response = await requestContext.delete(
+      `/api/enrollments/?course=${courseId}&user=${studentId}`
+    );
     expect(response.ok()).toBeTruthy();
     return response;
   }
@@ -266,10 +268,7 @@ test.describe('API Authentication and Authorization', () => {
   });
 
   test('Admin can access courses list', async () => {
-    await apiHelper.authenticate(
-      TEST_USERS.admin.username,
-      TEST_USERS.admin.password
-    );
+    await apiHelper.authenticate(TEST_USERS.admin.username, TEST_USERS.admin.password);
 
     const response = await apiHelper.getCourses();
 
@@ -295,10 +294,7 @@ test.describe('API Authentication and Authorization', () => {
   });
 
   test('Student can access courses list but cannot modify courses', async () => {
-    await apiHelper.authenticate(
-      TEST_USERS.student.username,
-      TEST_USERS.student.password
-    );
+    await apiHelper.authenticate(TEST_USERS.student.username, TEST_USERS.student.password);
 
     // Students can view courses
     const getResponse = await apiHelper.getCourses();
@@ -337,10 +333,7 @@ test.describe('API Authentication and Authorization', () => {
   });
 
   test('Admin can create, update and delete tasks', async () => {
-    await apiHelper.authenticate(
-      TEST_USERS.admin.username,
-      TEST_USERS.admin.password
-    );
+    await apiHelper.authenticate(TEST_USERS.admin.username, TEST_USERS.admin.password);
 
     // Get courses
     const coursesResponse = await apiHelper.getCourses();
@@ -478,10 +471,7 @@ test.describe('API Authentication and Authorization', () => {
 
   test('Token refresh works correctly', async () => {
     // Get initial tokens
-    await apiHelper.authenticate(
-      TEST_USERS.admin.username,
-      TEST_USERS.admin.password
-    );
+    await apiHelper.authenticate(TEST_USERS.admin.username, TEST_USERS.admin.password);
 
     // Refresh token
     const refreshedTokens = await apiHelper.refreshAuthToken();

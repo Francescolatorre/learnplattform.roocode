@@ -1,7 +1,7 @@
-import axios, {AxiosInstance, AxiosRequestConfig, AxiosError} from 'axios';
-import {API_CONFIG} from './apiConfig';
-import {authEventService} from '../../context/auth/AuthEventService';
-import {AuthEventType} from '../../context/auth/types';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios';
+import { API_CONFIG } from './apiConfig';
+import { authEventService } from '../../context/auth/AuthEventService';
+import { AuthEventType } from '../../context/auth/types';
 
 /**
  * Configured Axios instance with authentication interceptors
@@ -43,20 +43,20 @@ const processQueue = (token: string | null, error: any = null): void => {
 
 // Request interceptor to attach authentication token
 axiosInstance.interceptors.request.use(
-  (config) => {
+  config => {
     const token = localStorage.getItem('accessToken');
 
     // Add authorization header if token exists
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.debug('API request: Attaching auth token to request:', {url: config.url});
+      console.debug('API request: Attaching auth token to request:', { url: config.url });
     } else {
-      console.debug('API request: No auth token available for request:', {url: config.url});
+      console.debug('API request: No auth token available for request:', { url: config.url });
     }
 
     return config;
   },
-  (error) => {
+  error => {
     console.error('Request interceptor error:', error);
     return Promise.reject(error);
   }
@@ -64,10 +64,10 @@ axiosInstance.interceptors.request.use(
 
 // Response interceptor for error handling
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  response => response,
   async (error: AxiosError) => {
     // Get the original request config
-    const originalRequest = error.config as AxiosRequestConfig & {_retry?: boolean};
+    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
 
     // Handle 401 Unauthorized errors with token refresh
     if (error.response?.status === 401 && !originalRequest._retry) {
@@ -79,7 +79,7 @@ axiosInstance.interceptors.response.use(
         try {
           // Wait for the ongoing refresh to complete
           const newToken = await new Promise<string>((resolve, reject) => {
-            failedRequestQueue.push({resolve, reject});
+            failedRequestQueue.push({ resolve, reject });
           });
 
           // Retry with new token
@@ -106,11 +106,11 @@ axiosInstance.interceptors.response.use(
 
         // Make refresh token request
         const response = await axios.post(`${API_CONFIG.baseURL}/auth/token/refresh/`, {
-          refresh: refreshToken
+          refresh: refreshToken,
         });
 
         // Store the new tokens
-        const {access, refresh} = response.data;
+        const { access, refresh } = response.data;
         localStorage.setItem('accessToken', access);
         localStorage.setItem('refreshToken', refresh);
 
@@ -138,9 +138,9 @@ axiosInstance.interceptors.response.use(
             error: {
               message: 'Authentication session expired',
               code: 'token_refresh_failed',
-              details: {status: 401}
-            }
-          }
+              details: { status: 401 },
+            },
+          },
         });
 
         // Clear tokens since they're invalid
@@ -160,12 +160,12 @@ axiosInstance.interceptors.response.use(
       console.error('API error response:', {
         url: error.config?.url,
         status: error.response.status,
-        data: error.response.data
+        data: error.response.data,
       });
     } else if (error.request) {
       // Request made but no response received (network error)
       console.error('API network error (no response):', {
-        url: error.config?.url
+        url: error.config?.url,
       });
     } else {
       // Error in setting up the request

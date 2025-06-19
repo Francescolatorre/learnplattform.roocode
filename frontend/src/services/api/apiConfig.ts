@@ -35,11 +35,13 @@ export const API_CONFIG = {
       progress: (courseId: string | number): string => `/api/v1/courses/${courseId}/progress/`, // Added
       instructorCourses: '/api/v1/courses/instructor/courses/', // Fixed to match backend URL format
       courseDetails: (courseId: string | number): string => `/api/v1/courses/${courseId}/details/`,
-      studentProgress: (courseId: string | number): string => `/api/v1/courses/${courseId}/student-progress/`,
+      studentProgress: (courseId: string | number): string =>
+        `/api/v1/courses/${courseId}/student-progress/`,
       studentProgressDetail: (courseId: string | number, userId: string | number): string =>
         `/api/v1/courses/${courseId}/student-progress/${userId}/`,
       analytics: (courseId: string | number): string => `/api/v1/courses/${courseId}/analytics/`,
-      taskAnalytics: (courseId: string | number): string => `/api/v1/courses/${courseId}/task-analytics/`,
+      taskAnalytics: (courseId: string | number): string =>
+        `/api/v1/courses/${courseId}/task-analytics/`,
       // Corrected based on Swagger - this should use the tasks endpoint, not a course subpath
       tasks: (courseId: string | number): string => `/api/v1/tasks/course/${courseId}/`,
     },
@@ -63,7 +65,8 @@ export const API_CONFIG = {
       legacyDetails: (taskId: string | number): string => `/api/v1/learning-tasks/${taskId}/`,
       legacyUpdate: (taskId: string | number): string => `/api/v1/learning-tasks/${taskId}/`,
       legacyDelete: (taskId: string | number): string => `/api/v1/learning-tasks/${taskId}/`,
-      legacyByCourse: (courseId: string | number): string => `/api/v1/learning-tasks/course/${courseId}/`,
+      legacyByCourse: (courseId: string | number): string =>
+        `/api/v1/learning-tasks/course/${courseId}/`,
     },
     enrollments: {
       list: '/api/v1/enrollments/',
@@ -72,7 +75,8 @@ export const API_CONFIG = {
       create: '/api/v1/enrollments/',
       update: (enrollmentId: string | number): string => `/api/v1/enrollments/${enrollmentId}/`,
       delete: (enrollmentId: string | number): string => `/api/v1/enrollments/${enrollmentId}/`,
-      updateStatus: (enrollmentId: string | number): string => `/api/v1/enrollments/${enrollmentId}/update_status/`,
+      updateStatus: (enrollmentId: string | number): string =>
+        `/api/v1/enrollments/${enrollmentId}/update_status/`,
       unenroll: (courseId: string | number): string => `/api/v1/enrollments/unenroll/${courseId}/`,
     },
     taskProgress: {
@@ -81,11 +85,13 @@ export const API_CONFIG = {
       details: (progressId: string | number): string => `/api/v1/task-progress/${progressId}/`,
       update: (progressId: string | number): string => `/api/v1/task-progress/${progressId}/`,
       delete: (progressId: string | number): string => `/api/v1/task-progress/${progressId}/`,
-      updateStatus: (progressId: string | number): string => `/api/v1/task-progress/${progressId}/update_status/`,
+      updateStatus: (progressId: string | number): string =>
+        `/api/v1/task-progress/${progressId}/update_status/`,
     },
     student: {
       progress: (studentId: string | number): string => `/api/v1/students/${studentId}/progress/`,
-      quizPerformance: (studentId: string | number): string => `/api/v1/students/${studentId}/quiz-performance/`,
+      quizPerformance: (studentId: string | number): string =>
+        `/api/v1/students/${studentId}/quiz-performance/`,
     },
     quizzes: {
       // Quiz tasks
@@ -98,9 +104,12 @@ export const API_CONFIG = {
       // Quiz questions
       questionsList: '/api/v1/quiz-questions/',
       questionCreate: '/api/v1/quiz-questions/',
-      questionDetails: (questionId: string | number): string => `/api/v1/quiz-questions/${questionId}/`,
-      questionUpdate: (questionId: string | number): string => `/api/v1/quiz-questions/${questionId}/`,
-      questionDelete: (questionId: string | number): string => `/api/v1/quiz-questions/${questionId}/`,
+      questionDetails: (questionId: string | number): string =>
+        `/api/v1/quiz-questions/${questionId}/`,
+      questionUpdate: (questionId: string | number): string =>
+        `/api/v1/quiz-questions/${questionId}/`,
+      questionDelete: (questionId: string | number): string =>
+        `/api/v1/quiz-questions/${questionId}/`,
 
       // Quiz options
       optionsList: '/api/v1/quiz-options/',
@@ -115,8 +124,10 @@ export const API_CONFIG = {
       attemptDetails: (attemptId: string | number): string => `/api/v1/quiz-attempts/${attemptId}/`,
       attemptUpdate: (attemptId: string | number): string => `/api/v1/quiz-attempts/${attemptId}/`,
       attemptDelete: (attemptId: string | number): string => `/api/v1/quiz-attempts/${attemptId}/`,
-      attemptResponses: (attemptId: string | number): string => `/api/v1/quiz-attempts/${attemptId}/responses/`,
-      submitResponses: (attemptId: string | number): string => `/api/v1/quiz-attempts/${attemptId}/submit_responses/`,
+      attemptResponses: (attemptId: string | number): string =>
+        `/api/v1/quiz-attempts/${attemptId}/responses/`,
+      submitResponses: (attemptId: string | number): string =>
+        `/api/v1/quiz-attempts/${attemptId}/submit_responses/`,
     },
     dashboard: {
       admin: '/api/v1/admin/dashboard/',

@@ -8,10 +8,7 @@
           "module": "./components/ErrorBoundary",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/components/ErrorBoundary/index.tsx",
           "coreModule": false,
           "followable": true,
@@ -25,10 +22,7 @@
           "module": "./components/ErrorNotifier/ErrorProvider",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/components/ErrorNotifier/ErrorProvider.tsx",
           "coreModule": false,
           "followable": true,
@@ -42,10 +36,7 @@
           "module": "./components/navigation/NavigationBar.tsx",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/components/navigation/NavigationBar.tsx",
           "coreModule": false,
           "followable": true,
@@ -59,10 +50,7 @@
           "module": "./routes/AppRoutes.tsx",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/routes/AppRoutes.tsx",
           "coreModule": false,
           "followable": true,
@@ -76,10 +64,7 @@
           "module": "./styles/theme.ts",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/styles/theme.ts",
           "coreModule": false,
           "followable": true,
@@ -93,10 +78,7 @@
           "module": "@mui/material/CssBaseline",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/CssBaseline/index.js",
           "coreModule": false,
           "followable": false,
@@ -110,10 +92,7 @@
           "module": "@mui/material/styles",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/styles/index.js",
           "coreModule": false,
           "followable": false,
@@ -127,10 +106,7 @@
           "module": "@tanstack/react-query",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@tanstack/react-query/build/modern/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -144,10 +120,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -157,9 +130,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/index.tsx"
-      ],
+      "dependents": ["src/index.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -169,14 +140,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/App.tsx"
-      ],
+      "dependents": ["src/App.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -186,10 +152,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/App.tsx",
@@ -205,10 +168,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/App.tsx",
@@ -237,10 +197,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/App.tsx",
@@ -336,10 +293,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -353,10 +307,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -366,9 +317,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/App.tsx"
-      ],
+      "dependents": ["src/App.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -378,10 +327,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/components/ErrorBoundary/index.tsx",
@@ -449,10 +395,7 @@
           "module": "./ErrorToast",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/components/ErrorNotifier/ErrorToast.tsx",
           "coreModule": false,
           "followable": true,
@@ -466,10 +409,7 @@
           "module": "./types",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/components/ErrorNotifier/types.ts",
           "coreModule": false,
           "followable": true,
@@ -483,10 +423,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -512,10 +449,7 @@
           "module": "./types",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/components/ErrorNotifier/types.ts",
           "coreModule": false,
           "followable": true,
@@ -529,10 +463,7 @@
           "module": "@mui/icons-material/Close",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/Close.js",
           "coreModule": false,
           "followable": false,
@@ -546,10 +477,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -563,10 +491,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -576,9 +501,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/components/ErrorNotifier/ErrorProvider.tsx"
-      ],
+      "dependents": ["src/components/ErrorNotifier/ErrorProvider.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -588,14 +511,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/components/ErrorNotifier/ErrorToast.tsx"
-      ],
+      "dependents": ["src/components/ErrorNotifier/ErrorToast.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -678,10 +596,7 @@
           "module": "@mui/icons-material/ExitToApp",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/ExitToApp.js",
           "coreModule": false,
           "followable": false,
@@ -695,10 +610,7 @@
           "module": "@mui/icons-material/Menu",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/Menu.js",
           "coreModule": false,
           "followable": false,
@@ -712,10 +624,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -729,10 +638,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -746,10 +652,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -759,9 +662,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/App.tsx"
-      ],
+      "dependents": ["src/App.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -771,14 +672,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/components/navigation/NavigationBar.tsx"
-      ],
+      "dependents": ["src/components/navigation/NavigationBar.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -788,14 +684,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/components/navigation/NavigationBar.tsx"
-      ],
+      "dependents": ["src/components/navigation/NavigationBar.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -805,10 +696,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/components/navigation/NavigationBar.tsx",
@@ -876,10 +764,7 @@
           "module": "@mui/icons-material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/esm/index.js",
           "coreModule": false,
           "followable": false,
@@ -902,10 +787,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/config/menuConfig.ts",
@@ -923,10 +805,7 @@
           "module": "./analyticsTypes",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
+          "dependencyTypes": ["local", "export"],
           "resolved": "src/types/analyticsTypes.ts",
           "coreModule": false,
           "followable": true,
@@ -936,17 +815,11 @@
           "cycle": [
             {
               "name": "src/types/analyticsTypes.ts",
-              "dependencyTypes": [
-                "local",
-                "export"
-              ]
+              "dependencyTypes": ["local", "export"]
             },
             {
               "name": "src/types/index.ts",
-              "dependencyTypes": [
-                "local",
-                "import"
-              ]
+              "dependencyTypes": ["local", "import"]
             }
           ],
           "valid": false,
@@ -962,10 +835,7 @@
           "module": "./userTypes",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
+          "dependencyTypes": ["local", "export"],
           "resolved": "src/types/userTypes.ts",
           "coreModule": false,
           "followable": true,
@@ -1004,10 +874,7 @@
           "module": "./index",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/types/index.ts",
           "coreModule": false,
           "followable": true,
@@ -1017,17 +884,11 @@
           "cycle": [
             {
               "name": "src/types/index.ts",
-              "dependencyTypes": [
-                "local",
-                "import"
-              ]
+              "dependencyTypes": ["local", "import"]
             },
             {
               "name": "src/types/analyticsTypes.ts",
-              "dependencyTypes": [
-                "local",
-                "export"
-              ]
+              "dependencyTypes": ["local", "export"]
             }
           ],
           "valid": false,
@@ -1052,9 +913,7 @@
     {
       "source": "src/types/userTypes.ts",
       "dependencies": [],
-      "dependents": [
-        "src/types/index.ts"
-      ],
+      "dependents": ["src/types/index.ts"],
       "orphan": false,
       "valid": true
     },
@@ -1086,9 +945,7 @@
           "module": "@/services/api/authService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "unknown"
-          ],
+          "dependencyTypes": ["unknown"],
           "resolved": "@/services/api/authService",
           "coreModule": false,
           "followable": false,
@@ -1128,10 +985,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -1145,10 +999,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -1191,22 +1042,16 @@
       "coreModule": false,
       "couldNotResolve": true,
       "matchesDoNotFollow": false,
-      "dependencyTypes": [
-        "unknown"
-      ],
+      "dependencyTypes": ["unknown"],
       "dependencies": [],
-      "dependents": [
-        "src/context/auth/AuthContext.tsx"
-      ],
+      "dependents": ["src/context/auth/AuthContext.tsx"],
       "orphan": false,
       "valid": true
     },
     {
       "source": "src/config/appConfig.ts",
       "dependencies": [],
-      "dependents": [
-        "src/context/auth/AuthContext.tsx"
-      ],
+      "dependents": ["src/context/auth/AuthContext.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -1438,9 +1283,7 @@
           "module": "@/pages/instructor/EditCoursePage",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "unknown"
-          ],
+          "dependencyTypes": ["unknown"],
           "resolved": "@/pages/instructor/EditCoursePage",
           "coreModule": false,
           "followable": false,
@@ -1460,9 +1303,7 @@
           "module": "@/pages/instructor/InstructorCourseDetailPage",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "unknown"
-          ],
+          "dependencyTypes": ["unknown"],
           "resolved": "@/pages/instructor/InstructorCourseDetailPage",
           "coreModule": false,
           "followable": false,
@@ -1582,10 +1423,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -1599,10 +1437,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -1612,9 +1447,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/App.tsx"
-      ],
+      "dependents": ["src/App.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -1624,13 +1457,9 @@
       "coreModule": false,
       "couldNotResolve": true,
       "matchesDoNotFollow": false,
-      "dependencyTypes": [
-        "unknown"
-      ],
+      "dependencyTypes": ["unknown"],
       "dependencies": [],
-      "dependents": [
-        "src/routes/AppRoutes.tsx"
-      ],
+      "dependents": ["src/routes/AppRoutes.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -1640,13 +1469,9 @@
       "coreModule": false,
       "couldNotResolve": true,
       "matchesDoNotFollow": false,
-      "dependencyTypes": [
-        "unknown"
-      ],
+      "dependencyTypes": ["unknown"],
       "dependencies": [],
-      "dependents": [
-        "src/routes/AppRoutes.tsx"
-      ],
+      "dependents": ["src/routes/AppRoutes.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -1658,10 +1483,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -1675,10 +1497,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -1688,9 +1507,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/routes/AppRoutes.tsx"
-      ],
+      "dependents": ["src/routes/AppRoutes.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -1762,10 +1579,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -1779,10 +1593,7 @@
           "module": "@mui/x-data-grid",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/x-data-grid/index.js",
           "coreModule": false,
           "followable": false,
@@ -1796,10 +1607,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -1813,10 +1621,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -1826,9 +1631,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/routes/AppRoutes.tsx"
-      ],
+      "dependents": ["src/routes/AppRoutes.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -1838,14 +1641,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/pages/admin/AdminCoursesPage.tsx"
-      ],
+      "dependents": ["src/pages/admin/AdminCoursesPage.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -1857,10 +1655,7 @@
           "module": "./ErrorProvider",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/components/ErrorNotifier/ErrorProvider.tsx",
           "coreModule": false,
           "followable": true,
@@ -1874,10 +1669,7 @@
           "module": "./types",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/components/ErrorNotifier/types.ts",
           "coreModule": false,
           "followable": true,
@@ -1891,10 +1683,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -1928,10 +1717,7 @@
           "module": "../api/apiConfig",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/api/apiConfig.ts",
           "coreModule": false,
           "followable": true,
@@ -2112,10 +1898,7 @@
           "module": "./apiConfig",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/api/apiConfig.ts",
           "coreModule": false,
           "followable": true,
@@ -2129,10 +1912,7 @@
           "module": "./axiosConfig",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/api/axiosConfig.ts",
           "coreModule": false,
           "followable": true,
@@ -2146,10 +1926,7 @@
           "module": "axios",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/axios/index.d.cts",
           "coreModule": false,
           "followable": false,
@@ -2180,10 +1957,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/services/api/apiService.ts",
@@ -2204,10 +1978,7 @@
           "module": "../../context/auth/AuthEventService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/context/auth/AuthEventService.ts",
           "coreModule": false,
           "followable": true,
@@ -2221,10 +1992,7 @@
           "module": "../../context/auth/types",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/context/auth/types.ts",
           "coreModule": false,
           "followable": true,
@@ -2238,10 +2006,7 @@
           "module": "./apiConfig",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/api/apiConfig.ts",
           "coreModule": false,
           "followable": true,
@@ -2255,10 +2020,7 @@
           "module": "axios",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/axios/index.d.cts",
           "coreModule": false,
           "followable": false,
@@ -2268,10 +2030,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/services/api/apiService.ts",
-        "src/services/api/apiClient.ts"
-      ],
+      "dependents": ["src/services/api/apiService.ts", "src/services/api/apiClient.ts"],
       "orphan": false,
       "valid": true
     },
@@ -2283,10 +2042,7 @@
           "module": "./types",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/context/auth/types.ts",
           "coreModule": false,
           "followable": true,
@@ -2329,10 +2085,7 @@
           "module": "./user",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/types/user.ts",
           "coreModule": false,
           "followable": true,
@@ -2388,10 +2141,7 @@
           "module": "./task",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/types/task.ts",
           "coreModule": false,
           "followable": true,
@@ -2478,10 +2228,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -2491,9 +2238,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/routes/AppRoutes.tsx"
-      ],
+      "dependents": ["src/routes/AppRoutes.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -2505,10 +2250,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -2522,10 +2264,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -2535,9 +2274,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/routes/AppRoutes.tsx"
-      ],
+      "dependents": ["src/routes/AppRoutes.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -2549,10 +2286,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -2566,10 +2300,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -2579,9 +2310,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/routes/AppRoutes.tsx"
-      ],
+      "dependents": ["src/routes/AppRoutes.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -2653,10 +2382,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -2670,10 +2396,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -2687,10 +2410,7 @@
           "module": "react-hook-form",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-hook-form/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -2700,10 +2420,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/routes/AppRoutes.tsx",
-        "src/routes/AuthRoutes.tsx"
-      ],
+      "dependents": ["src/routes/AppRoutes.tsx", "src/routes/AuthRoutes.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -2713,10 +2430,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/pages/auth/LoginPage.tsx",
@@ -2735,10 +2449,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -2772,10 +2483,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -2789,10 +2497,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -2802,9 +2507,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/routes/AppRoutes.tsx"
-      ],
+      "dependents": ["src/routes/AppRoutes.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -2816,10 +2519,7 @@
           "module": "@tanstack/react-query",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@tanstack/react-query/build/modern/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -2849,9 +2549,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/pages/courses/CourseProgressPage.tsx"
-      ],
+      "dependents": ["src/pages/courses/CourseProgressPage.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -2943,10 +2641,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -3000,10 +2695,7 @@
           "module": "@tanstack/react-query",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@tanstack/react-query/build/modern/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -3017,10 +2709,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -3034,10 +2723,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -3047,9 +2733,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/routes/AppRoutes.tsx"
-      ],
+      "dependents": ["src/routes/AppRoutes.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -3061,10 +2745,7 @@
           "module": "@mui/icons-material/AccessTime",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/AccessTime.js",
           "coreModule": false,
           "followable": false,
@@ -3078,10 +2759,7 @@
           "module": "@mui/icons-material/CheckCircle",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/CheckCircle.js",
           "coreModule": false,
           "followable": false,
@@ -3095,10 +2773,7 @@
           "module": "@mui/icons-material/School",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/School.js",
           "coreModule": false,
           "followable": false,
@@ -3112,10 +2787,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -3129,10 +2801,7 @@
           "module": "@mui/material/styles",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/styles/index.js",
           "coreModule": false,
           "followable": false,
@@ -3146,10 +2815,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -3172,14 +2838,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/components/courses/EnrollmentStatusIndicator.tsx"
-      ],
+      "dependents": ["src/components/courses/EnrollmentStatusIndicator.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -3189,14 +2850,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/components/courses/EnrollmentStatusIndicator.tsx"
-      ],
+      "dependents": ["src/components/courses/EnrollmentStatusIndicator.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -3206,10 +2862,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/components/courses/EnrollmentStatusIndicator.tsx",
@@ -3403,10 +3056,7 @@
           "module": "./course",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/types/course.ts",
           "coreModule": false,
           "followable": true,
@@ -3420,10 +3070,7 @@
           "module": "./user",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/types/user.ts",
           "coreModule": false,
           "followable": true,
@@ -3451,10 +3098,7 @@
           "module": "axios",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/axios/index.d.cts",
           "coreModule": false,
           "followable": false,
@@ -3488,10 +3132,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -3505,10 +3146,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -3538,9 +3176,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/routes/AppRoutes.tsx"
-      ],
+      "dependents": ["src/routes/AppRoutes.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -3552,10 +3188,7 @@
           "module": "../services/resources/courseService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/resources/courseService.ts",
           "coreModule": false,
           "followable": true,
@@ -3569,10 +3202,7 @@
           "module": "./courses/CourseList",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/components/courses/CourseList.tsx",
           "coreModule": false,
           "followable": true,
@@ -3606,10 +3236,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -3643,10 +3270,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -3711,10 +3335,7 @@
           "module": "@mui/icons-material/DeleteOutline",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/DeleteOutline.js",
           "coreModule": false,
           "followable": false,
@@ -3728,10 +3349,7 @@
           "module": "@mui/icons-material/Edit",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/Edit.js",
           "coreModule": false,
           "followable": false,
@@ -3745,10 +3363,7 @@
           "module": "@mui/icons-material/People",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/People.js",
           "coreModule": false,
           "followable": false,
@@ -3762,10 +3377,7 @@
           "module": "@mui/icons-material/School",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/School.js",
           "coreModule": false,
           "followable": false,
@@ -3779,10 +3391,7 @@
           "module": "@mui/icons-material/Visibility",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/Visibility.js",
           "coreModule": false,
           "followable": false,
@@ -3796,10 +3405,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -3813,10 +3419,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -3830,10 +3433,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -3858,14 +3458,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/components/courses/CourseList.tsx"
-      ],
+      "dependents": ["src/components/courses/CourseList.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -3875,10 +3470,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/components/courses/CourseList.tsx",
@@ -3893,10 +3485,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/components/courses/CourseList.tsx",
@@ -3911,23 +3500,16 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/components/courses/CourseList.tsx"
-      ],
+      "dependents": ["src/components/courses/CourseList.tsx"],
       "orphan": false,
       "valid": true
     },
     {
       "source": "src/utils/dateUtils.ts",
       "dependencies": [],
-      "dependents": [
-        "src/components/courses/CourseList.tsx"
-      ],
+      "dependents": ["src/components/courses/CourseList.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -3939,10 +3521,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -4067,10 +3646,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -4124,10 +3700,7 @@
           "module": "@tanstack/react-query",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@tanstack/react-query/build/modern/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -4141,10 +3714,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -4158,10 +3728,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -4171,9 +3738,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/routes/AppRoutes.tsx"
-      ],
+      "dependents": ["src/routes/AppRoutes.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -4185,10 +3750,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -4202,10 +3764,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -4230,10 +3789,7 @@
           "module": "../api/apiConfig",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/api/apiConfig.ts",
           "coreModule": false,
           "followable": true,
@@ -4247,10 +3803,7 @@
           "module": "../api/apiService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/api/apiService.ts",
           "coreModule": false,
           "followable": true,
@@ -4320,10 +3873,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -4337,10 +3887,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -4354,10 +3901,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -4367,9 +3911,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/routes/AppRoutes.tsx"
-      ],
+      "dependents": ["src/routes/AppRoutes.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -4501,10 +4043,7 @@
           "module": "@mui/icons-material/Add",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/Add.js",
           "coreModule": false,
           "followable": false,
@@ -4518,10 +4057,7 @@
           "module": "@mui/icons-material/GridView",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/GridView.js",
           "coreModule": false,
           "followable": false,
@@ -4535,10 +4071,7 @@
           "module": "@mui/icons-material/ViewList",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/ViewList.js",
           "coreModule": false,
           "followable": false,
@@ -4552,10 +4085,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -4569,10 +4099,7 @@
           "module": "@tanstack/react-query",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@tanstack/react-query/build/modern/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -4586,10 +4113,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -4603,10 +4127,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -4616,9 +4137,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/routes/AppRoutes.tsx"
-      ],
+      "dependents": ["src/routes/AppRoutes.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -4628,10 +4147,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/pages/instructor/InstructorCoursesPage.tsx",
@@ -4646,14 +4162,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/pages/instructor/InstructorCoursesPage.tsx"
-      ],
+      "dependents": ["src/pages/instructor/InstructorCoursesPage.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -4663,14 +4174,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/pages/instructor/InstructorCoursesPage.tsx"
-      ],
+      "dependents": ["src/pages/instructor/InstructorCoursesPage.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -4682,10 +4188,7 @@
           "module": "./EnrollmentStatusIndicator",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/components/courses/EnrollmentStatusIndicator.tsx",
           "coreModule": false,
           "followable": true,
@@ -4719,10 +4222,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -4736,10 +4236,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -4753,10 +4250,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -4766,9 +4260,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/pages/instructor/InstructorCoursesPage.tsx"
-      ],
+      "dependents": ["src/pages/instructor/InstructorCoursesPage.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -4880,10 +4372,7 @@
           "module": "@mui/icons-material/Assignment",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/Assignment.js",
           "coreModule": false,
           "followable": false,
@@ -4897,10 +4386,7 @@
           "module": "@mui/icons-material/BarChart",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/BarChart.js",
           "coreModule": false,
           "followable": false,
@@ -4914,10 +4400,7 @@
           "module": "@mui/icons-material/People",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/People.js",
           "coreModule": false,
           "followable": false,
@@ -4931,10 +4414,7 @@
           "module": "@mui/icons-material/School",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/School.js",
           "coreModule": false,
           "followable": false,
@@ -4948,10 +4428,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -4985,10 +4462,7 @@
           "module": "@tanstack/react-query",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@tanstack/react-query/build/modern/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -5002,10 +4476,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -5019,10 +4490,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -5032,9 +4500,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/routes/AppRoutes.tsx"
-      ],
+      "dependents": ["src/routes/AppRoutes.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -5044,10 +4510,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/pages/instructor/InstructorDashboardPage.tsx",
@@ -5062,14 +4525,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/pages/instructor/InstructorDashboardPage.tsx"
-      ],
+      "dependents": ["src/pages/instructor/InstructorDashboardPage.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -5101,10 +4559,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -5138,10 +4593,7 @@
           "module": "@tanstack/react-query",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@tanstack/react-query/build/modern/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -5155,10 +4607,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -5228,9 +4677,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/routes/AppRoutes.tsx"
-      ],
+      "dependents": ["src/routes/AppRoutes.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -5242,10 +4689,7 @@
           "module": "../api/apiConfig",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/api/apiConfig.ts",
           "coreModule": false,
           "followable": true,
@@ -5355,9 +4799,7 @@
     {
       "source": "src/utils/logger.ts",
       "dependencies": [],
-      "dependents": [
-        "src/services/resources/learningTaskService.ts"
-      ],
+      "dependents": ["src/services/resources/learningTaskService.ts"],
       "orphan": false,
       "valid": true
     },
@@ -5369,10 +4811,7 @@
           "module": "./AuthContext",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
+          "dependencyTypes": ["local", "export"],
           "resolved": "src/context/auth/AuthContext.tsx",
           "coreModule": false,
           "followable": true,
@@ -5386,10 +4825,7 @@
           "module": "./AuthEventService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
+          "dependencyTypes": ["local", "export"],
           "resolved": "src/context/auth/AuthEventService.ts",
           "coreModule": false,
           "followable": true,
@@ -5403,10 +4839,7 @@
           "module": "./AuthInterceptor",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
+          "dependencyTypes": ["local", "export"],
           "resolved": "src/context/auth/AuthInterceptor.tsx",
           "coreModule": false,
           "followable": true,
@@ -5420,10 +4853,7 @@
           "module": "./authValidation",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
+          "dependencyTypes": ["local", "export"],
           "resolved": "src/context/auth/authValidation.ts",
           "coreModule": false,
           "followable": true,
@@ -5437,10 +4867,7 @@
           "module": "./types",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
+          "dependencyTypes": ["local", "export"],
           "resolved": "src/context/auth/types.ts",
           "coreModule": false,
           "followable": true,
@@ -5454,10 +4881,7 @@
           "module": "./useAuthEvents",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
+          "dependencyTypes": ["local", "export"],
           "resolved": "src/context/auth/useAuthEvents.ts",
           "coreModule": false,
           "followable": true,
@@ -5467,9 +4891,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/pages/learningTasks/StudentTasksPage.tsx"
-      ],
+      "dependents": ["src/pages/learningTasks/StudentTasksPage.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -5481,10 +4903,7 @@
           "module": "./types",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/context/auth/types.ts",
           "coreModule": false,
           "followable": true,
@@ -5498,10 +4917,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -5511,18 +4927,14 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/context/auth/index.ts"
-      ],
+      "dependents": ["src/context/auth/index.ts"],
       "orphan": false,
       "valid": true
     },
     {
       "source": "src/context/auth/authValidation.ts",
       "dependencies": [],
-      "dependents": [
-        "src/context/auth/index.ts"
-      ],
+      "dependents": ["src/context/auth/index.ts"],
       "orphan": false,
       "valid": true
     },
@@ -5534,10 +4946,7 @@
           "module": "./AuthEventService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/context/auth/AuthEventService.ts",
           "coreModule": false,
           "followable": true,
@@ -5551,10 +4960,7 @@
           "module": "./types",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/context/auth/types.ts",
           "coreModule": false,
           "followable": true,
@@ -5568,10 +4974,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -5581,9 +4984,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/context/auth/index.ts"
-      ],
+      "dependents": ["src/context/auth/index.ts"],
       "orphan": false,
       "valid": true
     },
@@ -5595,10 +4996,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -5612,10 +5010,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -5625,9 +5020,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/pages/learningTasks/StudentTasksPage.tsx"
-      ],
+      "dependents": ["src/pages/learningTasks/StudentTasksPage.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -5659,10 +5052,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -5676,10 +5066,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -5693,10 +5080,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -5706,9 +5090,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/routes/AppRoutes.tsx"
-      ],
+      "dependents": ["src/routes/AppRoutes.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -5760,10 +5142,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -5777,10 +5156,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -5790,10 +5166,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/routes/AppRoutes.tsx",
-        "src/routes/ProtectedRoute.test.tsx"
-      ],
+      "dependents": ["src/routes/AppRoutes.tsx", "src/routes/ProtectedRoute.test.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -5805,10 +5178,7 @@
           "module": "@mui/material/styles",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/styles/index.js",
           "coreModule": false,
           "followable": false,
@@ -5818,9 +5188,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/App.tsx"
-      ],
+      "dependents": ["src/App.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -5852,10 +5220,7 @@
           "module": "@mui/icons-material/Assignment",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/Assignment.js",
           "coreModule": false,
           "followable": false,
@@ -5869,10 +5234,7 @@
           "module": "@mui/icons-material/AssignmentTurnedIn",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/AssignmentTurnedIn.js",
           "coreModule": false,
           "followable": false,
@@ -5886,10 +5248,7 @@
           "module": "@mui/icons-material/EmojiEvents",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/EmojiEvents.js",
           "coreModule": false,
           "followable": false,
@@ -5903,10 +5262,7 @@
           "module": "@mui/icons-material/Grade",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/Grade.js",
           "coreModule": false,
           "followable": false,
@@ -5920,10 +5276,7 @@
           "module": "@mui/icons-material/PlayCircleOutline",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/PlayCircleOutline.js",
           "coreModule": false,
           "followable": false,
@@ -5937,10 +5290,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -5954,10 +5304,7 @@
           "module": "date-fns",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/date-fns/index.d.cts",
           "coreModule": false,
           "followable": false,
@@ -5971,10 +5318,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -5994,14 +5338,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/components/ActivityHistoryView/index.tsx"
-      ],
+      "dependents": ["src/components/ActivityHistoryView/index.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -6011,14 +5350,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/components/ActivityHistoryView/index.tsx"
-      ],
+      "dependents": ["src/components/ActivityHistoryView/index.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -6028,14 +5362,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/components/ActivityHistoryView/index.tsx"
-      ],
+      "dependents": ["src/components/ActivityHistoryView/index.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -6045,14 +5374,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/components/ActivityHistoryView/index.tsx"
-      ],
+      "dependents": ["src/components/ActivityHistoryView/index.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -6062,10 +5386,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/components/ActivityHistoryView/index.tsx",
@@ -6084,10 +5405,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -6101,10 +5419,7 @@
           "module": "lodash/get",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/lodash/get.js",
           "coreModule": false,
           "followable": false,
@@ -6118,10 +5433,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -6144,14 +5456,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/components/DataTable.tsx"
-      ],
+      "dependents": ["src/components/DataTable.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -6163,10 +5470,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -6180,10 +5484,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -6205,10 +5506,7 @@
           "module": "./ErrorProvider",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/components/ErrorNotifier/ErrorProvider.tsx",
           "coreModule": false,
           "followable": true,
@@ -6222,10 +5520,7 @@
           "module": "./useErrorNotifier",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/components/ErrorNotifier/useErrorNotifier.ts",
           "coreModule": false,
           "followable": true,
@@ -6239,10 +5534,7 @@
           "module": "@testing-library/jest-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/@testing-library/jest-dom/types/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -6256,10 +5548,7 @@
           "module": "@testing-library/react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/@testing-library/react/dist/@testing-library/react.esm.js",
           "coreModule": false,
           "followable": false,
@@ -6273,10 +5562,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -6290,10 +5576,7 @@
           "module": "vitest",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/vitest/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -6313,10 +5596,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm-dev",
-        "import"
-      ],
+      "dependencyTypes": ["npm-dev", "import"],
       "dependencies": [],
       "dependents": [
         "src/components/ErrorNotifier/ErrorNotifier.test.tsx",
@@ -6331,10 +5611,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm-dev",
-        "import"
-      ],
+      "dependencyTypes": ["npm-dev", "import"],
       "dependencies": [],
       "dependents": [
         "src/components/ErrorNotifier/ErrorNotifier.test.tsx",
@@ -6350,10 +5627,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm-dev",
-        "import"
-      ],
+      "dependencyTypes": ["npm-dev", "import"],
       "dependencies": [],
       "dependents": [
         "src/components/ErrorNotifier/ErrorNotifier.test.tsx",
@@ -6386,10 +5660,7 @@
           "module": "../../services/auth/authService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/auth/authService.ts",
           "coreModule": false,
           "followable": true,
@@ -6403,10 +5674,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -6420,10 +5688,7 @@
           "module": "axios",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/axios/index.d.cts",
           "coreModule": false,
           "followable": false,
@@ -6437,10 +5702,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -6462,10 +5724,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -6479,10 +5738,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -6544,10 +5800,7 @@
           "module": "@mui/icons-material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/esm/index.js",
           "coreModule": false,
           "followable": false,
@@ -6561,10 +5814,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -6578,10 +5828,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -6595,10 +5842,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -6620,10 +5864,7 @@
           "module": "../../utils/passwordValidation",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/utils/passwordValidation.ts",
           "coreModule": false,
           "followable": true,
@@ -6637,10 +5878,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -6654,10 +5892,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -6667,9 +5902,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/components/RegisterForm/RegisterForm.tsx"
-      ],
+      "dependents": ["src/components/RegisterForm/RegisterForm.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -6692,10 +5925,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -6709,10 +5939,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -6722,9 +5949,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/components/dashboards/StudentDashboard.tsx"
-      ],
+      "dependents": ["src/components/dashboards/StudentDashboard.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -6756,10 +5981,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -6781,10 +6003,7 @@
           "module": "../../utils/passwordValidation",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/utils/passwordValidation.ts",
           "coreModule": false,
           "followable": true,
@@ -6818,10 +6037,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -6835,10 +6051,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -6852,10 +6065,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -6897,10 +6107,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -6914,10 +6121,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -6959,10 +6163,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -6976,10 +6177,7 @@
           "module": "date-fns",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/date-fns/index.d.cts",
           "coreModule": false,
           "followable": false,
@@ -6993,10 +6191,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -7018,10 +6213,7 @@
           "module": "@mui/icons-material/FilterList",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/FilterList.js",
           "coreModule": false,
           "followable": false,
@@ -7035,10 +6227,7 @@
           "module": "@mui/icons-material/Search",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/Search.js",
           "coreModule": false,
           "followable": false,
@@ -7052,10 +6241,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -7069,10 +6255,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -7092,10 +6275,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/components/TaskDetailsView/TaskDetailsHeader.tsx",
@@ -7110,10 +6290,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/components/TaskDetailsView/TaskDetailsHeader.tsx",
@@ -7150,10 +6327,7 @@
           "module": "@mui/icons-material/ExpandLess",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/ExpandLess.js",
           "coreModule": false,
           "followable": false,
@@ -7167,10 +6341,7 @@
           "module": "@mui/icons-material/ExpandMore",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/ExpandMore.js",
           "coreModule": false,
           "followable": false,
@@ -7184,10 +6355,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -7201,10 +6369,7 @@
           "module": "date-fns",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/date-fns/index.d.cts",
           "coreModule": false,
           "followable": false,
@@ -7218,10 +6383,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -7241,10 +6403,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/components/TaskDetailsView/TaskTable.tsx",
@@ -7259,10 +6418,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/components/TaskDetailsView/TaskTable.tsx",
@@ -7279,10 +6435,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -7296,10 +6449,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -7341,10 +6491,7 @@
           "module": "@mui/icons-material/ExpandLess",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/ExpandLess.js",
           "coreModule": false,
           "followable": false,
@@ -7358,10 +6505,7 @@
           "module": "@mui/icons-material/ExpandMore",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/ExpandMore.js",
           "coreModule": false,
           "followable": false,
@@ -7375,10 +6519,7 @@
           "module": "@mui/icons-material/FilterList",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/FilterList.js",
           "coreModule": false,
           "followable": false,
@@ -7392,10 +6533,7 @@
           "module": "@mui/icons-material/Search",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/Search.js",
           "coreModule": false,
           "followable": false,
@@ -7409,10 +6547,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -7426,10 +6561,7 @@
           "module": "date-fns",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/date-fns/index.d.cts",
           "coreModule": false,
           "followable": false,
@@ -7443,10 +6575,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -7548,10 +6677,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -7573,10 +6699,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -7618,10 +6741,7 @@
           "module": "@mui/icons-material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/esm/index.js",
           "coreModule": false,
           "followable": false,
@@ -7635,10 +6755,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -7652,10 +6769,7 @@
           "module": "@tanstack/react-query",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@tanstack/react-query/build/modern/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -7669,10 +6783,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -7686,10 +6797,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -7791,10 +6899,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -7848,10 +6953,7 @@
           "module": "@tanstack/react-query",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@tanstack/react-query/build/modern/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -7865,10 +6967,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -7882,10 +6981,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -7907,10 +7003,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -8012,10 +7105,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -8049,10 +7139,7 @@
           "module": "@tanstack/react-query",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@tanstack/react-query/build/modern/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -8066,10 +7153,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -8083,10 +7167,7 @@
           "module": "react-hook-form",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-hook-form/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -8100,10 +7181,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -8125,10 +7203,7 @@
           "module": "../../services/resources/courseService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/resources/courseService.ts",
           "coreModule": false,
           "followable": true,
@@ -8142,10 +7217,7 @@
           "module": "./CourseList",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/components/courses/CourseList.tsx",
           "coreModule": false,
           "followable": true,
@@ -8179,10 +7251,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -8216,10 +7285,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -8241,10 +7307,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -8258,10 +7321,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -8283,10 +7343,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -8308,10 +7365,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -8453,10 +7507,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -8470,10 +7521,7 @@
           "module": "@tanstack/react-query",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@tanstack/react-query/build/modern/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -8487,10 +7535,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -8532,10 +7577,7 @@
           "module": "./api",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
+          "dependencyTypes": ["local", "export"],
           "resolved": "src/services/api/index.ts",
           "coreModule": false,
           "followable": true,
@@ -8549,10 +7591,7 @@
           "module": "./auth",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
+          "dependencyTypes": ["local", "export"],
           "resolved": "src/services/auth/index.ts",
           "coreModule": false,
           "followable": true,
@@ -8566,10 +7605,7 @@
           "module": "./resources",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
+          "dependencyTypes": ["local", "export"],
           "resolved": "src/services/resources/index.ts",
           "coreModule": false,
           "followable": true,
@@ -8579,9 +7615,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/components/dashboards/StudentDashboard.tsx"
-      ],
+      "dependents": ["src/components/dashboards/StudentDashboard.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -8593,10 +7627,7 @@
           "module": "./api",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
+          "dependencyTypes": ["local", "export"],
           "resolved": "src/services/api/api.ts",
           "coreModule": false,
           "followable": true,
@@ -8610,10 +7641,7 @@
           "module": "./apiClient",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
+          "dependencyTypes": ["local", "export"],
           "resolved": "src/services/api/apiClient.ts",
           "coreModule": false,
           "followable": true,
@@ -8627,10 +7655,7 @@
           "module": "./apiService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
+          "dependencyTypes": ["local", "export"],
           "resolved": "src/services/api/apiService.ts",
           "coreModule": false,
           "followable": true,
@@ -8640,9 +7665,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/services/index.ts"
-      ],
+      "dependents": ["src/services/index.ts"],
       "orphan": false,
       "valid": true
     },
@@ -8654,10 +7677,7 @@
           "module": "./apiConfig",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/api/apiConfig.ts",
           "coreModule": false,
           "followable": true,
@@ -8671,10 +7691,7 @@
           "module": "./apiService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/api/apiService.ts",
           "coreModule": false,
           "followable": true,
@@ -8684,9 +7701,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/services/api/index.ts"
-      ],
+      "dependents": ["src/services/api/index.ts"],
       "orphan": false,
       "valid": true
     },
@@ -8698,10 +7713,7 @@
           "module": "./axiosConfig",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/api/axiosConfig.ts",
           "coreModule": false,
           "followable": true,
@@ -8711,9 +7723,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/services/api/index.ts"
-      ],
+      "dependents": ["src/services/api/index.ts"],
       "orphan": false,
       "valid": true
     },
@@ -8725,10 +7735,7 @@
           "module": "./authService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
+          "dependencyTypes": ["local", "export"],
           "resolved": "src/services/auth/authService.ts",
           "coreModule": false,
           "followable": true,
@@ -8738,9 +7745,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/services/index.ts"
-      ],
+      "dependents": ["src/services/index.ts"],
       "orphan": false,
       "valid": true
     },
@@ -8752,10 +7757,7 @@
           "module": "./courseService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
+          "dependencyTypes": ["local", "export"],
           "resolved": "src/services/resources/courseService.ts",
           "coreModule": false,
           "followable": true,
@@ -8769,10 +7771,7 @@
           "module": "./enrollmentService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
+          "dependencyTypes": ["local", "export"],
           "resolved": "src/services/resources/enrollmentService.ts",
           "coreModule": false,
           "followable": true,
@@ -8786,10 +7785,7 @@
           "module": "./learningTaskService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
+          "dependencyTypes": ["local", "export"],
           "resolved": "src/services/resources/learningTaskService.ts",
           "coreModule": false,
           "followable": true,
@@ -8803,10 +7799,7 @@
           "module": "./progressService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "export"
-          ],
+          "dependencyTypes": ["local", "export"],
           "resolved": "src/services/resources/progressService.ts",
           "coreModule": false,
           "followable": true,
@@ -8816,9 +7809,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/services/index.ts"
-      ],
+      "dependents": ["src/services/index.ts"],
       "orphan": false,
       "valid": true
     },
@@ -8870,10 +7861,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -8895,10 +7883,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -8912,10 +7897,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -8937,10 +7919,7 @@
           "module": "@mui/material/Alert",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/Alert/index.js",
           "coreModule": false,
           "followable": false,
@@ -8954,10 +7933,7 @@
           "module": "@mui/material/Snackbar",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/Snackbar/index.js",
           "coreModule": false,
           "followable": false,
@@ -8971,10 +7947,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -9014,10 +7987,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/components/notifications/ErrorToast.tsx",
@@ -9032,14 +8002,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/components/notifications/ErrorToast.tsx"
-      ],
+      "dependents": ["src/components/notifications/ErrorToast.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -9051,10 +8016,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -9064,9 +8026,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/components/notifications/ErrorToast.tsx"
-      ],
+      "dependents": ["src/components/notifications/ErrorToast.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -9078,10 +8038,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -9123,10 +8080,7 @@
           "module": "axios",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/axios/index.d.cts",
           "coreModule": false,
           "followable": false,
@@ -9140,10 +8094,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -9165,10 +8116,7 @@
           "module": "./App",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/App.tsx",
           "coreModule": false,
           "followable": true,
@@ -9202,10 +8150,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -9219,10 +8164,7 @@
           "module": "react-dom/client",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-dom/client.js",
           "coreModule": false,
           "followable": false,
@@ -9236,10 +8178,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -9259,14 +8198,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/index.tsx"
-      ],
+      "dependents": ["src/index.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -9338,10 +8272,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -9383,10 +8314,7 @@
           "module": "@tanstack/react-query",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@tanstack/react-query/build/modern/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -9451,10 +8379,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -9476,10 +8401,7 @@
           "module": "../../../utils/passwordValidation",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/utils/passwordValidation.ts",
           "coreModule": false,
           "followable": true,
@@ -9533,10 +8455,7 @@
           "module": "@hookform/resolvers/zod",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@hookform/resolvers/zod/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -9550,10 +8469,7 @@
           "module": "@mui/material/Alert",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/Alert/index.js",
           "coreModule": false,
           "followable": false,
@@ -9567,10 +8483,7 @@
           "module": "@mui/material/AlertTitle",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/AlertTitle/index.js",
           "coreModule": false,
           "followable": false,
@@ -9584,10 +8497,7 @@
           "module": "@mui/material/Box",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/Box/index.js",
           "coreModule": false,
           "followable": false,
@@ -9601,10 +8511,7 @@
           "module": "@mui/material/Button",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/Button/index.js",
           "coreModule": false,
           "followable": false,
@@ -9618,10 +8525,7 @@
           "module": "@mui/material/CircularProgress",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/CircularProgress/index.js",
           "coreModule": false,
           "followable": false,
@@ -9635,10 +8539,7 @@
           "module": "@mui/material/TextField",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/TextField/index.js",
           "coreModule": false,
           "followable": false,
@@ -9652,10 +8553,7 @@
           "module": "@mui/material/Typography",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/Typography/index.js",
           "coreModule": false,
           "followable": false,
@@ -9669,10 +8567,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -9686,10 +8581,7 @@
           "module": "react-hook-form",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-hook-form/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -9703,10 +8595,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -9720,10 +8609,7 @@
           "module": "zod",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/zod/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -9743,14 +8629,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/pages/auth/ResetPasswordForm/ResetPasswordForm.tsx"
-      ],
+      "dependents": ["src/pages/auth/ResetPasswordForm/ResetPasswordForm.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -9760,14 +8641,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/pages/auth/ResetPasswordForm/ResetPasswordForm.tsx"
-      ],
+      "dependents": ["src/pages/auth/ResetPasswordForm/ResetPasswordForm.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -9777,14 +8653,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/pages/auth/ResetPasswordForm/ResetPasswordForm.tsx"
-      ],
+      "dependents": ["src/pages/auth/ResetPasswordForm/ResetPasswordForm.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -9794,14 +8665,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/pages/auth/ResetPasswordForm/ResetPasswordForm.tsx"
-      ],
+      "dependents": ["src/pages/auth/ResetPasswordForm/ResetPasswordForm.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -9811,14 +8677,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/pages/auth/ResetPasswordForm/ResetPasswordForm.tsx"
-      ],
+      "dependents": ["src/pages/auth/ResetPasswordForm/ResetPasswordForm.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -9828,14 +8689,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/pages/auth/ResetPasswordForm/ResetPasswordForm.tsx"
-      ],
+      "dependents": ["src/pages/auth/ResetPasswordForm/ResetPasswordForm.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -9845,14 +8701,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/pages/auth/ResetPasswordForm/ResetPasswordForm.tsx"
-      ],
+      "dependents": ["src/pages/auth/ResetPasswordForm/ResetPasswordForm.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -9862,14 +8713,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/pages/auth/ResetPasswordForm/ResetPasswordForm.tsx"
-      ],
+      "dependents": ["src/pages/auth/ResetPasswordForm/ResetPasswordForm.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -9901,10 +8747,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -9938,10 +8781,7 @@
           "module": "@tanstack/react-query",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@tanstack/react-query/build/modern/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -9955,10 +8795,7 @@
           "module": "src/types/",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "undetermined",
-            "import"
-          ],
+          "dependencyTypes": ["undetermined", "import"],
           "resolved": "src/types/index.ts",
           "coreModule": false,
           "followable": true,
@@ -10040,10 +8877,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -10117,10 +8951,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -10134,10 +8965,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -10159,10 +8987,7 @@
           "module": "../../components/ErrorNotifier/useErrorNotifier",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/components/ErrorNotifier/useErrorNotifier.ts",
           "coreModule": false,
           "followable": true,
@@ -10196,10 +9021,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -10233,10 +9055,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -10250,10 +9069,7 @@
           "module": "react-hook-form",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-hook-form/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -10267,10 +9083,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -10332,10 +9145,7 @@
           "module": "@tanstack/react-query",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@tanstack/react-query/build/modern/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -10385,9 +9195,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/pages/instructor/InstructorEditCoursePage.tsx"
-      ],
+      "dependents": ["src/pages/instructor/InstructorEditCoursePage.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -10459,10 +9267,7 @@
           "module": "@mui/icons-material/Add",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/Add.js",
           "coreModule": false,
           "followable": false,
@@ -10476,10 +9281,7 @@
           "module": "@mui/icons-material/Delete",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/Delete.js",
           "coreModule": false,
           "followable": false,
@@ -10493,10 +9295,7 @@
           "module": "@mui/icons-material/Edit",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/icons-material/Edit.js",
           "coreModule": false,
           "followable": false,
@@ -10510,10 +9309,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -10567,10 +9363,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -10584,10 +9377,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -10607,14 +9397,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
-      "dependents": [
-        "src/pages/learningTasks/CourseLearningTasksPage.tsx"
-      ],
+      "dependents": ["src/pages/learningTasks/CourseLearningTasksPage.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -10666,10 +9451,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -10683,10 +9465,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -10728,10 +9507,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -10765,10 +9541,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -10782,10 +9555,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -10847,10 +9617,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -10864,10 +9631,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -10909,10 +9673,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -10926,10 +9687,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -10951,10 +9709,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -10968,10 +9723,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -10985,10 +9737,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -11050,10 +9799,7 @@
           "module": "@mui/material",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@mui/material/index.js",
           "coreModule": false,
           "followable": false,
@@ -11067,10 +9813,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -11084,10 +9827,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -11129,10 +9869,7 @@
           "module": "@tanstack/react-query",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@tanstack/react-query/build/modern/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -11162,9 +9899,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/pages/learningTasks/TaskViewPage.tsx"
-      ],
+      "dependents": ["src/pages/learningTasks/TaskViewPage.tsx"],
       "orphan": false,
       "valid": true
     },
@@ -11176,10 +9911,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -11193,10 +9925,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -11238,10 +9967,7 @@
           "module": "./ProtectedRoute",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/routes/ProtectedRoute.tsx",
           "coreModule": false,
           "followable": true,
@@ -11275,10 +10001,7 @@
           "module": "@testing-library/jest-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/@testing-library/jest-dom/types/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -11292,10 +10015,7 @@
           "module": "@testing-library/react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/@testing-library/react/dist/@testing-library/react.esm.js",
           "coreModule": false,
           "followable": false,
@@ -11309,10 +10029,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -11326,10 +10043,7 @@
           "module": "vitest",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/vitest/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -11371,10 +10085,7 @@
           "module": "react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react/index.js",
           "coreModule": false,
           "followable": false,
@@ -11388,10 +10099,7 @@
           "module": "react-router-dom",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/react-router-dom/dist/index.js",
           "coreModule": false,
           "followable": false,
@@ -11413,10 +10121,7 @@
           "module": "./apiService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/api/apiService.ts",
           "coreModule": false,
           "followable": true,
@@ -11430,10 +10135,7 @@
           "module": "vitest",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/vitest/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -11455,10 +10157,7 @@
           "module": "./apiService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/api/apiService.ts",
           "coreModule": false,
           "followable": true,
@@ -11472,10 +10171,7 @@
           "module": "axios",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/axios/index.d.cts",
           "coreModule": false,
           "followable": false,
@@ -11489,10 +10185,7 @@
           "module": "vitest",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/vitest/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -11514,10 +10207,7 @@
           "module": "./authService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/auth/authService.ts",
           "coreModule": false,
           "followable": true,
@@ -11531,10 +10221,7 @@
           "module": "vitest",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/vitest/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -11556,10 +10243,7 @@
           "module": "./authService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/auth/authService.ts",
           "coreModule": false,
           "followable": true,
@@ -11573,10 +10257,7 @@
           "module": "vitest",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/vitest/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -11598,10 +10279,7 @@
           "module": "../auth/authService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/auth/authService.ts",
           "coreModule": false,
           "followable": true,
@@ -11615,10 +10293,7 @@
           "module": "./courseService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/resources/courseService.ts",
           "coreModule": false,
           "followable": true,
@@ -11652,10 +10327,7 @@
           "module": "vitest",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/vitest/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -11677,10 +10349,7 @@
           "module": "./courseService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/resources/courseService.ts",
           "coreModule": false,
           "followable": true,
@@ -11736,10 +10405,7 @@
           "module": "vitest",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/vitest/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -11761,10 +10427,7 @@
           "module": "../auth/authService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/auth/authService.ts",
           "coreModule": false,
           "followable": true,
@@ -11778,10 +10441,7 @@
           "module": "./courseService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/resources/courseService.ts",
           "coreModule": false,
           "followable": true,
@@ -11795,10 +10455,7 @@
           "module": "./enrollmentService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/resources/enrollmentService.ts",
           "coreModule": false,
           "followable": true,
@@ -11832,10 +10489,7 @@
           "module": "vitest",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/vitest/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -11857,10 +10511,7 @@
           "module": "../api/apiConfig",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/api/apiConfig.ts",
           "coreModule": false,
           "followable": true,
@@ -11874,10 +10525,7 @@
           "module": "./enrollmentService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/resources/enrollmentService.ts",
           "coreModule": false,
           "followable": true,
@@ -11911,10 +10559,7 @@
           "module": "vitest",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/vitest/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -11936,10 +10581,7 @@
           "module": "./learningTaskHooks",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/resources/learningTaskHooks.ts",
           "coreModule": false,
           "followable": true,
@@ -11953,10 +10595,7 @@
           "module": "./learningTaskService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/resources/learningTaskService.ts",
           "coreModule": false,
           "followable": true,
@@ -11970,10 +10609,7 @@
           "module": "@testing-library/react",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/@testing-library/react/dist/@testing-library/react.esm.js",
           "coreModule": false,
           "followable": false,
@@ -11987,10 +10623,7 @@
           "module": "vitest",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/vitest/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -12012,10 +10645,7 @@
           "module": "./learningTaskService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/resources/learningTaskService.ts",
           "coreModule": false,
           "followable": true,
@@ -12045,9 +10675,7 @@
           "valid": true
         }
       ],
-      "dependents": [
-        "src/services/resources/learningTaskHooks.test.ts"
-      ],
+      "dependents": ["src/services/resources/learningTaskHooks.test.ts"],
       "orphan": false,
       "valid": true
     },
@@ -12059,10 +10687,7 @@
           "module": "../auth/authService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/auth/authService.ts",
           "coreModule": false,
           "followable": true,
@@ -12076,10 +10701,7 @@
           "module": "./courseService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/resources/courseService.ts",
           "coreModule": false,
           "followable": true,
@@ -12093,10 +10715,7 @@
           "module": "./learningTaskService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/resources/learningTaskService.ts",
           "coreModule": false,
           "followable": true,
@@ -12130,10 +10749,7 @@
           "module": "vitest",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/vitest/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -12155,10 +10771,7 @@
           "module": "../api/apiConfig",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/api/apiConfig.ts",
           "coreModule": false,
           "followable": true,
@@ -12172,10 +10785,7 @@
           "module": "./learningTaskService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/resources/learningTaskService.ts",
           "coreModule": false,
           "followable": true,
@@ -12210,10 +10820,7 @@
           "module": "vitest",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/vitest/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -12235,10 +10842,7 @@
           "module": "vitest",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/vitest/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -12266,10 +10870,7 @@
           "module": "../auth/authService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/auth/authService.ts",
           "coreModule": false,
           "followable": true,
@@ -12283,10 +10884,7 @@
           "module": "./courseService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/resources/courseService.ts",
           "coreModule": false,
           "followable": true,
@@ -12300,10 +10898,7 @@
           "module": "./progressService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/resources/progressService.ts",
           "coreModule": false,
           "followable": true,
@@ -12337,10 +10932,7 @@
           "module": "vitest",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/vitest/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -12362,10 +10954,7 @@
           "module": "./progressService",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/services/resources/progressService.ts",
           "coreModule": false,
           "followable": true,
@@ -12379,10 +10968,7 @@
           "module": "vitest",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/vitest/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -12464,10 +11050,7 @@
           "module": "@tanstack/react-query",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/@tanstack/react-query/build/modern/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -12509,10 +11092,7 @@
           "module": "zustand",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/zustand/esm/index.d.mts",
           "coreModule": false,
           "followable": false,
@@ -12532,10 +11112,7 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm",
-        "import"
-      ],
+      "dependencyTypes": ["npm", "import"],
       "dependencies": [],
       "dependents": [
         "src/store/courseStore.ts",
@@ -12553,10 +11130,7 @@
           "module": "zustand",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/zustand/esm/index.d.mts",
           "coreModule": false,
           "followable": false,
@@ -12578,10 +11152,7 @@
           "module": "zustand",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm",
-            "import"
-          ],
+          "dependencyTypes": ["npm", "import"],
           "resolved": "node_modules/zustand/esm/index.d.mts",
           "coreModule": false,
           "followable": false,
@@ -12629,10 +11200,7 @@
           "module": "vitest",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/vitest/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -12660,10 +11228,7 @@
           "module": "vitest",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "import"
-          ],
+          "dependencyTypes": ["npm-dev", "import"],
           "resolved": "node_modules/vitest/dist/index.d.ts",
           "coreModule": false,
           "followable": false,
@@ -12767,10 +11332,7 @@
           "module": "./entities",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/types/entities.ts",
           "coreModule": false,
           "followable": true,
@@ -12784,10 +11346,7 @@
           "module": "./task",
           "moduleSystem": "es6",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "local",
-            "import"
-          ],
+          "dependencyTypes": ["local", "import"],
           "resolved": "src/types/task.ts",
           "coreModule": false,
           "followable": true,
@@ -12809,11 +11368,7 @@
           "module": "vite/client",
           "moduleSystem": "tsd",
           "exoticallyRequired": false,
-          "dependencyTypes": [
-            "npm-dev",
-            "triple-slash-directive",
-            "triple-slash-type-reference"
-          ],
+          "dependencyTypes": ["npm-dev", "triple-slash-directive", "triple-slash-type-reference"],
           "resolved": "node_modules/vite/client.d.ts",
           "coreModule": false,
           "followable": false,
@@ -12839,15 +11394,9 @@
       "coreModule": false,
       "couldNotResolve": false,
       "matchesDoNotFollow": true,
-      "dependencyTypes": [
-        "npm-dev",
-        "triple-slash-directive",
-        "triple-slash-type-reference"
-      ],
+      "dependencyTypes": ["npm-dev", "triple-slash-directive", "triple-slash-type-reference"],
       "dependencies": [],
-      "dependents": [
-        "src/vite-env.d.ts"
-      ],
+      "dependents": ["src/vite-env.d.ts"],
       "orphan": false,
       "valid": true
     }
@@ -12919,17 +11468,11 @@
         "cycle": [
           {
             "name": "src/types/index.ts",
-            "dependencyTypes": [
-              "local",
-              "import"
-            ]
+            "dependencyTypes": ["local", "import"]
           },
           {
             "name": "src/types/analyticsTypes.ts",
-            "dependencyTypes": [
-              "local",
-              "export"
-            ]
+            "dependencyTypes": ["local", "export"]
           }
         ]
       },
@@ -12984,22 +11527,9 @@
         "path": "node_modules"
       },
       "enhancedResolveOptions": {
-        "exportsFields": [
-          "exports"
-        ],
-        "conditionNames": [
-          "import",
-          "require",
-          "node",
-          "default",
-          "types"
-        ],
-        "mainFields": [
-          "module",
-          "main",
-          "types",
-          "typings"
-        ]
+        "exportsFields": ["exports"],
+        "conditionNames": ["import", "require", "node", "default", "types"],
+        "mainFields": ["module", "main", "types", "typings"]
       },
       "exclude": {
         "path": "'node_modules'"
@@ -13007,12 +11537,7 @@
       "exoticRequireStrings": [],
       "externalModuleResolutionStrategy": "node_modules",
       "metrics": false,
-      "moduleSystems": [
-        "es6",
-        "cjs",
-        "tsd",
-        "amd"
-      ],
+      "moduleSystems": ["es6", "cjs", "tsd", "amd"],
       "outputTo": "-",
       "outputType": "json",
       "preserveSymlinks": false,
@@ -13064,9 +11589,7 @@
           "severity": "warn",
           "from": {},
           "to": {
-            "dependencyTypes": [
-              "core"
-            ],
+            "dependencyTypes": ["core"],
             "path": "^v8/tools/codemap$|^v8/tools/consarray$|^v8/tools/csvparser$|^v8/tools/logreader$|^v8/tools/profile_view$|^v8/tools/profile$|^v8/tools/SourceMap$|^v8/tools/splaytree$|^v8/tools/tickprocessor-driver$|^v8/tools/tickprocessor$|^node-inspect/lib/_inspect$|^node-inspect/lib/internal/inspect_client$|^node-inspect/lib/internal/inspect_repl$|^async_hooks$|^punycode$|^domain$|^constants$|^sys$|^_linklist$|^_stream_wrap$"
           },
           "scope": "module"
@@ -13077,9 +11600,7 @@
           "severity": "warn",
           "from": {},
           "to": {
-            "dependencyTypes": [
-              "deprecated"
-            ]
+            "dependencyTypes": ["deprecated"]
           },
           "scope": "module"
         },
@@ -13089,10 +11610,7 @@
           "comment": "This module depends on an npm package that isn't in the 'dependencies' section of your package.json. That's problematic as the package either (1) won't be available on live (2 - worse) will be available on live with an non-guaranteed version. Fix it by adding the package to the dependencies in your package.json.",
           "from": {},
           "to": {
-            "dependencyTypes": [
-              "npm-no-pkg",
-              "npm-unknown"
-            ]
+            "dependencyTypes": ["npm-no-pkg", "npm-unknown"]
           },
           "scope": "module"
         },
@@ -13113,9 +11631,7 @@
           "from": {},
           "to": {
             "moreThanOneDependencyType": true,
-            "dependencyTypesNot": [
-              "type-only"
-            ]
+            "dependencyTypesNot": ["type-only"]
           },
           "scope": "module"
         },
@@ -13138,12 +11654,8 @@
             "pathNot": "[.](?:spec|test)[.](?:js|mjs|cjs|jsx|ts|mts|cts|tsx)$"
           },
           "to": {
-            "dependencyTypes": [
-              "npm-dev"
-            ],
-            "dependencyTypesNot": [
-              "type-only"
-            ],
+            "dependencyTypes": ["npm-dev"],
+            "dependencyTypesNot": ["type-only"],
             "pathNot": "node_modules/@types/"
           },
           "scope": "module"
@@ -13154,9 +11666,7 @@
           "comment": "This module depends on an npm package that is declared as an optional dependency in your package.json. As this makes sense in limited situations only, it's flagged here. If you're using an optional dependency here by design - add an exception to yourdependency-cruiser configuration.",
           "from": {},
           "to": {
-            "dependencyTypes": [
-              "npm-optional"
-            ]
+            "dependencyTypes": ["npm-optional"]
           },
           "scope": "module"
         },
@@ -13166,9 +11676,7 @@
           "severity": "warn",
           "from": {},
           "to": {
-            "dependencyTypes": [
-              "npm-peer"
-            ]
+            "dependencyTypes": ["npm-peer"]
           },
           "scope": "module"
         }

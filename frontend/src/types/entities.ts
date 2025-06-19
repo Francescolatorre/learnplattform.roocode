@@ -1,11 +1,11 @@
 // src/types/common/entities.ts
 
-import {ICourse} from './course';
-import {IUser} from './userTypes';
+import { ICourse } from './course';
+import { IUser } from './userTypes';
 
 // Basistypen
 export type TCompletionStatus = 'active' | 'completed' | 'dropped';
-export type TQuizCompletionStatus = 'completed' | 'incomplete'
+export type TQuizCompletionStatus = 'completed' | 'incomplete';
 
 // Enrollment-Typen
 export interface ICourseEnrollment {
@@ -99,8 +99,3 @@ export interface IQuizAttempt {
   quiz_details: IQuizTask;
   readonly responses: IQuizResponse[];
 }
-
-
-
-
-

@@ -1,5 +1,5 @@
-import React, {useState, ReactElement} from 'react';
-import {useNavigate} from 'react-router-dom';
+import React, { useState, ReactElement } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Button,
   List,
@@ -28,14 +28,14 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import PeopleIcon from '@mui/icons-material/People';
 import SchoolIcon from '@mui/icons-material/Add';
 import AddIcon from '@mui/icons-material/Add';
-import {useQueryClient} from '@tanstack/react-query';
-import {useNotification} from '@/components/Notifications/useNotification';
-import {ICourse} from '@/types/course';
-import {formatDateRelative} from '@/utils/dateUtils';
+import { useQueryClient } from '@tanstack/react-query';
+import { useNotification } from '@/components/Notifications/useNotification';
+import { ICourse } from '@/types/course';
+import { formatDateRelative } from '@/utils/dateUtils';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
-import {useAuth} from '@/context/auth/AuthContext';
+import { useAuth } from '@/context/auth/AuthContext';
 import EnrollmentStatusIndicator from './EnrollmentStatusIndicator';
-import {courseService} from '@/services/resources/courseService';
+import { courseService } from '@/services/resources/courseService';
 import CourseCreation from './CourseCreation';
 
 // Custom type extension for course with student count and enrollment status
@@ -65,7 +65,7 @@ const CourseList: React.FC<ICourseListProps> = ({
   courses,
   title,
   showInstructorActions = false,
-  onError
+  onError,
 }): ReactElement => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -74,7 +74,7 @@ const CourseList: React.FC<ICourseListProps> = ({
   const [isDeleting, setIsDeleting] = useState(false);
   const queryClient = useQueryClient();
   const notify = useNotification();
-  const {user} = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   // Check if user has instructor or admin privileges
@@ -93,26 +93,28 @@ const CourseList: React.FC<ICourseListProps> = ({
       return;
     }
     // Navigate based on user role/view mode
-    const path = showInstructorActions
-      ? `/instructor/courses/${courseId}`
-      : `/courses/${courseId}`;
+    const path = showInstructorActions ? `/instructor/courses/${courseId}` : `/courses/${courseId}`;
     navigate(path);
   };
 
   // Get status color based on course status
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'published': return 'success';
-      case 'draft': return 'default';
-      case 'archived': return 'error';
-      default: return 'default';
+      case 'published':
+        return 'success';
+      case 'draft':
+        return 'default';
+      case 'archived':
+        return 'error';
+      default:
+        return 'default';
     }
   };
 
   // Get a description preview
   const getDescriptionPreview = (course: ICourse) => {
     if (!course.description) {
-      return "No description provided.";
+      return 'No description provided.';
     }
     return course.description.length > 150
       ? `${course.description.substring(0, 150)}...`
@@ -125,7 +127,7 @@ const CourseList: React.FC<ICourseListProps> = ({
     setIsDeleting(true);
     try {
       await courseService.deleteCourse(String(selectedCourse.id));
-      await queryClient.invalidateQueries({queryKey: ['courses']});
+      await queryClient.invalidateQueries({ queryKey: ['courses'] });
       notify('Course deleted successfully', 'success');
       // Navigate back to course list if we're on the deleted course's detail page
       if (window.location.pathname.includes(`/courses/${selectedCourse.id}`)) {
@@ -151,9 +153,7 @@ const CourseList: React.FC<ICourseListProps> = ({
         // Optimistically update the UI
         queryClient.setQueryData(['courses'], (old: ICourse[] | undefined) => {
           return (old || []).map(course =>
-            course.id === selectedCourse.id
-              ? {...course, ...courseData}
-              : course
+            course.id === selectedCourse.id ? { ...course, ...courseData } : course
           );
         });
 
@@ -169,7 +169,7 @@ const CourseList: React.FC<ICourseListProps> = ({
       queryClient.setQueryData(['courses'], (old: ICourse[] | undefined) => {
         if (!old) return [savedCourse];
         if (selectedCourse?.id) {
-          return old.map(course => course.id === savedCourse.id ? savedCourse : course);
+          return old.map(course => (course.id === savedCourse.id ? savedCourse : course));
         }
         return [...old, savedCourse];
       });
@@ -189,7 +189,7 @@ const CourseList: React.FC<ICourseListProps> = ({
       // On error, rollback the optimistic update
       queryClient.setQueryData(['courses'], (old: ICourse[] | undefined) => {
         return selectedCourse?.id
-          ? (old || []).map(course => course.id === selectedCourse.id ? selectedCourse : course)
+          ? (old || []).map(course => (course.id === selectedCourse.id ? selectedCourse : course))
           : old;
       });
     }
@@ -202,7 +202,7 @@ const CourseList: React.FC<ICourseListProps> = ({
   // If courses array is empty, show a message
   if (!courses.length) {
     return (
-      <Paper elevation={0} sx={{p: 2, textAlign: 'center'}}>
+      <Paper elevation={0} sx={{ p: 2, textAlign: 'center' }}>
         <Typography color="text.secondary">No courses found</Typography>
       </Paper>
     );
@@ -210,12 +210,13 @@ const CourseList: React.FC<ICourseListProps> = ({
 
   return (
     <Box>
-      <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2}}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         {title && (
           <Typography variant="h6" component="h2" data-test-id="course-list-element">
             {title}
           </Typography>
-        )}        {/* Show Add Course button for instructors and admins */}
+        )}{' '}
+        {/* Show Add Course button for instructors and admins */}
         {canManageTasks && showInstructorActions && (
           <Button
             variant="contained"
@@ -227,14 +228,14 @@ const CourseList: React.FC<ICourseListProps> = ({
             Add Course
           </Button>
         )}
-      </Box>      {/* We've removed the TaskCreation modal as tasks should be managed within course context */}
-
-      <List data-testid="course-list" sx={{width: '100%', bgcolor: 'background.paper'}}>
+      </Box>{' '}
+      {/* We've removed the TaskCreation modal as tasks should be managed within course context */}
+      <List data-testid="course-list" sx={{ width: '100%', bgcolor: 'background.paper' }}>
         {courses.map((course, index) => (
           <React.Fragment key={course.id}>
             <ListItem
               alignItems="flex-start"
-              onClick={(e) => handleCourseClick(course.id, e)}
+              onClick={e => handleCourseClick(course.id, e)}
               sx={{
                 py: 2,
                 cursor: 'pointer',
@@ -245,8 +246,8 @@ const CourseList: React.FC<ICourseListProps> = ({
                   '& .MuiListItemSecondaryAction-root': {
                     opacity: 1,
                     transform: 'translateX(0)',
-                  }
-                }
+                  },
+                },
               }}
               data-testid={`course-list-item-${course.id}`}
             >
@@ -254,15 +255,17 @@ const CourseList: React.FC<ICourseListProps> = ({
                 <Avatar
                   alt={course.title}
                   src={course.image_url || undefined}
-                  sx={{bgcolor: theme => course.image_url ? 'transparent' : theme.palette.primary.main}}
+                  sx={{
+                    bgcolor: theme =>
+                      course.image_url ? 'transparent' : theme.palette.primary.main,
+                  }}
                 >
                   {!course.image_url && <SchoolIcon />}
                 </Avatar>
               </ListItemAvatar>
-
               <ListItemText
                 primary={
-                  <Box sx={{display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1}}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
                     <Typography
                       variant="subtitle1"
                       component="span"
@@ -292,9 +295,12 @@ const CourseList: React.FC<ICourseListProps> = ({
                     {/* Only show student count if property exists */}
                     {'student_count' in course && typeof course.student_count === 'number' && (
                       <Tooltip title="Enrolled students">
-                        <Box sx={{display: 'flex', alignItems: 'center', ml: 'auto', mr: 2}}>
-                          <PeopleIcon fontSize="small" sx={{mr: 0.5}} />
-                          <Typography variant="body2" data-testid={`course-enrollment-count-${course.id}`}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto', mr: 2 }}>
+                          <PeopleIcon fontSize="small" sx={{ mr: 0.5 }} />
+                          <Typography
+                            variant="body2"
+                            data-testid={`course-enrollment-count-${course.id}`}
+                          >
                             {course.student_count}
                           </Typography>
                         </Box>
@@ -306,12 +312,14 @@ const CourseList: React.FC<ICourseListProps> = ({
                   <React.Fragment>
                     {/* Use Markdown renderer for course descriptions if HTML version is available */}
                     {course.description_html ? (
-                      <Box sx={{
-                        maxHeight: '150px',
-                        overflow: 'hidden',
-                        '& img': {display: 'none'},
-                        '& h1,h2,h3': {fontSize: '1rem'}
-                      }}>
+                      <Box
+                        sx={{
+                          maxHeight: '150px',
+                          overflow: 'hidden',
+                          '& img': { display: 'none' },
+                          '& h1,h2,h3': { fontSize: '1rem' },
+                        }}
+                      >
                         <MarkdownRenderer
                           content={getDescriptionPreview(course)}
                           isPreview={true}
@@ -323,46 +331,59 @@ const CourseList: React.FC<ICourseListProps> = ({
                         component="span"
                         variant="body2"
                         color="text.primary"
-                        sx={{display: 'inline', mr: 1}}
+                        sx={{ display: 'inline', mr: 1 }}
                         data-testid={`course-description-${course.id}`}
                       >
                         {getDescriptionPreview(course)}
                       </Typography>
                     )}
 
-                    <Box sx={{mt: 1, display: 'flex', gap: 2}}>
+                    <Box sx={{ mt: 1, display: 'flex', gap: 2 }}>
                       {course.created_at && (
-                        <Typography variant="caption" color="text.secondary" display="block" component="span">
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          display="block"
+                          component="span"
+                        >
                           Created {formatDateRelative(course.created_at)}
                         </Typography>
                       )}
 
                       {course.updated_at && (
-                        <Typography variant="caption" color="text.secondary" display="block" component="span">
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          display="block"
+                          component="span"
+                        >
                           Updated {formatDateRelative(course.updated_at)}
                         </Typography>
                       )}
                     </Box>
                   </React.Fragment>
                 }
-              />              {showInstructorActions && (
-                <ListItemSecondaryAction sx={{
-                  transition: 'all 0.2s ease',
-                  opacity: 0.4,
-                  transform: 'translateX(-10px)',
-                  '& .MuiIconButton-root': {
-                    zIndex: 1
-                  }
-                }}>
+              />{' '}
+              {showInstructorActions && (
+                <ListItemSecondaryAction
+                  sx={{
+                    transition: 'all 0.2s ease',
+                    opacity: 0.4,
+                    transform: 'translateX(-10px)',
+                    '& .MuiIconButton-root': {
+                      zIndex: 1,
+                    },
+                  }}
+                >
                   <Tooltip title="View details">
                     <IconButton
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         handleCourseClick(course.id, e);
                       }}
                       edge="end"
                       aria-label="view"
-                      sx={{mr: 1}}
+                      sx={{ mr: 1 }}
                       data-testid={`view-course-${course.id}`}
                     >
                       <VisibilityIcon />
@@ -371,14 +392,14 @@ const CourseList: React.FC<ICourseListProps> = ({
 
                   <Tooltip title="Edit course">
                     <IconButton
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         setSelectedCourse(course);
                         setEditModalOpen(true);
                       }}
                       edge="end"
                       aria-label="edit"
-                      sx={{mr: 1}}
+                      sx={{ mr: 1 }}
                       data-testid={`edit-course-${course.id}`}
                     >
                       <EditIcon />
@@ -389,7 +410,7 @@ const CourseList: React.FC<ICourseListProps> = ({
                     <IconButton
                       edge="end"
                       aria-label="delete"
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         setSelectedCourse(course);
                         setDeleteDialogOpen(true);
@@ -403,20 +424,16 @@ const CourseList: React.FC<ICourseListProps> = ({
               )}
             </ListItem>
 
-            {index < courses.length - 1 && (
-              <Divider variant="inset" component="li" />
-            )}
+            {index < courses.length - 1 && <Divider variant="inset" component="li" />}
           </React.Fragment>
         ))}
       </List>
-
       {/* Course Create/Edit Modals */}
       <CourseCreation
         open={createModalOpen}
         onClose={handleCloseModals}
         onSave={handleSaveCourse}
       />
-
       <CourseCreation
         open={editModalOpen}
         course={selectedCourse || undefined}
@@ -424,26 +441,23 @@ const CourseList: React.FC<ICourseListProps> = ({
         onClose={handleCloseModals}
         onSave={handleSaveCourse}
       />
-
       {/* Delete Confirmation Dialog */}
       <Dialog
         open={deleteDialogOpen}
         onClose={() => !isDeleting && setDeleteDialogOpen(false)}
         aria-labelledby="delete-dialog-title"
         aria-describedby="delete-dialog-description"
-      >        <DialogTitle id="delete-dialog-title">
-          Confirm Course Deletion
-        </DialogTitle>
+      >
+        {' '}
+        <DialogTitle id="delete-dialog-title">Confirm Course Deletion</DialogTitle>
         <DialogContent>
           <DialogContentText id="delete-dialog-description">
-            Are you sure you want to delete the course "{selectedCourse?.title}"? This action cannot be undone.
+            Are you sure you want to delete the course "{selectedCourse?.title}"? This action cannot
+            be undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={() => setDeleteDialogOpen(false)}
-            disabled={isDeleting}
-          >
+          <Button onClick={() => setDeleteDialogOpen(false)} disabled={isDeleting}>
             Cancel
           </Button>
           <Button

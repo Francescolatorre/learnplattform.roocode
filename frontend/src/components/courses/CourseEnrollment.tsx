@@ -14,15 +14,15 @@ import {
   DialogContentText,
   DialogTitle,
 } from '@mui/material';
-import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
-import React, {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
-import {ICourse} from '@/types/course';
-import {TCompletionStatus} from '@/types/entities';
-import {useAuth} from '@context/auth/AuthContext';
-import {courseService} from '@services/resources/courseService';
+import { ICourse } from '@/types/course';
+import { TCompletionStatus } from '@/types/entities';
+import { useAuth } from '@context/auth/AuthContext';
+import { courseService } from '@services/resources/courseService';
 import enrollmentService from '@services/resources/enrollmentService';
 
 interface ICourseEnrollmentProps {
@@ -34,10 +34,10 @@ interface IEnrollmentStatusResponse {
   enrollmentId?: number;
 }
 
-const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
+const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({ courseId }) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const {user} = useAuth();
+  const { user } = useAuth();
   const [unenrollDialogOpen, setUnenrollDialogOpen] = useState(false);
 
   // Fetch course data
@@ -52,19 +52,21 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
   });
 
   // Fetch enrollment status
-  const {data: enrollment, isLoading: enrollmentLoading} = useQuery({
+  const { data: enrollment, isLoading: enrollmentLoading } = useQuery({
     queryKey: ['enrollment', courseId, user?.id],
     queryFn: async (): Promise<IEnrollmentStatusResponse | null> => {
       if (!user?.id) {
         throw new Error('User ID is required');
       }
       // Find enrollments for this course
-      const enrollments = await enrollmentService.findByFilter({course: Number(courseId)});
+      const enrollments = await enrollmentService.findByFilter({ course: Number(courseId) });
       const enrollment = enrollments.find(e => e.course === Number(courseId));
-      return enrollment ? {
-        status: enrollment.status,
-        enrollmentId: enrollment.id
-      } : null;
+      return enrollment
+        ? {
+            status: enrollment.status,
+            enrollmentId: enrollment.id,
+          }
+        : null;
     },
     enabled: Boolean(courseId) && Boolean(user?.id),
   });
@@ -78,7 +80,7 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
         status: 'active',
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['enrollment', courseId]});
+      queryClient.invalidateQueries({ queryKey: ['enrollment', courseId] });
     },
     onError: error => {
       console.error('Enrollment failed:', error);
@@ -90,7 +92,7 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
   const unenrollMutation = useMutation({
     mutationFn: () => enrollmentService.unenrollFromCourseById(Number(courseId)),
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['enrollment', courseId]});
+      queryClient.invalidateQueries({ queryKey: ['enrollment', courseId] });
       setUnenrollDialogOpen(false);
     },
     onError: error => {
@@ -100,7 +102,11 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
   });
 
   if (courseLoading || enrollmentLoading) {
-    return <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200}}><CircularProgress /></Box>;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (courseError) {
@@ -132,15 +138,15 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
   };
 
   return (
-    <Box sx={{mb: 4}}>
+    <Box sx={{ mb: 4 }}>
       {enrollMutation.isSuccess && (
-        <Alert severity="success" sx={{mb: 3}}>
+        <Alert severity="success" sx={{ mb: 3 }}>
           You have successfully enrolled in this course!
         </Alert>
       )}
 
       {unenrollMutation.isSuccess && (
-        <Alert severity="info" sx={{mb: 3}}>
+        <Alert severity="info" sx={{ mb: 3 }}>
           You have successfully unenrolled from this course.
         </Alert>
       )}
@@ -171,19 +177,20 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
         aria-describedby="unenroll-dialog-description"
         data-testid="unenroll-confirmation-dialog"
       >
-        <DialogTitle id="unenroll-dialog-title" data-testid="unenroll-dialog-title">Confirm Unenrollment</DialogTitle>
+        <DialogTitle id="unenroll-dialog-title" data-testid="unenroll-dialog-title">
+          Confirm Unenrollment
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText id="unenroll-dialog-description" data-testid="unenroll-dialog-description">
-            Are you sure you want to unenroll from "{course.title}"? This action will remove you from the course.
-            Your progress may be preserved if you re-enroll later.
+          <DialogContentText
+            id="unenroll-dialog-description"
+            data-testid="unenroll-dialog-description"
+          >
+            Are you sure you want to unenroll from "{course.title}"? This action will remove you
+            from the course. Your progress may be preserved if you re-enroll later.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={cancelUnenroll}
-            color="primary"
-            data-testid="cancel-unenroll"
-          >
+          <Button onClick={cancelUnenroll} color="primary" data-testid="cancel-unenroll">
             Cancel
           </Button>
           <Button
@@ -202,15 +209,15 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({courseId}) => {
 };
 
 // Sub-components for better organization
-const CourseHeader: React.FC<{course: ICourse}> = ({course}) => (
+const CourseHeader: React.FC<{ course: ICourse }> = ({ course }) => (
   <Typography variant="h5" gutterBottom>
     {course.title}
   </Typography>
 );
 
 // Adding support for Markdown rendering in course descriptions
-const CourseDescription: React.FC<{description?: string}> = ({description}) => (
-  <Paper sx={{p: 3, mb: 4}}>
+const CourseDescription: React.FC<{ description?: string }> = ({ description }) => (
+  <Paper sx={{ p: 3, mb: 4 }}>
     <Typography variant="h6" gutterBottom>
       Course Description
     </Typography>
@@ -219,15 +226,13 @@ const CourseDescription: React.FC<{description?: string}> = ({description}) => (
         <MarkdownRenderer content={description} />
       </Box>
     ) : (
-      <Typography variant="body1">
-        No description available
-      </Typography>
+      <Typography variant="body1">No description available</Typography>
     )}
   </Paper>
 );
 
-const CourseStatusTags: React.FC<{course: ICourse}> = ({course}) => (
-  <Box sx={{display: 'flex', gap: 1, mb: 2}}>
+const CourseStatusTags: React.FC<{ course: ICourse }> = ({ course }) => (
+  <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
     <Chip label={course.status} color="primary" size="small" variant="outlined" />
     <Chip label={course.visibility} color="primary" size="small" variant="outlined" />
   </Box>
@@ -254,9 +259,9 @@ const EnrollmentActions: React.FC<IEnrollmentActionsProps> = ({
 }) => {
   if (enrollmentStatus) {
     return (
-      <Box sx={{mt: 2}}>
+      <Box sx={{ mt: 2 }}>
         <EnrollmentStatusAlert status={enrollmentStatus} />
-        <Box sx={{display: 'flex', gap: 2, mt: 2}}>
+        <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
           <Button
             variant="contained"
             color="primary"
@@ -288,14 +293,14 @@ const EnrollmentActions: React.FC<IEnrollmentActionsProps> = ({
         color="primary"
         disabled={isEnrolling || !isPublished}
         onClick={onEnroll}
-        sx={{mt: 2}}
+        sx={{ mt: 2 }}
         data-testid="enroll-button"
       >
         {isEnrolling ? 'Enrolling...' : 'Enroll in Course'}
       </Button>
 
       {!isPublished && (
-        <Alert severity="warning" sx={{mt: 2}}>
+        <Alert severity="warning" sx={{ mt: 2 }}>
           This course is not currently published for enrollment.
         </Alert>
       )}
@@ -303,7 +308,7 @@ const EnrollmentActions: React.FC<IEnrollmentActionsProps> = ({
   );
 };
 
-const EnrollmentStatusAlert: React.FC<{status: TCompletionStatus}> = ({status}) => (
+const EnrollmentStatusAlert: React.FC<{ status: TCompletionStatus }> = ({ status }) => (
   <Alert severity={status === 'dropped' ? 'warning' : 'info'} data-testid="enrollment-status">
     {status === 'active' && 'You are currently enrolled in this course.'}
     {status === 'completed' && 'You have completed this course.'}

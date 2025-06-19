@@ -1,4 +1,4 @@
-import {IUser} from '@/types/userTypes';
+import { IUser } from '@/types/userTypes';
 
 /**
  * Login request payload
