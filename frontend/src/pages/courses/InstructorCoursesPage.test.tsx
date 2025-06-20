@@ -32,11 +32,13 @@ describe('InstructorCoursesPage', () => {
     const renderComponent = () => {
         const queryClient = new QueryClient();
         render(
-            <QueryClientProvider client={queryClient}>
-                <NotificationProvider>
-                    <InstructorCoursesPage />
-                </NotificationProvider>
-            </QueryClientProvider>
+            <Router>
+                <QueryClientProvider client={queryClient}>
+                    <NotificationProvider>
+                        <InstructorCoursesPage />
+                    </NotificationProvider>
+                </QueryClientProvider>
+            </Router>
         );
     };
 
@@ -47,38 +49,38 @@ describe('InstructorCoursesPage', () => {
 
     it('renders loading indicator while fetching courses', async () => {
         renderComponent();
-        await waitFor(() => expect(screen.getByText(/Loading/i)).toBeInTheDocument());
+        await screen.findByText(/Loading/i);
     });
 
     it('displays courses when fetched successfully', async () => {
         renderComponent();
-        await waitFor(() => expect(screen.findByText(/Course 1/i)).toBeInTheDocument());
-        await waitFor(() => expect(screen.findByText(/Course 2/i)).toBeInTheDocument());
+        expect(await screen.findByText(/Course 1/i)).toBeInTheDocument();
+        expect(await screen.findByText(/Course 2/i)).toBeInTheDocument();
     });
 
     it('handles error during course fetch', async () => {
         (courseService.fetchInstructorCourses as vi.Mock).mockRejectedValue(new Error('Fetch error'));
         renderComponent();
-        await waitFor(() => expect(screen.findByText(/Failed to load your courses/i)).toBeInTheDocument());
+        expect(await screen.findByText(/Failed to load your courses/i)).toBeInTheDocument();
     });
 
     it('switches view mode', async () => {
         renderComponent();
         const viewModeSelector = await screen.findByTestId('view-mode-selector');
         fireEvent.click(viewModeSelector);
-        await waitFor(() => expect(screen.getByText(/List View/i)).toBeInTheDocument());
+        expect(await screen.findByText(/List View/i)).toBeInTheDocument();
     });
 
     it('handles pagination', async () => {
         renderComponent();
         const paginationControls = await screen.findByTestId('pagination-controls');
         fireEvent.click(paginationControls);
-        await waitFor(() => expect(screen.getByText(/Page 2/i)).toBeInTheDocument());
+        expect(await screen.findByText(/Page 2/i)).toBeInTheDocument();
     });
 
     it('displays no courses message when no courses are available', async () => {
         (courseService.fetchInstructorCourses as vi.Mock).mockResolvedValue({results: [], count: 0});
         renderComponent();
-        await waitFor(() => expect(screen.findByText(/No courses available/i)).toBeInTheDocument());
+        expect(await screen.findByText(/No courses available/i)).toBeInTheDocument();
     });
 });
