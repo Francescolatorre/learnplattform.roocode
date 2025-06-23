@@ -1,15 +1,15 @@
-import { Box, Grid, Typography, CircularProgress } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import {Box, Grid, Typography, CircularProgress} from '@mui/material';
+import {useQuery} from '@tanstack/react-query';
+import {useEffect} from 'react';
 
-import { ILearningTask } from '@/types/task';
+import {ILearningTask} from '@/types/task';
 import learningTaskService from '@services/resources/learningTaskService';
-import { useNotification } from '@/components/Notifications/useNotification';
-import { useAuth } from 'src/context/auth'; // Annahme: Auth-Kontext für Benutzer-ID
+import useNotification from '@/components/Notifications/useNotification';
+import {useAuth} from 'src/context/auth'; // Annahme: Auth-Kontext für Benutzer-ID
 import LearningTaskCard from 'src/pages/learningTasks/LearningTaskCard';
 
 const StudentTasksPage: React.FC = () => {
-  const { user } = useAuth();
+  const {user} = useAuth();
   const studentId = user?.id;
   const notify = useNotification();
 
@@ -40,7 +40,7 @@ const StudentTasksPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+      <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
         <CircularProgress />
       </Box>
     );
@@ -48,7 +48,7 @@ const StudentTasksPage: React.FC = () => {
 
   if (error) {
     return (
-      <Box sx={{ mt: 4, textAlign: 'center' }}>
+      <Box sx={{mt: 4, textAlign: 'center'}}>
         <Typography variant="body1" color="error">
           Failed to load tasks. Please try again later.
         </Typography>
@@ -57,13 +57,13 @@ const StudentTasksPage: React.FC = () => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{p: 3}}>
       <Typography variant="h4" gutterBottom>
         Your Learning Tasks
       </Typography>
 
       {!tasks || tasks.length === 0 ? (
-        <Box sx={{ mt: 4, textAlign: 'center' }}>
+        <Box sx={{mt: 4, textAlign: 'center'}}>
           <Typography variant="body1" color="textSecondary">
             You don&apos;t have any learning tasks assigned yet.
           </Typography>
@@ -75,7 +75,6 @@ const StudentTasksPage: React.FC = () => {
               <LearningTaskCard
                 title={task.title ?? ''}
                 description={task.description ?? ''}
-                dueDate={''}
                 onViewTask={() => console.info('View task ${task.id}')}
               />
             </Grid>

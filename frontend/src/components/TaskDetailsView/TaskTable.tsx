@@ -17,10 +17,10 @@ import {
   Card,
   CardContent,
 } from '@mui/material';
-import { format, parseISO } from 'date-fns'; // Importing format and parseISO
+import {format, parseISO} from 'date-fns'; // Importing format and parseISO
 import React from 'react';
 
-import { ITaskProgress } from '@/types/task';
+import {ITaskProgress} from '@/types/task';
 
 interface TaskTableProps {
   tasks: ITaskProgress[];
@@ -48,7 +48,6 @@ const TaskTable: React.FC<TaskTableProps> = ({
             <TableCell>Type</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Score</TableCell>
-            <TableCell>Due Date</TableCell>
             <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -58,7 +57,7 @@ const TaskTable: React.FC<TaskTableProps> = ({
               <TableRow
                 hover
                 sx={{
-                  '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.04)' },
+                  '&:hover': {bgcolor: 'rgba(0, 0, 0, 0.04)'},
                   borderLeft: `4px solid ${getStatusColor(task.status)}`,
                 }}
               >
@@ -77,9 +76,7 @@ const TaskTable: React.FC<TaskTableProps> = ({
                 <TableCell>
                   {task.score !== null ? `${task.score} / ${task.maxScore}` : 'Not graded'}
                 </TableCell>
-                <TableCell>
-                  {task.dueDate ? format(parseISO(task.dueDate), 'MMM d, yyyy') : 'No due date'}
-                </TableCell>
+
                 <TableCell>
                   <IconButton
                     size="small"
@@ -91,9 +88,9 @@ const TaskTable: React.FC<TaskTableProps> = ({
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={6}>
                   <Collapse in={expandedTaskId === task.taskId} timeout="auto" unmountOnExit>
-                    <Box sx={{ margin: 2 }}>
+                    <Box sx={{margin: 2}}>
                       <Typography variant="h6" gutterBottom component="div">
                         Task Details
                       </Typography>

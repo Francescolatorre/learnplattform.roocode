@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 
-import { ICourseEnrollment } from '@/types/entities';
-import EnrollmentService from '@services/resources/enrollmentService';
+import {ICourseEnrollment} from '@/types/entities';
+import {enrollmentService} from '@/services/resources/enrollmentService';
 
 const EnrollmentList: React.FC = () => {
   const [enrollments, setEnrollments] = useState<ICourseEnrollment[]>([]);
@@ -9,7 +9,7 @@ const EnrollmentList: React.FC = () => {
   useEffect(() => {
     const fetchEnrollments = async () => {
       try {
-        const response = await EnrollmentService.getAll();
+        const response = await enrollmentService.getAll();
         setEnrollments(response as ICourseEnrollment[]);
       } catch (error) {
         console.error('Failed to fetch enrollments:', error);

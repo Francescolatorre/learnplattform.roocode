@@ -1,4 +1,4 @@
-import { IUser } from '@/types/userTypes';
+import {IUser} from '@/types/userTypes';
 
 export type TCourseStatus = 'draft' | 'published' | 'archived';
 
@@ -18,7 +18,7 @@ export interface ICourseVersion {
 export interface ICourse {
   category: string;
   difficulty_level: string;
-  id: number;
+  readonly id: number;
   title: string;
   description?: string;
   description_html?: string;

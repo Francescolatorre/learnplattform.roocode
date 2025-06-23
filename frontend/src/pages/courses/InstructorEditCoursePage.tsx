@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {
   Container,
   TextField,
@@ -10,14 +10,14 @@ import {
   FormControlLabel,
   Switch,
 } from '@mui/material';
-import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import {useForm, Controller, SubmitHandler} from 'react-hook-form';
+import {useNavigate, useParams} from 'react-router-dom';
+import {useMutation, useQueryClient, useQuery} from '@tanstack/react-query';
 
-import { useAuth } from '@context/auth/AuthContext';
-import { courseService } from '@services/resources/courseService';
-import { useNotification } from '@/components/Notifications/useNotification';
-import { ICourse } from '@/types/course';
+import {useAuth} from '@context/auth/AuthContext';
+import {courseService} from '@services/resources/courseService';
+import useNotification from '@/components/Notifications/useNotification';
+import {ICourse} from '@/types/course';
 import MarkdownEditor from '@/components/shared/MarkdownEditor';
 
 interface IEditCourseProps {
@@ -43,10 +43,10 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
   isNew = false,
   isInstructorView = false,
 }) => {
-  const { courseId } = useParams<{ courseId: string }>();
+  const {courseId} = useParams<{courseId: string}>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { user } = useAuth();
+  const {user} = useAuth();
   const notify = useNotification();
 
   const {
@@ -54,7 +54,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
     register,
     handleSubmit,
     reset,
-    formState: { errors, isValid },
+    formState: {errors, isValid},
   } = useForm<ICourseFormData>({
     mode: 'onChange',
     defaultValues: {
@@ -76,7 +76,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
   }, [user, navigate, notify]);
 
   // Fetch course data if editing an existing course
-  const { data: courseData, isLoading: isLoadingCourse } = useQuery({
+  const {data: courseData, isLoading: isLoadingCourse} = useQuery({
     queryKey: ['course', courseId],
     queryFn: () => courseService.getCourseDetails(courseId as string) as Promise<ICourse>,
     enabled: !isNew && !!courseId,
@@ -109,7 +109,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
           status: data.is_published ? 'published' : 'draft',
           visibility: 'public',
           // Add creator ID if available from user context
-          ...(user?.id && { creator: Number(user.id) }),
+          ...(user?.id && {creator: Number(user.id)}),
         };
 
         console.debug('Creating course with enhanced data:', enhancedData);
@@ -120,10 +120,10 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
     },
     onSuccess: data => {
       // Invalidate queries to refetch course data
-      queryClient.invalidateQueries({ queryKey: ['courses'] });
-      queryClient.invalidateQueries({ queryKey: ['course', courseId] });
+      queryClient.invalidateQueries({queryKey: ['courses']});
+      queryClient.invalidateQueries({queryKey: ['course', courseId]});
       // Also invalidate instructor courses to ensure the dashboard is updated
-      queryClient.invalidateQueries({ queryKey: ['instructorCourses'] });
+      queryClient.invalidateQueries({queryKey: ['instructorCourses']});
 
       // Show success notification
       notify(isNew ? 'Course created successfully!' : 'Course updated successfully!', 'success');
@@ -247,7 +247,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
 
   if (isLoadingCourse && !isNew) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+      <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
         <CircularProgress />
       </Box>
     );
@@ -258,7 +258,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
 
   return (
     <Container maxWidth={containerMaxWidth as 'sm' | 'md'}>
-      <Paper sx={{ p: 4, mt: 3 }}>
+      <Paper sx={{p: 4, mt: 3}}>
         <Typography variant="h5" gutterBottom>
           {isNew ? 'Create New Course' : 'Edit Course'}
         </Typography>
@@ -276,16 +276,16 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
             error={!!errors.title}
             helperText={errors.title?.message || ' '}
             disabled={mutation.isPending}
-            inputProps={{ 'data-testid': 'course-title-input' }}
+            inputProps={{'data-testid': 'course-title-input'}}
           />
 
           {/* Use MarkdownEditor for course description instead of TextField */}
           <Controller
             name="description"
             control={control}
-            rules={{ required: 'Description is required' }}
-            render={({ field }) => (
-              <Box sx={{ mt: 2, mb: 2 }}>
+            rules={{required: 'Description is required'}}
+            render={({field}) => (
+              <Box sx={{mt: 2, mb: 2}}>
                 <MarkdownEditor
                   id="course-description"
                   label="Course Description"
@@ -311,10 +311,10 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
                 error={!!errors.image_url}
                 helperText={errors.image_url?.message}
                 disabled={mutation.isPending}
-                inputProps={{ 'data-testid': 'course-image-url-input' }}
+                inputProps={{'data-testid': 'course-image-url-input'}}
               />
 
-              <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+              <Box sx={{display: 'flex', gap: 2, mt: 2}}>
                 <TextField
                   {...register('category')}
                   label="Category"
@@ -323,7 +323,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
                   error={!!errors.category}
                   helperText={errors.category?.message}
                   disabled={mutation.isPending}
-                  inputProps={{ 'data-testid': 'course-category-input' }}
+                  inputProps={{'data-testid': 'course-category-input'}}
                 />
 
                 <TextField
@@ -334,7 +334,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
                   select
                   SelectProps={{
                     native: true,
-                    inputProps: { 'data-testid': 'course-difficulty-select' },
+                    inputProps: {'data-testid': 'course-difficulty-select'},
                   }}
                   disabled={mutation.isPending}
                 >
@@ -349,14 +349,14 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
           <Controller
             name="is_published"
             control={control}
-            render={({ field }) => (
+            render={({field}) => (
               <FormControlLabel
                 control={
                   <Switch
                     checked={field.value}
                     onChange={field.onChange}
                     disabled={mutation.isPending}
-                    inputProps={{ 'data-testid': 'course-publish-switch' }}
+                    inputProps={{'data-testid': 'course-publish-switch'}}
                   />
                 }
                 label="Publish Course"
@@ -364,7 +364,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
             )}
           />
 
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
+          <Box sx={{display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3}}>
             <Button
               variant="outlined"
               onClick={() => navigate(-1)}

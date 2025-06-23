@@ -1,12 +1,12 @@
-import { IUserProgress } from '@/types/progress';
-import { IStudentProgressSummary } from '@/types';
+import {IUserProgress} from '@/types/progress';
+import {IStudentProgressSummary} from '@/types';
 
-import { ApiService } from '@/services/api/apiService';
-import { ICourse, TCourseStatus } from '@/types/course';
-import { ILearningTask, ITaskProgress } from '@/types/task';
-import { IPaginatedResponse } from 'src/types/paginatedResponse';
+import {ApiService} from '@/services/api/apiService';
+import {ICourse, TCourseStatus} from '@/types/course';
+import {ILearningTask, ITaskProgress} from '@/types/task';
+import {IPaginatedResponse} from 'src/types/paginatedResponse';
 
-import { API_CONFIG } from '../api/apiConfig';
+import {API_CONFIG} from '../api/apiConfig';
 
 /**
  * Options for filtering courses in API requests
@@ -62,7 +62,7 @@ class CourseService {
   async enrollStudent(courseId: string | number, studentId: string | number): Promise<any> {
     try {
       this.ensureAuthToken();
-      const body = { course: courseId, student: studentId };
+      const body = {course: courseId, student: studentId};
       const response = await this.apiAny.post(API_CONFIG.endpoints.enrollments.create, body);
       return response;
     } catch (error) {
@@ -339,7 +339,7 @@ class CourseService {
     try {
       const response = await this.apiCourse.patch(
         `${API_CONFIG.endpoints.courses.updateStatus}/${courseId}`,
-        { status }
+        {status}
       );
       console.info(`CourseService: Successfully updated course ${courseId} status to ${status}`);
       return response;
@@ -466,4 +466,3 @@ class CourseService {
 }
 
 export const courseService = new CourseService();
-export default courseService;

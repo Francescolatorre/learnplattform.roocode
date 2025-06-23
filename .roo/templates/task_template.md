@@ -1,110 +1,177 @@
-# Task: [Task Title]
+# TASK-\[ID]-\[AREA]-\[SHORT\_DESCRIPTION]
+
+## Task Title
+
+Short and clear task title.
+
+---
 
 ## Task Metadata
 
-- **Task-ID:** [TASK-ID]
-- **Status:** [DRAFT|VALIDATED|TODO|IN_PROGRESS|DONE|REVIEW|POSTPONED]
-- **Priority:** [High|Medium|Low]
-- **Last Updated:** [YYYY-MM-DD]
+* **Task-ID:** TASK-\[ID]
+* **Status:** DRAFT | VALIDATED | TODO | IN\_PROGRESS | REVIEW | DONE | POSTPONED
+* **Owner:** \[Responsible role/person]
+* **Priority:** High | Medium | Low
+* **Last Updated:** YYYY-MM-DD
+* **Estimated Hours:** \[Number]
+* **Hours Spent:** \[Number]
+* **Remaining Hours:** \[Number]
 
-### Time Tracking
+---
 
-- **Estimated Hours:** [Number] <!-- Total estimated hours for the task -->
-- **Hours Spent:** [Number] <!-- Actual hours spent on the task -->
-- **Remaining Hours:** [Number] <!-- Calculated: Estimated - Spent -->
+## Business Context
 
-### Task Relationships
+\[Brief description of the business need or problem being addressed]
 
-- **Has Subtasks:** [Yes|No]
-- **Parent Task:** [PARENT-TASK-ID|None] <!-- Reference to parent task if this is a subtask -->
-- **Dependencies:** [List of dependent tasks]
-
-### Progress Metrics
-
-- **Completion:** [0-100]% <!-- Overall completion percentage -->
-- **Active Subtasks:** [Number] <!-- Count of IN_PROGRESS subtasks -->
-- **Total Subtasks:** [Number] <!-- Total number of subtasks -->
-
-## Description
-
-[Detailed task description]
+---
 
 ## Requirements
 
-1. [Requirement 1]
-2. [Requirement 2]
-...
+### User Stories
 
-## Implementation Details
+```markdown
+As a [user type]
+I want to [goal]
+so that [benefit].
+```
 
-[Technical approach, architecture considerations, etc.]
+### Acceptance Criteria
 
-## Validation Criteria
+1. \[Criterion 1]
+2. \[Criterion 2]
+3. \[Criterion 3]
 
-1. [Criterion 1]
-2. [Criterion 2]
-...
+### Technical Requirements
+
+* \[Technical requirement 1]
+* \[Technical requirement 2]
+
+---
+
+## Implementation
+
+### Technical Approach
+
+* Architecture, libraries, integrations
+
+### Dependencies
+
+* \[Dependency 1]
+* \[Dependency 2]
+
+### Test Strategy
+
+* **Unit Tests:**
+
+  * \[Test case 1]
+* **Integration Tests:**
+
+  * \[Test scenario 1]
+
+---
 
 ## Subtasks
 
-<!-- Begin Subtasks Section -->
-<!-- Each subtask follows a nested structure with its own metadata -->
+### Subtask-1: \[Title]
 
-### Subtask-1: [Subtask Title]
+* **ID:** \[TASK-ID]-SUB-001
+* **Status:** DRAFT | IN\_PROGRESS | DONE
+* **Estimated Hours:** \[Number]
+* **Dependencies:** \[List of subtask IDs]
+* **Description:** \[Short description]
+* **Validation:** \[Validation criteria]
 
-- **ID:** [TASK-ID]-SUB-001
-- **Status:** [DRAFT|IN_PROGRESS|DONE]
-- **Estimated Hours:** [Number]
-- **Dependencies:** [List of dependent subtask IDs]
-- **Description:** [Brief description]
-- **Validation:** [Specific validation criteria]
+(Additional subtasks follow the same structure)
 
-### Subtask-2: [Subtask Title]
+---
 
-- **ID:** [TASK-ID]-SUB-002
-- **Status:** [DRAFT|IN_PROGRESS|DONE]
-- **Estimated Hours:** [Number]
-- **Dependencies:** [List of dependent subtask IDs]
-- **Description:** [Brief description]
-- **Validation:** [Specific validation criteria]
+## Documentation
 
-<!-- End Subtasks Section -->
+### API Documentation
 
-## Status Roll-up Rules
+```typescript
+interface Example {
+  property: string;
+  method(): void;
+}
+```
 
-<!-- Automated status calculation based on subtasks -->
-1. Task is considered DONE when:
-   - All subtasks are marked as DONE
-   - All validation criteria are met
-   - Required documentation is complete
+### Usage Examples
 
-2. Task Progress Calculation:
-   - Completion % = (Completed Subtasks / Total Subtasks) * 100
-   - Subtask weights can be adjusted in metadata if needed
+```typescript
+const b = new Example();
+b.method();
+```
 
-3. Status Inheritance Rules:
-   - Parent task cannot be DONE if any subtask is not DONE
-   - Parent task is IN_PROGRESS if any subtask is IN_PROGRESS
-   - All subtasks inherit dependencies from parent task
+---
 
-4. Validation Requirements:
-   - Each subtask must have defined validation criteria
-   - Parent task validation must encompass subtask validations
-   - Status changes require validation criteria check
+## Risk Assessment
 
-## Related Work
+### Technical Risks
 
-- [Reference to related tasks or resources]
+* Risk 1
 
-## Potential Risks
+  * **Impact:** High | Medium | Low
+  * **Mitigation:** Strategy
 
-- [Risk 1]
-- [Risk 2]
-...
+### Security Considerations
+
+* \[Security requirement 1]
+* \[Security requirement 2]
+
+---
+
+## Progress Tracking
+
+### Milestones
+
+1. Milestone A
+
+   * **Status:** Pending | In Progress | Complete
+   * **Notes:** \[optional]
+
+### Status Updates
+
+| Date       | Status       | Notes             |
+| ---------- | ------------ | ----------------- |
+| YYYY-MM-DD | IN\_PROGRESS | Details on change |
+
+---
+
+## Review Checklist
+
+### Implementation Review
+
+* [ ] Code follows standards
+* [ ] Tests are complete
+* [ ] Documentation is updated
+* [ ] Performance is verified
+* [ ] Security is validated
+
+### Documentation Review
+
+* [ ] API documentation is complete
+* [ ] Examples are provided
+* [ ] Configuration is documented
+* [ ] Deployment/release notes are added
+
+---
 
 ## Notes
 
-[Additional information]
+### Implementation Notes
 
-<!-- Template Version: 2.0 -->
-<!-- Last Updated: 2025-06-10 -->
+* \[Relevant detail 1]
+
+### Future Considerations
+
+* \[Future item 1]
+* \[Future item 2]
+
+---
+
+<!-- Template Version: 1.1 -->
+
+<!-- Maintainer: Requirements Manager -->
+
+<!-- Last Updated: 2025-06-22 -->

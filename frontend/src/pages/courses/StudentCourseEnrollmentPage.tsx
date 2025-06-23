@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {
   Box,
   Typography,
@@ -13,21 +13,21 @@ import {
 } from '@mui/material';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import GridViewIcon from '@mui/icons-material/GridView';
-import { useQuery } from '@tanstack/react-query';
+import {useQuery} from '@tanstack/react-query';
 
-import { useAuth } from '@/context/auth/AuthContext';
-import courseService from '@services/resources/courseService';
-import { ICourse, IPaginatedResponse } from '@/types';
+import {useAuth} from '@/context/auth/AuthContext';
+import {courseService} from '@services/resources/courseService';
+import {ICourse, IPaginatedResponse} from '@/types';
 import CourseCard from '@/components/courses/CourseCard';
 import CourseList from '@/components/courses/CourseList';
-import { useNotification } from '@/components/Notifications/useNotification';
+import useNotification from '@/components/Notifications/useNotification';
 
 /**
  * Page for students to browse and enroll in courses
  * Displays available courses with options to view details and enroll
  */
 const StudentCourseEnrollmentPage: React.FC = () => {
-  const { user } = useAuth();
+  const {user} = useAuth();
   const notify = useNotification();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -67,7 +67,7 @@ const StudentCourseEnrollmentPage: React.FC = () => {
       } catch (err) {
         console.error('StudentCourseEnrollmentPage: Failed to fetch courses', err);
         // If we get a 404 (not found) for a page, it means we requested a page that doesn't exist
-        const apiError = err as { response?: { status?: number } };
+        const apiError = err as {response?: {status?: number}};
         if (apiError?.response?.status === 404 && currentPage > 1) {
           console.info('StudentCourseEnrollmentPage: Invalid page requested, resetting to page 1');
           setTimeout(() => setCurrentPage(1), 0);
@@ -95,7 +95,7 @@ const StudentCourseEnrollmentPage: React.FC = () => {
       console.error('StudentCourseEnrollmentPage: Failed to fetch courses', error);
 
       // If it's a 404 error (page not found) and we're not on page 1, reset to page 1
-      const apiError = error as { response?: { status?: number } };
+      const apiError = error as {response?: {status?: number}};
       const statusCode = apiError?.response?.status;
 
       if (statusCode === 404 && currentPage > 1) {
@@ -178,7 +178,7 @@ const StudentCourseEnrollmentPage: React.FC = () => {
   });
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{p: 3}}>
       {/* Page Header with Title */}
       <Box
         sx={{
@@ -188,19 +188,19 @@ const StudentCourseEnrollmentPage: React.FC = () => {
           mb: 3,
         }}
       >
-        <Typography variant="h4" component="h1" sx={{ fontWeight: 500 }}>
+        <Typography variant="h4" component="h1" sx={{fontWeight: 500}}>
           Available Courses
         </Typography>
       </Box>
 
       {/* View Mode Selector */}
-      <Paper sx={{ mb: 3 }}>
+      <Paper sx={{mb: 3}}>
         <Tabs
           value={viewMode}
           onChange={handleViewModeChange}
           indicatorColor="primary"
           textColor="primary"
-          sx={{ borderBottom: 1, borderColor: 'divider' }}
+          sx={{borderBottom: 1, borderColor: 'divider'}}
         >
           <Tab value="grid" label="Grid View" icon={<GridViewIcon />} iconPosition="start" />
           <Tab value="list" label="List View" icon={<ViewListIcon />} iconPosition="start" />
@@ -209,14 +209,14 @@ const StudentCourseEnrollmentPage: React.FC = () => {
 
       {/* Loading State */}
       {isLoading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+        <Box sx={{display: 'flex', justifyContent: 'center', my: 4}}>
           <CircularProgress />
         </Box>
       )}
 
       {/* Error State */}
       {error && !isLoading && (
-        <Alert severity="error" sx={{ mb: 3 }}>
+        <Alert severity="error" sx={{mb: 3}}>
           {error instanceof Error
             ? error.message
             : 'An error occurred while fetching courses. Please try again.'}
@@ -225,7 +225,7 @@ const StudentCourseEnrollmentPage: React.FC = () => {
 
       {/* No Courses State */}
       {!isLoading && !error && courses.length === 0 && (
-        <Paper elevation={2} sx={{ p: 4, textAlign: 'center' }}>
+        <Paper elevation={2} sx={{p: 4, textAlign: 'center'}}>
           <Typography variant="h6" gutterBottom>
             No courses available for enrollment
           </Typography>
@@ -237,12 +237,12 @@ const StudentCourseEnrollmentPage: React.FC = () => {
 
       {/* Course List - conditionally render based on viewMode */}
       {!isLoading && !error && courses.length > 0 && (
-        <Paper elevation={2} sx={{ p: 3 }}>
+        <Paper elevation={2} sx={{p: 3}}>
           {viewMode === 'grid' ? renderGridView() : renderListView()}
 
           {/* Pagination Component */}
           {totalPages > 1 && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3, py: 2 }}>
+            <Box sx={{display: 'flex', justifyContent: 'center', mt: 3, py: 2}}>
               <Pagination
                 count={totalPages}
                 page={currentPage}
@@ -260,11 +260,11 @@ const StudentCourseEnrollmentPage: React.FC = () => {
 
       {/* My Courses Summary - Only visible if user has enrolled courses */}
       {!isLoading && !error && courses.some((course: ICourse) => course.isEnrolled) && (
-        <Paper elevation={2} sx={{ p: 3, mt: 3 }}>
+        <Paper elevation={2} sx={{p: 3, mt: 3}}>
           <Typography variant="h6" gutterBottom>
             My Learning Status
           </Typography>
-          <Divider sx={{ mb: 2 }} />
+          <Divider sx={{mb: 2}} />
           <Grid container spacing={3}>
             <Grid item xs={12} sm={4}>
               <Typography variant="subtitle2" color="text.secondary">

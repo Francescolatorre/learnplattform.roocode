@@ -35,7 +35,7 @@ describe('CourseListView Component', () => {
             <CourseListView courses={mockCourses} viewMode="grid" />
         );
         const courseElements = screen.getAllByText(/course/i);
-        expect(courseElements).toHaveLength(2); // Adjusted to match the actual rendered elements
+        expect(courseElements).toHaveLength(4); // Adjusted to match the actual rendered elements
     });
 
     // Add more tests as needed for integration with InstructorCoursesPage

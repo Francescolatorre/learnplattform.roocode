@@ -2,8 +2,8 @@
 
 ## Current Phase
 
-- **Phase**: Implementation
-- **Focus**: Task Management System
+- **Phase**: Implementation & Refactoring
+- **Focus**: Task Management System & Frontend-Backend Alignment
 
 ## Active Tasks
 
@@ -12,7 +12,8 @@
 3. `TASK-INTEGRATION-TEST-WORKFLOW.md`
 4. `TASK-FEAT-001-IMPLEMENT-STUDENT-JOURNEY.md`
 5. `TASK-CREATION-001-COURSE-CREATION.md`
-6. `TASK-FEAT-001-IMPLEMENT-STUDENT-JOURNEY.md`
+6. `TASK-REFACTOR-001-TaskStore-ILearningTask-Migration.md` [DONE]
+7. `TASK-004-Documentation-Migration.md` [DRAFT]
 
 ## Blockers
 

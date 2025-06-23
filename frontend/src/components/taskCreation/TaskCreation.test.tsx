@@ -4,7 +4,12 @@ import {renderWithProviders} from '../../test-utils/renderWithProviders';
 import {screen} from '@testing-library/react';
 /**
  * TaskCreation.test.tsx
- * Comprehensive test suite for TaskCreation component using real context providers.
+ *
+ * This test suite REQUIRES a mock for useNotification.
+ * - useNotification is mocked to avoid context errors and to allow assertion of notification calls.
+ * - NotificationProvider is NOT used in these tests.
+ *
+ * If you need to test the actual notification system, use NotificationProvider and do NOT mock useNotification.
  */
 import React from 'react';
 import {fireEvent, waitFor} from '@testing-library/react';

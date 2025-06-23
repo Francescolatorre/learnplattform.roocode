@@ -1,106 +1,152 @@
+/**
+ * Clean test: StudentCourseDetailsPage.test.tsx
+ * Step 1: Only check that mocks are called when rendering the component.
+ */
+
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { vi } from 'vitest';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import {vi} from 'vitest';
 import StudentCourseDetailsPage from './StudentCourseDetailsPage';
-import { courseService } from '@/services/resources/courseService';
-import { enrollmentService } from '@/services/resources/enrollmentService';
-import { AuthContext } from '@/context/auth/AuthContext';
+import {courseService} from '@services/resources/courseService';
+import {enrollmentService} from '@services/resources/enrollmentService';
+import {renderWithProviders} from '@/test-utils/renderWithProviders';
+import {courseFactory} from '@/test-utils/factories/courseFactory';
+import {learningTaskFactory} from '@/test-utils/factories/learningTaskFactory';
+import {IUser, UserRoleEnum} from '@/types/userTypes';
+import {MemoryRouter, Routes, Route} from 'react-router-dom';
+import {waitFor} from '@testing-library/react';
+import {screen} from '@testing-library/react';
 
 // Mock the services
-vi.mock('@/services/resources/courseService');
-vi.mock('@/services/resources/enrollmentService');
+vi.mock('@services/resources/courseService');
+vi.mock('@services/resources/enrollmentService');
 vi.mock('@/components/Notifications/useNotification', () => ({
-  useNotification: vi.fn(),
+  default: vi.fn(),
 }));
+vi.mock('@context/auth/AuthContext', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    useAuth: () => ({
+      user: {id: '1', username: 'testuser', email: 'testuser@example.com', role: 'student', is_active: true},
+      isAuthenticated: true,
+      isRestoring: false,
+      error: null,
+      login: vi.fn(),
+      logout: vi.fn(),
+      register: vi.fn(),
+      getUserRole: () => 'student',
+      redirectToDashboard: vi.fn(),
+    }),
+  };
+});
 
-const mockCourse = {
-  id: '1',
+// Replace static mocks with factories, using numbers for id and course
+const mockCourse = courseFactory.build({
+  id: 1,
   title: 'Test Course',
-  description: 'Test Description',
-  isEnrolled: true,
-  isCompleted: false,
-};
+  description: 'This is a test course description',
+  isEnrolled: true, // ensure this is set
+});
 
 const mockTasks = {
   count: 2,
   results: [
-    { id: '1', title: 'Task 1', description: 'Task 1 Description' },
-    { id: '2', title: 'Task 2', description: 'Task 2 Description' },
+    learningTaskFactory.build({id: 1, course: 1, title: 'Task 1'}),
+    learningTaskFactory.build({id: 2, course: 1, title: 'Task 2'}),
   ],
 };
 
-const mockEnrollmentStatus = {
-  enrolled: true,
-  completed: false,
-};
+const mockEnrollmentStatus = {enrolled: true, completed: false};
 
-describe('StudentCourseDetailsPage', () => {
-  const queryClient = new QueryClient();
-
+describe('StudentCourseDetailsPage (clean mock call check)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (courseService.getCourseDetails as jest.Mock).mockResolvedValue(mockCourse);
-    (courseService.getCourseTasks as jest.Mock).mockResolvedValue(mockTasks);
-    (enrollmentService.getEnrollmentStatus as jest.Mock).mockResolvedValue(mockEnrollmentStatus);
+    vi.mocked(courseService).getCourseDetails.mockImplementation((id: string) => {
+      console.log('[MOCK] getCourseDetails', id);
+      return Promise.resolve({...mockCourse});
+    });
+    vi.mocked(courseService).getCourseTasks.mockImplementation((id: string) => {
+      console.log('[MOCK] getCourseTasks', id);
+      return Promise.resolve({
+        count: mockTasks.count,
+        results: mockTasks.results,
+        next: null,
+        previous: null,
+      });
+    });
+    vi.mocked(enrollmentService).getEnrollmentStatus.mockImplementation((id: string | number) => {
+      console.log('[MOCK] getEnrollmentStatus', id);
+      return Promise.resolve({
+        enrolled: true,
+        enrollmentDate: '2024-01-01',
+        enrollmentId: 123,
+      });
+    });
   });
 
-  const renderComponent = () => {
-    return render(
-      <QueryClientProvider client={queryClient}>
-        <AuthContext.Provider value={{ isAuthenticated: true, user: { id: '1' } }}>
-          <MemoryRouter initialEntries={['/courses/1']}>
-            <Routes>
-              <Route path="/courses/:courseId" element={<StudentCourseDetailsPage />} />
-            </Routes>
-          </MemoryRouter>
-        </AuthContext.Provider>
-      </QueryClientProvider>
+  it('calls all service mocks when rendering', async () => {
+    // No need to provide AuthContext.Provider, AuthProvider is now in renderWithProviders
+    renderWithProviders(
+      <Routes>
+        <Route path="/courses/:courseId" element={<StudentCourseDetailsPage />} />
+      </Routes>,
+      {initialEntries: ['/courses/1']}
     );
-  };
-
-  it('displays tasks when user is enrolled', async () => {
-    renderComponent();
-
-    // Verify course details are loaded
+    // Wait for the mocks to be called using waitFor
     await waitFor(() => {
-      expect(screen.getByText('Test Course')).toBeInTheDocument();
-    });
-
-    // Verify tasks are displayed
-    await waitFor(() => {
-      expect(screen.getByText('Task 1')).toBeInTheDocument();
-      expect(screen.getByText('Task 2')).toBeInTheDocument();
+      expect(courseService.getCourseDetails).toHaveBeenCalled();
+      expect(courseService.getCourseTasks).toHaveBeenCalled();
+      expect(enrollmentService.getEnrollmentStatus).toHaveBeenCalled();
     });
   });
 
-  it('does not display tasks when user is not enrolled', async () => {
-    // Mock unenrolled state
-    (courseService.getCourseDetails as jest.Mock).mockResolvedValue({
+  it('Lists course details and tasks if enrolled', async () => {
+    renderWithProviders(
+      <Routes>
+        <Route path="/courses/:courseId" element={<StudentCourseDetailsPage />} />
+      </Routes>,
+      {initialEntries: ['/courses/1']}
+    );
+
+    // Wait for course details to be displayed
+    await waitFor(() => {
+      expect(screen.getByText(mockCourse.title)).toBeInTheDocument();
+      expect(screen.getByText(mockCourse.description)).toBeInTheDocument();
+    });
+
+    // Wait for and check that tasks are listed by testid
+    for (const task of mockTasks.results) {
+      const taskTitle = await screen.findByTestId(`task-title-${task.id}`);
+      expect(taskTitle).toHaveTextContent(task.title);
+    }
+  });
+
+  it('does not show tasks if user is not enrolled', async () => {
+    // Mock course and enrollment to not enrolled
+    vi.mocked(courseService).getCourseDetails.mockResolvedValue({
       ...mockCourse,
       isEnrolled: false,
     });
-    (enrollmentService.getEnrollmentStatus as jest.Mock).mockResolvedValue({
+    vi.mocked(enrollmentService).getEnrollmentStatus.mockResolvedValue({
       enrolled: false,
-      completed: false,
+      enrollmentDate: null,
+      enrollmentId: null,
     });
-
-    renderComponent();
-
-    // Verify course details are loaded
+    renderWithProviders(
+      <Routes>
+        <Route path="/courses/:courseId" element={<StudentCourseDetailsPage />} />
+      </Routes>,
+      {initialEntries: ['/courses/1']}
+    );
+    // Wait for course details to be displayed
     await waitFor(() => {
-      expect(screen.getByText('Test Course')).toBeInTheDocument();
+      expect(screen.getByText(mockCourse.title)).toBeInTheDocument();
     });
-
-    // Verify tasks are not displayed but enroll message is shown
-    await waitFor(() => {
-      expect(screen.queryByText('Task 1')).not.toBeInTheDocument();
-      expect(screen.queryByText('Task 2')).not.toBeInTheDocument();
-      expect(
-        screen.getByText(/Enroll in this course to access learning tasks/i)
-      ).toBeInTheDocument();
+    // Tasks should NOT be shown
+    mockTasks.results.forEach((task) => {
+      expect(screen.queryByText(task.title)).not.toBeInTheDocument();
     });
+    // Optionally, check for a message about enrolling to see tasks
+    expect(screen.getByText(/enroll in this course to access learning tasks/i)).toBeInTheDocument();
   });
 });

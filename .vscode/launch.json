@@ -186,6 +186,39 @@
                 "<node_internals>/**",
                 "**/node_modules/**"
             ]
+        },
+        {
+            "name": "Vitest: Debug Current Test File",
+            "type": "node",
+            "request": "launch",
+            "autoAttachChildProcesses": true,
+            "skipFiles": [
+                "<node_internals>/**",
+                "**/node_modules/**"
+            ],
+            "program": "${workspaceFolder}/frontend/node_modules/vitest/vitest.mjs",
+            "args": [
+                "run",
+                "${relativeFile}"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Vitest Unit Test StudentCourseDetailsPage",
+            "autoAttachChildProcesses": true,
+            "program": "${workspaceFolder}/frontend/node_modules/vitest/vitest.mjs",
+            "args": [
+                "run",
+                "src/pages/courses/StudentCourseDetailsPage.test.tsx",
+                "--config",
+                "vitest.unit.config.ts"
+            ],
+            "cwd": "${workspaceFolder}/frontend",
+            "smartStep": true,
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
         }
         // Note: To run multiple configurations, open multiple VSCode windows
         // and start each configuration separately
