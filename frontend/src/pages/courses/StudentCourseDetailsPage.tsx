@@ -241,28 +241,6 @@ const StudentCourseDetailsPage: React.FC = () => {
   // Get the description content in the correct format for the MarkdownRenderer
   const descriptionContent = courseDetails.description_html || courseDetails.description || '';
 
-  // Debug: log courseDetails and enrollmentStatus after both are loaded
-  if (courseDetails && enrollmentStatus) {
-    // eslint-disable-next-line no-console
-    console.log('[DEBUG] courseDetails:', courseDetails, 'enrollmentStatus:', enrollmentStatus);
-  }
-
-  // Debug: log all relevant variables on every render
-  // eslint-disable-next-line no-console
-  console.log('[DEBUG] StudentCourseDetailsPage vars', {
-    courseIdNum,
-    isAuthenticated,
-    courseDetails,
-    enrollmentStatus,
-    canViewTasks,
-    isCourseLoading,
-    isEnrollmentLoading,
-    isTasksLoading,
-    courseError,
-    enrollmentError,
-    tasksError,
-  });
-
   return (
     <Box sx={{maxWidth: 1200, mx: 'auto', p: 2}}>
       <Paper sx={{p: 3, mb: 3}}>

@@ -14,6 +14,7 @@ import {screen} from '@testing-library/react';
 import React from 'react';
 import {fireEvent, waitFor} from '@testing-library/react';
 import {describe, test, vi, beforeEach} from 'vitest';
+import {ILearningTask} from '@/types';
 
 // Mock Notification Hook
 vi.mock('@/components/Notifications/useNotification', () => ({
@@ -31,16 +32,12 @@ vi.mock('../shared/MarkdownRenderer', () => ({
 }));
 
 describe.skip('TaskCreation Component', () => {
-    console.log('Starting TaskCreation tests');
     test.only('render TaskCreation with all providers and debug', () => {
-        console.log('Provider+Component test started');
         const onClose = () => {
             console.log('onClose called');
         };
         renderWithProviders(<TaskCreation open={true} onClose={onClose} />);
-        console.log('Rendered TaskCreation');
         expect(screen.getByRole('dialog')).toBeInTheDocument();
-        console.log('Provider+Component test finished');
     });
 
     let mockOnClose = vi.fn();

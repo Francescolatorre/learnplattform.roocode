@@ -27,11 +27,7 @@ const Dashboard: React.FC = () => {
   const {user} = useAuth();
 
   useEffect(() => {
-    console.info('Dashboard component mounted');
-    console.info('User:', user);
-    return () => {
-      console.info('Dashboard component unmounted');
-    };
+    return () => { };
   }, [user]);
 
   // User progress data query using React Query

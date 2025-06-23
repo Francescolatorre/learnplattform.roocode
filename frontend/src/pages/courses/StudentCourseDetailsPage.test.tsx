@@ -62,11 +62,9 @@ describe('StudentCourseDetailsPage (clean mock call check)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(courseService).getCourseDetails.mockImplementation((id: string) => {
-      console.log('[MOCK] getCourseDetails', id);
       return Promise.resolve({...mockCourse});
     });
     vi.mocked(courseService).getCourseTasks.mockImplementation((id: string) => {
-      console.log('[MOCK] getCourseTasks', id);
       return Promise.resolve({
         count: mockTasks.count,
         results: mockTasks.results,
@@ -75,7 +73,6 @@ describe('StudentCourseDetailsPage (clean mock call check)', () => {
       });
     });
     vi.mocked(enrollmentService).getEnrollmentStatus.mockImplementation((id: string | number) => {
-      console.log('[MOCK] getEnrollmentStatus', id);
       return Promise.resolve({
         enrolled: true,
         enrollmentDate: '2024-01-01',
