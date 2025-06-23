@@ -1,7 +1,9 @@
 /**
- * ErrorNotifier.test.tsx
+ * NotificationSystem.test.tsx
  *
- * This test suite uses a mock implementation to avoid timeouts.
+ * Test suite for the notification system components and hooks.
+ * Tests the functionality of displaying notifications, auto-dismissal,
+ * and multiple notification handling using mock implementations.
  */
 
 import {vi, describe, it, expect, beforeEach} from 'vitest';
