@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import React, {useEffect} from 'react';
+import {Navigate, useLocation} from 'react-router-dom';
 
-import { useAuth } from '@/context/auth/AuthContext';
-import { TUserRole } from '@/types';
-import { useNotification } from '@/components/Notifications/useNotification';
+import {useAuth} from '@/context/auth/AuthContext';
+import {UserRoleEnum} from '@/types/userTypes';
+import useNotification from '@/components/Notifications/useNotification';
 
 interface IProtectedRouteProps {
   children: React.ReactNode;
-  allowedRoles?: TUserRole[];
+  allowedRoles?: UserRoleEnum[];
 }
 
 /**
@@ -19,8 +19,8 @@ interface IProtectedRouteProps {
  * @param children - The components to render if the user is authenticated and authorized
  * @param allowedRoles - Optional array of roles that are allowed to access this route
  */
-const ProtectedRoute: React.FC<IProtectedRouteProps> = ({ children, allowedRoles = [] }) => {
-  const { isAuthenticated, getUserRole, isRestoring } = useAuth();
+const ProtectedRoute: React.FC<IProtectedRouteProps> = ({children, allowedRoles = []}) => {
+  const {isAuthenticated, getUserRole, isRestoring} = useAuth();
   const userRole = getUserRole();
   const location = useLocation();
   const notify = useNotification();
@@ -37,11 +37,11 @@ const ProtectedRoute: React.FC<IProtectedRouteProps> = ({ children, allowedRoles
   // Effect to handle role-based access logging
   useEffect(() => {
     if (isAuthenticated && allowedRoles.length > 0) {
-      const hasAccess = allowedRoles.includes(userRole as TUserRole);
+      const hasAccess = allowedRoles.includes(userRole as UserRoleEnum);
       if (!hasAccess) {
         console.warn(
           `Access denied: User with role "${userRole}" attempted to access route "${location.pathname}" ` +
-            `which requires one of these roles: [${allowedRoles.join(', ')}]`
+          `which requires one of these roles: [${allowedRoles.join(', ')}]`
         );
       }
     }
@@ -74,11 +74,11 @@ const ProtectedRoute: React.FC<IProtectedRouteProps> = ({ children, allowedRoles
       currentPath: location.pathname,
     });
     // Save the current location to redirect back after login
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to="/login" state={{from: location}} replace />;
   }
 
   // If allowedRoles is provided and not empty, check if user has required role
-  if (allowedRoles.length > 0 && !allowedRoles.includes(userRole as TUserRole)) {
+  if (allowedRoles.length > 0 && !allowedRoles.includes(userRole as UserRoleEnum)) {
     console.info('User does not have required role, redirecting to appropriate dashboard', {
       userRole,
       requiredRoles: allowedRoles,
@@ -87,9 +87,9 @@ const ProtectedRoute: React.FC<IProtectedRouteProps> = ({ children, allowedRoles
     notify("You don't have permission to access this page. Redirecting to dashboard.", 'error');
 
     // Redirect to appropriate dashboard based on role
-    if (userRole === 'admin') {
+    if (userRole === UserRoleEnum.ADMIN) {
       return <Navigate to="/admin/dashboard" replace />;
-    } else if (userRole === 'instructor') {
+    } else if (userRole === UserRoleEnum.INSTRUCTOR) {
       return <Navigate to="/instructor/dashboard" replace />;
     } else {
       return <Navigate to="/dashboard" replace />;

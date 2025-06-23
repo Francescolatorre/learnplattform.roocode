@@ -1,6 +1,6 @@
 // vitest.integration.config.ts
 import tsconfigPaths from 'vite-tsconfig-paths';
-import { defineConfig } from 'vitest/config';
+import {defineConfig} from 'vitest/config';
 
 export default defineConfig({
   plugins: [tsconfigPaths()],
@@ -10,6 +10,6 @@ export default defineConfig({
     setupFiles: './src/test-utils/setupIntegrationTests.ts',
     include: ['src/**/*.int.test.ts'],
     reporters: ['default', 'vitest-html-reporter'],
-    outputFile: 'vitest-integration-report.html',
+    outputFile: 'tests-results/inegration/vitest-integration-report.html',
   },
 });

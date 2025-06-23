@@ -10,12 +10,12 @@
  * - no Delete method is provided, as enrollments should not be deleted but rather marked as inactive or unenrolled.
  */
 
-import { ICourseEnrollment, IEnrollmentStatus } from '@/types/entities';
-import { API_CONFIG } from 'src/services/api/apiConfig';
-import { ApiService } from 'src/services/api/apiService';
-import { IPaginatedResponse } from 'src/types/paginatedResponse';
-import { authEventService } from '@context/auth/AuthEventService';
-import { AuthEventType } from '@context/auth/types';
+import {ICourseEnrollment, IEnrollmentStatus} from '@/types/entities';
+import {API_CONFIG} from 'src/services/api/apiConfig';
+import {ApiService} from 'src/services/api/apiService';
+import {IPaginatedResponse} from 'src/types/paginatedResponse';
+import {authEventService} from '@context/auth/AuthEventService';
+import {AuthEventType} from '@context/auth/types';
 
 /**
  * Interface for enrollment response data
@@ -72,9 +72,10 @@ class EnrollmentService {
    * @returns {Promise<IEnrollmentStatus>} A promise resolving to the enrollment status
    */
   async getEnrollmentStatus(courseId: string | number): Promise<IEnrollmentStatus> {
+    console.info(`enrollmentservice:getEnrollmentStatus: Checking enrollment status for course ID: ${courseId}`);
     try {
       // Find enrollments for this course
-      const enrollments = await this.findByFilter({ course: Number(courseId) });
+      const enrollments = await this.findByFilter({course: Number(courseId)});
       const enrollment = enrollments.find(e => e.course === Number(courseId));
 
       if (!enrollment) {
@@ -423,7 +424,3 @@ export const fetchEnrolledStudents = async (courseId: string | number) =>
 export const findByFilter = async (filter: Record<string, unknown>) =>
   enrollmentService.findByFilter(filter);
 
-/**
- * @deprecated Use the enrollmentService singleton export instead.
- */
-export default enrollmentService;

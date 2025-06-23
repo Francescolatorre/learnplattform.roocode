@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {
   Card,
   CardContent,
@@ -10,10 +10,10 @@ import {
   Chip,
   CircularProgress,
 } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
-import { useAuth } from '@/context/auth/AuthContext';
-import enrollmentService from '@/services/resources/enrollmentService';
-import { ICourse } from '@/types';
+import {useQuery} from '@tanstack/react-query';
+import {useAuth} from '@/context/auth/AuthContext';
+import {enrollmentService} from '@/services/resources/enrollmentService';
+import {ICourse} from '@/types';
 
 /**
  * Interface for CourseCard component props
@@ -33,11 +33,11 @@ interface ICourseCardProps {
  *
  * @returns A card component displaying course information
  */
-const CourseCard: React.FC<ICourseCardProps> = ({ course, isInstructorView }) => {
-  const { isAuthenticated } = useAuth();
+const CourseCard: React.FC<ICourseCardProps> = ({course, isInstructorView}) => {
+  const {isAuthenticated} = useAuth();
 
   // Enhanced query configuration for more reliable data fetching
-  const { data: enrollment, isLoading: enrollmentLoading } = useQuery({
+  const {data: enrollment, isLoading: enrollmentLoading} = useQuery({
     queryKey: ['enrollment', course.id],
     queryFn: () => enrollmentService.getEnrollmentStatus(course.id),
     enabled: Boolean(course.id) && Boolean(isAuthenticated),
@@ -52,16 +52,16 @@ const CourseCard: React.FC<ICourseCardProps> = ({ course, isInstructorView }) =>
 
   return (
     <Card
-      sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+      sx={{display: 'flex', flexDirection: 'column', height: '100%'}}
       data-testid={`course-card-${course.id}`}
     >
-      <CardContent sx={{ flexGrow: 1 }}>
+      <CardContent sx={{flexGrow: 1}}>
         <Typography variant="h6" component="h2" gutterBottom>
           {course.title}
         </Typography>
 
         {/* Status indicators */}
-        <Box sx={{ mb: 2, minHeight: 32, display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box sx={{mb: 2, minHeight: 32, display: 'flex', alignItems: 'center', gap: 1}}>
           <Chip
             label={course.status}
             color={
@@ -84,11 +84,23 @@ const CourseCard: React.FC<ICourseCardProps> = ({ course, isInstructorView }) =>
               color="primary"
               size="small"
               data-testid="enrolled-badge"
-              sx={{ mr: 1 }}
+              sx={{mr: 1}}
             />
           ) : null}
           <Chip label={course.visibility} color="default" size="small" variant="outlined" />
         </Box>
+
+        {/* Image placeholder section */}
+        {!course.image_url && (
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{mb: 1, fontStyle: 'italic'}}
+            data-testid="image-placeholder"
+          >
+            No image available
+          </Typography>
+        )}
 
         <Typography
           variant="body2"
@@ -101,12 +113,18 @@ const CourseCard: React.FC<ICourseCardProps> = ({ course, isInstructorView }) =>
             overflow: 'hidden',
           }}
         >
-          {course.description}
+          {course.description || 'No description available'}
         </Typography>
       </CardContent>
 
       <CardActions>
-        <Button component={Link} to={`/courses/${course.id}`} size="small" color="primary">
+        <Button
+          component={Link}
+          to={`/courses/${course.id}`}
+          size="small"
+          color="primary"
+          data-testid="course-action-btn"
+        >
           {enrollment?.enrolled ? 'Continue Learning' : 'View Details'}
         </Button>
       </CardActions>

@@ -1,6 +1,7 @@
-import { z } from 'zod';
-import { UserRoleEnum } from '@/types/userTypes';
-import { PASSWORD_MIN_LENGTH } from '@/constants/auth';
+import {z} from 'zod';
+import {UserRoleEnum} from '@/types/userTypes';
+
+export const PASSWORD_MIN_LENGTH = 8; // Minimum length for passwords
 
 export const usernameSchema = z
   .string()

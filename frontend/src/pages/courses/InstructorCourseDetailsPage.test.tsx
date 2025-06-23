@@ -1,3 +1,13 @@
+/**
+ * InstructorCourseDetailsPage.test.tsx
+ *
+ * This test suite REQUIRES a mock for useNotification.
+ * - useNotification is mocked to avoid context errors and to allow assertion of notification calls.
+ * - NotificationProvider is NOT used in these tests.
+ *
+ * If you need to test the actual notification system, use NotificationProvider and do NOT mock useNotification.
+ */
+
 import React from 'react';
 import {render, screen, fireEvent, waitFor} from '@testing-library/react';
 import {vi, describe, it, expect, beforeEach} from 'vitest';
@@ -10,6 +20,7 @@ import {courseService} from '@/services/resources/courseService';
 import learningTaskService, {updateTask} from '@/services/resources/learningTaskService';
 import useNotification from '@/components/Notifications/useNotification';
 import {courseFactory} from '@test-utils/factories/courseFactory';
+import {learningTaskFactory} from '@test-utils/factories/learningTaskFactory';
 
 // Mock the required dependencies
 vi.mock('react-router-dom', async () => {
@@ -38,18 +49,7 @@ vi.mock('@/services/resources/learningTaskService', () => ({
     updateTask: vi.fn(),
 }));
 
-vi.mock('@components/Notifications/useNotification', () => {
-    const notify = Object.assign(vi.fn(), {
-        success: vi.fn(),
-        error: vi.fn(),
-        info: vi.fn(),
-        warning: vi.fn(),
-    });
-    return {
-        __esModule: true,
-        default: () => notify,
-    };
-});
+vi.mock('@/components/Notifications/useNotification');
 
 vi.mock('@/components/shared/MarkdownRenderer', () => ({
     default: ({content}: {content: string}) => (
@@ -88,35 +88,39 @@ vi.mock('@/components/shared/InfoCard', () => ({
 describe('InstructorCourseDetailsPage', () => {
     const mockCourseId = '123';
     const mockCourse = courseFactory.build({
-        id: 123,
+        id: 1,
         title: 'Test Course',
-        description: 'This is a test course description',
-        instructor_name: 'Test Instructor',
-        status: 'published',
+        description: 'Test Description',
+        description_html: '<p>Test Description</p>',
+        isEnrolled: true,
+        isCompleted: false,
     });
 
     const mockTasks = [
-        {
-            id: 1,
+        learningTaskFactory.build({
             title: 'Task 1',
             description: 'Description for task 1',
             order: 1,
             is_published: true,
             created_at: '2023-01-01T00:00:00Z',
             updated_at: '2023-01-01T00:00:00Z',
-        },
-        {
-            id: 2,
+        }),
+        learningTaskFactory.build({
             title: 'Task 2',
             description: 'Description for task 2',
             order: 2,
             is_published: false,
             created_at: '2023-01-02T00:00:00Z',
             updated_at: '2023-01-02T00:00:00Z',
-        },
+        }),
     ];
 
-    const mockNotify = vi.fn();
+    const mockNotify = Object.assign(vi.fn(), {
+        success: vi.fn(),
+        error: vi.fn(),
+        info: vi.fn(),
+        warning: vi.fn(),
+    });
 
     const renderWithProviders = (ui: React.ReactElement) => {
         const queryClient = new QueryClient();
@@ -133,7 +137,7 @@ describe('InstructorCourseDetailsPage', () => {
         (courseService.getCourseDetails as any).mockResolvedValue(mockCourse);
         (learningTaskService.getAllTasksByCourseId as any).mockResolvedValue(mockTasks);
         (updateTask as any).mockResolvedValue({...mockTasks[0], title: 'Updated Task Title'});
-        (useNotification as any).mockReturnValue(mockNotify);
+        vi.mocked(useNotification).mockReturnValue(mockNotify);
     });
 
     it('renders loading state initially', () => {

@@ -163,14 +163,20 @@ In this project, "task" can mean two distinct things:
    - Test edge cases and error conditions
    - Verify component state management
    - Run `test:unit` command
+   - analyste test results and fix any issues
+   - test results for the frontend should be available in the `test-results` folder
 
 3. **Integration Testing Phase**
+   - require backend to be running
+   - Test interactions between components
    - Test component interactions
    - Verify API integrations
    - Check state management across components
    - Run `test:integration` command
 
 4. **End-to-End Testing Phase**
+   - require backend to be running
+   - require frontend to be running
    - Test complete user workflows
    - Verify frontend-backend integration
    - Test data persistence

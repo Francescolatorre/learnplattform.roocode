@@ -74,10 +74,29 @@ const useAuth = vi.fn(() => ({
   getUserRole: () => 'guest',
   redirectToDashboard: vi.fn(),
 }));
-vi.mock('@context/auth/AuthContext', () => ({
+
+vi.mock('@context/auth/AuthContext', async () => {
+  const RealModule = await vi.importActual<any>('@context/auth/AuthContext');
+  return {
+    __esModule: true,
+    ...RealModule,
+    AuthContext: React.createContext({}),
+    useAuth,
+    AuthProvider: function AuthProvider(props) {return React.createElement(React.Fragment, null, props.children);},
+  };
+});
+
+// Global mock for useNotification (for tests that do not use NotificationProvider)
+vi.mock('@/components/Notifications/useNotification', () => ({
   __esModule: true,
-  AuthContext: React.createContext({}),
-  useAuth,
+  default: vi.fn(() => {
+    const fn = vi.fn();
+    fn.success = vi.fn();
+    fn.error = vi.fn();
+    fn.info = vi.fn();
+    fn.warning = vi.fn();
+    return fn;
+  }),
 }));
 
 // Expose mocks for tests

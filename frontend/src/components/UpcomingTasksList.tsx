@@ -1,17 +1,17 @@
 import React from 'react';
 
 interface UpcomingTasksListProps {
-  tasks: Array<{ title: string; dueDate: string }>;
+  tasks: Array<{title: string}>;
 }
 
-const UpcomingTasksList: React.FC<UpcomingTasksListProps> = ({ tasks }) => {
+const UpcomingTasksList: React.FC<UpcomingTasksListProps> = ({tasks}) => {
   return (
     <div>
       <h3>Upcoming Tasks</h3>
       <ul>
         {tasks.map((task, index) => (
           <li key={index}>
-            {task.title} - Due: {task.dueDate}
+            {task.title}
           </li>
         ))}
       </ul>
