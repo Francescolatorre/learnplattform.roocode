@@ -56,6 +56,7 @@ frontend/yarn.lock
 frontend/npm-debug.log
 frontend/playwright-report/
 frontend/test-results/
+frontend/coverage/
 
 #backend
 backend/.pytest_cache/
@@ -92,3 +93,4 @@ node_modules/lodash-es/_getNative.js
 .vite/
 
 
+frontend/coverage/clover.xml

@@ -1,22 +1,50 @@
-import React, {createContext, useCallback, useContext, useRef, useState} from 'react';
-
+import React, {createContext, useCallback, useContext, useReducer} from 'react';
 import {NotificationToast} from './NotificationToast';
 import {INotification, NotificationContextType} from './types';
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
-/**
- * Provider for the notification system. Maintains a list of notifications
- * and exposes methods for adding and dismissing them.
- */
+let idCounter = 0;
+export const resetIdCounter = () => {idCounter = 0;};
+
 export interface NotificationProviderProps {
     children: React.ReactNode;
-    /** Maximum number of visible notifications. Defaults to 3. */
     maxVisible?: number;
-    /** Snackbar position. Defaults to bottom-right. */
     position?: {vertical: 'top' | 'bottom'; horizontal: 'left' | 'right'};
-    /** Default duration if not specified on notification. */
     defaultDuration?: number;
+}
+
+type NotificationState = {all: INotification[]};
+
+type NotificationAction =
+    | {type: 'ADD'; notification: Omit<INotification, 'id'>; id: number; defaultDuration: number}
+    | {type: 'DISMISS'; id: number};
+
+function sortNotifications(notifications: INotification[]): INotification[] {
+    return [...notifications].sort((a, b) => {
+        const priorityDiff = (b.priority ?? 0) - (a.priority ?? 0);
+        return priorityDiff !== 0 ? priorityDiff : b.id - a.id;
+    });
+}
+
+function notificationReducer(state: NotificationState, action: NotificationAction): NotificationState {
+    switch (action.type) {
+        case 'ADD': {
+            const newNotif: INotification = {
+                ...action.notification,
+                id: action.id,
+                duration: action.notification.duration ?? action.defaultDuration,
+            };
+            return {all: [...state.all, newNotif]};
+        }
+        case 'DISMISS': {
+            const notif = state.all.find(n => n.id === action.id);
+            if (notif?.onClose) notif.onClose();
+            return {all: state.all.filter(n => n.id !== action.id)};
+        }
+        default:
+            return state;
+    }
 }
 
 export const NotificationProvider: React.FC<NotificationProviderProps> = ({
@@ -25,41 +53,42 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     position = {vertical: 'bottom', horizontal: 'right'},
     defaultDuration = 6000,
 }) => {
-    const [notifications, setNotifications] = useState<INotification[]>([]);
-    const idCounter = useRef(0);
+    const [state, dispatch] = useReducer(notificationReducer, {all: []});
 
     const addNotification = useCallback(
         (notification: Omit<INotification, 'id'>) => {
-            setNotifications((prev) => {
-                const newNotif: INotification = {
-                    ...notification,
-                    id: idCounter.current++,
-                    duration:
-                        notification.duration === undefined
-                            ? defaultDuration
-                            : notification.duration,
-                };
-                return [...prev, newNotif].sort(
-                    (a, b) => (b.priority ?? 0) - (a.priority ?? 0)
-                );
+            dispatch({
+                type: 'ADD',
+                notification,
+                id: idCounter++,
+                defaultDuration,
             });
         },
         [defaultDuration]
     );
 
-    const dismissNotification = useCallback((id: number) => {
-        setNotifications((prev) => {
-            const notif = prev.find((n) => n.id === id);
-            if (notif?.onClose) notif.onClose();
-            return prev.filter((err) => err.id !== id);
-        });
-    }, []);
+    const dismissNotification = useCallback(
+        (id: number) => {
+            dispatch({type: 'DISMISS', id});
+        },
+        []
+    );
+
+    // Compute active and queue from all notifications
+    const sorted = sortNotifications(state.all);
+    const active = sorted.slice(0, maxVisible);
+    const queue = sorted.slice(maxVisible);
+
+    const contextValue: NotificationContextType = {
+        addNotification,
+        dismissNotification,
+    };
 
     return (
-        <NotificationContext.Provider value={{addNotification, dismissNotification}}>
+        <NotificationContext.Provider value={contextValue}>
             {children}
             <NotificationToast
-                notifications={notifications.slice(0, maxVisible)}
+                notifications={active}
                 onDismiss={dismissNotification}
                 position={position}
             />
@@ -67,9 +96,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     );
 };
 
-/**
- * Access the notification context safely within components.
- */
 export const useNotificationContext = (): NotificationContextType => {
     const ctx = useContext(NotificationContext);
     if (!ctx) {
@@ -77,3 +103,4 @@ export const useNotificationContext = (): NotificationContextType => {
     }
     return ctx;
 };
+

@@ -1,7 +1,7 @@
-import { Page, Locator, expect } from '@playwright/test';
-import { BasePage } from './BasePage';
-import { takeScreenshot } from '../setupTests';
-import { NavigationHelper } from './NavigationHelper';
+import {Page, Locator, expect} from '@playwright/test';
+import {BasePage} from './BasePage';
+import {takeScreenshot} from '../setupTests';
+import {NavigationHelper} from './NavigationHelper';
 
 /**
  * Page object for the login page
@@ -70,7 +70,7 @@ export class LoginPage extends BasePage {
    */
   async waitForPageLoad(): Promise<void> {
     console.log('Navigated to login page');
-    await this.page.waitForURL('**/login**', { timeout: 10000 });
+    await this.page.waitForURL('**/login**', {timeout: 10000});
 
     // Überprüfen ob die Seite geladen ist
     const currentUrl = this.page.url();
@@ -189,65 +189,100 @@ export class LoginPage extends BasePage {
   }
 
   /**
-   * Netzwerk-Listener für die Erfassung des Auth-Tokens einrichten
+   * Set up network listeners and attempt to capture authentication tokens from API responses or localStorage.
    */
-  private async setupNetworkListeners(): Promise<void> {
-    console.log('Setting up network listeners to capture authentication token');
-
-    // Prüfen, ob bereits ein Token im localStorage vorhanden ist
-    const existingToken = await this.page.evaluate(() => {
-      return (
-        localStorage.getItem('accessToken') ||
-        localStorage.getItem('authToken') ||
-        localStorage.getItem('token') ||
-        localStorage.getItem('jwt')
-      );
-    });
-
-    if (existingToken) {
-      console.log('Found existing auth token in localStorage');
-      this._authToken = existingToken;
-      return;
-    }
-
-    // Auf den nächsten Request mit Auth-Token warten (max. 5 Sekunden)
+  async setupNetworkListeners(): Promise<void> {
     try {
-      // Warten auf eine erfolgreiche Antwort von /auth/login/ oder /auth/token/
-      const response = await this.page.waitForResponse(
-        response => {
-          return (
+      // 1. Check if token already exists in localStorage
+      const existingToken = await this.page.evaluate(() => {
+        return (
+          localStorage.getItem('accessToken') ||
+          localStorage.getItem('authToken') ||
+          localStorage.getItem('token') ||
+          localStorage.getItem('jwt')
+        );
+      });
+
+      if (existingToken) {
+        console.log('Found existing auth token in localStorage');
+        this._authToken = existingToken;
+        return;
+      }
+
+      // 2. Set up a request route for login requests (for debugging/logging)
+      await this.page.route('**/auth/login/**', async (route, request) => {
+        console.log('Intercepted login request');
+        await route.continue();
+      });
+
+      // 3. Set up a response listener to capture auth tokens from future responses
+      this.page.on('response', async response => {
+        const url = response.url();
+        if (url.includes('/auth/login') || url.includes('/auth/token') || url.includes('/api/auth/')) {
+          try {
+            const contentType = response.headers()['content-type'] || '';
+            if (contentType.includes('application/json')) {
+              const data = await response.json().catch(() => null);
+              const token = data && (data.access || data.token || data.accessToken || data.jwt);
+              if (token) {
+                console.log('Captured authentication tokens from network response');
+                this._authToken = token;
+                this._refreshToken = data.refresh || data.refreshToken || null;
+
+                // Store tokens in localStorage
+                await this.page.evaluate(
+                  ({access, refresh}) => {
+                    localStorage.setItem('accessToken', access || '');
+                    localStorage.setItem('authToken', access || '');
+                    localStorage.setItem('token', access || '');
+                    localStorage.setItem('jwt', access || '');
+                    if (refresh) localStorage.setItem('refreshToken', refresh);
+                  },
+                  {
+                    access: this._authToken,
+                    refresh: this._refreshToken,
+                  }
+                );
+              }
+            }
+          } catch (error) {
+            console.error('Error processing auth response:', error);
+          }
+        }
+      });
+
+      // 4. Wait for the next relevant response (fallback for immediate login)
+      try {
+        const response = await this.page.waitForResponse(
+          response =>
             (response.url().includes('/auth/login/') ||
               response.url().includes('/auth/token/') ||
               response.url().includes('/api/auth/')) &&
-            response.status() === 200
-          );
-        },
-        { timeout: 5000 }
-      );
+            response.status() === 200,
+          {timeout: 5000}
+        );
 
-      // Token aus der Response extrahieren
-      const responseData = await response.json().catch(() => ({}));
-      const token =
-        responseData.access || responseData.token || responseData.accessToken || responseData.jwt;
+        const responseData = await response.json().catch(() => ({}));
+        const token =
+          responseData.access || responseData.token || responseData.accessToken || responseData.jwt;
 
-      if (token) {
-        console.log('Retrieved auth token from network response');
-        this._authToken = token;
-
-        // Token im localStorage speichern für weitere Requests
-        await this.page.evaluate(token => {
-          // Verschiedene gängige Token-Keys versuchen
-          localStorage.setItem('accessToken', token);
-          localStorage.setItem('authToken', token);
-          localStorage.setItem('token', token);
-          localStorage.setItem('jwt', token);
-        }, token);
-
-        console.log('Stored auth token in localStorage');
-        return;
+        if (token) {
+          console.log('Retrieved auth token from network response');
+          this._authToken = token;
+          await this.page.evaluate(token => {
+            localStorage.setItem('accessToken', token);
+            localStorage.setItem('authToken', token);
+            localStorage.setItem('token', token);
+            localStorage.setItem('jwt', token);
+          }, token);
+        }
+      } catch (error) {
+        console.warn('Failed to capture auth token from network:', error);
       }
+
+      console.log('Network listeners set up for authentication');
     } catch (error) {
-      console.warn('Failed to capture auth token from network:', error);
+      console.error('Error setting up network listeners:', error);
     }
   }
 
@@ -468,52 +503,4 @@ export class LoginPage extends BasePage {
     return false;
   }
 
-  /**
-   * Set up network listeners to capture authentication tokens from API responses
-   */
-  async setupNetworkListeners(): Promise<void> {
-    try {
-      // Set up a request listener for future requests
-      await this.page.route('**/auth/login/**', async (route, request) => {
-        console.log('Intercepted login request');
-        await route.continue();
-      });
-
-      // Set up a response listener to capture auth tokens
-      this.page.on('response', async response => {
-        const url = response.url();
-        if (url.includes('/auth/login') || url.includes('/auth/token')) {
-          try {
-            const contentType = response.headers()['content-type'] || '';
-            if (contentType.includes('application/json')) {
-              const data = await response.json().catch(() => null);
-              if (data && (data.access || data.token || data.accessToken)) {
-                console.log('Captured authentication tokens from network response');
-                this._authToken = data.access || data.token || data.accessToken;
-                this._refreshToken = data.refresh || data.refreshToken || null;
-
-                // Store tokens in localStorage
-                await this.page.evaluate(
-                  ({ access, refresh }) => {
-                    localStorage.setItem('accessToken', access || '');
-                    if (refresh) localStorage.setItem('refreshToken', refresh);
-                  },
-                  {
-                    access: this._authToken,
-                    refresh: this._refreshToken,
-                  }
-                );
-              }
-            }
-          } catch (error) {
-            console.error('Error processing auth response:', error);
-          }
-        }
-      });
-
-      console.log('Network listeners set up for authentication');
-    } catch (error) {
-      console.error('Error setting up network listeners:', error);
-    }
-  }
 }

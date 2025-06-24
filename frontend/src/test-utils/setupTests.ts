@@ -1,11 +1,17 @@
-// src/test-utils/setupTests.ts
+ // src/test-utils/setupTests.ts
 import {vi} from 'vitest';
+// Log timer state before any test setup
+// @ts-ignore
+console.log('🧪 [setup] BEFORE vi.useFakeTimers:', typeof vi.getMockedSystemTime === 'function' ? vi.getMockedSystemTime() : 'n/a');
 import '@testing-library/jest-dom';
 import React from 'react';
 import {configure} from '@testing-library/react';
 
-// Ensure MUI Snackbar/Modal portals render into the test container
+ // Ensure MUI Snackbar/Modal portals render into the test container
 configure({defaultHidden: true});
+// Log timer state after all test setup (but before tests)
+ // @ts-ignore
+console.log('🧪 [setup] AFTER setup (no vi.useFakeTimers yet):', typeof vi.getMockedSystemTime === 'function' ? vi.getMockedSystemTime() : 'n/a');
 
 // Mock for MarkdownRenderer component
 vi.mock('@/components/common/MarkdownRenderer', () => ({
