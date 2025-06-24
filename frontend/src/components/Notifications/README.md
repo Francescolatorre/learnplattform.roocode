@@ -1,5 +1,24 @@
 # Enhanced Notification System
 
+> **Migration Strategy (Manual, No Script)**
+>
+> This project has migrated from legacy notification APIs to a unified, extensible notification system. All developers must follow the manual migration process below—no migration scripts are provided or permitted.
+>
+> **Actionable Steps:**
+> 1. **Update Imports:** Replace all legacy notification imports (e.g., `ErrorNotification`, `showErrorNotification`) with the new `useNotification` hook and `NotificationProvider`.
+> 2. **Refactor Usage:** Change all notification calls to use the `notify` function from `useNotification`. See the [Migration Guide](#migration-guide) below for code examples.
+> 3. **Provider Update:** Ensure your app is wrapped in a single `NotificationProvider`.
+> 4. **Remove Deprecated Code:** Delete all legacy notification components/utilities.
+> 5. **Gradual Migration:** You may update modules incrementally; deprecated APIs emit warnings until removal in the next major release.
+> 6. **Monitoring:** Watch for deprecation warnings in logs and test all notification scenarios after migration.
+> 7. **Issue Resolution:** Report migration issues via the project tracker.
+> 8. **Removal Plan:** Deprecated APIs will be removed in the next major release. Complete migration before upgrading.
+>
+> **References:**
+> - [Migration Guide](#migration-guide) (detailed steps/checklist)
+> - [`ADR-012-frontend-error-notification-system.md`](../../../../memory_bank/ADRs/ADR-012-frontend-error-notification-system.md:1) (architecture rationale)
+>
+
 A flexible, accessible notification system for managing and displaying multiple notifications with priority queuing.
 
 ## Overview
@@ -143,7 +162,7 @@ function ConfigExample() {
 The system automatically manages notifications based on:
 1. Maximum visible notifications limit
 2. Priority levels
-3. First-in-first-out (FIFO) for equal priorities
+3. Last-in-first-out (LIFO) for equal priorities
 
 Higher priority notifications will interrupt and replace lower priority ones when the maximum visible limit is reached.
 
@@ -159,35 +178,90 @@ The notification system follows WAI-ARIA guidelines:
 
 ## Migration Guide
 
-### Upgrading from v1.x
+### Migration Overview and Rationale
 
-1. Replace the old provider:
+The new Notification API replaces legacy "Error-prefixed" notification components and ad-hoc notification calls with a unified, extensible, and accessible system. This migration enables:
+- Consistent notification handling across the application
+- Improved accessibility and user experience
+- Priority-based queueing and flexible configuration
+- Easier maintenance and future enhancements
+
+### Step-by-Step Migration Instructions
+
+#### 1. Update Imports
+
+Replace imports of legacy notification components or utilities (e.g., `ErrorNotification`, `showErrorNotification`, `showNotification`) with the new API:
 
 ```diff
-- <SimpleNotificationProvider>
-+ <NotificationProvider maxVisible={3}>
+- import { showErrorNotification } from '.../old/path';
++ import { useNotification } from './NotificationProvider';
 ```
 
-2. Update notification calls:
+#### 2. Refactor Notification Usage
+
+- Replace direct calls to legacy notification functions:
+
+```diff
+- showErrorNotification('An error occurred');
++ const notify = useNotification();
++ notify({ message: 'An error occurred', severity: 'error' });
+```
+
+- For generic notifications:
 
 ```diff
 - showNotification('Message');
 + notify({ message: 'Message' });
 ```
 
-3. For duration customization:
+- For custom durations:
 
 ```diff
 - showNotification('Message', 3000);
 + notify({ message: 'Message', duration: 3000 });
 ```
 
-4. For severity levels:
+#### 3. Update Provider Usage
+
+Replace any usage of old notification providers (e.g., `SimpleNotificationProvider`, `ErrorNotificationProvider`) with the new `NotificationProvider`:
 
 ```diff
-- showErrorNotification('Error occurred');
-+ notify({ message: 'Error occurred', severity: 'error' });
+- <SimpleNotificationProvider>
++ <NotificationProvider maxVisible={3}>
+    {/* ... */}
+  </NotificationProvider>
 ```
+
+#### 4. Update Configuration
+
+- Set `maxVisible`, `position`, and `defaultDuration` as needed in `NotificationProvider`.
+- Use the `priority` and `severity` options for advanced notification control.
+
+#### 5. Remove Deprecated Components
+
+- Remove all references to legacy notification components and utilities from your codebase.
+
+### Migration Verification Checklist
+
+- [ ] All imports of legacy notification utilities/components are removed
+- [ ] All notification calls use the `useNotification` hook and `notify` function
+- [ ] The application is wrapped in a single `NotificationProvider`
+- [ ] Notification configuration matches application requirements
+- [ ] No runtime warnings or errors related to deprecated notification APIs
+- [ ] All notification types (success, info, warning, error) display correctly
+- [ ] Accessibility features (screen reader, keyboard navigation) are verified
+
+### Deprecation and Removal Timeline
+
+- **Phase 5:** Deprecation warnings are shown when using legacy notification APIs.
+- **Phase 6:** Legacy notification APIs will be removed in the next major release.
+- **Recommendation:** Complete migration and verification before upgrading to the next major version.
+
+#### Monitoring and Issue Reporting
+
+- Monitor application logs for deprecation warnings.
+- Test all notification scenarios after migration.
+- Report any issues to the maintainers or via the project issue tracker.
 
 ## Best Practices
 

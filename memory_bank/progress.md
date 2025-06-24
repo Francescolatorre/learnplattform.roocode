@@ -15,6 +15,12 @@
 
 ## Completed Tasks
 
+- `TASK-006-Notification-Refactor.md`: All legacy notification APIs/components removed, usages migrated, and migration guide updated. All subtasks DONE and validation criteria satisfied. Documentation and codebase fully aligned with the new notification system.
+
+---
+
+## Completed Tasks
+
 - Task references updated to comply with ADR-010 naming convention.
 - `TASK-REFACTOR-001`: Aligned frontend LearningTask interfaces with backend model
   - Removed unused fields from interfaces

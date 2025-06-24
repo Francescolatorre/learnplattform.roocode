@@ -14,6 +14,7 @@
 5. `TASK-CREATION-001-COURSE-CREATION.md`
 6. `TASK-REFACTOR-001-TaskStore-ILearningTask-Migration.md` [DONE]
 7. `TASK-004-Documentation-Migration.md` [DRAFT]
+8. `TASK-006-Notification-Refactor.md` [DONE]
 
 ## Blockers
 
