@@ -1,8 +1,17 @@
-import { describe, it, expect, beforeAll } from 'vitest';
-import { TCourseStatus } from '@/types/course';
+/**
+ * Integration test for courseService.
+ * Test environment requirements:
+ * - All service dependencies must be initialized via their public setAuthToken method.
+ * - No direct property access to internal API clients.
+ * - If mocking is needed, use global mocks in setupTests.ts.
+ * - Diagnostic logging is included before dependency access.
+ */
+
+import {describe, it, expect, beforeAll} from 'vitest';
+import {TCourseStatus} from '@/types/course';
 import authService from '../auth/authService';
-import courseService from './courseService';
-import { TEST_USERS } from '@/test-utils/setupIntegrationTests';
+import {courseService} from './courseService';
+import {TEST_USERS} from '@/test-utils/setupIntegrationTests';
 
 describe('courseService Integration', () => {
   let accessToken: string;
@@ -19,11 +28,10 @@ describe('courseService Integration', () => {
         TEST_USERS.instructor.password
       );
       accessToken = loginData.access;
-      // Set Authorization header for all ApiService instances used by courseService
-      courseService['apiCourse'].setAuthToken(accessToken);
-      courseService['apiCourses'].setAuthToken(accessToken);
-      courseService['apiVoid'].setAuthToken(accessToken);
-      courseService['apiAny'].setAuthToken(accessToken);
+      // Diagnostic logging
+      console.log('[courseService] Type:', typeof courseService);
+      // Set Authorization header for all ApiService instances using public API
+      courseService.setAuthToken(accessToken);
       // Fetch user profile to get userId
       const userProfile = await authService.getUserProfile(accessToken);
       userId = userProfile.id;
@@ -35,10 +43,9 @@ describe('courseService Integration', () => {
         TEST_USERS.student.password
       );
       accessToken = loginData.access;
-      courseService['apiCourse'].setAuthToken(accessToken);
-      courseService['apiCourses'].setAuthToken(accessToken);
-      courseService['apiVoid'].setAuthToken(accessToken);
-      courseService['apiAny'].setAuthToken(accessToken);
+      // Diagnostic logging
+      console.log('[courseService] Type:', typeof courseService);
+      courseService.setAuthToken(accessToken);
       const userProfile = await authService.getUserProfile(accessToken);
       userId = userProfile.id;
     }
@@ -123,3 +130,4 @@ describe('courseService Integration', () => {
     }
   });
 });
+

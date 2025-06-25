@@ -1,7 +1,16 @@
+/**
+ * Integration test for learningTaskService.
+ * Test environment requirements:
+ * - All service dependencies must be initialized via their public setAuthToken method.
+ * - No direct property access to internal API clients.
+ * - If mocking is needed, use global mocks in setupTests.ts.
+ * - Diagnostic logging is included before dependency access.
+ */
+
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { ICourse } from '@/types/course';
 import authService from '../auth/authService';
-import courseService from './courseService';
+import { courseService } from './courseService';
 import learningTaskService from './learningTaskService';
 import { TEST_USERS } from '@/test-utils/setupIntegrationTests';
 
@@ -19,12 +28,12 @@ describe('learningTaskService Integration', () => {
         TEST_USERS.instructor.password
       );
       accessToken = loginData.access;
-      // Set Authorization header for all ApiService instances used
+      // Diagnostic logging
+      console.log('[learningTaskService] Type:', typeof learningTaskService);
+      console.log('[courseService] Type:', typeof courseService);
+      // Set Authorization header for all ApiService instances using public API
       learningTaskService.setAuthToken(accessToken);
-      courseService['apiCourse'].setAuthToken(accessToken);
-      courseService['apiCourses'].setAuthToken(accessToken);
-      courseService['apiVoid'].setAuthToken(accessToken);
-      courseService['apiAny'].setAuthToken(accessToken);
+      courseService.setAuthToken(accessToken);
 
       // Fetch user profile to get userId
       const userProfile = await authService.getUserProfile(accessToken);
@@ -37,11 +46,12 @@ describe('learningTaskService Integration', () => {
         TEST_USERS.student.password
       );
       accessToken = loginData.access;
+      accessToken = loginData.access;
+      // Diagnostic logging
+      console.log('[learningTaskService] Type:', typeof learningTaskService);
+      console.log('[courseService] Type:', typeof courseService);
       learningTaskService.setAuthToken(accessToken);
-      courseService['apiCourse'].setAuthToken(accessToken);
-      courseService['apiCourses'].setAuthToken(accessToken);
-      courseService['apiVoid'].setAuthToken(accessToken);
-      courseService['apiAny'].setAuthToken(accessToken);
+      courseService.setAuthToken(accessToken);
       const userProfile = await authService.getUserProfile(accessToken);
       userId = userProfile.id;
     }

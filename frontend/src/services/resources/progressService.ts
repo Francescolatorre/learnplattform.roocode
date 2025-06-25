@@ -14,13 +14,10 @@ import {
   IPaginatedResponse,
   IDashboardResponse,
   ITaskProgress,
-  IEnrollmentStatus,
-  IEnrollmentResponse,
-  IUserProgressDetails,
 } from '@/types';
 
-import { API_CONFIG } from '../api/apiConfig';
-import { ApiService } from '../api/apiService';
+import {API_CONFIG} from '../api/apiConfig';
+import {ApiService} from '../api/apiService';
 
 /**
  * Service for managing progress-related operations, including student progress, quiz history,
@@ -34,6 +31,27 @@ class ProgressService {
   private apiAny = new ApiService<unknown>();
   private apiCourse = new ApiService<ICourse>();
   // private apiTaskProgress = new ApiService<ITaskProgress>();
+
+  /**
+   * Explicitly sets the authentication token for all API service instances
+   * This is primarily used for testing scenarios where localStorage isn't available
+   * @param token JWT auth token to use for API requests
+   */
+  setAuthToken(token: string): void {
+    if (!token) {
+      console.warn('ProgressService: Attempted to set empty auth token');
+      return;
+    }
+
+    // Set auth token on all API service instances
+    this.apiUserProgress.setAuthToken(token);
+    this.apiUserProgressArr.setAuthToken(token);
+    this.apiQuizAttemptArr.setAuthToken(token);
+    this.apiAny.setAuthToken(token);
+    this.apiCourse.setAuthToken(token);
+
+    console.debug('ProgressService: Auth tokens explicitly set on all API service instances');
+  }
 
   /**
    * Fetches the progress of a student across all courses.

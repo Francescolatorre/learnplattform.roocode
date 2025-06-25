@@ -5,7 +5,7 @@
  */
 
 // Re-export all types from their respective files
-export type { UserRoleEnum, IUser, IAuthState, IRegisterRequest } from './userTypes';
+export type {UserRoleEnum, IUser, IAuthState, IRegisterRequest} from './userTypes';
 export type {
   TCourseStatus,
   ICourseVersion,
@@ -56,8 +56,9 @@ export type {
   IProgressResponse,
   IUserProgressDetails,
   ICourseProgress,
+  IUserProgress,
 } from './progress';
-export type { IPaginatedResponse } from './paginatedResponse';
+export type {IPaginatedResponse} from './paginatedResponse';
 export type {
   ILoginRequest,
   ILoginResponse,
