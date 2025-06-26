@@ -29,6 +29,43 @@ class TasksByCoursePaginatedTest(TestCase):
         # Create API client
         self.client = APIClient()
 
+
+class CourseCreationTest(TestCase):
+    def setUp(self):
+        User = get_user_model()
+        self.instructor = User.objects.create_user(
+            username="instructor2",
+            email="instructor2@example.com",
+            password="instructpass2",
+            role="instructor",
+        )
+        self.student = User.objects.create_user(
+            username="student2",
+            email="student2@example.com",
+            password="studentpass2",
+            role="student",
+        )
+        self.admin = User.objects.create_superuser(
+            username="admin2", email="admin2@example.com", password="adminpass2"
+        )
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.instructor)
+
+    def test_course_creation_sets_creator(self):
+        payload = {
+            "title": "Backend Test Course",
+            "description": "A course created by test.",
+            "version": 1,
+            "status": "published",
+            "visibility": "public",
+            "learning_objectives": "",
+            "prerequisites": "",
+        }
+        response = self.client.post("/api/v1/courses/", payload, format="json")
+        self.assertEqual(response.status_code, 201, response.content)
+        course = Course.objects.get(title="Backend Test Course")
+        self.assertEqual(course.creator, self.instructor)
+
     def test_tasks_by_course_visibility(self):
         """Test that task visibility is correctly filtered based on user role:
         - Students can only see published tasks

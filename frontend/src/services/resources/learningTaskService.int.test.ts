@@ -7,12 +7,12 @@
  * - Diagnostic logging is included before dependency access.
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { ICourse } from '@/types/course';
+import {describe, it, expect, beforeAll, afterAll} from 'vitest';
+import {ICourse} from '@/types/course';
 import authService from '../auth/authService';
-import { courseService } from './courseService';
+import {courseService} from './courseService';
 import learningTaskService from './learningTaskService';
-import { TEST_USERS } from '@/test-utils/setupIntegrationTests';
+import {TEST_USERS} from '@/test-utils/setupIntegrationTests';
 
 describe('learningTaskService Integration', () => {
   let accessToken: string;
@@ -28,9 +28,7 @@ describe('learningTaskService Integration', () => {
         TEST_USERS.instructor.password
       );
       accessToken = loginData.access;
-      // Diagnostic logging
-      console.log('[learningTaskService] Type:', typeof learningTaskService);
-      console.log('[courseService] Type:', typeof courseService);
+
       // Set Authorization header for all ApiService instances using public API
       learningTaskService.setAuthToken(accessToken);
       courseService.setAuthToken(accessToken);
@@ -47,9 +45,7 @@ describe('learningTaskService Integration', () => {
       );
       accessToken = loginData.access;
       accessToken = loginData.access;
-      // Diagnostic logging
-      console.log('[learningTaskService] Type:', typeof learningTaskService);
-      console.log('[courseService] Type:', typeof courseService);
+
       learningTaskService.setAuthToken(accessToken);
       courseService.setAuthToken(accessToken);
       const userProfile = await authService.getUserProfile(accessToken);
@@ -66,7 +62,6 @@ describe('learningTaskService Integration', () => {
         visibility: 'public',
         learning_objectives: 'Test objectives',
         prerequisites: 'None',
-        creator: userId,
       };
       const createdCourse = await courseService.createCourse(courseData);
       createdCourseId = createdCourse.id;
@@ -98,19 +93,11 @@ describe('learningTaskService Integration', () => {
 
   it('getAll returns learning tasks', async () => {
     //console.log('Test course ID for getAll:', createdCourseId);
-    let tasks: any = await learningTaskService.getAll({ course: String(createdCourseId) });
+    let tasks: any = await learningTaskService.getAll({course: String(createdCourseId)});
     if (!Array.isArray(tasks) && tasks && Array.isArray(tasks.results)) {
       tasks = tasks.results;
     }
-    // Debug: log the tasks array to inspect structure
 
-    // console.log('learningTaskService.getAll() response:', tasks);
-    /*
-        if (Array.isArray(tasks)) {
-            tasks.forEach((t: any) => console.log('Task:', t));
-        }
-        */
-    //console.log('Returned task IDs:', tasks.map((t: any) => t.id));
     expect(Array.isArray(tasks)).toBe(true);
 
     // Assert all returned tasks are for the created course
@@ -158,7 +145,7 @@ describe('learningTaskService Integration', () => {
     });
     expect(updated).toHaveProperty('title', 'Updated Integration Test Task');
     // Revert title for idempotency
-    await learningTaskService.update(String(baseTaskId), { title: 'Base Integration Test Task' });
+    await learningTaskService.update(String(baseTaskId), {title: 'Base Integration Test Task'});
   });
 
   it('delete removes the learning task', async () => {

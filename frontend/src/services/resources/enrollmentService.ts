@@ -16,6 +16,7 @@ import {ApiService} from 'src/services/api/apiService';
 import {IPaginatedResponse} from 'src/types/paginatedResponse';
 import {authEventService} from '@context/auth/AuthEventService';
 import {AuthEventType} from '@context/auth/types';
+import {withManagedExceptions} from 'src/utils/errorHandling';
 
 /**
  * Interface for enrollment response data
@@ -71,9 +72,10 @@ class EnrollmentService {
    * @param {string | number} courseId - The ID of the course to check enrollment status for
    * @returns {Promise<IEnrollmentStatus>} A promise resolving to the enrollment status
    */
-  async getEnrollmentStatus(courseId: string | number): Promise<IEnrollmentStatus> {
-    console.info(`enrollmentservice:getEnrollmentStatus: Checking enrollment status for course ID: ${courseId}`);
-    try {
+  getEnrollmentStatus = withManagedExceptions(
+    async (courseId: string | number): Promise<IEnrollmentStatus> => {
+      console.info(`enrollmentservice:getEnrollmentStatus: Checking enrollment status for course ID: ${courseId}`);
+
       // Find enrollments for this course
       const enrollments = await this.findByFilter({course: Number(courseId)});
       const enrollment = enrollments.find(e => e.course === Number(courseId));
@@ -92,20 +94,27 @@ class EnrollmentService {
         enrollmentDate: enrollment.enrollment_date || null,
         enrollmentId: enrollment.id,
       };
-    } catch (error) {
-      console.error('Failed to get enrollment status:', error);
-      throw new Error('Failed to get enrollment status');
+    },
+    {
+      serviceName: 'EnrollmentService',
+      methodName: 'getEnrollmentStatus',
     }
-  }
+  );
 
   /**
    * Fetch all enrollments.
    * @returns {Promise<ICourseEnrollment[]>} Promise resolving to an array of Enrollment objects.
    * @throws {Error} If the API request fails.
    */
-  async getAll(): Promise<ICourseEnrollment[]> {
-    return this.apiEnrollments.get(API_CONFIG.endpoints.enrollments.list);
-  }
+  getAll = withManagedExceptions(
+    async (): Promise<ICourseEnrollment[]> => {
+      return this.apiEnrollments.get(API_CONFIG.endpoints.enrollments.list);
+    },
+    {
+      serviceName: 'EnrollmentService',
+      methodName: 'getAll',
+    }
+  );
 
   /**
    * Fetch enrollment by ID.
@@ -113,9 +122,15 @@ class EnrollmentService {
    * @returns {Promise<ICourseEnrollment>} Promise resolving to the Enrollment object.
    * @throws {Error} If the enrollment is not found or the API request fails.
    */
-  async getById(id: string | number): Promise<ICourseEnrollment> {
-    return this.apiEnrollment.get(API_CONFIG.endpoints.enrollments.details(id));
-  }
+  getById = withManagedExceptions(
+    async (id: string | number): Promise<ICourseEnrollment> => {
+      return this.apiEnrollment.get(API_CONFIG.endpoints.enrollments.details(id));
+    },
+    {
+      serviceName: 'EnrollmentService',
+      methodName: 'getById',
+    }
+  );
 
   /**
    * Create a new enrollment.
@@ -123,9 +138,15 @@ class EnrollmentService {
    * @returns {Promise<ICourseEnrollment>} Promise resolving to the created Enrollment object.
    * @throws {Error} If enrollment creation fails.
    */
-  async create(data: Partial<ICourseEnrollment>): Promise<ICourseEnrollment> {
-    return this.apiEnrollment.post(API_CONFIG.endpoints.enrollments.create, data);
-  }
+  create = withManagedExceptions(
+    async (data: Partial<ICourseEnrollment>): Promise<ICourseEnrollment> => {
+      return this.apiEnrollment.post(API_CONFIG.endpoints.enrollments.create, data);
+    },
+    {
+      serviceName: 'EnrollmentService',
+      methodName: 'create',
+    }
+  );
 
   /**
    * Update an existing enrollment.
@@ -134,8 +155,8 @@ class EnrollmentService {
    * @returns {Promise<ICourseEnrollment>} Promise resolving to the updated Enrollment object.
    * @throws {Error} If enrollment update fails or the enrollment is not found.
    */
-  async update(id: string | number, data: Partial<ICourseEnrollment>): Promise<ICourseEnrollment> {
-    try {
+  update = withManagedExceptions(
+    async (id: string | number, data: Partial<ICourseEnrollment>): Promise<ICourseEnrollment> => {
       // First get the current enrollment to ensure we have all required fields
       const currentEnrollment = await this.getById(id);
 
@@ -148,20 +169,27 @@ class EnrollmentService {
 
       console.info(`EnrollmentService: Updating enrollment ${id} with data:`, data);
       return this.apiEnrollment.put(API_CONFIG.endpoints.enrollments.update(id), completeData);
-    } catch (error) {
-      console.error(`EnrollmentService: Failed to update enrollment ${id}:`, error);
-      throw error;
+    },
+    {
+      serviceName: 'EnrollmentService',
+      methodName: 'update',
     }
-  }
+  );
 
   /**
    * Fetch all enrollments for the current user.
    * @returns {Promise<ICourseEnrollment[]>} Promise resolving to an array of Enrollment objects for the current user.
    * @throws {Error} If the API request fails or the user is not authenticated.
    */
-  async fetchUserEnrollments(): Promise<ICourseEnrollment[]> {
-    return this.apiEnrollments.get(API_CONFIG.endpoints.enrollments.list);
-  }
+  fetchUserEnrollments = withManagedExceptions(
+    async (): Promise<ICourseEnrollment[]> => {
+      return this.apiEnrollments.get(API_CONFIG.endpoints.enrollments.list);
+    },
+    {
+      serviceName: 'EnrollmentService',
+      methodName: 'fetchUserEnrollments',
+    }
+  );
 
   /**
    * Enroll the current user in a course.
@@ -169,8 +197,8 @@ class EnrollmentService {
    * @returns {Promise<ICourseEnrollment>} Promise resolving to the created Enrollment object.
    * @throws {Error} If enrollment fails, the course is not found, or the user is already enrolled.
    */
-  async enrollInCourse(courseId: string | number): Promise<ICourseEnrollment> {
-    try {
+  enrollInCourse = withManagedExceptions(
+    async (courseId: string | number): Promise<ICourseEnrollment> => {
       // Get the current user's ID - Since we can't directly access AuthContext here,
       // we use the token from localStorage which contains the user ID
       const accessToken = this.authToken || localStorage.getItem('accessToken');
@@ -221,34 +249,15 @@ class EnrollmentService {
       });
 
       return response;
-    } catch (error: any) {
-      console.error('Enrollment failed:', error);
-
-      // Enhanced error reporting
-      if (error.response?.data) {
-        console.error('Server responded with:', error.response.data);
-
-        // Check for specific error conditions
-        if (error.response.status === 400) {
-          // If we have detailed validation errors, include them in the message
-          const detailedMessage =
-            error.response.data.detail ||
-            Object.entries(error.response.data)
-              .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
-              .join(', ');
-
-          throw new Error(`Failed to enroll in course: ${detailedMessage}`);
-        } else if (error.response.status === 401) {
-          throw new Error('You must be logged in to enroll in courses.');
-        } else if (error.response.status === 409) {
-          throw new Error('You are already enrolled in this course.');
-        }
+    },
+    {
+      serviceName: 'EnrollmentService',
+      methodName: 'enrollInCourse',
+      context: {
+        additionalInfo: 'Enrolling user in course',
       }
-
-      // Generic error if we don't have specific details
-      throw new Error('Failed to enroll in course. Please try again later.');
     }
-  }
+  );
 
   /**
    * Unenroll from a course by course ID
@@ -257,59 +266,63 @@ class EnrollmentService {
    * @param courseId The course ID to unenroll from
    * @returns Response with status of the unenrollment operation
    */
-  async unenrollFromCourseById(courseId: number | string): Promise<IEnrollmentResponse> {
-    try {
+  unenrollFromCourseById = withManagedExceptions(
+    async (courseId: number | string): Promise<IEnrollmentResponse> => {
       console.log(`Unenrolling from course ID: ${courseId}`);
 
-      // Call the primary enrollments unenroll endpoint
-      const response = (await this.apiAny.post(
-        API_CONFIG.endpoints.enrollments.unenroll(courseId),
-        {}
-      )) as Record<string, any>;
+      try {
+        // Call the primary enrollments unenroll endpoint
+        const response = (await this.apiAny.post(
+          API_CONFIG.endpoints.enrollments.unenroll(courseId),
+          {}
+        )) as Record<string, any>;
 
-      console.log(
-        `Successfully unenrolled from course ${courseId} using enrollments unenroll endpoint`
-      );
+        console.log(
+          `Successfully unenrolled from course ${courseId} using enrollments unenroll endpoint`
+        );
 
-      // Special handling for "not enrolled" case from backend
-      if (response?.message?.includes('not enrolled')) {
+        // Special handling for "not enrolled" case from backend
+        if (response?.message?.includes('not enrolled')) {
+          return {
+            success: true,
+            message: 'You are not enrolled in this course',
+            courseId: String(courseId),
+            status: 'not_enrolled',
+          };
+        }
+
         return {
           success: true,
-          message: 'You are not enrolled in this course',
+          message: response?.message || 'Successfully unenrolled from course',
           courseId: String(courseId),
-          status: 'not_enrolled',
+          status: response?.status || 'dropped',
+          enrollmentId: response?.enrollmentId,
         };
+      } catch (error) {
+        // For not enrolled cases in errors, return a formatted response
+        if (
+          error instanceof Error &&
+          (error.message.includes('not enrolled') ||
+            (error as any)?.response?.data?.detail?.includes('not enrolled') ||
+            (error as any)?.response?.data?.message?.includes('not enrolled'))
+        ) {
+          return {
+            success: true,
+            message: 'You are not enrolled in this course',
+            courseId: String(courseId),
+            status: 'not_enrolled',
+          };
+        }
+
+        // Otherwise throw the error
+        throw new Error(`Failed to complete unenrollment operation: ${(error as Error).message}`);
       }
-
-      return {
-        success: true,
-        message: response?.message || 'Successfully unenrolled from course',
-        courseId: String(courseId),
-        status: response?.status || 'dropped',
-        enrollmentId: response?.enrollmentId,
-      };
-    } catch (error) {
-      console.error(`Error during unenrollment from course ${courseId}:`, error);
-
-      // For not enrolled cases in errors, return a formatted response
-      if (
-        error instanceof Error &&
-        (error.message.includes('not enrolled') ||
-          (error as any)?.response?.data?.detail?.includes('not enrolled') ||
-          (error as any)?.response?.data?.message?.includes('not enrolled'))
-      ) {
-        return {
-          success: true,
-          message: 'You are not enrolled in this course',
-          courseId: String(courseId),
-          status: 'not_enrolled',
-        };
-      }
-
-      // Otherwise throw the error
-      throw new Error(`Failed to complete unenrollment operation: ${(error as Error).message}`);
+    },
+    {
+      serviceName: 'EnrollmentService',
+      methodName: 'unenrollFromCourseById',
     }
-  }
+  );
 
   /**
    * Updates an enrollment with new data.
@@ -319,12 +332,18 @@ class EnrollmentService {
    * @param {Partial<ICourseEnrollment>} data - Enrollment data to update.
    * @returns {Promise<ICourseEnrollment>} Promise resolving to the updated enrollment.
    */
-  async updateEnrollment(
-    id: string | number,
-    data: Partial<ICourseEnrollment>
-  ): Promise<ICourseEnrollment> {
-    return this.update(id, data);
-  }
+  updateEnrollment = withManagedExceptions(
+    async (
+      id: string | number,
+      data: Partial<ICourseEnrollment>
+    ): Promise<ICourseEnrollment> => {
+      return this.update(id, data);
+    },
+    {
+      serviceName: 'EnrollmentService',
+      methodName: 'updateEnrollment',
+    }
+  );
 
   /**
    * Fetch all enrollments for a specific course.
@@ -332,9 +351,15 @@ class EnrollmentService {
    * @returns {Promise<ICourseEnrollment[]>} Promise resolving to an array of Enrollment objects for the specified course.
    * @throws {Error} If the API request fails or the course is not found.
    */
-  async fetchEnrolledStudents(courseId: string | number): Promise<ICourseEnrollment[]> {
-    return this.apiEnrollments.get(API_CONFIG.endpoints.enrollments.byCourse(courseId));
-  }
+  fetchEnrolledStudents = withManagedExceptions(
+    async (courseId: string | number): Promise<ICourseEnrollment[]> => {
+      return this.apiEnrollments.get(API_CONFIG.endpoints.enrollments.byCourse(courseId));
+    },
+    {
+      serviceName: 'EnrollmentService',
+      methodName: 'fetchEnrolledStudents',
+    }
+  );
 
   /**
    * Find enrollments by filter criteria
@@ -342,8 +367,8 @@ class EnrollmentService {
    * @param filter An object with filter criteria
    * @returns Array of enrollments matching the filter
    */
-  async findByFilter(filter: Record<string, unknown>): Promise<ICourseEnrollment[]> {
-    try {
+  findByFilter = withManagedExceptions(
+    async (filter: Record<string, unknown>): Promise<ICourseEnrollment[]> => {
       const queryParams = Object.entries(filter)
         .map(([key, value]) => `${key}=${value}`)
         .join('&');
@@ -365,11 +390,12 @@ class EnrollmentService {
         console.warn('Unexpected response format from enrollment API:', response);
         return [];
       }
-    } catch (error) {
-      console.error('Error finding enrollments by filter:', error);
-      throw error;
+    },
+    {
+      serviceName: 'EnrollmentService',
+      methodName: 'findByFilter',
     }
-  }
+  );
 
   /**
    * Set authentication token for all ApiService instances.

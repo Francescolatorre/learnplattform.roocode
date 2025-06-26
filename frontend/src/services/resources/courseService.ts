@@ -1,10 +1,10 @@
-import {IUserProgress} from '@/types/progress';
-import {IStudentProgressSummary} from '@/types';
-
 import {ApiService} from '@/services/api/apiService';
 import {ICourse, TCourseStatus} from '@/types/course';
 import {ILearningTask, ITaskProgress} from '@/types/task';
 import {IPaginatedResponse} from 'src/types/paginatedResponse';
+import {withManagedExceptions} from 'src/utils/errorHandling';
+import {IUserProgress} from '@/types/progress';
+import {IStudentProgressSummary} from '@/types';
 
 import {API_CONFIG} from '../api/apiConfig';
 
@@ -41,75 +41,68 @@ class CourseService {
   private apiCourses = new ApiService<IPaginatedResponse<ICourse>>();
   private apiVoid = new ApiService<void>();
   private apiAny = new ApiService<unknown>();
-  private transformUserProgressToStudentSummary(
-    userProgress: IUserProgress[]
-  ): IStudentProgressSummary[] {
-    return userProgress.map(progress => ({
-      user_id: progress.id,
-      username: progress.label || 'Unknown',
-      overall_progress: progress.percentage,
-      courses_enrolled: 1,
-      progress: progress.percentage, // Assuming 'percentage' corresponds to 'progress'
-    }));
-  }
-
-  /**
-   * Enroll a student in a course.
-   * @param courseId - The ID of the course to enroll in.
-   * @param studentId - The ID of the student to enroll.
-   * @returns The enrollment response from the backend.
-   */
-  async enrollStudent(courseId: string | number, studentId: string | number): Promise<any> {
-    try {
-      this.ensureAuthToken();
-      const body = {course: courseId, student: studentId};
-      const response = await this.apiAny.post(API_CONFIG.endpoints.enrollments.create, body);
-      return response;
-    } catch (error) {
-      console.error('CourseService: Failed to enroll student:', error);
-      throw error;
-    }
-  }
 
   private apiTaskProgressArray = new ApiService<ITaskProgress[]>();
   private apiLearningTasks = new ApiService<IPaginatedResponse<ILearningTask>>();
 
   /**
+ * Enroll a student in a course.
+ * @param courseId - The ID of the course to enroll in.
+ * @param studentId - The ID of the student to enroll.
+ * @returns The enrollment response from the backend.
+ */
+  enrollStudent = withManagedExceptions(
+    async (courseId: string | number, studentId: string | number): Promise<any> => {
+      this.ensureAuthToken();
+      const body = {course: courseId, student: studentId};
+      const response = await this.apiAny.post(API_CONFIG.endpoints.enrollments.create, body);
+      return response;
+    },
+    {
+      serviceName: 'CourseService',
+      methodName: 'enrollStudent',
+    }
+  );
+
+
+
+  /**
    * Fetches a paginated list of courses with optional filtering
    * @param options
    */
-  async fetchCourses(options: CourseFilterOptions = {}): Promise<IPaginatedResponse<ICourse>> {
-    console.info('CourseService: fetchCourses called with options:', options);
-    const queryParams = new URLSearchParams();
+  fetchCourses = withManagedExceptions(
+    async (options: CourseFilterOptions = {}): Promise<IPaginatedResponse<ICourse>> => {
+      console.info('CourseService: fetchCourses called with options:', options);
+      const queryParams = new URLSearchParams();
 
-    if (options.page) queryParams.append('page', options.page.toString());
-    if (options.page_size) queryParams.append('page_size', options.page_size.toString());
-    if (options.search) queryParams.append('search', options.search);
-    if (options.status) queryParams.append('status', options.status);
-    if (options.creator) queryParams.append('creator', options.creator.toString());
+      if (options.page) queryParams.append('page', options.page.toString());
+      if (options.page_size) queryParams.append('page_size', options.page_size.toString());
+      if (options.search) queryParams.append('search', options.search);
+      if (options.status) queryParams.append('status', options.status);
+      if (options.creator) queryParams.append('creator', options.creator.toString());
 
-    const url = `${API_CONFIG.endpoints.courses.list}?${queryParams.toString()}`;
-    console.debug('CourseService: Fetching courses with URL:', url);
+      const url = `${API_CONFIG.endpoints.courses.list}?${queryParams.toString()}`;
+      console.debug('CourseService: Fetching courses with URL:', url);
 
-    try {
       const response = await this.apiCourses.get(url);
       console.info('CourseService: fetchCourses succeeded', {
         count: response.count,
         resultsLength: response.results?.length || 0,
       });
       return response;
-    } catch (error) {
-      console.error('CourseService: fetchCourses failed', error);
-      throw error;
+    },
+    {
+      serviceName: 'CourseService',
+      methodName: 'fetchCourses',
     }
-  }
+  );
 
   /**
    * Creates a new course
    * @param courseData
    */
-  async createCourse(courseData: Partial<ICourse>): Promise<ICourse> {
-    try {
+  createCourse = withManagedExceptions(
+    async (courseData: Partial<ICourse>): Promise<ICourse> => {
       console.info('CourseService: Creating course with data:', courseData);
       // Make sure we're using token from localStorage
       this.ensureAuthToken();
@@ -120,79 +113,73 @@ class CourseService {
         title: course.title,
       });
       return course;
-    } catch (error) {
-      console.error('CourseService: Failed to create course:', error);
-      // Add better error information
-      if (error instanceof Error) {
-        const response = (error as any).response;
-        if (response) {
-          console.error('CourseService: Error response:', {
-            status: response.status,
-            data: response.data,
-          });
-        }
-      }
-      throw error;
+    },
+    {
+      serviceName: 'CourseService',
+      methodName: 'createCourse',
     }
-  }
+  );
 
   /**
    * Retrieves detailed information for a specific course
    * @param courseId
    */
-  async getCourseDetails(courseId: string): Promise<ICourse> {
-    console.info(`CourseService: Getting details for course ${courseId}`);
-    try {
+  getCourseDetails = withManagedExceptions(
+    async (courseId: string): Promise<ICourse> => {
+      console.info(`CourseService: Getting details for course ${courseId}`);
       const response = await this.apiCourse.get(API_CONFIG.endpoints.courses.details(courseId));
       if (!response) {
         console.error(`CourseService: Course ${courseId} not found`);
-        throw new Error('Course not found');
+        throw new Error(`Course with ID ${courseId} not found`);
       }
       console.info(`CourseService: Successfully retrieved course ${courseId}`, {
         title: response.title,
         status: response.status,
       });
       return response;
-    } catch (error) {
-      console.error(`CourseService: Failed to get course details for ${courseId}`, error);
-      throw error;
+    },
+    {
+      serviceName: 'CourseService',
+      methodName: 'getCourseDetails',
     }
-  }
+  );
 
   /**
    * Updates an existing course
    * @param courseId
    * @param courseData
    */
-  async updateCourse(courseId: string, courseData: Partial<ICourse>): Promise<ICourse> {
-    console.info(`CourseService: Updating course ${courseId}`, courseData);
-    try {
+  updateCourse = withManagedExceptions(
+    async (courseId: string, courseData: Partial<ICourse>): Promise<ICourse> => {
+      console.info(`CourseService: Updating course ${courseId}`, courseData);
       const response = await this.apiCourse.patch(
         API_CONFIG.endpoints.courses.update(courseId),
         courseData
       );
       console.info(`CourseService: Successfully updated course ${courseId}`);
       return response;
-    } catch (error) {
-      console.error(`CourseService: Failed to update course ${courseId}`, error);
-      throw error;
+    },
+    {
+      serviceName: 'CourseService',
+      methodName: 'updateCourse',
     }
-  }
+  );
 
   /**
    * Deletes a course
    * @param courseId
    */
-  async deleteCourse(courseId: string): Promise<void> {
-    console.info(`CourseService: Deleting course ${courseId}`);
-    try {
+  deleteCourse = withManagedExceptions(
+    async (courseId: string): Promise<void> => {
+      console.info(`CourseService: Deleting course ${courseId}`);
       await this.apiVoid.delete(API_CONFIG.endpoints.courses.delete(courseId));
       console.info(`CourseService: Successfully deleted course ${courseId}`);
-    } catch (error) {
-      console.error(`CourseService: Failed to delete course ${courseId}`, error);
-      throw error;
+    },
+    {
+      serviceName: 'CourseService',
+      methodName: 'deleteCourse',
     }
-  }
+  );
 
   /**
    * Enrolls the current user in a course
@@ -202,11 +189,11 @@ class CourseService {
   /**
    * Fetches courses where the current user is an instructor
    * @param options Optional pagination and filtering options
-   */ async fetchInstructorCourses(
-    options: CourseFilterOptions = {}
-  ): Promise<IPaginatedResponse<ICourse>> {
-    console.info('CourseService: Fetching instructor courses with options:', options);
-    try {
+   */
+  fetchInstructorCourses = withManagedExceptions(
+    async (options: CourseFilterOptions = {}): Promise<IPaginatedResponse<ICourse>> => {
+      console.info('CourseService: Fetching instructor courses with options:', options);
+
       // Prepare query parameters
       const queryParams = new URLSearchParams();
       if (options.page) queryParams.append('page', options.page.toString());
@@ -302,79 +289,72 @@ class CourseService {
       }
 
       return formattedResponse;
-    } catch (error) {
-      console.error('CourseService: Failed to fetch instructor courses', error);
-
-      // Enhanced error logging
-      if (error instanceof Error) {
-        if ((error as any).response) {
-          console.error('CourseService: Error response details:', {
-            status: (error as any).response.status,
-            statusText: (error as any).response.statusText,
-            data: (error as any).response.data,
-            headers: (error as any).response.headers,
-          });
-        } else if ((error as any).request) {
-          console.error('CourseService: No response received, request details:', {
-            method: (error as any).request.method,
-            url: (error as any).request.url,
-            headers: (error as any).request.headers,
-          });
-        } else {
-          console.error('CourseService: Error setting up request:', error.message);
-        }
-      }
-
-      throw error;
+    },
+    {
+      serviceName: 'CourseService',
+      methodName: 'fetchInstructorCourses',
     }
-  }
+  );
 
   /**
    * Changes the status of a course
    * @param courseId
    * @param status
    */
-  async updateCourseStatus(courseId: string, status: TCourseStatus): Promise<ICourse> {
-    console.info(`CourseService: Updating course ${courseId} status to ${status}`);
-    try {
+  updateCourseStatus = withManagedExceptions(
+    async (courseId: string, status: TCourseStatus): Promise<ICourse> => {
+      console.info(`CourseService: Updating course ${courseId} status to ${status}`);
       const response = await this.apiCourse.patch(
         `${API_CONFIG.endpoints.courses.updateStatus}/${courseId}`,
         {status}
       );
       console.info(`CourseService: Successfully updated course ${courseId} status to ${status}`);
       return response;
-    } catch (error) {
-      console.error(`CourseService: Failed to update course ${courseId} status`, error);
-      throw error;
+    },
+    {
+      serviceName: 'CourseService',
+      methodName: 'updateCourseStatus',
     }
-  }
+  );
 
   /**
    * Archives a course
    * @param courseId
    */
-  async archiveCourse(courseId: string): Promise<ICourse> {
-    console.info(`CourseService: Archiving course ${courseId}`);
-    return this.updateCourseStatus(courseId, 'archived');
-  }
+  archiveCourse = withManagedExceptions(
+    async (courseId: string): Promise<ICourse> => {
+      console.info(`CourseService: Archiving course ${courseId}`);
+      return this.updateCourseStatus(courseId, 'archived');
+    },
+    {
+      serviceName: 'CourseService',
+      methodName: 'archiveCourse',
+    }
+  );
 
   /**
    * Publishes a course
    * @param courseId
    */
-  async publishCourse(courseId: string): Promise<ICourse> {
-    console.info(`CourseService: Publishing course ${courseId}`);
-    return this.updateCourseStatus(courseId, 'published');
-  }
+  publishCourse = withManagedExceptions(
+    async (courseId: string): Promise<ICourse> => {
+      console.info(`CourseService: Publishing course ${courseId}`);
+      return this.updateCourseStatus(courseId, 'published');
+    },
+    {
+      serviceName: 'CourseService',
+      methodName: 'publishCourse',
+    }
+  );
 
   /**
    * Fetches course progress for the current user
    * @param courseId - ID of the course to fetch progress for
    * @returns Promise containing an array of task progress records
    */
-  async fetchCourseProgress(courseId: string): Promise<ITaskProgress[]> {
-    console.info(`CourseService: Fetching progress for course ${courseId}`);
-    try {
+  fetchCourseProgress = withManagedExceptions(
+    async (courseId: string): Promise<ITaskProgress[]> => {
+      console.info(`CourseService: Fetching progress for course ${courseId}`);
       const response = await this.apiTaskProgressArray.get(
         `${API_CONFIG.endpoints.courses.progress}/${courseId}`
       );
@@ -382,20 +362,21 @@ class CourseService {
         itemCount: response.length,
       });
       return response;
-    } catch (error) {
-      console.error(`CourseService: Failed to fetch progress for course ${courseId}`, error);
-      throw error;
+    },
+    {
+      serviceName: 'CourseService',
+      methodName: 'fetchCourseProgress',
     }
-  }
+  );
 
   /**
    * Fetches learning tasks associated with a specific course
    * @param courseId - ID of the course to fetch tasks for
    * @returns Promise containing a paginated response of learning tasks
    */
-  async getCourseTasks(courseId: string): Promise<IPaginatedResponse<ILearningTask>> {
-    console.info(`CourseService: Fetching tasks for course ${courseId}`);
-    try {
+  getCourseTasks = withManagedExceptions(
+    async (courseId: string): Promise<IPaginatedResponse<ILearningTask>> => {
+      console.info(`CourseService: Fetching tasks for course ${courseId}`);
       const response = await this.apiLearningTasks.get(
         API_CONFIG.endpoints.tasks.byCourse(courseId)
       );
@@ -414,11 +395,50 @@ class CourseService {
       });
 
       return formattedResponse;
-    } catch (error) {
-      console.error(`CourseService: Failed to fetch tasks for course ${courseId}`, error);
-      throw error;
+    },
+    {
+      serviceName: 'CourseService',
+      methodName: 'getCourseTasks',
     }
-  }
+  );
+
+  /**
+   * Transforms a simple user progress object into a student progress summary
+   * @param progress - The user progress object to transform
+   * @returns A student progress summary object
+   */
+  transformUserProgressToStudentSummary = (progress: IUserProgress): IStudentProgressSummary => {
+    console.info('CourseService: Transforming user progress to student summary');
+
+    // Create a default student progress summary with data from the user progress
+    return {
+      progress: progress.percentage,
+      user_info: {
+        id: progress.id.toString(),
+        username: progress.label,
+        display_name: progress.label,
+        role: 'student'
+      },
+      overall_stats: {
+        courses_enrolled: 1,
+        courses_completed: 0,
+        overall_progress: progress.percentage,
+        tasks_completed: 0,
+        tasks_in_progress: 0,
+        tasks_overdue: 0
+      },
+      courses: [
+        {
+          id: progress.id.toString(),
+          title: progress.label,
+          progress: progress.percentage,
+          status: 'active',
+          enrolled_date: new Date().toISOString(),
+          last_activity_date: new Date().toISOString()
+        }
+      ]
+    };
+  };
 
   /**
    * Explicitly sets the authentication token for all API service instances

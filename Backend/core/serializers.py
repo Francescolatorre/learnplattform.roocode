@@ -168,6 +168,7 @@ class CourseSerializer(serializers.ModelSerializer):
             "id",
             "created_at",
             "updated_at",
+            "creator",
             "creator_details",
             "description_html",
         ]

@@ -18,6 +18,7 @@ import {
 
 import {API_CONFIG} from '../api/apiConfig';
 import {ApiService} from '../api/apiService';
+import {withManagedExceptions} from 'src/utils/errorHandling';
 
 /**
  * Service for managing progress-related operations, including student progress, quiz history,
@@ -58,38 +59,52 @@ class ProgressService {
    * @param studentId The ID of the student.
    * @returns A promise that resolves to an array of UserProgress objects.
    */
-  async fetchStudentProgressByUser(studentId: string): Promise<IUserProgress[]> {
-    console.log('Fetching student progress by user:', studentId);
-    const endpoint = API_CONFIG.endpoints.student.progress(studentId);
-    return this.apiUserProgressArr.get(endpoint);
-  }
+  fetchStudentProgressByUser = withManagedExceptions(
+    async (studentId: string): Promise<IUserProgress[]> => {
+      console.log('Fetching student progress by user:', studentId);
+      const endpoint = API_CONFIG.endpoints.student.progress(studentId);
+      return this.apiUserProgressArr.get(endpoint);
+    },
+    {
+      serviceName: 'ProgressService',
+      methodName: 'fetchStudentProgressByUser',
+    }
+  );
 
   /**
    * Fetches the progress of a student in a specific course.
    * @param courseId The ID of the course.
    * @param studentId The ID of the student.
-   * @param includeDetails Whether to include detailed progress information.
    * @returns A promise that resolves to a UserProgress object or null if not found.
    */
-  async fetchStudentProgressByCourse(
-    courseId: string,
-    studentId: string
-  ): Promise<IUserProgress | null> {
-    console.log('Fetching student progress by course:', courseId, studentId);
-    const endpoint = API_CONFIG.endpoints.courses.studentProgressDetail(courseId, studentId);
-    return this.apiUserProgress.get(endpoint);
-  }
+  fetchStudentProgressByCourse = withManagedExceptions(
+    async (courseId: string, studentId: string): Promise<IUserProgress | null> => {
+      console.log('Fetching student progress by course:', courseId, studentId);
+      const endpoint = API_CONFIG.endpoints.courses.studentProgressDetail(courseId, studentId);
+      return this.apiUserProgress.get(endpoint);
+    },
+    {
+      serviceName: 'ProgressService',
+      methodName: 'fetchStudentProgressByCourse',
+    }
+  );
 
   /**
    * Fetches the progress of all students in a specific course.
    * @param courseId The ID of the course.
    * @returns A promise that resolves to an object containing the count, next page, previous page, and results.
    */
-  async fetchAllStudentsProgress(courseId: string): Promise<IPaginatedResponse<IUserProgress>> {
-    console.log('Fetching all students progress for course:', courseId);
-    const endpoint = API_CONFIG.endpoints.courses.studentProgress(courseId);
-    return this.apiAny.get(endpoint) as Promise<IPaginatedResponse<IUserProgress>>;
-  }
+  fetchAllStudentsProgress = withManagedExceptions(
+    async (courseId: string): Promise<IPaginatedResponse<IUserProgress>> => {
+      console.log('Fetching all students progress for course:', courseId);
+      const endpoint = API_CONFIG.endpoints.courses.studentProgress(courseId);
+      return this.apiAny.get(endpoint) as Promise<IPaginatedResponse<IUserProgress>>;
+    },
+    {
+      serviceName: 'ProgressService',
+      methodName: 'fetchAllStudentsProgress',
+    }
+  );
 
   /**
    * Fetches quiz attempts for a course or a specific student.
@@ -97,13 +112,19 @@ class ProgressService {
    * @param studentId The ID of the student (optional).
    * @returns A promise that resolves to an array of QuizAttempt objects.
    */
-  async getIQuizHistory(courseId: string, studentId?: string): Promise<IQuizAttempt[]> {
-    console.log('Getting quiz history for course:', courseId, 'and student:', studentId);
-    const endpoint = API_CONFIG.endpoints.quizzes.attemptsList;
-    // If studentId is provided, filter by studentId (assuming API supports query param)
-    const url = studentId ? `${endpoint}?student=${studentId}` : endpoint;
-    return this.apiQuizAttemptArr.get(url);
-  }
+  getIQuizHistory = withManagedExceptions(
+    async (courseId: string, studentId?: string): Promise<IQuizAttempt[]> => {
+      console.log('Getting quiz history for course:', courseId, 'and student:', studentId);
+      const endpoint = API_CONFIG.endpoints.quizzes.attemptsList;
+      // If studentId is provided, filter by studentId (assuming API supports query param)
+      const url = studentId ? `${endpoint}?student=${studentId}` : endpoint;
+      return this.apiQuizAttemptArr.get(url);
+    },
+    {
+      serviceName: 'ProgressService',
+      methodName: 'getIQuizHistory',
+    }
+  );
 
   /**
    * Updates task progress for a student in a course.
@@ -112,14 +133,20 @@ class ProgressService {
    * @param progressData The progress data to update.
    * @returns A promise that resolves to the updated task progress.
    */
-  async updateTaskProgress(
-    courseId: string,
-    taskId: string,
-    progressData: ITaskProgressUpdateData
-  ): Promise<ITaskProgress> {
-    const endpoint = API_CONFIG.endpoints.tasks.details(taskId);
-    return this.apiAny.put(endpoint, progressData) as Promise<ITaskProgress>;
-  }
+  updateTaskProgress = withManagedExceptions(
+    async (
+      courseId: string,
+      taskId: string,
+      progressData: ITaskProgressUpdateData
+    ): Promise<ITaskProgress> => {
+      const endpoint = API_CONFIG.endpoints.tasks.details(taskId);
+      return this.apiAny.put(endpoint, progressData) as Promise<ITaskProgress>;
+    },
+    {
+      serviceName: 'ProgressService',
+      methodName: 'updateTaskProgress',
+    }
+  );
 
   /**
    * Submits a task for a student in a course.
@@ -128,14 +155,20 @@ class ProgressService {
    * @param submissionData The submission data to be submitted.
    * @returns A promise that resolves to the server response.
    */
-  async submitTask(
-    courseId: string,
-    taskId: string,
-    submissionData: ITaskSubmissionData
-  ): Promise<ITaskProgress> {
-    const endpoint = API_CONFIG.endpoints.tasks.details(taskId);
-    return this.apiAny.post(endpoint, submissionData) as Promise<ITaskProgress>;
-  }
+  submitTask = withManagedExceptions(
+    async (
+      courseId: string,
+      taskId: string,
+      submissionData: ITaskSubmissionData
+    ): Promise<ITaskProgress> => {
+      const endpoint = API_CONFIG.endpoints.tasks.details(taskId);
+      return this.apiAny.post(endpoint, submissionData) as Promise<ITaskProgress>;
+    },
+    {
+      serviceName: 'ProgressService',
+      methodName: 'submitTask',
+    }
+  );
 
   /**
    * Grades a submission for a student in a course.
@@ -145,15 +178,21 @@ class ProgressService {
    * @param gradingData The grading data to apply.
    * @returns A promise that resolves to the server response.
    */
-  async gradeSubmission(
-    courseId: string,
-    taskId: string,
-    studentId: string,
-    gradingData: IGradingData
-  ): Promise<ITaskProgress> {
-    const endpoint = `${API_CONFIG.endpoints.tasks.details(taskId)}grade/`;
-    return this.apiAny.post(endpoint, gradingData) as Promise<ITaskProgress>;
-  }
+  gradeSubmission = withManagedExceptions(
+    async (
+      courseId: string,
+      taskId: string,
+      studentId: string,
+      gradingData: IGradingData
+    ): Promise<ITaskProgress> => {
+      const endpoint = `${API_CONFIG.endpoints.tasks.details(taskId)}grade/`;
+      return this.apiAny.post(endpoint, gradingData) as Promise<ITaskProgress>;
+    },
+    {
+      serviceName: 'ProgressService',
+      methodName: 'gradeSubmission',
+    }
+  );
 
   /**
    * Fetches course details.
@@ -161,75 +200,109 @@ class ProgressService {
    * @returns A promise that resolves to a Course object.
    * @throws Error if the course is not found.
    */
-  async fetchCourseDetails(courseId: string): Promise<ICourse> {
-    const response = await this.apiCourse.get(API_CONFIG.endpoints.courses.details(courseId));
-    if (!response) {
-      throw new Error('Course not found');
+  fetchCourseDetails = withManagedExceptions(
+    async (courseId: string): Promise<ICourse> => {
+      const response = await this.apiCourse.get(API_CONFIG.endpoints.courses.details(courseId));
+      if (!response) {
+        throw new Error(`Course not found for ID: ${courseId}`);
+      }
+      return response;
+    },
+    {
+      serviceName: 'ProgressService',
+      methodName: 'fetchCourseDetails',
     }
-    return response;
-  }
+  );
 
   /**
    * Fetches progress analytics for a course.
    * @param courseId The ID of the course.
    * @returns A promise that resolves to analytics data.
    */
-  async fetchProgressAnalytics(courseId: string): Promise<IProgressAnalytics> {
-    const endpoint = API_CONFIG.endpoints.courses.analytics(courseId);
-    return this.apiAny.get(endpoint) as Promise<IProgressAnalytics>;
-  }
+  fetchProgressAnalytics = withManagedExceptions(
+    async (courseId: string): Promise<IProgressAnalytics> => {
+      const endpoint = API_CONFIG.endpoints.courses.analytics(courseId);
+      return this.apiAny.get(endpoint) as Promise<IProgressAnalytics>;
+    },
+    {
+      serviceName: 'ProgressService',
+      methodName: 'fetchProgressAnalytics',
+    }
+  );
 
   /**
    * Fetches a summary of a student's progress.
    * @param studentId - The ID of the student.
    * @returns A promise that resolves to the student's progress summary.
    */
-  async fetchStudentProgressSummary(studentId: string): Promise<IStudentProgressSummary> {
-    const endpoint = API_CONFIG.endpoints.student.progress(studentId);
-    return this.apiAny.get(endpoint) as Promise<IStudentProgressSummary>;
-  }
+  fetchStudentProgressSummary = withManagedExceptions(
+    async (studentId: string): Promise<IStudentProgressSummary> => {
+      const endpoint = API_CONFIG.endpoints.student.progress(studentId);
+      return this.apiAny.get(endpoint) as Promise<IStudentProgressSummary>;
+    },
+    {
+      serviceName: 'ProgressService',
+      methodName: 'fetchStudentProgressSummary',
+    }
+  );
 
   /**
    * Fetches data for the instructor's dashboard.
    * @returns A promise that resolves to the instructor's dashboard data.
    */
-  async fetchInstructorDashboardData(): Promise<IInstructorDashboardData> {
-    try {
+  fetchInstructorDashboardData = withManagedExceptions(
+    async (): Promise<IInstructorDashboardData> => {
       const response = await this.apiAny.get(API_CONFIG.endpoints.dashboard.instructor);
+      if (!response) {
+        throw new Error('Instructor dashboard data not found');
+      }
       return response as IInstructorDashboardData;
-    } catch (error) {
-      console.error('Error fetching instructor dashboard data:', error);
-      throw new Error('Instructor dashboard data not found');
+    },
+    {
+      serviceName: 'ProgressService',
+      methodName: 'fetchInstructorDashboardData',
     }
-  }
+  );
 
   /**
    * Fetches analytics data related to the structure of a course.
    * @param courseId - The ID of the course.
    * @returns A promise that resolves to the course structure analytics data.
    */
-  async fetchCourseStructure(courseId: string): Promise<ICourseStructureAnalytics> {
-    const endpoint = API_CONFIG.endpoints.courses.analytics(courseId);
-    return this.apiAny.get(endpoint) as Promise<ICourseStructureAnalytics>;
-  }
+  fetchCourseStructure = withManagedExceptions(
+    async (courseId: string): Promise<ICourseStructureAnalytics> => {
+      const endpoint = API_CONFIG.endpoints.courses.analytics(courseId);
+      return this.apiAny.get(endpoint) as Promise<ICourseStructureAnalytics>;
+    },
+    {
+      serviceName: 'ProgressService',
+      methodName: 'fetchCourseStructure',
+    }
+  );
 
   /**
    * Fetches dashboard data for a student.
    * @param studentId - The ID of the student.
    * @returns A promise that resolves to the student's dashboard data.
    */
-  async getStudentDashboard(studentId?: number | string | null): Promise<IDashboardResponse> {
-    if (!studentId) {
-      throw new Error('Student ID is required');
+  getStudentDashboard = withManagedExceptions(
+    async (studentId?: number | string | null): Promise<IDashboardResponse> => {
+      if (!studentId) {
+        throw new Error('Student ID is required');
+      }
+
+      // Update to use a valid endpoint from API_CONFIG
+      const endpoint = API_CONFIG.endpoints.dashboard.student
+        ? API_CONFIG.endpoints.dashboard.student(studentId.toString())
+        : API_CONFIG.endpoints.dashboard.instructor + `?student_id=${studentId.toString()}`;
+
+      return this.apiAny.get(endpoint) as Promise<IDashboardResponse>;
+    },
+    {
+      serviceName: 'ProgressService',
+      methodName: 'getStudentDashboard',
     }
-
-    // Update to use a valid endpoint from API_CONFIG
-    const endpoint = API_CONFIG.endpoints.dashboard.student
-      ? API_CONFIG.endpoints.dashboard.student(studentId.toString())
-      : API_CONFIG.endpoints.dashboard.instructor + `?student_id=${studentId.toString()}`;
-
-    return this.apiAny.get(endpoint) as Promise<IDashboardResponse>;
-  }
+  );
 
   /**
         const studentProgressResponse = await this.apiAny.get(studentProgressEndpoint) as any;
@@ -287,55 +360,59 @@ class ProgressService {
    * @param quizId - The ID of the quiz.
    * @returns A promise that resolves to an array of quiz attempts.
    */
-  async getQuizAttempts(quizId: string): Promise<IQuizAttempt[]> {
-    const endpoint = `${API_CONFIG.endpoints.quizzes.attemptsList}?quiz=${quizId}`;
-    try {
-      const response = await this.apiQuizAttemptArr.get(endpoint);
+  getQuizAttempts = withManagedExceptions(
+    async (quizId: string): Promise<IQuizAttempt[]> => {
+      try {
+        const endpoint = `${API_CONFIG.endpoints.quizzes.attemptsList}?quiz=${quizId}`;
+        const response = await this.apiQuizAttemptArr.get(endpoint);
 
-      // Ensure we return an array even if the API doesn't match our expectation
-      if (!Array.isArray(response)) {
-        if (response && typeof response === 'object' && Array.isArray((response as any).results)) {
-          // Handle paginated response
-          return (response as any).results as IQuizAttempt[];
+        // Ensure we return an array even if the API doesn't match our expectation
+        if (!Array.isArray(response)) {
+          if (response && typeof response === 'object' && Array.isArray((response as any).results)) {
+            // Handle paginated response
+            return (response as any).results as IQuizAttempt[];
+          }
+
+          // Handle singleton response
+          if (response && typeof response === 'object') {
+            return [response] as IQuizAttempt[];
+          }
+
+          // Return empty array if response format is unexpected
+          return [];
         }
 
-        // Handle singleton response
-        if (response && typeof response === 'object') {
-          return [response] as IQuizAttempt[];
+        return response;
+      } catch (error) {
+        // For test environments, return mock data
+        if (process.env.NODE_ENV === 'test') {
+          return [
+            {
+              id: '1',
+              quiz: quizId,
+              user: '1',
+              time_taken: 600, // seconds
+              start_time: new Date().toISOString(),
+              end_time: new Date().toISOString(),
+              score: 80,
+              max_score: 100,
+              completion_status: 'completed',
+              answers: [],
+              feedback: '',
+              graded: true,
+            } as unknown as IQuizAttempt,
+          ];
         }
 
-        // Return empty array if response format is unexpected
-        return [];
+        // Re-throw the error to be handled by withManagedExceptions
+        throw error;
       }
-
-      return response;
-    } catch (error) {
-      console.error(`Error fetching quiz attempts for quiz ${quizId}:`, error);
-
-      // For test environments, return mock data
-      if (process.env.NODE_ENV === 'test') {
-        return [
-          {
-            id: '1',
-            quiz: quizId,
-            user: '1',
-            time_taken: 600, // seconds
-            start_time: new Date().toISOString(),
-            end_time: new Date().toISOString(),
-            score: 80,
-            max_score: 100,
-            completion_status: 'completed',
-            answers: [],
-            feedback: '',
-            graded: true,
-          } as unknown as IQuizAttempt,
-        ];
-      }
-
-      // Return empty array if API call fails in production
-      return [];
+    },
+    {
+      serviceName: 'ProgressService',
+      methodName: 'getQuizAttempts'
     }
-  }
+  );
 }
 
 // Singleton export

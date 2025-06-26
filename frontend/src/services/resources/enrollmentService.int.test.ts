@@ -1,12 +1,11 @@
 import {describe, it, expect, beforeAll, afterAll, beforeEach} from 'vitest';
-import {TCourseStatus, TCourseVisibility} from '@/types/course';
-import {TEnrollmentStatus} from '@/types/enrollment';
+import {TCourseStatus} from '@/types/course';
+import {IEnrollmentStatus} from '@/types/entities';
 import authService from '../auth/authService';
 import {courseService} from './courseService';
 import {enrollmentService} from './enrollmentService';
 import {
   TEST_USERS,
-  setupTestEnvironment,
   cleanupTestEnvironment,
 } from '@/test-utils/setupIntegrationTests';
 
@@ -94,7 +93,7 @@ describe('enrollmentService Integration', () => {
       const baseCourseData = {
         version: 1,
         status: 'published' as TCourseStatus,
-        visibility: 'public' as TCourseVisibility,
+        visibility: 'public',
         creator: testData.instructor.userId,
       };
 
@@ -184,7 +183,7 @@ describe('enrollmentService Integration', () => {
       // Act: Update enrollment to completed
       const updatedEnrollment = await enrollmentService.updateEnrollment(
         testData.enrollments.regular.id,
-        {status: 'completed' as TEnrollmentStatus}
+        {status: 'completed' as IEnrollmentStatus}
       );
 
       // Assert: Status was updated

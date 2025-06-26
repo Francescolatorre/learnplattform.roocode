@@ -1,5 +1,27 @@
  // src/test-utils/setupTests.ts
 import {vi} from 'vitest';
+// Axios Mocking (move up before vi.mock)
+const mockAxiosInstance = {
+  get: vi.fn(),
+  post: vi.fn(),
+  put: vi.fn(),
+  delete: vi.fn(),
+  patch: vi.fn(),
+  request: vi.fn(),
+  interceptors: {
+    request: {use: vi.fn(), eject: vi.fn()},
+    response: {use: vi.fn(), eject: vi.fn()},
+  },
+  defaults: {},
+};
+
+const mockAxios = {
+  create: vi.fn(() => mockAxiosInstance),
+  ...mockAxiosInstance,
+};
+
+
+
 // Log timer state before any test setup
 // @ts-ignore
 console.log('🧪 [setup] BEFORE vi.useFakeTimers:', typeof vi.getMockedSystemTime === 'function' ? vi.getMockedSystemTime() : 'n/a');
@@ -25,30 +47,17 @@ vi.mock('@/components/common/MarkdownRenderer', () => ({
   }),
 }));
 
-// Axios Mocking
-const mockAxiosInstance = {
-  get: vi.fn(),
-  post: vi.fn(),
-  put: vi.fn(),
-  delete: vi.fn(),
-  patch: vi.fn(),
-  request: vi.fn(),
-  interceptors: {
-    request: {use: vi.fn(), eject: vi.fn()},
-    response: {use: vi.fn(), eject: vi.fn()},
-  },
-  defaults: {},
-};
-
-const mockAxios = {
-  create: vi.fn(() => mockAxiosInstance),
-  ...mockAxiosInstance,
-};
-
-vi.mock('axios', () => ({
-  __esModule: true,
-  default: mockAxios,
-}));
+// Axios mock (now safe, after all variables/imports)
+vi.mock('axios', () => {
+  // Import here to avoid hoisting issues
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { AxiosError } = require('axios');
+  return {
+    __esModule: true,
+    default: mockAxios,
+    AxiosError,
+  };
+});
 
 // Globale Mocks für LocalStorage
 const localStorageMock = (() => {
@@ -88,7 +97,7 @@ vi.mock('@context/auth/AuthContext', async () => {
     ...RealModule,
     AuthContext: React.createContext({}),
     useAuth,
-    AuthProvider: function AuthProvider(props) {return React.createElement(React.Fragment, null, props.children);},
+    AuthProvider: function AuthProvider(props: React.PropsWithChildren<{}>) {return React.createElement(React.Fragment, null, props.children);},
   };
 });
 
@@ -96,7 +105,7 @@ vi.mock('@context/auth/AuthContext', async () => {
 vi.mock('@/components/Notifications/useNotification', () => ({
   __esModule: true,
   default: vi.fn(() => {
-    const fn = vi.fn();
+    const fn = vi.fn() as any;
     fn.success = vi.fn();
     fn.error = vi.fn();
     fn.info = vi.fn();

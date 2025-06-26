@@ -1,19 +1,10 @@
-import { IPaginatedResponse } from '@/types';
-import { ILearningTask, ITaskCreationData } from '@/types/task';
-import { ApiService } from 'src/services/api/apiService';
-import { logger } from 'src/utils/logger';
+import {IPaginatedResponse} from '@/types';
+import {ILearningTask, ITaskCreationData} from '@/types/task';
+import {ApiService} from 'src/services/api/apiService';
+import {logger} from 'src/utils/logger';
+import {withManagedExceptions} from 'src/utils/errorHandling';
 
-import { API_CONFIG } from '../api/apiConfig';
-
-class LearningTaskServiceError extends Error {
-  statusCode?: number;
-
-  constructor(message: string, statusCode?: number) {
-    super(message);
-    this.name = 'LearningTaskServiceError';
-    this.statusCode = statusCode;
-  }
-}
+import {API_CONFIG} from '../api/apiConfig';
 /**
  * Service for managing learning tasks, including CRUD operations and relationship queries.
  * Provides methods to interact with the backend API for learning tasks. All methods are asynchronous and strictly typed.
@@ -49,18 +40,19 @@ class LearningTaskService {
    * @returns Promise resolving to the LearningTask object.
    * @throws Error if the task is not found.
    */
-  async getById(taskId: string): Promise<ILearningTask> {
-    try {
+  getById = withManagedExceptions(
+    async (taskId: string): Promise<ILearningTask> => {
       const response = await this.apiTask.get(API_CONFIG.endpoints.tasks.details(taskId));
       if (!response) {
-        throw new LearningTaskServiceError('Task not found');
+        throw new Error(`Task not found for ID: ${taskId}`);
       }
       return response;
-    } catch (error) {
-      logger.error('Error fetching task by ID:', error);
-      throw error;
+    },
+    {
+      serviceName: 'LearningTaskService',
+      methodName: 'getById',
     }
-  }
+  );
 
   /**
    * Create a new learning task.
@@ -68,17 +60,22 @@ class LearningTaskService {
    * @param notifyUsers Whether to notify users about the new task.
    * @returns Promise resolving to the created LearningTask object.
    */
-  async create(taskData: ITaskCreationData, notifyUsers = false): Promise<ILearningTask> {
-    try {
-      const formData = this.prepareFormData(taskData);
-      formData.append('notifyUsers', String(notifyUsers));
-      const response = await this.apiTask.post(API_CONFIG.endpoints.tasks.create, formData);
-      return response;
-    } catch (error) {
-      logger.error('Error creating learning task:', error);
-      throw new LearningTaskServiceError('Failed to create learning task');
+  create = withManagedExceptions(
+    async (taskData: ITaskCreationData, notifyUsers = false): Promise<ILearningTask> => {
+      try {
+        const formData = this.prepareFormData(taskData);
+        formData.append('notifyUsers', String(notifyUsers));
+        const response = await this.apiTask.post(API_CONFIG.endpoints.tasks.create, formData);
+        return response;
+      } catch (err) {
+        throw new Error('Failed to create learning task');
+      }
+    },
+    {
+      serviceName: 'LearningTaskService',
+      methodName: 'create',
     }
-  }
+  );
 
   /**
    * Update an existing learning task.
@@ -86,18 +83,30 @@ class LearningTaskService {
    * @param updatedData Partial data to update the task.
    * @returns Promise resolving to the updated LearningTask object.
    */
-  async update(taskId: string, updatedData: Partial<ILearningTask>): Promise<ILearningTask> {
-    return this.apiTask.patch(API_CONFIG.endpoints.tasks.update(taskId), updatedData);
-  }
+  update = withManagedExceptions(
+    async (taskId: string, updatedData: Partial<ILearningTask>): Promise<ILearningTask> => {
+      return this.apiTask.patch(API_CONFIG.endpoints.tasks.update(taskId), updatedData);
+    },
+    {
+      serviceName: 'LearningTaskService',
+      methodName: 'update',
+    }
+  );
 
   /**
    * Delete a learning task by its ID.
    * @param taskId The ID of the task to delete.
    * @returns Promise resolving when the task is deleted.
    */
-  async delete(taskId: string): Promise<void> {
-    await this.apiVoid.delete(API_CONFIG.endpoints.tasks.delete(taskId));
-  }
+  delete = withManagedExceptions(
+    async (taskId: string): Promise<void> => {
+      await this.apiVoid.delete(API_CONFIG.endpoints.tasks.delete(taskId));
+    },
+    {
+      serviceName: 'LearningTaskService',
+      methodName: 'delete',
+    }
+  );
 
   // Relationship-specific methods
   /**
@@ -107,63 +116,65 @@ class LearningTaskService {
    * @returns Promise resolving to an array of LearningTask objects.
    * @throws Error if no tasks are found.
    */
-  async getByStudentId(studentId: string): Promise<ILearningTask[]> {
-    try {
-      const params = { student: studentId };
+  getByStudentId = withManagedExceptions(
+    async (studentId: string): Promise<ILearningTask[]> => {
+      const params = {student: studentId};
       const response = await this.apiTasksResults.get(
         `${API_CONFIG.endpoints.tasks.list}?${new URLSearchParams(params).toString()}`
       );
       if (!response || !Array.isArray(response.results) || response.results.length === 0) {
-        throw new LearningTaskServiceError('Tasks not found');
+        throw new Error('Tasks not found');
       }
       return response.results;
-    } catch (error) {
-      logger.error('Error fetching tasks by student ID:', error);
-      throw error;
+    },
+    {
+      serviceName: 'LearningTaskService',
+      methodName: 'getByStudentId',
     }
-  }
+  );
 
   /**
    * Fetch all learning tasks for a specific course.
    * @param courseId The ID of the course.
    * @returns Promise resolving to an array of LearningTask objects.
    */
-  async getByCourseId(courseId: string): Promise<ILearningTask[]> {
-    try {
+  getByCourseId = withManagedExceptions(
+    async (courseId: string): Promise<ILearningTask[]> => {
       const response = await this.apiTasksResults.get(
         API_CONFIG.endpoints.tasks.byCourse(courseId)
       );
 
-      // Prüfen, ob response direkt ein Array ist
+      // Check if response is directly an array
       if (Array.isArray(response)) {
         return response;
       }
 
-      // Oder prüfen, ob es eine results-Eigenschaft hat
+      // Or check if it has a results property
       if (response && response.results && Array.isArray(response.results)) {
         return response.results;
       }
 
-      // Wenn keines von beiden zutrifft
-      throw new LearningTaskServiceError('Invalid API response format');
-    } catch (error) {
-      logger.error('Error fetching tasks by course ID:', error);
-      throw error;
+      // If neither is true
+      throw new Error(`Invalid API response format for course ID: ${courseId}`);
+    },
+    {
+      serviceName: 'LearningTaskService',
+      methodName: 'getByCourseId',
     }
-  }
+  );
 
   /**
    * Fetch all learning tasks for a specific course with a large page size to get all results.
    * @param courseId The ID of the course.
    * @returns Promise resolving to an array of all LearningTask objects for the course.
    */
-  async getAllTasksByCourseId(courseId: string): Promise<ILearningTask[]> {
-    try {
-      // Parameter für große Ergebnismenge setzen
+  getAllTasksByCourseId = withManagedExceptions(
+    async (courseId: string): Promise<ILearningTask[]> => {
+      // Set parameters for large result set
       const params = {
         course: courseId,
-        page_size: '999', // Hoher Wert für maximale Ergebnisse pro Seite
-        page: '1', // Erste Seite abfragen
+        page_size: '999', // High value for maximum results per page
+        page: '1', // Query first page
       };
 
       const queryString = new URLSearchParams(params).toString();
@@ -173,28 +184,26 @@ class LearningTaskService {
 
       const response = await this.apiTasksResults.get(endpoint);
 
-      // Behandelt sowohl Arrays als auch paginierte Antworten
+      // Handle both arrays and paginated responses
       if (Array.isArray(response)) {
         return response;
       } else if (response && response.results && Array.isArray(response.results)) {
         return response.results;
       }
 
-      throw new LearningTaskServiceError('Invalid API response format');
-    } catch (error) {
-      logger.error('Error fetching all tasks by course ID:', error);
-      throw error;
+      throw new Error(`Invalid API response format for course ID: ${courseId}`);
+    },
+    {
+      serviceName: 'LearningTaskService',
+      methodName: 'getAllTasksByCourseId',
     }
-  }
+  );
 
   /**
-   * Alternativer Fallback-Ansatz: Iterativer Abruf aller Seiten, falls große page_size nicht funktioniert
+   * Alternative fallback approach: Iterative retrieval of all pages if large page_size doesn't work
    */
-  async getAllTasksByCourseIdPaginated(
-    courseId: string,
-    pageSize: number = 50
-  ): Promise<ILearningTask[]> {
-    try {
+  getAllTasksByCourseIdPaginated = withManagedExceptions(
+    async (courseId: string, pageSize: number = 50): Promise<ILearningTask[]> => {
       let allTasks: ILearningTask[] = [];
       let currentPage = 1;
       let hasMorePages = true;
@@ -216,17 +225,17 @@ class LearningTaskService {
         let pageTasks: ILearningTask[] = [];
         if (Array.isArray(response)) {
           pageTasks = response;
-          hasMorePages = false; // Wenn ein direktes Array zurückgegeben wird, gibt es keine weitere Seite
+          hasMorePages = false; // If a direct array is returned, there is no next page
         } else if (response && response.results && Array.isArray(response.results)) {
           pageTasks = response.results;
-          hasMorePages = !!response.next; // Prüfen, ob es eine nächste Seite gibt
+          hasMorePages = !!response.next; // Check if there is a next page
         } else {
-          throw new LearningTaskServiceError('Invalid API response format');
+          throw new Error(`Invalid API response format for course ID: ${courseId}, page: ${currentPage}`);
         }
 
         allTasks = [...allTasks, ...pageTasks];
 
-        // Wenn keine oder leere Ergebnisse zurückkommen, Schleife beenden
+        // If no or empty results are returned, end the loop
         if (pageTasks.length === 0) {
           hasMorePages = false;
         }
@@ -235,11 +244,12 @@ class LearningTaskService {
       }
 
       return allTasks;
-    } catch (error) {
-      logger.error('Error fetching all tasks by course ID with pagination:', error);
-      throw error;
+    },
+    {
+      serviceName: 'LearningTaskService',
+      methodName: 'getAllTasksByCourseIdPaginated',
     }
-  }
+  );
 
   // Helper methods
   /**

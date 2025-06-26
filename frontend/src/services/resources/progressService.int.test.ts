@@ -69,7 +69,7 @@ describe('progressService Integration', () => {
         visibility: 'public' as const,
         learning_objectives: 'Test objectives',
         prerequisites: 'None',
-        creator: userId,
+        // creator: userId, // REMOVED: backend sets creator automatically
       };
       const createdCourse = await courseService.createCourse(courseData);
       createdCourseId = createdCourse.id;
