@@ -165,7 +165,8 @@ const Dashboard: React.FC = () => {
         ) : (
           <Grid container spacing={3}>
             {progressData.map(progress => {
-              const courseId = progress.id;
+              // Prioritize course_id if available, fall back to id
+              const courseId = progress.course_id?.toString() || progress.id || '';
 
               return (
                 <Grid
@@ -173,17 +174,17 @@ const Dashboard: React.FC = () => {
                   xs={12}
                   sm={6}
                   md={4}
-                  key={progress.id || progress.title || Math.random()}
+                  key={courseId || progress.course_title || Math.random()}
                 >
                   <DashboardCourseCard
-                    courseTitle={progress.title}
+                    courseTitle={progress.course_title}
                     progress={{
                       percentage: typeof progress.progress === 'number' ? progress.progress : 0,
                       completed_tasks: stats?.tasks_completed || 0,
                       total_tasks: stats?.tasks_in_progress || 0,
                       last_activity: progress.last_activity_date,
                     }}
-                    courseId={courseId || ''}
+                    courseId={courseId}
                     data-testid={`course-card-${courseId}`}
                   />
                 </Grid>

@@ -117,10 +117,13 @@ export interface IDashboardResponse {
   };
   courses: {
     id: string;
-    title: string;
+    course_id?: number;
+    course_title: string;
     progress: number;
     status: string;
     enrolled_date: string;
+    enrollment_date?: string;
+    enrollment_status?: string;
     last_activity_date?: string;
   }[];
 }
