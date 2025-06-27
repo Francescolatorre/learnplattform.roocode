@@ -23,6 +23,12 @@
       Test environment requirements are now documented.
       No skipped tests remain; all integration tests are active and maintainable.
 21 |
+22 | - `TASK-040-UI-Course-Progress-Dashboard-Enhancement.md`:
+      Fixed course title display issue by correctly using course_title from API response.
+      Fixed navigation links by prioritizing course_id over id with proper fallbacks.
+      Added comprehensive tests for DashboardCourseCard component.
+      All subtasks completed and verified with passing tests.
+23 |
 22 | ## Completed Tasks
 23 |
 24 | - Task references updated to comply with ADR-010 naming convention.
