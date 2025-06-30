@@ -8,13 +8,13 @@
 ## Active Tasks
 
 1. `TASK-UI-001-DESIGN-TASK-MANAGEMENT.md`
-2. `TASK-005-Get All Integration Tests to Pass.md` [DONE]
-3. `TASK-UI-005-IMPLEMENT-TASK-PROGRESS.md`
-4. `TASK-INTEGRATION-TEST-WORKFLOW.md`
-5. `TASK-FEAT-001-IMPLEMENT-STUDENT-JOURNEY.md`
-6. `TASK-CREATION-001-COURSE-CREATION.md`
-7. `TASK-REFACTOR-001-TaskStore-ILearningTask-Migration.md` [DONE]
-8. `TASK-004-Documentation-Migration.md` [DRAFT]
+2. `TASK-UI-005-IMPLEMENT-TASK-PROGRESS.md`
+3. `TASK-INTEGRATION-TEST-WORKFLOW.md`
+4. `TASK-FEAT-001-IMPLEMENT-STUDENT-JOURNEY.md`
+5. `TASK-CREATION-001-COURSE-CREATION.md`
+6. `TASK-004-Documentation-Migration.md` [DRAFT]
+7. `TASK-005-Get All Integration Tests to Pass.md` [DONE]
+8. `TASK-REFACTOR-001-TaskStore-ILearningTask-Migration.md` [DONE]
 9. `TASK-006-Notification-Refactor.md` [DONE]
 10. `TASK-040-UI-Course-Progress-Dashboard-Enhancement.md` [DONE]
 

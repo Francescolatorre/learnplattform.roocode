@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import useNotification from '@/components/Notifications/useNotification';
 import {useQueryClient} from '@tanstack/react-query';
 import {
@@ -47,21 +47,25 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previouslyOpen, setPreviouslyOpen] = useState(open);
+  const prevTaskRef = useRef(task);
   const defaultNotify = useNotification();
   const notify = notificationService || defaultNotify;
   const queryClient = useQueryClient();
 
-  // Update form data when the dialog opens or task changes while dialog is open
+  // Update form data when the dialog opens or task changes
   useEffect(() => {
-    // Only update form when dialog opens or when task changes while dialog is open
+    // Only update form when dialog opens or when task changes
     if (open) {
-      if (!previouslyOpen || JSON.stringify(task) !== JSON.stringify(formData)) {
+      // Reset form data only when the modal is first opened or when the task prop changes
+      if (!previouslyOpen || JSON.stringify(task) !== JSON.stringify(prevTaskRef.current)) {
         setFormData({
           title: '',
           description: '',
           is_published: false,
           ...task,
         });
+        // Update the reference to the current task
+        prevTaskRef.current = task;
       }
     }
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {
   Box,
   Typography,
@@ -15,18 +15,18 @@ import {
   ListItemText,
   Chip,
 } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
-import { Link as RouterLink } from 'react-router-dom';
+import {useQuery} from '@tanstack/react-query';
+import {Link as RouterLink} from 'react-router-dom';
 import SchoolIcon from '@mui/icons-material/School';
 import PeopleIcon from '@mui/icons-material/People';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import BarChartIcon from '@mui/icons-material/BarChart';
 
-import { useAuth } from '@context/auth/AuthContext';
+import {useAuth} from '@context/auth/AuthContext';
 import ProgressIndicator from '@/components/shared/ProgressIndicator';
 import progressService from '@/services/resources/progressService';
-import { courseService } from '@services/resources/courseService';
-import { ICourse, IPaginatedResponse, IInstructorDashboardData } from '@/types';
+import {courseService} from '@services/resources/courseService';
+import {ICourse, IPaginatedResponse, IInstructorDashboardData} from '@/types';
 
 /**
  * Dashboard for instructors showing course statistics, student progress,
@@ -35,7 +35,7 @@ import { ICourse, IPaginatedResponse, IInstructorDashboardData } from '@/types';
  * @returns InstructorDashboard component
  */
 const InstructorDashboard: React.FC = () => {
-  const { user } = useAuth();
+  const {user} = useAuth();
 
   // Log component lifecycle
   useEffect(() => {
@@ -75,7 +75,7 @@ const InstructorDashboard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+      <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
         <CircularProgress />
       </Box>
     );
@@ -83,8 +83,8 @@ const InstructorDashboard: React.FC = () => {
 
   if (error) {
     return (
-      <Box sx={{ textAlign: 'center', mt: 4 }}>
-        <Alert severity="error" sx={{ maxWidth: 600, mx: 'auto', mb: 3 }}>
+      <Box sx={{textAlign: 'center', mt: 4}}>
+        <Alert severity="error" sx={{maxWidth: 600, mx: 'auto', mb: 3}}>
           {error instanceof Error ? error.message : 'An error occurred while loading data'}
         </Alert>
         <Typography variant="body1">
@@ -98,7 +98,7 @@ const InstructorDashboard: React.FC = () => {
   const courses = coursesData?.results || [];
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{p: 3}}>
       <Typography variant="h4" gutterBottom>
         Instructor Dashboard
       </Typography>
@@ -107,16 +107,16 @@ const InstructorDashboard: React.FC = () => {
       </Typography>
 
       {/* Stats Overview Section */}
-      <Paper elevation={2} sx={{ p: 3, mt: 3 }}>
+      <Paper elevation={2} sx={{p: 3, mt: 3}}>
         <Typography variant="h5" gutterBottom>
           Teaching Overview
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <Card variant="outlined" sx={{ height: '100%' }}>
+            <Card variant="outlined" sx={{height: '100%'}}>
               <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <SchoolIcon color="primary" sx={{ mr: 1 }} />
+                <Box sx={{display: 'flex', alignItems: 'center', mb: 2}}>
+                  <SchoolIcon color="primary" sx={{mr: 1}} />
                   <Typography variant="subtitle2" color="text.secondary" gutterBottom>
                     Active Courses
                   </Typography>
@@ -126,10 +126,10 @@ const InstructorDashboard: React.FC = () => {
             </Card>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Card variant="outlined" sx={{ height: '100%' }}>
+            <Card variant="outlined" sx={{height: '100%'}}>
               <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <PeopleIcon color="primary" sx={{ mr: 1 }} />
+                <Box sx={{display: 'flex', alignItems: 'center', mb: 2}}>
+                  <PeopleIcon color="primary" sx={{mr: 1}} />
                   <Typography variant="subtitle2" color="text.secondary" gutterBottom>
                     Total Students
                   </Typography>
@@ -139,10 +139,10 @@ const InstructorDashboard: React.FC = () => {
             </Card>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Card variant="outlined" sx={{ height: '100%' }}>
+            <Card variant="outlined" sx={{height: '100%'}}>
               <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <BarChartIcon color="primary" sx={{ mr: 1 }} />
+                <Box sx={{display: 'flex', alignItems: 'center', mb: 2}}>
+                  <BarChartIcon color="primary" sx={{mr: 1}} />
                   <Typography variant="subtitle2" color="text.secondary" gutterBottom>
                     Average Completion
                   </Typography>
@@ -154,10 +154,10 @@ const InstructorDashboard: React.FC = () => {
             </Card>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Card variant="outlined" sx={{ height: '100%' }}>
+            <Card variant="outlined" sx={{height: '100%'}}>
               <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <AssignmentIcon color="primary" sx={{ mr: 1 }} />
+                <Box sx={{display: 'flex', alignItems: 'center', mb: 2}}>
+                  <AssignmentIcon color="primary" sx={{mr: 1}} />
                   <Typography variant="subtitle2" color="text.secondary" gutterBottom>
                     Tasks Needing Attention
                   </Typography>
@@ -172,13 +172,13 @@ const InstructorDashboard: React.FC = () => {
       </Paper>
 
       {/* Course Activity Section */}
-      <Box sx={{ mt: 4 }}>
+      <Box sx={{mt: 4}}>
         <Typography variant="h5" gutterBottom>
           Course Activity
         </Typography>
 
         {!courses || courses.length === 0 ? (
-          <Paper elevation={2} sx={{ p: 3, textAlign: 'center' }}>
+          <Paper elevation={2} sx={{p: 3, textAlign: 'center'}}>
             <Typography variant="h6" gutterBottom>
               No Courses Created Yet
             </Typography>
@@ -190,7 +190,7 @@ const InstructorDashboard: React.FC = () => {
               to="/instructor/courses/new"
               variant="contained"
               color="primary"
-              sx={{ mt: 2 }}
+              sx={{mt: 2}}
             >
               Create New Course
             </Button>
@@ -212,20 +212,15 @@ const InstructorDashboard: React.FC = () => {
                     {course.title}
                   </Typography>
 
-                  <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+                  <Box sx={{display: 'flex', gap: 1, mb: 2}}>
                     <Chip
                       size="small"
                       label={course.status}
                       color={course.status === 'published' ? 'success' : 'default'}
                     />
-                    <Chip
-                      size="small"
-                      label={course.visibility}
-                      color={course.visibility === 'public' ? 'primary' : 'default'}
-                    />
                   </Box>
 
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>
                     {course.description && course.description.length > 100
                       ? `${course.description.substring(0, 100)}...`
                       : course.description}
@@ -235,43 +230,43 @@ const InstructorDashboard: React.FC = () => {
                   {dashboardData?.course_activity_summary?.find(
                     activity => activity.course_id === course.id
                   ) && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        mt: 'auto',
-                      }}
-                    >
-                      <Box>
-                        <Typography variant="body2">
-                          <strong>Students:</strong>{' '}
-                          {dashboardData.course_activity_summary.find(
-                            activity => activity.course_id === course.id
-                          )?.student_count || 0}
-                        </Typography>
-                        <Typography variant="body2">
-                          <strong>Average Progress:</strong>{' '}
-                          {dashboardData.course_activity_summary.find(
-                            activity => activity.course_id === course.id
-                          )?.average_progress || 0}
-                          %
-                        </Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', justifyContent: 'center', minWidth: 80 }}>
-                        <ProgressIndicator
-                          value={
-                            dashboardData.course_activity_summary.find(
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          mt: 'auto',
+                        }}
+                      >
+                        <Box>
+                          <Typography variant="body2">
+                            <strong>Students:</strong>{' '}
+                            {dashboardData.course_activity_summary.find(
                               activity => activity.course_id === course.id
-                            )?.average_progress || 0
-                          }
-                          size={60}
-                        />
+                            )?.student_count || 0}
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>Average Progress:</strong>{' '}
+                            {dashboardData.course_activity_summary.find(
+                              activity => activity.course_id === course.id
+                            )?.average_progress || 0}
+                            %
+                          </Typography>
+                        </Box>
+                        <Box sx={{display: 'flex', justifyContent: 'center', minWidth: 80}}>
+                          <ProgressIndicator
+                            value={
+                              dashboardData.course_activity_summary.find(
+                                activity => activity.course_id === course.id
+                              )?.average_progress || 0
+                            }
+                            size={60}
+                          />
+                        </Box>
                       </Box>
-                    </Box>
-                  )}
+                    )}
 
-                  <Box sx={{ mt: 'auto', pt: 2, display: 'flex', justifyContent: 'space-between' }}>
+                  <Box sx={{mt: 'auto', pt: 2, display: 'flex', justifyContent: 'space-between'}}>
                     <Button
                       component={RouterLink}
                       to={`/courses/${course.id}`}
@@ -282,7 +277,7 @@ const InstructorDashboard: React.FC = () => {
                     </Button>
                     <Button
                       component={RouterLink}
-                      to={`/instructor/courses/${course.id}/edit`}
+                      to={`/instructor/courses/${course.id}/`}
                       variant="outlined"
                       size="small"
                     >
@@ -299,7 +294,7 @@ const InstructorDashboard: React.FC = () => {
       {/* Tasks Requiring Attention Section */}
       {dashboardData?.tasks_requiring_attention &&
         dashboardData.tasks_requiring_attention.length > 0 && (
-          <Paper elevation={2} sx={{ p: 3, mt: 4 }}>
+          <Paper elevation={2} sx={{p: 3, mt: 4}}>
             <Typography variant="h5" gutterBottom>
               Tasks Requiring Attention
             </Typography>
@@ -331,13 +326,13 @@ const InstructorDashboard: React.FC = () => {
 
       {/* Performance Analytics Section */}
       {dashboardData?.performance_analytics && (
-        <Paper elevation={2} sx={{ p: 3, mt: 4 }}>
+        <Paper elevation={2} sx={{p: 3, mt: 4}}>
           <Typography variant="h5" gutterBottom>
             Performance Analytics
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
-              <Card variant="outlined" sx={{ mb: 2 }}>
+              <Card variant="outlined" sx={{mb: 2}}>
                 <CardContent>
                   <Typography variant="h6" gutterBottom>
                     Best Performing Course
@@ -355,7 +350,7 @@ const InstructorDashboard: React.FC = () => {
               </Card>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Card variant="outlined" sx={{ mb: 2 }}>
+              <Card variant="outlined" sx={{mb: 2}}>
                 <CardContent>
                   <Typography variant="h6" gutterBottom>
                     Most Engaged Course
@@ -377,7 +372,7 @@ const InstructorDashboard: React.FC = () => {
       )}
 
       {/* Quick Links Section */}
-      <Paper elevation={2} sx={{ p: 3, mt: 4 }}>
+      <Paper elevation={2} sx={{p: 3, mt: 4}}>
         <Typography variant="h5" gutterBottom>
           Quick Links
         </Typography>
@@ -388,7 +383,7 @@ const InstructorDashboard: React.FC = () => {
               to="/instructor/courses/new"
               variant="contained"
               fullWidth
-              sx={{ p: 2 }}
+              sx={{p: 2}}
             >
               New Course
             </Button>
@@ -399,7 +394,7 @@ const InstructorDashboard: React.FC = () => {
               to="/instructor/courses"
               variant="outlined"
               fullWidth
-              sx={{ p: 2 }}
+              sx={{p: 2}}
             >
               Manage Courses
             </Button>
@@ -410,7 +405,7 @@ const InstructorDashboard: React.FC = () => {
               to="/instructor/students"
               variant="outlined"
               fullWidth
-              sx={{ p: 2 }}
+              sx={{p: 2}}
             >
               Student Progress
             </Button>
@@ -421,7 +416,7 @@ const InstructorDashboard: React.FC = () => {
               to="/instructor/reports"
               variant="outlined"
               fullWidth
-              sx={{ p: 2 }}
+              sx={{p: 2}}
             >
               Analytics
             </Button>
