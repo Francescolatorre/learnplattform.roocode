@@ -1,12 +1,12 @@
-import {ApiService} from '@/services/api/apiService';
-import {ICourse, TCourseStatus} from '@/types/course';
-import {ILearningTask, ITaskProgress} from '@/types/task';
-import {IPaginatedResponse} from 'src/types/paginatedResponse';
-import {withManagedExceptions} from 'src/utils/errorHandling';
-import {IUserProgress} from '@/types/progress';
-import {IStudentProgressSummary} from '@/types';
+import { ApiService } from '@/services/api/apiService';
+import { ICourse, TCourseStatus } from '@/types/course';
+import { ILearningTask, ITaskProgress } from '@/types/task';
+import { IPaginatedResponse } from 'src/types/paginatedResponse';
+import { withManagedExceptions } from 'src/utils/errorHandling';
+import { IUserProgress } from '@/types/progress';
+import { IStudentProgressSummary } from '@/types';
 
-import {API_CONFIG} from '../api/apiConfig';
+import { API_CONFIG } from '../api/apiConfig';
 
 /**
  * Options for filtering courses in API requests
@@ -46,15 +46,15 @@ class CourseService {
   private apiLearningTasks = new ApiService<IPaginatedResponse<ILearningTask>>();
 
   /**
- * Enroll a student in a course.
- * @param courseId - The ID of the course to enroll in.
- * @param studentId - The ID of the student to enroll.
- * @returns The enrollment response from the backend.
- */
+   * Enroll a student in a course.
+   * @param courseId - The ID of the course to enroll in.
+   * @param studentId - The ID of the student to enroll.
+   * @returns The enrollment response from the backend.
+   */
   enrollStudent = withManagedExceptions(
     async (courseId: string | number, studentId: string | number): Promise<any> => {
       this.ensureAuthToken();
-      const body = {course: courseId, student: studentId};
+      const body = { course: courseId, student: studentId };
       const response = await this.apiAny.post(API_CONFIG.endpoints.enrollments.create, body);
       return response;
     },
@@ -63,8 +63,6 @@ class CourseService {
       methodName: 'enrollStudent',
     }
   );
-
-
 
   /**
    * Fetches a paginated list of courses with optional filtering
@@ -306,7 +304,7 @@ class CourseService {
       console.info(`CourseService: Updating course ${courseId} status to ${status}`);
       const response = await this.apiCourse.patch(
         `${API_CONFIG.endpoints.courses.updateStatus}/${courseId}`,
-        {status}
+        { status }
       );
       console.info(`CourseService: Successfully updated course ${courseId} status to ${status}`);
       return response;
@@ -417,7 +415,7 @@ class CourseService {
         id: progress.id.toString(),
         username: progress.label,
         display_name: progress.label,
-        role: 'student'
+        role: 'student',
       },
       overall_stats: {
         courses_enrolled: 1,
@@ -425,7 +423,7 @@ class CourseService {
         overall_progress: progress.percentage,
         tasks_completed: 0,
         tasks_in_progress: 0,
-        tasks_overdue: 0
+        tasks_overdue: 0,
       },
       courses: [
         {
@@ -434,9 +432,9 @@ class CourseService {
           progress: progress.percentage,
           status: 'active',
           enrolled_date: new Date().toISOString(),
-          last_activity_date: new Date().toISOString()
-        }
-      ]
+          last_activity_date: new Date().toISOString(),
+        },
+      ],
     };
   };
 

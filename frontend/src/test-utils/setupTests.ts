@@ -1,5 +1,5 @@
- // src/test-utils/setupTests.ts
-import {vi} from 'vitest';
+// src/test-utils/setupTests.ts
+import { vi } from 'vitest';
 // Axios Mocking (move up before vi.mock)
 const mockAxiosInstance = {
   get: vi.fn(),
@@ -9,8 +9,8 @@ const mockAxiosInstance = {
   patch: vi.fn(),
   request: vi.fn(),
   interceptors: {
-    request: {use: vi.fn(), eject: vi.fn()},
-    response: {use: vi.fn(), eject: vi.fn()},
+    request: { use: vi.fn(), eject: vi.fn() },
+    response: { use: vi.fn(), eject: vi.fn() },
   },
   defaults: {},
 };
@@ -20,29 +20,33 @@ const mockAxios = {
   ...mockAxiosInstance,
 };
 
-
-
 // Log timer state before any test setup
 // @ts-ignore
-console.log('🧪 [setup] BEFORE vi.useFakeTimers:', typeof vi.getMockedSystemTime === 'function' ? vi.getMockedSystemTime() : 'n/a');
+console.log(
+  '🧪 [setup] BEFORE vi.useFakeTimers:',
+  typeof vi.getMockedSystemTime === 'function' ? vi.getMockedSystemTime() : 'n/a'
+);
 import '@testing-library/jest-dom';
 import React from 'react';
-import {configure} from '@testing-library/react';
+import { configure } from '@testing-library/react';
 
- // Ensure MUI Snackbar/Modal portals render into the test container
-configure({defaultHidden: true});
+// Ensure MUI Snackbar/Modal portals render into the test container
+configure({ defaultHidden: true });
 // Log timer state after all test setup (but before tests)
- // @ts-ignore
-console.log('🧪 [setup] AFTER setup (no vi.useFakeTimers yet):', typeof vi.getMockedSystemTime === 'function' ? vi.getMockedSystemTime() : 'n/a');
+// @ts-ignore
+console.log(
+  '🧪 [setup] AFTER setup (no vi.useFakeTimers yet):',
+  typeof vi.getMockedSystemTime === 'function' ? vi.getMockedSystemTime() : 'n/a'
+);
 
 // Mock for MarkdownRenderer component
 vi.mock('@/components/common/MarkdownRenderer', () => ({
   __esModule: true,
-  default: vi.fn(({content}) => {
+  default: vi.fn(({ content }) => {
     return React.createElement('div', {
       className: 'markdown-content',
       'data-testid': 'markdown-content',
-      dangerouslySetInnerHTML: {__html: content || ''},
+      dangerouslySetInnerHTML: { __html: content || '' },
     });
   }),
 }));
@@ -75,7 +79,7 @@ const localStorageMock = (() => {
     }),
   };
 })();
-Object.defineProperty(window, 'localStorage', {value: localStorageMock});
+Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
 // Auth Kontext Mock
 const useAuth = vi.fn(() => ({
@@ -97,7 +101,9 @@ vi.mock('@context/auth/AuthContext', async () => {
     ...RealModule,
     AuthContext: React.createContext({}),
     useAuth,
-    AuthProvider: function AuthProvider(props: React.PropsWithChildren<{}>) {return React.createElement(React.Fragment, null, props.children);},
+    AuthProvider: function AuthProvider(props: React.PropsWithChildren<{}>) {
+      return React.createElement(React.Fragment, null, props.children);
+    },
   };
 });
 
@@ -115,7 +121,7 @@ vi.mock('@/components/Notifications/useNotification', () => ({
 }));
 
 // Expose mocks for tests
-Object.assign(globalThis, {mockAxios, mockAxiosInstance});
+Object.assign(globalThis, { mockAxios, mockAxiosInstance });
 
 console.log('🧪 Unit test setup loaded (axios, notifications, localStorage, auth mocked)');
 

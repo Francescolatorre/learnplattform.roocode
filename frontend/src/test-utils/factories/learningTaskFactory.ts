@@ -1,7 +1,7 @@
-import {Factory} from 'fishery';
-import {ILearningTask} from '@/types/task';
+import { Factory } from 'fishery';
+import { ILearningTask } from '@/types/task';
 
-export const learningTaskFactory = Factory.define<ILearningTask>(({sequence}) => ({
+export const learningTaskFactory = Factory.define<ILearningTask>(({ sequence }) => ({
   id: sequence,
   course: 1,
   title: `Sample Task ${sequence}`,

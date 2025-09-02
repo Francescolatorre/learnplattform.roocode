@@ -1,6 +1,6 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import useNotification from '@/components/Notifications/useNotification';
-import {useQueryClient} from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Box,
   Button,
@@ -13,8 +13,8 @@ import {
   DialogActions,
 } from '@mui/material';
 import MarkdownEditor from '../shared/MarkdownEditor';
-import {createTask, updateTask} from '@/services/resources/learningTaskService';
-import {ILearningTask} from '@/types/task';
+import { createTask, updateTask } from '@/services/resources/learningTaskService';
+import { ILearningTask } from '@/types/task';
 
 interface TaskCreationProps {
   open: boolean;
@@ -76,7 +76,7 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
   }, [open, previouslyOpen, task]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const {name, value} = e.target;
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value,
@@ -84,7 +84,7 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
   };
 
   const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {name, checked} = e.target;
+    const { name, checked } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: checked,
@@ -116,8 +116,8 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
       if (onSave) {
         await onSave(formData);
         if (courseId) {
-          queryClient.invalidateQueries({queryKey: ['courseTasks', courseId]});
-          queryClient.invalidateQueries({queryKey: ['learningTasks', courseId]});
+          queryClient.invalidateQueries({ queryKey: ['courseTasks', courseId] });
+          queryClient.invalidateQueries({ queryKey: ['learningTasks', courseId] });
         }
         resetForm();
       } else {
@@ -143,8 +143,8 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
 
         // Ensure other components get fresh data
         if (courseId) {
-          queryClient.invalidateQueries({queryKey: ['courseTasks', courseId]});
-          queryClient.invalidateQueries({queryKey: ['learningTasks', courseId]});
+          queryClient.invalidateQueries({ queryKey: ['courseTasks', courseId] });
+          queryClient.invalidateQueries({ queryKey: ['learningTasks', courseId] });
         }
         // Reset form and close dialog
         resetForm();
@@ -179,7 +179,7 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>{isEditing ? 'Edit Task' : 'Create a New Task'}</DialogTitle>
       <DialogContent>
-        <Box sx={{padding: 2}}>
+        <Box sx={{ padding: 2 }}>
           <TextField
             label="Task Title"
             name="title"
@@ -188,7 +188,7 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
             fullWidth
             error={!!error && !formData.title}
             helperText={error && !formData.title ? error : ''}
-            sx={{marginBottom: 2}}
+            sx={{ marginBottom: 2 }}
           />
           <MarkdownEditor
             value={formData.description || ''}
@@ -199,7 +199,7 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
             helperText={error && !formData.description ? error : ''}
           />
 
-          <Box sx={{mt: 2}}>
+          <Box sx={{ mt: 2 }}>
             <FormControlLabel
               control={
                 <Switch
@@ -213,7 +213,7 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
           </Box>
 
           {error && !error.includes('Title') && !error.includes('description') && (
-            <Box sx={{mt: 2, color: 'error.main'}}>{error}</Box>
+            <Box sx={{ mt: 2, color: 'error.main' }}>{error}</Box>
           )}
         </Box>
       </DialogContent>

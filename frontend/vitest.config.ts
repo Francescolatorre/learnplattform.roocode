@@ -12,7 +12,7 @@ export default defineConfig({
       'src/**/*.test.ts',
       'src/**/*.test.tsx',
       'src/**/*.int.test.ts',
-      'src/**/*.int.test.tsx'
+      'src/**/*.int.test.tsx',
     ],
     exclude: [
       'e2e/**',

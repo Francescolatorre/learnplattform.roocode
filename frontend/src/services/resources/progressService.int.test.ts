@@ -1,9 +1,9 @@
-import {describe, it, expect, beforeAll, afterAll} from 'vitest';
-import {TCourseStatus} from '@/types/';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { TCourseStatus } from '@/types/';
 import authService from '../auth/authService';
-import {courseService} from './courseService';
+import { courseService } from './courseService';
 import progressService from './progressService';
-import {TEST_USERS} from '@/test-utils/setupIntegrationTests';
+import { TEST_USERS } from '@/test-utils/setupIntegrationTests';
 
 /**
  * Integration test for progressService.
@@ -101,7 +101,6 @@ describe('progressService Integration', () => {
       expect(/not found/i.test(error.message) || /status code 404/i.test(error.message)).toBe(true);
     }
   });
-
 
   it('getQuizAttempts returns quiz attempts for a specific quiz', async () => {
     // This test assumes there's a quiz ID available or can be mocked

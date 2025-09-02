@@ -5,3 +5,7 @@ dist
 coverage
 backend/
 memory_bank/
+assets/
+playwright-report/
+test-results/
+package-lock.json

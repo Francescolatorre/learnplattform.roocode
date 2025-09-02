@@ -8,11 +8,11 @@ import {
 import { LoginPage } from '../../page-objects/LoginPage';
 import { InstructorCoursesPage } from '../../page-objects/courses/InstructorCoursesPage';
 import { logTestAction } from '../../utils/debugHelper';
-import { 
-  clearMemory, 
-  limitDOMElements, 
+import {
+  clearMemory,
+  limitDOMElements,
   optimizePage,
-  dismissModals 
+  dismissModals,
 } from '../../utils/testStability';
 
 test.describe('Course Filtering', () => {
@@ -21,7 +21,7 @@ test.describe('Course Filtering', () => {
   test.beforeEach(async ({ page }) => {
     // Optimize page for testing
     await optimizePage(page);
-    
+
     // Start with login
     const loginPage = new LoginPage(page);
     await loginPage.navigateTo();
@@ -31,12 +31,12 @@ test.describe('Course Filtering', () => {
     coursesPage = new InstructorCoursesPage(page);
     await coursesPage.navigateTo();
     await coursesPage.isCoursesPageLoaded();
-    
+
     // Limit DOM elements to prevent memory issues
     await limitDOMElements(page, '.course-card', 15);
     await limitDOMElements(page, '.MuiCard-root', 15);
   });
-  
+
   test.afterEach(async ({ page }) => {
     // Clean up after each test
     await clearMemory(page);
@@ -106,7 +106,7 @@ test.describe('Course Filtering', () => {
     expect(allCourses.length).toBeGreaterThanOrEqual(draftCourses.length);
     expect(allCourses.length).toBeGreaterThanOrEqual(publishedCourses.length);
     expect(allCourses.length).toBeGreaterThanOrEqual(archivedCourses.length);
-    
+
     // Verify that filtering actually reduced the count for each status
     expect(draftCourses.length).toBeLessThan(allCourses.length);
     expect(publishedCourses.length).toBeLessThan(allCourses.length);

@@ -24,15 +24,15 @@ import {
   MenuItem,
   SelectChangeEvent,
 } from '@mui/material';
-import React, {useEffect, useState} from 'react';
-import {Navigate} from 'react-router-dom';
-import {useNavigate, useParams} from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import useNotification from '@/components/Notifications/useNotification';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
-import {ILearningTask} from '@/types/task';
-import {useAuth} from '@context/auth/AuthContext';
-import {courseService} from '@services/resources/courseService';
+import { ILearningTask } from '@/types/task';
+import { useAuth } from '@context/auth/AuthContext';
+import { courseService } from '@services/resources/courseService';
 import LearningTaskService, {
   deleteTask as deleteLearningTask,
   updateTask as updateLearningTask,
@@ -49,14 +49,14 @@ interface ITaskDialogProps {
 }
 
 // Task Dialog Component
-const TaskDialog: React.FC<ITaskDialogProps> = ({open, onClose, onSave, task, isEditing}) => {
+const TaskDialog: React.FC<ITaskDialogProps> = ({ open, onClose, onSave, task, isEditing }) => {
   const [formData, setFormData] = useState<Partial<ILearningTask>>(task);
   useEffect(() => {
     setFormData(task);
   }, [task]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const {name, value} = e.target;
+    const { name, value } = e.target;
     setFormData((prev: Partial<ILearningTask>) => ({
       ...prev,
       [name]: value,
@@ -64,7 +64,7 @@ const TaskDialog: React.FC<ITaskDialogProps> = ({open, onClose, onSave, task, is
   };
 
   const handleSelectChange = (e: SelectChangeEvent<string>) => {
-    const {name, value} = e.target;
+    const { name, value } = e.target;
     setFormData((prev: Partial<ILearningTask>) => ({
       ...prev,
       [name]: value === 'true', // Convert string to boolean
@@ -80,7 +80,7 @@ const TaskDialog: React.FC<ITaskDialogProps> = ({open, onClose, onSave, task, is
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>{isEditing ? 'Edit Task' : 'Create New Learning Task'}</DialogTitle>
       <DialogContent>
-        <Box component="form" sx={{mt: 2}}>
+        <Box component="form" sx={{ mt: 2 }}>
           <TextField
             fullWidth
             required
@@ -89,7 +89,7 @@ const TaskDialog: React.FC<ITaskDialogProps> = ({open, onClose, onSave, task, is
             value={formData.title || ''}
             onChange={handleChange}
             margin="normal"
-            inputProps={{maxLength: 200}}
+            inputProps={{ maxLength: 200 }}
             helperText="Title of the task (max 200 characters)"
           />
 
@@ -103,7 +103,7 @@ const TaskDialog: React.FC<ITaskDialogProps> = ({open, onClose, onSave, task, is
             margin="normal"
             multiline
             rows={4}
-            inputProps={{maxLength: 1500}}
+            inputProps={{ maxLength: 1500 }}
             helperText="Description of the task. Supports Markdown formatting (max 1500 characters)"
           />
 
@@ -145,9 +145,9 @@ const TaskDialog: React.FC<ITaskDialogProps> = ({open, onClose, onSave, task, is
 
 // Main Component
 const CourseLearningTasksPage: React.FC = () => {
-  const {courseId} = useParams<{courseId: string}>();
+  const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
-  const {user, isAuthenticated} = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const canEdit = ['admin', 'instructor'].includes(user?.role ?? '');
 
   const [courseName, setCourseName] = useState('');
@@ -187,7 +187,7 @@ const CourseLearningTasksPage: React.FC = () => {
         setCourseName(courseResult.title);
 
         // Fetch tasks for this course
-        const tasksResponse = await LearningTaskService.getAll({courseId: courseId});
+        const tasksResponse = await LearningTaskService.getAll({ courseId: courseId });
         setTasks(tasksResponse.sort((a: ILearningTask, b: ILearningTask) => a.order - b.order));
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Unknown error';
@@ -261,7 +261,7 @@ const CourseLearningTasksPage: React.FC = () => {
         notify('Task updated successfully', 'success');
       } else {
         // Create new task
-        const {id, ...taskDataWithoutId} = taskData;
+        const { id, ...taskDataWithoutId } = taskData;
         const newTask = await createLearningTask({
           ...taskDataWithoutId,
           course: Number(courseId!),
@@ -291,7 +291,7 @@ const CourseLearningTasksPage: React.FC = () => {
           <Button
             variant="outlined"
             onClick={() => navigate(`/courses/${courseId}`)}
-            sx={{mb: 2}}
+            sx={{ mb: 2 }}
           >
             Back to Course
           </Button>
@@ -321,7 +321,7 @@ const CourseLearningTasksPage: React.FC = () => {
               color="primary"
               startIcon={<AddIcon />}
               onClick={handleCreateTask}
-              sx={{mt: 2}}
+              sx={{ mt: 2 }}
             >
               Create Your First Task
             </Button>
@@ -331,7 +331,7 @@ const CourseLearningTasksPage: React.FC = () => {
             {tasks.map((task, index) => (
               <React.Fragment key={task.id}>
                 {index > 0 && <Divider />}
-                <ListItem sx={{py: 2}}>
+                <ListItem sx={{ py: 2 }}>
                   <ListItemText
                     primary={
                       <Box display="flex" alignItems="center">
@@ -340,7 +340,7 @@ const CourseLearningTasksPage: React.FC = () => {
                           <Typography
                             variant="caption"
                             color="warning.main"
-                            sx={{ml: 1, p: 0.5, bgcolor: 'warning.light', borderRadius: 1}}
+                            sx={{ ml: 1, p: 0.5, bgcolor: 'warning.light', borderRadius: 1 }}
                           >
                             Draft
                           </Typography>
@@ -350,11 +350,11 @@ const CourseLearningTasksPage: React.FC = () => {
                     secondary={
                       <React.Fragment>
                         {task.description_html ? (
-                          <Box sx={{my: 1}}>
+                          <Box sx={{ my: 1 }}>
                             <MarkdownRenderer content={task.description} />
                           </Box>
                         ) : (
-                          <Typography variant="body2" color="text.primary" sx={{mb: 1, mt: 1}}>
+                          <Typography variant="body2" color="text.primary" sx={{ mb: 1, mt: 1 }}>
                             {task.description}
                           </Typography>
                         )}
@@ -373,7 +373,7 @@ const CourseLearningTasksPage: React.FC = () => {
                         <IconButton
                           edge="end"
                           onClick={() => handleDeletePrompt(task.id)}
-                          sx={{ml: 1}}
+                          sx={{ ml: 1 }}
                         >
                           <DeleteIcon />
                         </IconButton>

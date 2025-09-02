@@ -1,6 +1,6 @@
 // src/types/common/tasks.ts
 
-import {IUser} from '@/types/userTypes';
+import { IUser } from '@/types/userTypes';
 
 /**
  * Aufgabenstatus-Typ

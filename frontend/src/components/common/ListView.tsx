@@ -1,7 +1,7 @@
 // ListView.tsx
 import React from 'react';
-import {List, ListItem} from '@mui/material';
-import {ICourse} from '@/types';
+import { List, ListItem } from '@mui/material';
+import { ICourse } from '@/types';
 import CourseCard from '@/components/courses/CourseCard';
 
 interface ListViewProps {
@@ -9,7 +9,7 @@ interface ListViewProps {
   isInstructorView?: boolean;
 }
 
-const ListView: React.FC<ListViewProps> = ({courses, isInstructorView = false}) => {
+const ListView: React.FC<ListViewProps> = ({ courses, isInstructorView = false }) => {
   return (
     <List
       sx={{

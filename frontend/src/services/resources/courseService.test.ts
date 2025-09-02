@@ -1,6 +1,6 @@
-import {describe, it, expect} from 'vitest';
-import {courseService} from './courseService';
-import {IUserProgress} from '@/types/progress';
+import { describe, it, expect } from 'vitest';
+import { courseService } from './courseService';
+import { IUserProgress } from '@/types/progress';
 
 describe('CourseService', () => {
   describe('transformUserProgressToStudentSummary', () => {
@@ -9,7 +9,7 @@ describe('CourseService', () => {
       const mockUserProgress: IUserProgress = {
         id: 123,
         percentage: 75,
-        label: 'Introduction to TypeScript'
+        label: 'Introduction to TypeScript',
       };
 
       // Act
@@ -22,7 +22,7 @@ describe('CourseService', () => {
           id: '123',
           username: 'Introduction to TypeScript',
           display_name: 'Introduction to TypeScript',
-          role: 'student'
+          role: 'student',
         },
         overall_stats: {
           courses_enrolled: 1,
@@ -30,7 +30,7 @@ describe('CourseService', () => {
           overall_progress: 75,
           tasks_completed: 0,
           tasks_in_progress: 0,
-          tasks_overdue: 0
+          tasks_overdue: 0,
         },
         courses: [
           {
@@ -39,9 +39,9 @@ describe('CourseService', () => {
             progress: 75,
             status: 'active',
             enrolled_date: expect.any(String),
-            last_activity_date: expect.any(String)
-          }
-        ]
+            last_activity_date: expect.any(String),
+          },
+        ],
       });
 
       // Verify date strings are in ISO format
@@ -58,7 +58,7 @@ describe('CourseService', () => {
       const minimalUserProgress: IUserProgress = {
         id: 0,
         percentage: 0,
-        label: ''
+        label: '',
       };
 
       // Act
@@ -71,7 +71,7 @@ describe('CourseService', () => {
           id: '0',
           username: '',
           display_name: '',
-          role: 'student'
+          role: 'student',
         },
         overall_stats: {
           courses_enrolled: 1,
@@ -79,7 +79,7 @@ describe('CourseService', () => {
           overall_progress: 0,
           tasks_completed: 0,
           tasks_in_progress: 0,
-          tasks_overdue: 0
+          tasks_overdue: 0,
         },
         courses: [
           {
@@ -88,9 +88,9 @@ describe('CourseService', () => {
             progress: 0,
             status: 'active',
             enrolled_date: expect.any(String),
-            last_activity_date: expect.any(String)
-          }
-        ]
+            last_activity_date: expect.any(String),
+          },
+        ],
       });
     });
   });

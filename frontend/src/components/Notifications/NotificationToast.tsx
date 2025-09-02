@@ -1,13 +1,13 @@
 import CloseIcon from '@mui/icons-material/Close';
-import {Snackbar, Alert, AlertTitle, IconButton, Box, Slide} from '@mui/material';
+import { Snackbar, Alert, AlertTitle, IconButton, Box, Slide } from '@mui/material';
 import React from 'react';
 
-import {INotification} from './types';
+import { INotification } from './types';
 
 interface NotificationToastProps {
   notifications: INotification[];
   onDismiss: (id: number) => void;
-  position: {vertical: 'top' | 'bottom'; horizontal: 'left' | 'right'};
+  position: { vertical: 'top' | 'bottom'; horizontal: 'left' | 'right' };
   // container?: Element | null; // Removed, not supported by MUI Snackbar
 }
 
@@ -33,7 +33,8 @@ export const NotificationToast: React.FC<NotificationToastProps> = ({
   };
 
   // Only render up to maxVisible notifications (enforced at the display layer)
-  const visibleNotifications = notifications.slice(0,  // fallback to 3 if not set
+  const visibleNotifications = notifications.slice(
+    0, // fallback to 3 if not set
     typeof (window as any).NOTIFICATION_MAX_VISIBLE === 'number'
       ? (window as any).NOTIFICATION_MAX_VISIBLE
       : 3
@@ -85,7 +86,7 @@ export const NotificationToast: React.FC<NotificationToastProps> = ({
               }}
               aria-live="assertive"
               aria-atomic="true"
-            // container={container} // Removed
+              // container={container} // Removed
             >
               <Alert
                 role="alert"

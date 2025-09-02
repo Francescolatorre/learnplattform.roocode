@@ -1,13 +1,10 @@
-import {describe, it, expect, beforeAll, afterAll, beforeEach} from 'vitest';
-import {TCourseStatus} from '@/types/course';
-import {IEnrollmentStatus} from '@/types/entities';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import { TCourseStatus } from '@/types/course';
+import { IEnrollmentStatus } from '@/types/entities';
 import authService from '../auth/authService';
-import {courseService} from './courseService';
-import {enrollmentService} from './enrollmentService';
-import {
-  TEST_USERS,
-  cleanupTestEnvironment,
-} from '@/test-utils/setupIntegrationTests';
+import { courseService } from './courseService';
+import { enrollmentService } from './enrollmentService';
+import { TEST_USERS, cleanupTestEnvironment } from '@/test-utils/setupIntegrationTests';
 
 describe('enrollmentService Integration', () => {
   // Test data state
@@ -21,13 +18,13 @@ describe('enrollmentService Integration', () => {
       userId: 0,
     },
     courses: {
-      regular: {id: 0},
-      forUnenrollment: {id: 0},
-      notEnrolled: {id: 0},
+      regular: { id: 0 },
+      forUnenrollment: { id: 0 },
+      notEnrolled: { id: 0 },
     },
     enrollments: {
-      regular: {id: 0},
-      forUnenrollment: {id: 0},
+      regular: { id: 0 },
+      forUnenrollment: { id: 0 },
     },
   };
 
@@ -183,7 +180,7 @@ describe('enrollmentService Integration', () => {
       // Act: Update enrollment to completed
       const updatedEnrollment = await enrollmentService.updateEnrollment(
         testData.enrollments.regular.id,
-        {status: 'completed' as IEnrollmentStatus}
+        { status: 'completed' as IEnrollmentStatus }
       );
 
       // Assert: Status was updated

@@ -5,6 +5,7 @@
 > This project has migrated from legacy notification APIs to a unified, extensible notification system. All developers must follow the manual migration process below—no migration scripts are provided or permitted.
 >
 > **Actionable Steps:**
+>
 > 1. **Update Imports:** Replace all legacy notification imports (e.g., `ErrorNotification`, `showErrorNotification`) with the new `useNotification` hook and `NotificationProvider`.
 > 2. **Refactor Usage:** Change all notification calls to use the `notify` function from `useNotification`. See the [Migration Guide](#migration-guide) below for code examples.
 > 3. **Provider Update:** Ensure your app is wrapped in a single `NotificationProvider`.
@@ -15,9 +16,9 @@
 > 8. **Removal Plan:** Deprecated APIs will be removed in the next major release. Complete migration before upgrading.
 >
 > **References:**
+>
 > - [Migration Guide](#migration-guide) (detailed steps/checklist)
 > - [`ADR-012-frontend-error-notification-system.md`](../../../../memory_bank/ADRs/ADR-012-frontend-error-notification-system.md:1) (architecture rationale)
->
 
 A flexible, accessible notification system for managing and displaying multiple notifications with priority queuing.
 
@@ -56,12 +57,12 @@ function App() {
 
 #### Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `maxVisible` | `number` | `3` | Maximum number of visible notifications |
-| `position` | `{ vertical: 'top' \| 'bottom', horizontal: 'left' \| 'right' }` | `{ vertical: 'bottom', horizontal: 'right' }` | Position of the notification stack |
-| `defaultDuration` | `number` | `5000` | Default duration in milliseconds before auto-dismiss |
-| `children` | `ReactNode` | - | Child components |
+| Prop              | Type                                                             | Default                                       | Description                                          |
+| ----------------- | ---------------------------------------------------------------- | --------------------------------------------- | ---------------------------------------------------- |
+| `maxVisible`      | `number`                                                         | `3`                                           | Maximum number of visible notifications              |
+| `position`        | `{ vertical: 'top' \| 'bottom', horizontal: 'left' \| 'right' }` | `{ vertical: 'bottom', horizontal: 'right' }` | Position of the notification stack                   |
+| `defaultDuration` | `number`                                                         | `5000`                                        | Default duration in milliseconds before auto-dismiss |
+| `children`        | `ReactNode`                                                      | -                                             | Child components                                     |
 
 ### useNotification Hook
 
@@ -79,7 +80,7 @@ function MyComponent() {
       message: 'Operation completed',
       severity: 'success',
       duration: 3000,
-      priority: 2
+      priority: 2,
     });
   };
 
@@ -89,13 +90,13 @@ function MyComponent() {
 
 #### Notification Options
 
-| Option | Type | Required | Description |
-|--------|------|----------|-------------|
-| `title` | `string` | No | Notification title |
-| `message` | `string` | Yes | Main notification message |
-| `severity` | `'success' \| 'info' \| 'warning' \| 'error'` | No | Severity level (affects styling) |
-| `duration` | `number` | No | Display duration in milliseconds |
-| `priority` | `number` | No | Priority level (higher numbers = higher priority) |
+| Option     | Type                                          | Required | Description                                       |
+| ---------- | --------------------------------------------- | -------- | ------------------------------------------------- |
+| `title`    | `string`                                      | No       | Notification title                                |
+| `message`  | `string`                                      | Yes      | Main notification message                         |
+| `severity` | `'success' \| 'info' \| 'warning' \| 'error'` | No       | Severity level (affects styling)                  |
+| `duration` | `number`                                      | No       | Display duration in milliseconds                  |
+| `priority` | `number`                                      | No       | Priority level (higher numbers = higher priority) |
 
 ## Usage Examples
 
@@ -106,9 +107,7 @@ function BasicExample() {
   const notify = useNotification();
 
   return (
-    <button onClick={() => notify({ message: 'Simple notification' })}>
-      Show Notification
-    </button>
+    <button onClick={() => notify({ message: 'Simple notification' })}>Show Notification</button>
   );
 }
 ```
@@ -123,17 +122,17 @@ function PriorityExample() {
     notify({
       message: 'High priority alert',
       severity: 'error',
-      priority: 3
+      priority: 3,
     });
     notify({
       message: 'Medium priority warning',
       severity: 'warning',
-      priority: 2
+      priority: 2,
     });
     notify({
       message: 'Low priority info',
       severity: 'info',
-      priority: 1
+      priority: 1,
     });
   };
 
@@ -160,6 +159,7 @@ function ConfigExample() {
 ## Queue Management
 
 The system automatically manages notifications based on:
+
 1. Maximum visible notifications limit
 2. Priority levels
 3. Last-in-first-out (LIFO) for equal priorities
@@ -181,6 +181,7 @@ The notification system follows WAI-ARIA guidelines:
 ### Migration Overview and Rationale
 
 The new Notification API replaces legacy "Error-prefixed" notification components and ad-hoc notification calls with a unified, extensible, and accessible system. This migration enables:
+
 - Consistent notification handling across the application
 - Improved accessibility and user experience
 - Priority-based queueing and flexible configuration
@@ -266,17 +267,20 @@ Replace any usage of old notification providers (e.g., `SimpleNotificationProvid
 ## Best Practices
 
 1. **Priority Levels**
+
    - Use priorities 1-3 for standard notifications
    - Reserve 4-5 for critical system messages
    - Default to priority 1 for general information
 
 2. **Duration Guidelines**
+
    - Error messages: 8000ms or manual dismiss
    - Warnings: 5000ms
    - Success/Info: 3000ms
    - Critical alerts: Manual dismiss only
 
 3. **Message Content**
+
    - Keep messages concise and clear
    - Use severity levels appropriately
    - Include actionable information when relevant

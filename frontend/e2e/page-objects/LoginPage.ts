@@ -1,7 +1,7 @@
-import {Page, Locator, expect} from '@playwright/test';
-import {BasePage} from './BasePage';
-import {takeScreenshot} from '../setupTests';
-import {NavigationHelper} from './NavigationHelper';
+import { Page, Locator, expect } from '@playwright/test';
+import { BasePage } from './BasePage';
+import { takeScreenshot } from '../setupTests';
+import { NavigationHelper } from './NavigationHelper';
 
 /**
  * Page object for the login page
@@ -70,7 +70,7 @@ export class LoginPage extends BasePage {
    */
   async waitForPageLoad(): Promise<void> {
     console.log('Navigated to login page');
-    await this.page.waitForURL('**/login**', {timeout: 10000});
+    await this.page.waitForURL('**/login**', { timeout: 10000 });
 
     // Überprüfen ob die Seite geladen ist
     const currentUrl = this.page.url();
@@ -218,7 +218,11 @@ export class LoginPage extends BasePage {
       // 3. Set up a response listener to capture auth tokens from future responses
       this.page.on('response', async response => {
         const url = response.url();
-        if (url.includes('/auth/login') || url.includes('/auth/token') || url.includes('/api/auth/')) {
+        if (
+          url.includes('/auth/login') ||
+          url.includes('/auth/token') ||
+          url.includes('/api/auth/')
+        ) {
           try {
             const contentType = response.headers()['content-type'] || '';
             if (contentType.includes('application/json')) {
@@ -231,7 +235,7 @@ export class LoginPage extends BasePage {
 
                 // Store tokens in localStorage
                 await this.page.evaluate(
-                  ({access, refresh}) => {
+                  ({ access, refresh }) => {
                     localStorage.setItem('accessToken', access || '');
                     localStorage.setItem('authToken', access || '');
                     localStorage.setItem('token', access || '');
@@ -259,7 +263,7 @@ export class LoginPage extends BasePage {
               response.url().includes('/auth/token/') ||
               response.url().includes('/api/auth/')) &&
             response.status() === 200,
-          {timeout: 5000}
+          { timeout: 5000 }
         );
 
         const responseData = await response.json().catch(() => ({}));
@@ -502,5 +506,4 @@ export class LoginPage extends BasePage {
     console.warn('No authentication tokens found after 10 attempts');
     return false;
   }
-
 }

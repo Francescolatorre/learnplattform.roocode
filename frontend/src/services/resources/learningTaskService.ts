@@ -1,10 +1,10 @@
-import {IPaginatedResponse} from '@/types';
-import {ILearningTask, ITaskCreationData} from '@/types/task';
-import {ApiService} from 'src/services/api/apiService';
-import {logger} from 'src/utils/logger';
-import {withManagedExceptions} from 'src/utils/errorHandling';
+import { IPaginatedResponse } from '@/types';
+import { ILearningTask, ITaskCreationData } from '@/types/task';
+import { ApiService } from 'src/services/api/apiService';
+import { logger } from 'src/utils/logger';
+import { withManagedExceptions } from 'src/utils/errorHandling';
 
-import {API_CONFIG} from '../api/apiConfig';
+import { API_CONFIG } from '../api/apiConfig';
 /**
  * Service for managing learning tasks, including CRUD operations and relationship queries.
  * Provides methods to interact with the backend API for learning tasks. All methods are asynchronous and strictly typed.
@@ -118,7 +118,7 @@ class LearningTaskService {
    */
   getByStudentId = withManagedExceptions(
     async (studentId: string): Promise<ILearningTask[]> => {
-      const params = {student: studentId};
+      const params = { student: studentId };
       const response = await this.apiTasksResults.get(
         `${API_CONFIG.endpoints.tasks.list}?${new URLSearchParams(params).toString()}`
       );
@@ -230,7 +230,9 @@ class LearningTaskService {
           pageTasks = response.results;
           hasMorePages = !!response.next; // Check if there is a next page
         } else {
-          throw new Error(`Invalid API response format for course ID: ${courseId}, page: ${currentPage}`);
+          throw new Error(
+            `Invalid API response format for course ID: ${courseId}, page: ${currentPage}`
+          );
         }
 
         allTasks = [...allTasks, ...pageTasks];

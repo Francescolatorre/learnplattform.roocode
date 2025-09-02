@@ -1,17 +1,17 @@
-import {render, screen, act, waitFor, waitForElementToBeRemoved} from '@testing-library/react';
-import {MemoryRouter} from 'react-router-dom';
+import { render, screen, act, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import InstructorCoursesPage from './InstructorCoursesPage';
-import {NotificationProvider} from '@/components/Notifications/NotificationProvider';
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {useAuth} from '@/context/auth/AuthContext';
-import {courseService} from '@/services/resources/courseService';
-import {fireEvent} from '@testing-library/react';
-import {vi} from 'vitest';
-import {UserRoleEnum, IUser} from '@/types/userTypes';
-import {ICourse} from '@/types/course';
-import {IPaginatedResponse} from '@/types/paginatedResponse';
-import {userFactory} from '@/test-utils/factories/userFactory';
-import {courseFactory} from '@/test-utils/factories/courseFactory';
+import { NotificationProvider } from '@/components/Notifications/NotificationProvider';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useAuth } from '@/context/auth/AuthContext';
+import { courseService } from '@/services/resources/courseService';
+import { fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
+import { UserRoleEnum, IUser } from '@/types/userTypes';
+import { ICourse } from '@/types/course';
+import { IPaginatedResponse } from '@/types/paginatedResponse';
+import { userFactory } from '@/test-utils/factories/userFactory';
+import { courseFactory } from '@/test-utils/factories/courseFactory';
 
 describe('InstructorCoursesPage', () => {
   const mockUser: IUser = userFactory.build({
@@ -121,8 +121,8 @@ describe('InstructorCoursesPage', () => {
   it('handles pagination if there are multiple pages', async () => {
     vi.mocked(useAuth).mockReturnValue(mockAuthContext);
     // Create 25 mock courses to trigger pagination (default pageSize is 20)
-    const manyCourses = Array.from({length: 25}, (_, i) =>
-      courseFactory.build({id: 200 + i, title: `Course ${i + 1}`})
+    const manyCourses = Array.from({ length: 25 }, (_, i) =>
+      courseFactory.build({ id: 200 + i, title: `Course ${i + 1}` })
     );
     vi.spyOn(courseService, 'fetchInstructorCourses').mockResolvedValue({
       results: manyCourses.slice(0, 20), // first page

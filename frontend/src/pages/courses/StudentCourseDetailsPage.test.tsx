@@ -4,17 +4,17 @@
  */
 
 import React from 'react';
-import {vi} from 'vitest';
+import { vi } from 'vitest';
 import StudentCourseDetailsPage from './StudentCourseDetailsPage';
-import {courseService} from '@services/resources/courseService';
-import {enrollmentService} from '@services/resources/enrollmentService';
-import {renderWithProviders} from '@/test-utils/renderWithProviders';
-import {courseFactory} from '@/test-utils/factories/courseFactory';
-import {learningTaskFactory} from '@/test-utils/factories/learningTaskFactory';
-import {IUser, UserRoleEnum} from '@/types/userTypes';
-import {MemoryRouter, Routes, Route} from 'react-router-dom';
-import {waitFor} from '@testing-library/react';
-import {screen} from '@testing-library/react';
+import { courseService } from '@services/resources/courseService';
+import { enrollmentService } from '@services/resources/enrollmentService';
+import { renderWithProviders } from '@/test-utils/renderWithProviders';
+import { courseFactory } from '@/test-utils/factories/courseFactory';
+import { learningTaskFactory } from '@/test-utils/factories/learningTaskFactory';
+import { IUser, UserRoleEnum } from '@/types/userTypes';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 
 // Mock the services
 vi.mock('@services/resources/courseService');
@@ -22,12 +22,18 @@ vi.mock('@services/resources/enrollmentService');
 vi.mock('@/components/Notifications/useNotification', () => ({
   default: vi.fn(),
 }));
-vi.mock('@context/auth/AuthContext', async (importOriginal) => {
+vi.mock('@context/auth/AuthContext', async importOriginal => {
   const actual = await importOriginal();
   return {
     ...actual,
     useAuth: () => ({
-      user: {id: '1', username: 'testuser', email: 'testuser@example.com', role: 'student', is_active: true},
+      user: {
+        id: '1',
+        username: 'testuser',
+        email: 'testuser@example.com',
+        role: 'student',
+        is_active: true,
+      },
       isAuthenticated: true,
       isRestoring: false,
       error: null,
@@ -51,18 +57,18 @@ const mockCourse = courseFactory.build({
 const mockTasks = {
   count: 2,
   results: [
-    learningTaskFactory.build({id: 1, course: 1, title: 'Task 1'}),
-    learningTaskFactory.build({id: 2, course: 1, title: 'Task 2'}),
+    learningTaskFactory.build({ id: 1, course: 1, title: 'Task 1' }),
+    learningTaskFactory.build({ id: 2, course: 1, title: 'Task 2' }),
   ],
 };
 
-const mockEnrollmentStatus = {enrolled: true, completed: false};
+const mockEnrollmentStatus = { enrolled: true, completed: false };
 
 describe('StudentCourseDetailsPage (clean mock call check)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(courseService).getCourseDetails.mockImplementation((id: string) => {
-      return Promise.resolve({...mockCourse});
+      return Promise.resolve({ ...mockCourse });
     });
     vi.mocked(courseService).getCourseTasks.mockImplementation((id: string) => {
       return Promise.resolve({
@@ -87,7 +93,7 @@ describe('StudentCourseDetailsPage (clean mock call check)', () => {
       <Routes>
         <Route path="/courses/:courseId" element={<StudentCourseDetailsPage />} />
       </Routes>,
-      {initialEntries: ['/courses/1']}
+      { initialEntries: ['/courses/1'] }
     );
     // Wait for the mocks to be called using waitFor
     await waitFor(() => {
@@ -102,7 +108,7 @@ describe('StudentCourseDetailsPage (clean mock call check)', () => {
       <Routes>
         <Route path="/courses/:courseId" element={<StudentCourseDetailsPage />} />
       </Routes>,
-      {initialEntries: ['/courses/1']}
+      { initialEntries: ['/courses/1'] }
     );
 
     // Wait for course details to be displayed
@@ -133,14 +139,14 @@ describe('StudentCourseDetailsPage (clean mock call check)', () => {
       <Routes>
         <Route path="/courses/:courseId" element={<StudentCourseDetailsPage />} />
       </Routes>,
-      {initialEntries: ['/courses/1']}
+      { initialEntries: ['/courses/1'] }
     );
     // Wait for course details to be displayed
     await waitFor(() => {
       expect(screen.getByText(mockCourse.title)).toBeInTheDocument();
     });
     // Tasks should NOT be shown
-    mockTasks.results.forEach((task) => {
+    mockTasks.results.forEach(task => {
       expect(screen.queryByText(task.title)).not.toBeInTheDocument();
     });
     // Optionally, check for a message about enrolling to see tasks

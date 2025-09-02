@@ -10,13 +10,13 @@
  * - no Delete method is provided, as enrollments should not be deleted but rather marked as inactive or unenrolled.
  */
 
-import {ICourseEnrollment, IEnrollmentStatus} from '@/types/entities';
-import {API_CONFIG} from 'src/services/api/apiConfig';
-import {ApiService} from 'src/services/api/apiService';
-import {IPaginatedResponse} from 'src/types/paginatedResponse';
-import {authEventService} from '@context/auth/AuthEventService';
-import {AuthEventType} from '@context/auth/types';
-import {withManagedExceptions} from 'src/utils/errorHandling';
+import { ICourseEnrollment, IEnrollmentStatus } from '@/types/entities';
+import { API_CONFIG } from 'src/services/api/apiConfig';
+import { ApiService } from 'src/services/api/apiService';
+import { IPaginatedResponse } from 'src/types/paginatedResponse';
+import { authEventService } from '@context/auth/AuthEventService';
+import { AuthEventType } from '@context/auth/types';
+import { withManagedExceptions } from 'src/utils/errorHandling';
 
 /**
  * Interface for enrollment response data
@@ -74,10 +74,12 @@ class EnrollmentService {
    */
   getEnrollmentStatus = withManagedExceptions(
     async (courseId: string | number): Promise<IEnrollmentStatus> => {
-      console.info(`enrollmentservice:getEnrollmentStatus: Checking enrollment status for course ID: ${courseId}`);
+      console.info(
+        `enrollmentservice:getEnrollmentStatus: Checking enrollment status for course ID: ${courseId}`
+      );
 
       // Find enrollments for this course
-      const enrollments = await this.findByFilter({course: Number(courseId)});
+      const enrollments = await this.findByFilter({ course: Number(courseId) });
       const enrollment = enrollments.find(e => e.course === Number(courseId));
 
       if (!enrollment) {
@@ -255,7 +257,7 @@ class EnrollmentService {
       methodName: 'enrollInCourse',
       context: {
         additionalInfo: 'Enrolling user in course',
-      }
+      },
     }
   );
 
@@ -333,10 +335,7 @@ class EnrollmentService {
    * @returns {Promise<ICourseEnrollment>} Promise resolving to the updated enrollment.
    */
   updateEnrollment = withManagedExceptions(
-    async (
-      id: string | number,
-      data: Partial<ICourseEnrollment>
-    ): Promise<ICourseEnrollment> => {
+    async (id: string | number, data: Partial<ICourseEnrollment>): Promise<ICourseEnrollment> => {
       return this.update(id, data);
     },
     {
@@ -449,4 +448,3 @@ export const fetchEnrolledStudents = async (courseId: string | number) =>
  */
 export const findByFilter = async (filter: Record<string, unknown>) =>
   enrollmentService.findByFilter(filter);
-

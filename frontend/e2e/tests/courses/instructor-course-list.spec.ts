@@ -5,12 +5,12 @@ import { CourseDetailPage } from '../../page-objects/courses/CourseDetailPage';
 import { DashboardPage } from '../../page-objects/DashboardPage';
 import { TEST_USERS, takeScreenshot } from '../../setupTests';
 import { logPageState, trackNetworkActivity } from '../../utils/debugHelper';
-import { 
-  optimizePage, 
-  clearMemory, 
-  waitForRoleDashboard, 
+import {
+  optimizePage,
+  clearMemory,
+  waitForRoleDashboard,
   waitForDashboardWithAPI,
-  limitDOMElements 
+  limitDOMElements,
 } from '../../utils/testStability';
 
 // Test constants - instructor specific courses
@@ -27,7 +27,7 @@ test.describe('Instructor Course List and Search', () => {
   test.beforeEach(async ({ page }) => {
     // Optimize page for testing
     await optimizePage(page);
-    
+
     if (enableApiDebugging) {
       trackNetworkActivity(page, {
         logRequests: true,
@@ -49,11 +49,11 @@ test.describe('Instructor Course List and Search', () => {
     expect(dashboardLoaded).toBeTruthy();
 
     await takeScreenshot(page, 'instructor-dashboard-after-login');
-    
+
     // Limit DOM elements to prevent memory issues
     await limitDOMElements(page, '.course-card', 15);
   });
-  
+
   test.afterEach(async ({ page }) => {
     await clearMemory(page);
   });
@@ -62,7 +62,7 @@ test.describe('Instructor Course List and Search', () => {
     const coursesPage = new InstructorCoursesPage(page);
     await coursesPage.navigateTo();
     await coursesPage.isCoursesPageLoaded();
-    
+
     // Limit DOM elements after page load
     await limitDOMElements(page, '.course-card', 10);
 
@@ -78,7 +78,7 @@ test.describe('Instructor Course List and Search', () => {
 
       const results = await coursesPage.getSearchResults();
       console.log(`Search results for "${courseName}":`, results);
-      
+
       // Clear memory between searches
       await clearMemory(page);
     }
@@ -90,10 +90,13 @@ test.describe('Instructor Course List and Search', () => {
     await coursesPage.isCoursesPageLoaded();
 
     // Wait for any courses to appear
-    await page.waitForSelector('[data-testid^="course-list-item-"], [data-testid^="course-card-"]', { 
-      timeout: 15000,
-      state: 'visible' 
-    });
+    await page.waitForSelector(
+      '[data-testid^="course-list-item-"], [data-testid^="course-card-"]',
+      {
+        timeout: 15000,
+        state: 'visible',
+      }
+    );
 
     // Check draft courses visibility
     await page.locator('[data-testid="course-status-filter"]').selectOption('draft');
@@ -108,7 +111,7 @@ test.describe('Instructor Course List and Search', () => {
 
     const publishedResults = await coursesPage.getSearchResults();
     console.log('Published courses:', publishedResults);
-    
+
     // Verify we have some courses
     expect(draftResults.length + publishedResults.length).toBeGreaterThan(0);
   });
@@ -124,22 +127,28 @@ test.describe('Instructor Course List and Search', () => {
     await expect(page.locator('[data-testid="course-management-header"]')).toBeVisible();
 
     // Wait for any course elements to load
-    await page.waitForSelector('[data-testid^="course-list-item-"], [data-testid^="course-card-"]', { 
-      timeout: 15000,
-      state: 'visible'
-    });
-    
+    await page.waitForSelector(
+      '[data-testid^="course-list-item-"], [data-testid^="course-card-"]',
+      {
+        timeout: 15000,
+        state: 'visible',
+      }
+    );
+
     // Check if we have course list items or course cards
     const courseListItems = page.locator('[data-testid^="course-list-item-"]');
     const courseCards = page.locator('[data-testid^="course-card-"]');
-    
+
     const listItemCount = await courseListItems.count();
     const cardCount = await courseCards.count();
-    
+
     if (listItemCount > 0) {
       // For list items, check edit button with the course ID
       const firstItem = courseListItems.first();
-      const courseId = (await firstItem.getAttribute('data-testid'))?.replace('course-list-item-', '');
+      const courseId = (await firstItem.getAttribute('data-testid'))?.replace(
+        'course-list-item-',
+        ''
+      );
       if (courseId) {
         const editButton = page.locator(`[data-testid="edit-course-${courseId}"]`);
         // Edit button should exist (may need to scroll or hover to see it)
@@ -151,7 +160,9 @@ test.describe('Instructor Course List and Search', () => {
       await firstCard.scrollIntoViewIfNeeded();
       await firstCard.hover();
       // Look for either action button or edit button
-      const actionButton = firstCard.locator('[data-testid="course-action-btn"], [data-testid^="edit-course-"]').first();
+      const actionButton = firstCard
+        .locator('[data-testid="course-action-btn"], [data-testid^="edit-course-"]')
+        .first();
       await expect(actionButton).toBeAttached();
     } else {
       // No courses found, verify the create course button is still available

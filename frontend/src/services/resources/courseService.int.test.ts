@@ -7,11 +7,11 @@
  * - Diagnostic logging is included before dependency access.
  */
 
-import {describe, it, expect, beforeAll} from 'vitest';
-import {TCourseStatus} from '@/types/course';
+import { describe, it, expect, beforeAll } from 'vitest';
+import { TCourseStatus } from '@/types/course';
 import authService from '../auth/authService';
-import {courseService} from './courseService';
-import {TEST_USERS} from '@/test-utils/setupIntegrationTests';
+import { courseService } from './courseService';
+import { TEST_USERS } from '@/test-utils/setupIntegrationTests';
 
 describe('courseService Integration', () => {
   let accessToken: string;
@@ -130,4 +130,3 @@ describe('courseService Integration', () => {
     }
   });
 });
-

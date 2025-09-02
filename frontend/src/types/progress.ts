@@ -1,6 +1,6 @@
 // src/types/common/progress.ts
 
-import {ITaskProgress} from './task';
+import { ITaskProgress } from './task';
 
 // Progress-bezogene Typen - ohne Konflikte
 export interface IUserProgress {

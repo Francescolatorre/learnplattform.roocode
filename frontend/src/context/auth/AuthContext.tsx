@@ -13,12 +13,12 @@
  * @module AuthContext
  */
 
-import React, {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import authService from '@/services/auth/authService';
-import {IUser, UserRoleEnum} from '@/types/userTypes';
-import {AUTH_CONFIG, ROUTE_CONFIG} from '@/config/appConfig';
+import { IUser, UserRoleEnum } from '@/types/userTypes';
+import { AUTH_CONFIG, ROUTE_CONFIG } from '@/config/appConfig';
 
 /**
  * AuthEvent types for tracking authentication-related events
@@ -53,7 +53,7 @@ interface IAuthContextProps {
   logout: () => void;
   register: (username: string, email: string, password: string) => Promise<void>;
   getUserRole: () => UserRoleEnum;
-  redirectToDashboard: (options?: {path?: string; replace?: boolean}) => void;
+  redirectToDashboard: (options?: { path?: string; replace?: boolean }) => void;
 }
 
 // Create the auth context with a default value
@@ -62,11 +62,11 @@ const AuthContext = createContext<IAuthContextProps>({
   isAuthenticated: false,
   isRestoring: true,
   error: null,
-  login: async () => { },
-  logout: () => { },
-  register: async () => { },
+  login: async () => {},
+  logout: () => {},
+  register: async () => {},
   getUserRole: () => UserRoleEnum.GUEST,
-  redirectToDashboard: () => { },
+  redirectToDashboard: () => {},
 });
 
 /**
@@ -91,7 +91,7 @@ const authEventService = new AuthEventService();
 /**
  * AuthProvider component that wraps the application and provides authentication context
  */
-export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<IUser | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isRestoring, setIsRestoring] = useState(true);
@@ -165,7 +165,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
 
             authEventService.publish({
               type: AuthEventType.TOKEN_REFRESH,
-              payload: {message: 'Authentication restored from token', userId: userData.id},
+              payload: { message: 'Authentication restored from token', userId: userData.id },
             });
           } catch (profileError) {
             console.error(
@@ -189,7 +189,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         setIsAuthenticated(false);
         authEventService.publish({
           type: AuthEventType.ERROR,
-          payload: {message: 'Error restoring authentication', error: err},
+          payload: { message: 'Error restoring authentication', error: err },
         });
       } finally {
         setIsRestoring(false);
@@ -314,7 +314,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
 
   // Redirect to dashboard based on role
   const redirectToDashboard = useCallback(
-    (options?: {path?: string; replace?: boolean}) => {
+    (options?: { path?: string; replace?: boolean }) => {
       const role = getUserRole();
       console.info(`AuthContext | User role: ${role}`);
 
@@ -329,7 +329,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
 
       // Use React Router's navigate for redirection
       if (shouldReplace) {
-        navigate(redirectPath, {replace: true});
+        navigate(redirectPath, { replace: true });
       } else {
         navigate(redirectPath);
       }

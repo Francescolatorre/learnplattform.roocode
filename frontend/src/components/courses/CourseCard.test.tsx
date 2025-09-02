@@ -1,7 +1,7 @@
-import {renderWithProviders, screen, fireEvent} from '@/test-utils/renderWithProviders';
+import { renderWithProviders, screen, fireEvent } from '@/test-utils/renderWithProviders';
 import CourseCard from './CourseCard';
-import {describe, it, expect, vi} from 'vitest';
-import {courseFactory} from '@/test-utils/factories/courseFactory';
+import { describe, it, expect, vi } from 'vitest';
+import { courseFactory } from '@/test-utils/factories/courseFactory';
 
 // Mock react-router-dom's useNavigate
 const mockedNavigate = vi.fn();
@@ -28,14 +28,14 @@ describe('CourseCard Component', () => {
   });
 
   it('handles missing image by showing placeholder', () => {
-    const courseWithoutImage = {...mockCourse, image_url: undefined};
+    const courseWithoutImage = { ...mockCourse, image_url: undefined };
     renderWithProviders(<CourseCard course={courseWithoutImage} isInstructorView={false} />);
 
     expect(screen.getByText('No image available')).toBeInTheDocument();
   });
 
   it('handles undefined description by showing default text', () => {
-    const courseWithoutDescription = {...mockCourse, description: undefined};
+    const courseWithoutDescription = { ...mockCourse, description: undefined };
     renderWithProviders(<CourseCard course={courseWithoutDescription} isInstructorView={false} />);
 
     expect(screen.getByText('No description available')).toBeInTheDocument();
@@ -43,7 +43,7 @@ describe('CourseCard Component', () => {
 
   it('truncates long descriptions', () => {
     const longDesc = 'A'.repeat(150); // Creates a string longer than 120 chars
-    const courseWithLongDesc = {...mockCourse, description: longDesc};
+    const courseWithLongDesc = { ...mockCourse, description: longDesc };
 
     renderWithProviders(<CourseCard course={courseWithLongDesc} isInstructorView={false} />);
 
@@ -68,9 +68,9 @@ describe('CourseCard Component', () => {
       return {
         ...actual,
         useQuery: () => ({
-          data: {enrolled: true},
-          isLoading: false
-        })
+          data: { enrolled: true },
+          isLoading: false,
+        }),
       };
     });
 

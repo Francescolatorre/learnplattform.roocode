@@ -16,9 +16,9 @@ import {
   ITaskProgress,
 } from '@/types';
 
-import {API_CONFIG} from '../api/apiConfig';
-import {ApiService} from '../api/apiService';
-import {withManagedExceptions} from 'src/utils/errorHandling';
+import { API_CONFIG } from '../api/apiConfig';
+import { ApiService } from '../api/apiService';
+import { withManagedExceptions } from 'src/utils/errorHandling';
 
 /**
  * Service for managing progress-related operations, including student progress, quiz history,
@@ -368,7 +368,11 @@ class ProgressService {
 
         // Ensure we return an array even if the API doesn't match our expectation
         if (!Array.isArray(response)) {
-          if (response && typeof response === 'object' && Array.isArray((response as any).results)) {
+          if (
+            response &&
+            typeof response === 'object' &&
+            Array.isArray((response as any).results)
+          ) {
             // Handle paginated response
             return (response as any).results as IQuizAttempt[];
           }
@@ -410,7 +414,7 @@ class ProgressService {
     },
     {
       serviceName: 'ProgressService',
-      methodName: 'getQuizAttempts'
+      methodName: 'getQuizAttempts',
     }
   );
 }

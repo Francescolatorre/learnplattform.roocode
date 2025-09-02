@@ -1,4 +1,4 @@
-import {describe, it, expect, vi, beforeEach} from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import progressService from './progressService';
 
@@ -7,7 +7,7 @@ vi.mock('../api/apiService', () => {
   const mockPut = vi.fn();
   const mockPost = vi.fn();
   const mockDelete = vi.fn(); // Add mockDelete for DELETE requests
-  Object.assign(globalThis, {mockGet, mockPut, mockPost, mockDelete});
+  Object.assign(globalThis, { mockGet, mockPut, mockPost, mockDelete });
   class MockApiService {
     get = mockGet;
     put = mockPut;
@@ -19,7 +19,6 @@ vi.mock('../api/apiService', () => {
     __esModule: true,
   };
 });
-
 
 describe('progressService', () => {
   let mockGet: any;
@@ -54,7 +53,7 @@ describe('progressService', () => {
         url.includes('/student-progress/') &&
         !url.includes('/student-progress/2/')
       ) {
-        return Promise.resolve({count: 0, next: null, previous: null, results: []});
+        return Promise.resolve({ count: 0, next: null, previous: null, results: [] });
       }
 
       // Course student progress for specific user - return course object
@@ -116,7 +115,7 @@ describe('progressService', () => {
 
   it('fetchAllStudentsProgress returns empty result', async () => {
     const result = await progressService.fetchAllStudentsProgress('1');
-    expect(result).toEqual({count: 0, next: null, previous: null, results: []});
+    expect(result).toEqual({ count: 0, next: null, previous: null, results: [] });
   });
 
   it('getIQuizHistory returns empty array', async () => {
@@ -140,7 +139,7 @@ describe('progressService', () => {
   });
 
   it('fetchCourseDetails returns course if found', async () => {
-    const mockCourse = {id: 1, title: 'Course'};
+    const mockCourse = { id: 1, title: 'Course' };
     mockGet.mockResolvedValueOnce(mockCourse);
     const result = await progressService.fetchCourseDetails('1');
     expect(mockGet).toHaveBeenCalled();

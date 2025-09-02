@@ -14,18 +14,18 @@ import {
   DialogContentText,
   DialogActions,
 } from '@mui/material';
-import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
-import React, {useMemo, useState} from 'react';
-import {useParams, useNavigate} from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import React, { useMemo, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import useNotification from '@/components/Notifications/useNotification';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
-import {ICourse} from '@/types/course';
-import {ILearningTask} from '@/types/task';
-import {IPaginatedResponse} from '@/types/paginatedResponse';
-import {useAuth} from '@context/auth/AuthContext';
-import {courseService} from '@services/resources/courseService';
-import {enrollmentService} from '@services/resources/enrollmentService';
+import { ICourse } from '@/types/course';
+import { ILearningTask } from '@/types/task';
+import { IPaginatedResponse } from '@/types/paginatedResponse';
+import { useAuth } from '@context/auth/AuthContext';
+import { courseService } from '@services/resources/courseService';
+import { enrollmentService } from '@services/resources/enrollmentService';
 import EnrollmentStatusIndicator from '@/components/courses/EnrollmentStatusIndicator';
 
 /**
@@ -40,10 +40,10 @@ import EnrollmentStatusIndicator from '@/components/courses/EnrollmentStatusIndi
  * @returns {React.ReactElement} The CourseDetailsPage component
  */
 const StudentCourseDetailsPage: React.FC = () => {
-  const {courseId} = useParams<{courseId: string}>();
+  const { courseId } = useParams<{ courseId: string }>();
   const courseIdNum = Number(courseId);
   const queryClient = useQueryClient();
-  const {isAuthenticated} = useAuth();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const notify = useNotification();
   const [unenrollDialogOpen, setUnenrollDialogOpen] = useState(false);
@@ -77,7 +77,7 @@ const StudentCourseDetailsPage: React.FC = () => {
   } = useQuery<ICourse>({
     queryKey: ['courseDetails', courseIdNum],
     queryFn: () => {
-      console.log('[COMPONENT] StudentCourseDetailsPage: getCourseDetails called', {courseIdNum});
+      console.log('[COMPONENT] StudentCourseDetailsPage: getCourseDetails called', { courseIdNum });
       return courseService.getCourseDetails(String(courseIdNum));
     },
     enabled: !!courseIdNum,
@@ -98,12 +98,7 @@ const StudentCourseDetailsPage: React.FC = () => {
     const isEnrolled = !!primaryEnrollmentStatus || isCompletionVerified;
 
     return isAuthenticated && isEnrolled;
-  }, [
-    isAuthenticated,
-    courseDetails,
-    enrollmentStatus,
-    courseId,
-  ]);
+  }, [isAuthenticated, courseDetails, enrollmentStatus, courseId]);
 
   /**
    * Query to fetch learning tasks associated with the course
@@ -116,7 +111,7 @@ const StudentCourseDetailsPage: React.FC = () => {
   } = useQuery<IPaginatedResponse<ILearningTask>>({
     queryKey: ['learningTasks', courseIdNum],
     queryFn: async () => {
-      console.debug('[StudentCourseDetailsPage] Fetching course tasks:', {courseIdNum});
+      console.debug('[StudentCourseDetailsPage] Fetching course tasks:', { courseIdNum });
       try {
         const response = await courseService.getCourseTasks(String(courseIdNum));
         console.debug('[StudentCourseDetailsPage] Tasks loaded:', {
@@ -144,9 +139,9 @@ const StudentCourseDetailsPage: React.FC = () => {
       queryClient.invalidateQueries({
         queryKey: ['courseDetails', courseIdNum],
       });
-      queryClient.invalidateQueries({queryKey: ['enrollments']});
-      queryClient.invalidateQueries({queryKey: ['courses', courseIdNum]});
-      queryClient.invalidateQueries({queryKey: ['availableCourses']});
+      queryClient.invalidateQueries({ queryKey: ['enrollments'] });
+      queryClient.invalidateQueries({ queryKey: ['courses', courseIdNum] });
+      queryClient.invalidateQueries({ queryKey: ['availableCourses'] });
       notify({
         message: 'Successfully enrolled in course!',
         severity: 'success',
@@ -168,9 +163,9 @@ const StudentCourseDetailsPage: React.FC = () => {
       queryClient.invalidateQueries({
         queryKey: ['courseDetails', courseIdNum],
       });
-      queryClient.invalidateQueries({queryKey: ['enrollments']});
-      queryClient.invalidateQueries({queryKey: ['courses', courseIdNum]});
-      queryClient.invalidateQueries({queryKey: ['availableCourses']});
+      queryClient.invalidateQueries({ queryKey: ['enrollments'] });
+      queryClient.invalidateQueries({ queryKey: ['courses', courseIdNum] });
+      queryClient.invalidateQueries({ queryKey: ['availableCourses'] });
       notify({
         message: 'Successfully unenrolled from course!',
         severity: 'success',
@@ -242,8 +237,8 @@ const StudentCourseDetailsPage: React.FC = () => {
   const descriptionContent = courseDetails.description_html || courseDetails.description || '';
 
   return (
-    <Box sx={{maxWidth: 1200, mx: 'auto', p: 2}}>
-      <Paper sx={{p: 3, mb: 3}}>
+    <Box sx={{ maxWidth: 1200, mx: 'auto', p: 2 }}>
+      <Paper sx={{ p: 3, mb: 3 }}>
         {/* Header with Title and Status */}
         <Box
           sx={{
@@ -256,7 +251,7 @@ const StudentCourseDetailsPage: React.FC = () => {
           <Typography variant="h4" gutterBottom data-testid="course-title">
             {courseDetails.title}
           </Typography>
-          <Box sx={{display: 'flex', gap: 1, alignItems: 'center'}}>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
             <EnrollmentStatusIndicator
               isEnrolled={!!courseDetails.isEnrolled}
               isCompleted={!!courseDetails.isCompleted}
@@ -265,10 +260,10 @@ const StudentCourseDetailsPage: React.FC = () => {
           </Box>
         </Box>
 
-        <Divider sx={{my: 2}} />
+        <Divider sx={{ my: 2 }} />
 
         {/* Use the MarkdownRenderer component for the description with proper content */}
-        <Box sx={{my: 2}} data-testid="course-description">
+        <Box sx={{ my: 2 }} data-testid="course-description">
           {descriptionContent ? (
             <MarkdownRenderer content={descriptionContent} />
           ) : (
@@ -279,14 +274,14 @@ const StudentCourseDetailsPage: React.FC = () => {
         </Box>
 
         {!canViewTasks && (
-          <Box sx={{mt: 2, mb: 2}}>
+          <Box sx={{ mt: 2, mb: 2 }}>
             <Button
               variant="contained"
               color="primary"
               onClick={handleEnrollClick}
               disabled={enrollMutation.isPending}
               size="large"
-              sx={{px: 4}}
+              sx={{ px: 4 }}
               data-testid="enroll-button"
             >
               {enrollMutation.isPending ? 'Enrolling...' : 'Enroll in Course'}
@@ -295,14 +290,14 @@ const StudentCourseDetailsPage: React.FC = () => {
         )}
 
         {canViewTasks && (
-          <Box sx={{mt: 2, mb: 2, display: 'flex', gap: 2}}>
+          <Box sx={{ mt: 2, mb: 2, display: 'flex', gap: 2 }}>
             <Button
               variant="outlined"
               color="secondary"
               onClick={handleUnenrollClick}
               disabled={unenrollMutation.isPending}
               size="large"
-              sx={{px: 4}}
+              sx={{ px: 4 }}
               data-testid="unenroll-button"
             >
               {unenrollMutation.isPending ? 'Unenrolling...' : 'Unenroll from Course'}
@@ -313,7 +308,7 @@ const StudentCourseDetailsPage: React.FC = () => {
 
       {/* Learning tasks section with proper type checking */}
       {canViewTasks ? (
-        <Paper sx={{p: 3}}>
+        <Paper sx={{ p: 3 }}>
           <Typography variant="h5" gutterBottom>
             Associated Learning Tasks
           </Typography>
@@ -344,11 +339,11 @@ const StudentCourseDetailsPage: React.FC = () => {
                 ))}
               </List>
             ) : (
-              <Box sx={{textAlign: 'center', py: 3}}>
+              <Box sx={{ textAlign: 'center', py: 3 }}>
                 <Typography variant="body1" color="text.secondary">
                   No learning tasks are currently available for this course.
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{mt: 1}}>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                   Check back later as new content may be added.
                 </Typography>
               </Box>
@@ -358,7 +353,7 @@ const StudentCourseDetailsPage: React.FC = () => {
           )}
         </Paper>
       ) : (
-        <Paper sx={{p: 3, backgroundColor: 'action.hover'}}>
+        <Paper sx={{ p: 3, backgroundColor: 'action.hover' }}>
           <Typography variant="body2" color="textSecondary">
             Enroll in this course to access learning tasks.
           </Typography>

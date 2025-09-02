@@ -21,13 +21,20 @@
 - **Don't** skip checking for error or empty states—test both enrolled and not enrolled cases.
 
 ## Example: Correct Auth Mock
+
 ```ts
-vi.mock('@context/auth/AuthContext', async (importOriginal) => {
+vi.mock('@context/auth/AuthContext', async importOriginal => {
   const actual = await importOriginal();
   return {
     ...actual,
     useAuth: () => ({
-      user: { id: '1', username: 'testuser', email: 'testuser@example.com', role: 'student', is_active: true },
+      user: {
+        id: '1',
+        username: 'testuser',
+        email: 'testuser@example.com',
+        role: 'student',
+        is_active: true,
+      },
       isAuthenticated: true,
       isRestoring: false,
       error: null,
@@ -42,6 +49,7 @@ vi.mock('@context/auth/AuthContext', async (importOriginal) => {
 ```
 
 ## Example: Route Setup
+
 ```ts
 renderWithProviders(
   <Routes>

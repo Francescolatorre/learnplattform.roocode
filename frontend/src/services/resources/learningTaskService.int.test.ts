@@ -7,12 +7,12 @@
  * - Diagnostic logging is included before dependency access.
  */
 
-import {describe, it, expect, beforeAll, afterAll} from 'vitest';
-import {ICourse} from '@/types/course';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { ICourse } from '@/types/course';
 import authService from '../auth/authService';
-import {courseService} from './courseService';
+import { courseService } from './courseService';
 import learningTaskService from './learningTaskService';
-import {TEST_USERS} from '@/test-utils/setupIntegrationTests';
+import { TEST_USERS } from '@/test-utils/setupIntegrationTests';
 
 describe('learningTaskService Integration', () => {
   let accessToken: string;
@@ -93,7 +93,7 @@ describe('learningTaskService Integration', () => {
 
   it('getAll returns learning tasks', async () => {
     //console.log('Test course ID for getAll:', createdCourseId);
-    let tasks: any = await learningTaskService.getAll({course: String(createdCourseId)});
+    let tasks: any = await learningTaskService.getAll({ course: String(createdCourseId) });
     if (!Array.isArray(tasks) && tasks && Array.isArray(tasks.results)) {
       tasks = tasks.results;
     }
@@ -145,7 +145,7 @@ describe('learningTaskService Integration', () => {
     });
     expect(updated).toHaveProperty('title', 'Updated Integration Test Task');
     // Revert title for idempotency
-    await learningTaskService.update(String(baseTaskId), {title: 'Base Integration Test Task'});
+    await learningTaskService.update(String(baseTaskId), { title: 'Base Integration Test Task' });
   });
 
   it('delete removes the learning task', async () => {

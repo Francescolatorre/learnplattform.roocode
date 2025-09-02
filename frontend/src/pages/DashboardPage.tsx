@@ -9,13 +9,13 @@ import {
   CardContent,
   Button,
 } from '@mui/material';
-import {useQuery} from '@tanstack/react-query';
-import React, {useEffect} from 'react';
-import {Link as RouterLink} from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import React, { useEffect } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 
-import {IDashboardResponse} from '@/types/progress';
-import {useAuth} from '@context/auth/AuthContext';
-import {fetchDashboardData} from '@services/resources/dashboardService';
+import { IDashboardResponse } from '@/types/progress';
+import { useAuth } from '@context/auth/AuthContext';
+import { fetchDashboardData } from '@services/resources/dashboardService';
 import DashboardCourseCard from '@/components/DashboardCourseCard';
 
 /**
@@ -24,10 +24,10 @@ import DashboardCourseCard from '@/components/DashboardCourseCard';
  * Displays student progress information, overall statistics, and enrolled courses
  */
 const Dashboard: React.FC = () => {
-  const {user} = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
-    return () => { };
+    return () => {};
   }, [user]);
 
   // User progress data query using React Query
@@ -48,12 +48,12 @@ const Dashboard: React.FC = () => {
   });
 
   // Create a map of course IDs to course titles from enrollments
-  const {overall_stats: stats, courses: progressData = []} = progressResponse || {};
+  const { overall_stats: stats, courses: progressData = [] } = progressResponse || {};
 
   // Loading state
   if (isLoadingProgress) {
     return (
-      <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
         <CircularProgress role="progressbar" data-testid="dashboard-loading-spinner" />
       </Box>
     );
@@ -62,8 +62,12 @@ const Dashboard: React.FC = () => {
   // Error state
   if (error) {
     return (
-      <Box sx={{textAlign: 'center', mt: 4}}>
-        <Alert severity="error" sx={{maxWidth: 600, mx: 'auto', mb: 3}} data-testid="dashboard-error-alert">
+      <Box sx={{ textAlign: 'center', mt: 4 }}>
+        <Alert
+          severity="error"
+          sx={{ maxWidth: 600, mx: 'auto', mb: 3 }}
+          data-testid="dashboard-error-alert"
+        >
           {error instanceof Error ? error.message : 'An error occurred while loading data'}
         </Alert>
         <Typography variant="body1">
@@ -74,7 +78,7 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <Box sx={{p: 3}}>
+    <Box sx={{ p: 3 }}>
       <Typography variant="h4" gutterBottom data-testid="dashboard-title">
         Student Dashboard
       </Typography>
@@ -83,13 +87,13 @@ const Dashboard: React.FC = () => {
       </Typography>
 
       {/* Overall Statistics Card */}
-      <Paper elevation={2} sx={{p: 3, mt: 3}} data-testid="dashboard-summary">
+      <Paper elevation={2} sx={{ p: 3, mt: 3 }} data-testid="dashboard-summary">
         <Typography variant="h5" gutterBottom data-testid="learning-overview">
           Learning Overview
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <Card variant="outlined" sx={{height: '100%'}}>
+            <Card variant="outlined" sx={{ height: '100%' }}>
               <CardContent>
                 <Typography
                   variant="subtitle2"
@@ -104,7 +108,7 @@ const Dashboard: React.FC = () => {
             </Card>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Card variant="outlined" sx={{height: '100%'}}>
+            <Card variant="outlined" sx={{ height: '100%' }}>
               <CardContent>
                 <Typography variant="subtitle2" color="text.secondary" gutterBottom>
                   Completed Courses
@@ -114,7 +118,7 @@ const Dashboard: React.FC = () => {
             </Card>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Card variant="outlined" sx={{height: '100%'}}>
+            <Card variant="outlined" sx={{ height: '100%' }}>
               <CardContent>
                 <Typography variant="subtitle2" color="text.secondary" gutterBottom>
                   Overall Completion
@@ -124,7 +128,7 @@ const Dashboard: React.FC = () => {
             </Card>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Card variant="outlined" sx={{height: '100%'}}>
+            <Card variant="outlined" sx={{ height: '100%' }}>
               <CardContent>
                 <Typography variant="subtitle2" color="text.secondary" gutterBottom>
                   Completed Tasks
@@ -139,13 +143,13 @@ const Dashboard: React.FC = () => {
       </Paper>
 
       {/* Course Progress Section */}
-      <Box sx={{mt: 4}} data-testid="progress-section">
+      <Box sx={{ mt: 4 }} data-testid="progress-section">
         <Typography variant="h5" gutterBottom>
           Course Progress
         </Typography>
 
         {!progressData || progressData.length === 0 ? (
-          <Paper elevation={2} sx={{p: 3, textAlign: 'center'}}>
+          <Paper elevation={2} sx={{ p: 3, textAlign: 'center' }}>
             <Typography variant="h6" gutterBottom>
               No Course Progress Yet
             </Typography>
@@ -157,7 +161,7 @@ const Dashboard: React.FC = () => {
               to="/courses"
               variant="contained"
               color="primary"
-              sx={{mt: 2}}
+              sx={{ mt: 2 }}
             >
               Browse Courses
             </Button>
@@ -195,8 +199,8 @@ const Dashboard: React.FC = () => {
       </Box>
 
       {/* Quick Links Section */}
-      <Box sx={{mt: 4}}>
-        <Paper elevation={2} sx={{p: 3}}>
+      <Box sx={{ mt: 4 }}>
+        <Paper elevation={2} sx={{ p: 3 }}>
           <Typography variant="h5" gutterBottom>
             Quick Links
           </Typography>

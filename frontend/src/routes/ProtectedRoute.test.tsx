@@ -6,17 +6,17 @@
  * - Do NOT mock useNotification in this file.
  */
 
-import {render, screen, waitFor} from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom'; // Import for toBeInTheDocument
-import {MemoryRouter, Route, Routes} from 'react-router-dom';
-import {vi, Mock} from 'vitest';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { vi, Mock } from 'vitest';
 vi.mock('@context/auth/AuthContext', () => ({
   useAuth: vi.fn(),
 }));
-import {describe, it, expect} from 'vitest';
+import { describe, it, expect } from 'vitest';
 
-import {useAuth} from '@context/auth/AuthContext';
-import {NotificationProvider} from '@/components/Notifications/NotificationProvider';
+import { useAuth } from '@context/auth/AuthContext';
+import { NotificationProvider } from '@/components/Notifications/NotificationProvider';
 
 import ProtectedRoute from './ProtectedRoute';
 
@@ -62,7 +62,7 @@ describe('ProtectedRoute with isRestoring logic', () => {
     (useAuth as Mock).mockReturnValue({
       isAuthenticated: true,
       isRestoring: false,
-      user: {id: '1', username: 'student'},
+      user: { id: '1', username: 'student' },
       getUserRole: vi.fn().mockReturnValue('user'),
     });
     renderWithAuthContext();
@@ -104,14 +104,14 @@ describe('ProtectedRoute with isRestoring logic', () => {
       getUserRole: vi.fn().mockReturnValue(null),
     });
 
-    const {rerender} = renderWithAuthContext();
+    const { rerender } = renderWithAuthContext();
     expect(screen.getByTestId('protected-route-loading')).toBeInTheDocument();
 
     // Update the mock for the second render
     (useAuth as Mock).mockReturnValue({
       isAuthenticated: true,
       isRestoring: false,
-      user: {id: '1', username: 'student'},
+      user: { id: '1', username: 'student' },
       getUserRole: vi.fn().mockReturnValue('user'),
     });
 

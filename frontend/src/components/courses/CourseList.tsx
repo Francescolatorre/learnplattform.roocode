@@ -1,5 +1,5 @@
-import React, {useState, ReactElement} from 'react';
-import {useNavigate} from 'react-router-dom';
+import React, { useState, ReactElement } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Button,
   List,
@@ -28,14 +28,14 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import PeopleIcon from '@mui/icons-material/People';
 import SchoolIcon from '@mui/icons-material/Add';
 import AddIcon from '@mui/icons-material/Add';
-import {useQueryClient} from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import useNotification from '@/components/Notifications/useNotification';
-import {ICourse} from '@/types/course';
-import {formatDateRelative} from '@/utils/dateUtils';
+import { ICourse } from '@/types/course';
+import { formatDateRelative } from '@/utils/dateUtils';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
-import {useAuth} from '@/context/auth/AuthContext';
+import { useAuth } from '@/context/auth/AuthContext';
 import EnrollmentStatusIndicator from './EnrollmentStatusIndicator';
-import {courseService} from '@/services/resources/courseService';
+import { courseService } from '@/services/resources/courseService';
 import CourseCreation from './CourseCreation';
 
 // Custom type extension for course with student count and enrollment status
@@ -74,7 +74,7 @@ const CourseList: React.FC<ICourseListProps> = ({
   const [isDeleting, setIsDeleting] = useState(false);
   const queryClient = useQueryClient();
   const notify = useNotification();
-  const {user} = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   // Check if user has instructor or admin privileges
@@ -127,7 +127,7 @@ const CourseList: React.FC<ICourseListProps> = ({
     setIsDeleting(true);
     try {
       await courseService.deleteCourse(String(selectedCourse.id));
-      await queryClient.invalidateQueries({queryKey: ['courses']});
+      await queryClient.invalidateQueries({ queryKey: ['courses'] });
       notify('Course deleted successfully', 'success');
       // Navigate back to course list if we're on the deleted course's detail page
       if (window.location.pathname.includes(`/courses/${selectedCourse.id}`)) {
@@ -153,7 +153,7 @@ const CourseList: React.FC<ICourseListProps> = ({
         // Optimistically update the UI
         queryClient.setQueryData(['courses'], (old: ICourse[] | undefined) => {
           return (old || []).map(course =>
-            course.id === selectedCourse.id ? {...course, ...courseData} : course
+            course.id === selectedCourse.id ? { ...course, ...courseData } : course
           );
         });
 
@@ -202,7 +202,7 @@ const CourseList: React.FC<ICourseListProps> = ({
   // If courses array is empty, show a message
   if (!courses.length) {
     return (
-      <Paper elevation={0} sx={{p: 2, textAlign: 'center'}}>
+      <Paper elevation={0} sx={{ p: 2, textAlign: 'center' }}>
         <Typography color="text.secondary">No courses found</Typography>
       </Paper>
     );
@@ -210,7 +210,7 @@ const CourseList: React.FC<ICourseListProps> = ({
 
   return (
     <Box>
-      <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2}}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         {title && (
           <Typography variant="h6" component="h2" data-test-id="course-list-element">
             {title}
@@ -230,7 +230,7 @@ const CourseList: React.FC<ICourseListProps> = ({
         )}
       </Box>{' '}
       {/* We've removed the TaskCreation modal as tasks should be managed within course context */}
-      <List data-testid="course-list" sx={{width: '100%', bgcolor: 'background.paper'}}>
+      <List data-testid="course-list" sx={{ width: '100%', bgcolor: 'background.paper' }}>
         {courses.map((course, index) => (
           <React.Fragment key={course.id}>
             <ListItem
@@ -265,7 +265,7 @@ const CourseList: React.FC<ICourseListProps> = ({
               </ListItemAvatar>
               <ListItemText
                 primary={
-                  <Box sx={{display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1}}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
                     <Typography
                       variant="subtitle1"
                       component="span"
@@ -295,8 +295,8 @@ const CourseList: React.FC<ICourseListProps> = ({
                     {/* Only show student count if property exists */}
                     {'student_count' in course && typeof course.student_count === 'number' && (
                       <Tooltip title="Enrolled students">
-                        <Box sx={{display: 'flex', alignItems: 'center', ml: 'auto', mr: 2}}>
-                          <PeopleIcon fontSize="small" sx={{mr: 0.5}} />
+                        <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto', mr: 2 }}>
+                          <PeopleIcon fontSize="small" sx={{ mr: 0.5 }} />
                           <Typography
                             variant="body2"
                             data-testid={`course-enrollment-count-${course.id}`}
@@ -316,8 +316,8 @@ const CourseList: React.FC<ICourseListProps> = ({
                         sx={{
                           maxHeight: '150px',
                           overflow: 'hidden',
-                          '& img': {display: 'none'},
-                          '& h1,h2,h3': {fontSize: '1rem'},
+                          '& img': { display: 'none' },
+                          '& h1,h2,h3': { fontSize: '1rem' },
                         }}
                       >
                         <MarkdownRenderer
@@ -331,14 +331,14 @@ const CourseList: React.FC<ICourseListProps> = ({
                         component="span"
                         variant="body2"
                         color="text.primary"
-                        sx={{display: 'inline', mr: 1}}
+                        sx={{ display: 'inline', mr: 1 }}
                         data-testid={`course-description-${course.id}`}
                       >
                         {getDescriptionPreview(course)}
                       </Typography>
                     )}
 
-                    <Box sx={{mt: 1, display: 'flex', gap: 2}}>
+                    <Box sx={{ mt: 1, display: 'flex', gap: 2 }}>
                       {course.created_at && (
                         <Typography
                           variant="caption"
@@ -383,7 +383,7 @@ const CourseList: React.FC<ICourseListProps> = ({
                       }}
                       edge="end"
                       aria-label="view"
-                      sx={{mr: 1}}
+                      sx={{ mr: 1 }}
                       data-testid={`view-course-${course.id}`}
                     >
                       <VisibilityIcon />
@@ -399,7 +399,7 @@ const CourseList: React.FC<ICourseListProps> = ({
                       }}
                       edge="end"
                       aria-label="edit"
-                      sx={{mr: 1}}
+                      sx={{ mr: 1 }}
                       data-testid={`edit-course-${course.id}`}
                     >
                       <EditIcon />
