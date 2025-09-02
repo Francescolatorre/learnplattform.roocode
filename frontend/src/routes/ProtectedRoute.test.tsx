@@ -15,8 +15,8 @@ vi.mock('@context/auth/AuthContext', () => ({
 }));
 import { describe, it, expect } from 'vitest';
 
-import { useAuth } from '@context/auth/AuthContext';
 import { NotificationProvider } from '@/components/Notifications/NotificationProvider';
+import { useAuth } from '@context/auth/AuthContext';
 
 import ProtectedRoute from './ProtectedRoute';
 

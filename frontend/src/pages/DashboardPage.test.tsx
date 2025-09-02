@@ -1,6 +1,8 @@
 import { vi } from 'vitest';
-import Dashboard from './DashboardPage';
+
 import { renderWithProviders } from '@/test-utils/renderWithProviders';
+
+import Dashboard from './DashboardPage';
 
 // Only the basic render test is active for now
 

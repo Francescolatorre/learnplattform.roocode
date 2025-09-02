@@ -11,12 +11,14 @@ import {
   SelectChangeEvent,
   Pagination,
 } from '@mui/material';
-import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import React, { useState } from 'react';
+
 import { ICourse, TCourseStatus } from '@/types/course';
-import { useDebounce } from '@utils/useDebounce';
-import { courseService, CourseFilterOptions } from '@services/resources/courseService';
 import { IPaginatedResponse } from '@/types/paginatedResponse';
+import { courseService, CourseFilterOptions } from '@services/resources/courseService';
+import { useDebounce } from '@utils/useDebounce';
+
 import CourseList from './CourseList';
 
 interface FilterableCourseListProps {

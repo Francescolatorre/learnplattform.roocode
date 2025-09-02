@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import MenuIcon from '@mui/icons-material/Menu';
 import {
   AppBar,
   Toolbar,
@@ -17,11 +17,11 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
-import { useAuth } from '@/context/auth/AuthContext';
 import { menuConfig } from '@/config/menuConfig';
+import { useAuth } from '@/context/auth/AuthContext';
 import { TUserRole } from '@/types';
 
 /**

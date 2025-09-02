@@ -1,5 +1,5 @@
-import React from 'react';
 import { Box, Pagination } from '@mui/material';
+import React from 'react';
 
 interface PaginationControlsProps {
   totalPages: number;

@@ -1,6 +1,7 @@
-import React from 'react';
 import { Box, Typography, Paper, Divider, Link } from '@mui/material';
+import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+
 import ProgressIndicator from '@/components/shared/ProgressIndicator';
 
 interface DashboardCourseCardProps {

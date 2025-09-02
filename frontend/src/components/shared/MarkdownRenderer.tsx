@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { default as ReactMarkdown } from 'react-markdown';
-import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import rehypeHighlight from 'rehype-highlight';
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import remarkGfm from 'remark-gfm';
 import 'highlight.js/styles/github.css';
 import { Box, Theme } from '@mui/material';
@@ -136,7 +136,7 @@ const MarkdownRenderer = forwardRef<HTMLElement, IMarkdownRendererProps>(
     };
 
     // Component overrides for ReactMarkdown
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     const mdComponents: Components = isPreview
       ? {
           // In preview mode, use spans and divs to avoid nesting violations

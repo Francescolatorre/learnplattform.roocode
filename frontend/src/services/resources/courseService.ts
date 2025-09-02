@@ -1,10 +1,10 @@
 import { ApiService } from '@/services/api/apiService';
+import { IStudentProgressSummary } from '@/types';
 import { ICourse, TCourseStatus } from '@/types/course';
+import { IUserProgress } from '@/types/progress';
 import { ILearningTask, ITaskProgress } from '@/types/task';
 import { IPaginatedResponse } from 'src/types/paginatedResponse';
 import { withManagedExceptions } from 'src/utils/errorHandling';
-import { IUserProgress } from '@/types/progress';
-import { IStudentProgressSummary } from '@/types';
 
 import { API_CONFIG } from '../api/apiConfig';
 

@@ -1,6 +1,6 @@
 // src/types/common/gradingTypes.ts
 
-import { ITaskProgress } from './task';
+import { ITaskProgress } from './Task';
 
 /**
  * Interface für Bewertungsdaten

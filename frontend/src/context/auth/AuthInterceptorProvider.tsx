@@ -5,6 +5,7 @@
  * This component handles the integration between AuthContext and the axios interceptors.
  */
 import React from 'react';
+
 import { AuthInterceptor } from './AuthInterceptor';
 import { useAuthInterceptor } from './useAuthInterceptor';
 

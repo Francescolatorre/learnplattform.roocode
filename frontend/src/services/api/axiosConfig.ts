@@ -1,7 +1,9 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios';
-import { API_CONFIG } from './apiConfig';
+
 import { authEventService } from '../../context/auth/AuthEventService';
 import { AuthEventType } from '../../context/auth/types';
+
+import { API_CONFIG } from './apiConfig';
 
 /**
  * Configured Axios instance with authentication interceptors

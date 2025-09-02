@@ -15,8 +15,8 @@ import {
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAuth } from '@context/auth/AuthContext';
 import PasswordStrengthIndicator from '@components/shared/PasswordStrengthIndicator';
+import { useAuth } from '@context/auth/AuthContext';
 
 import { validatePassword, type PasswordStrength } from '../utils/passwordValidation';
 

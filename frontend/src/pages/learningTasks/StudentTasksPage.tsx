@@ -2,9 +2,9 @@ import { Box, Grid, Typography, CircularProgress } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
+import useNotification from '@/components/Notifications/useNotification';
 import { ILearningTask } from '@/types/task';
 import learningTaskService from '@services/resources/learningTaskService';
-import useNotification from '@/components/Notifications/useNotification';
 import { useAuth } from 'src/context/auth'; // Annahme: Auth-Kontext für Benutzer-ID
 import LearningTaskCard from 'src/pages/learningTasks/LearningTaskCard';
 

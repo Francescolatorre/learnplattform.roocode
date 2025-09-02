@@ -15,10 +15,10 @@ import {
   IDashboardResponse,
   ITaskProgress,
 } from '@/types';
+import { withManagedExceptions } from 'src/utils/errorHandling';
 
 import { API_CONFIG } from '../api/apiConfig';
 import { ApiService } from '../api/apiService';
-import { withManagedExceptions } from 'src/utils/errorHandling';
 
 /**
  * Service for managing progress-related operations, including student progress, quiz history,

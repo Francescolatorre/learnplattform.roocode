@@ -1,17 +1,19 @@
-import { render, screen, act, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import InstructorCoursesPage from './InstructorCoursesPage';
-import { NotificationProvider } from '@/components/Notifications/NotificationProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen, act, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { fireEvent } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { vi } from 'vitest';
+
+import { NotificationProvider } from '@/components/Notifications/NotificationProvider';
 import { useAuth } from '@/context/auth/AuthContext';
 import { courseService } from '@/services/resources/courseService';
-import { fireEvent } from '@testing-library/react';
-import { vi } from 'vitest';
-import { UserRoleEnum, IUser } from '@/types/userTypes';
+import { courseFactory } from '@/test-utils/factories/courseFactory';
+import { userFactory } from '@/test-utils/factories/userFactory';
 import { ICourse } from '@/types/course';
 import { IPaginatedResponse } from '@/types/paginatedResponse';
-import { userFactory } from '@/test-utils/factories/userFactory';
-import { courseFactory } from '@/test-utils/factories/courseFactory';
+import { UserRoleEnum, IUser } from '@/types/userTypes';
+
+import InstructorCoursesPage from './InstructorCoursesPage';
 
 describe('InstructorCoursesPage', () => {
   const mockUser: IUser = userFactory.build({

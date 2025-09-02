@@ -1,7 +1,7 @@
 import { AxiosInstance, AxiosRequestConfig } from 'axios';
 
-import axiosInstance from './axiosConfig';
 import { API_CONFIG } from './apiConfig';
+import axiosInstance from './axiosConfig';
 
 export interface IApiService<T = unknown> {
   setAxiosInstance(instance: AxiosInstance): void;

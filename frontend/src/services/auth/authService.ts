@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { AUTH_CONFIG } from '@/config/appConfig';
 
 const apiClient = axios.create({

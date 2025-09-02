@@ -59,7 +59,10 @@
       "Bash(.venv/Scripts/python.exe -m black:*)",
       "Bash(.venv/Scripts/python.exe :*)",
       "Bash(.venv/Scripts/python.exe -m flake8:*)",
-      "Bash(npx vite:*)"
+      "Bash(npx vite:*)",
+      "Bash(npm install:*)",
+      "Bash(npx husky:*)",
+      "Bash(npm run sort-imports:*)"
     ],
     "deny": [],
     "ask": []

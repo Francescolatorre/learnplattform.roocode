@@ -19,11 +19,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
+import { enrollmentService } from '@/services/resources/enrollmentService';
 import { ICourse } from '@/types/course';
 import { TCompletionStatus } from '@/types/entities';
 import { useAuth } from '@context/auth/AuthContext';
 import { courseService } from '@services/resources/courseService';
-import { enrollmentService } from '@/services/resources/enrollmentService';
 
 interface ICourseEnrollmentProps {
   courseId: string;

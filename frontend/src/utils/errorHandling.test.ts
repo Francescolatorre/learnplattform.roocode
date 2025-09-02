@@ -1,9 +1,12 @@
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { withManagedExceptions, ManagedServiceError, ErrorType } from './errorHandling';
 import { AxiosError } from 'axios';
-import { logger } from './logger';
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+
 import { authEventService } from '@context/auth/AuthEventService';
 import { AuthEventType } from '@context/auth/types';
+
+import { withManagedExceptions, ManagedServiceError, ErrorType } from './errorHandling';
+import { logger } from './logger';
+
 
 // Mock dependencies
 vi.mock('./logger', () => ({

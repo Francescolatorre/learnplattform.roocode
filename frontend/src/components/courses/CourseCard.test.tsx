@@ -1,7 +1,9 @@
-import { renderWithProviders, screen, fireEvent } from '@/test-utils/renderWithProviders';
-import CourseCard from './CourseCard';
 import { describe, it, expect, vi } from 'vitest';
+
 import { courseFactory } from '@/test-utils/factories/courseFactory';
+import { renderWithProviders, screen, fireEvent } from '@/test-utils/renderWithProviders';
+
+import CourseCard from './CourseCard';
 
 // Mock react-router-dom's useNavigate
 const mockedNavigate = vi.fn();

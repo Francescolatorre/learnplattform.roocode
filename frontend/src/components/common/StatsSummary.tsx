@@ -1,5 +1,6 @@
-import React from 'react';
 import { Paper, Typography, Divider, Grid } from '@mui/material';
+import React from 'react';
+
 import { ICourse } from '@/types';
 
 interface StatsSummaryProps {

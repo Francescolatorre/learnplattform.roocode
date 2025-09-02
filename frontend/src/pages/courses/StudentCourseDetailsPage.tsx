@@ -18,15 +18,15 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
+import EnrollmentStatusIndicator from '@/components/courses/EnrollmentStatusIndicator';
 import useNotification from '@/components/Notifications/useNotification';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import { ICourse } from '@/types/course';
-import { ILearningTask } from '@/types/task';
 import { IPaginatedResponse } from '@/types/paginatedResponse';
+import { ILearningTask } from '@/types/task';
 import { useAuth } from '@context/auth/AuthContext';
 import { courseService } from '@services/resources/courseService';
 import { enrollmentService } from '@services/resources/enrollmentService';
-import EnrollmentStatusIndicator from '@/components/courses/EnrollmentStatusIndicator';
 
 /**
  * StudentCourseDetailsPage displays detailed information about a specific course.

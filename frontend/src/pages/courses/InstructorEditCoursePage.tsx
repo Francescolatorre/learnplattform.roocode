@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import {
   Container,
   TextField,
@@ -10,15 +9,16 @@ import {
   FormControlLabel,
   Switch,
 } from '@mui/material';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import React, { useEffect } from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 
+import useNotification from '@/components/Notifications/useNotification';
+import MarkdownEditor from '@/components/shared/MarkdownEditor';
+import { ICourse } from '@/types/course';
 import { useAuth } from '@context/auth/AuthContext';
 import { courseService } from '@services/resources/courseService';
-import useNotification from '@/components/Notifications/useNotification';
-import { ICourse } from '@/types/course';
-import MarkdownEditor from '@/components/shared/MarkdownEditor';
 
 interface IEditCourseProps {
   isNew?: boolean;

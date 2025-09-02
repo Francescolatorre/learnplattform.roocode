@@ -1,10 +1,13 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+
+import { TEST_USERS, cleanupTestEnvironment } from '@/test-utils/setupIntegrationTests';
 import { TCourseStatus } from '@/types/course';
 import { IEnrollmentStatus } from '@/types/entities';
+
 import authService from '../auth/authService';
+
 import { courseService } from './courseService';
 import { enrollmentService } from './enrollmentService';
-import { TEST_USERS, cleanupTestEnvironment } from '@/test-utils/setupIntegrationTests';
 
 describe('enrollmentService Integration', () => {
   // Test data state

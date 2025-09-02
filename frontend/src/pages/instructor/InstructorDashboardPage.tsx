@@ -1,4 +1,7 @@
-import React, { useEffect } from 'react';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import PeopleIcon from '@mui/icons-material/People';
+import SchoolIcon from '@mui/icons-material/School';
 import {
   Box,
   Typography,
@@ -16,17 +19,14 @@ import {
   Chip,
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
+import React, { useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import SchoolIcon from '@mui/icons-material/School';
-import PeopleIcon from '@mui/icons-material/People';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import BarChartIcon from '@mui/icons-material/BarChart';
 
-import { useAuth } from '@context/auth/AuthContext';
 import ProgressIndicator from '@/components/shared/ProgressIndicator';
 import progressService from '@/services/resources/progressService';
-import { courseService } from '@services/resources/courseService';
 import { ICourse, IPaginatedResponse, IInstructorDashboardData } from '@/types';
+import { useAuth } from '@context/auth/AuthContext';
+import { courseService } from '@services/resources/courseService';
 
 /**
  * Dashboard for instructors showing course statistics, student progress,

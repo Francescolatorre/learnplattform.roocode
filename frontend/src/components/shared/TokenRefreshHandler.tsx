@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
+
 import { useAuth } from '@context/auth/AuthContext';
 import { authEventService } from '@context/auth/AuthEventService';
 import { AuthEventType } from '@context/auth/types';

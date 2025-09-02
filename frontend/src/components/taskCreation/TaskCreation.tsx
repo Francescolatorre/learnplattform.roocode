@@ -1,6 +1,3 @@
-import React, { useState, useEffect, useRef } from 'react';
-import useNotification from '@/components/Notifications/useNotification';
-import { useQueryClient } from '@tanstack/react-query';
 import {
   Box,
   Button,
@@ -12,9 +9,14 @@ import {
   DialogTitle,
   DialogActions,
 } from '@mui/material';
-import MarkdownEditor from '../shared/MarkdownEditor';
+import { useQueryClient } from '@tanstack/react-query';
+import React, { useState, useEffect, useRef } from 'react';
+
+import useNotification from '@/components/Notifications/useNotification';
 import { createTask, updateTask } from '@/services/resources/learningTaskService';
 import { ILearningTask } from '@/types/task';
+
+import MarkdownEditor from '../shared/MarkdownEditor';
 
 interface TaskCreationProps {
   open: boolean;

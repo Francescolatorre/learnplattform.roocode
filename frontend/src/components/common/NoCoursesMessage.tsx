@@ -1,7 +1,7 @@
-import React from 'react';
-import { Paper, Typography, Button } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
+import { Paper, Typography, Button } from '@mui/material';
+import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 
 const NoCoursesMessage: React.FC = () => (
   <Paper elevation={2} sx={{ p: 4, textAlign: 'center' }}>

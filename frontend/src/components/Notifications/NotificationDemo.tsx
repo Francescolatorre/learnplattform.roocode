@@ -1,5 +1,3 @@
-import React, { useState } from 'react';
-import { useNotificationContext } from './NotificationProvider';
 import {
   Box,
   Button,
@@ -10,6 +8,9 @@ import {
   Select,
   TextField,
 } from '@mui/material';
+import React, { useState } from 'react';
+
+import { useNotificationContext } from './NotificationProvider';
 
 /**
  * A demo component showcasing the notification system capabilities.

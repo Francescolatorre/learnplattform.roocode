@@ -8,11 +8,14 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+
+import { TEST_USERS } from '@/test-utils/setupIntegrationTests';
 import { ICourse } from '@/types/course';
+
 import authService from '../auth/authService';
+
 import { courseService } from './courseService';
 import learningTaskService from './learningTaskService';
-import { TEST_USERS } from '@/test-utils/setupIntegrationTests';
 
 describe('learningTaskService Integration', () => {
   let accessToken: string;

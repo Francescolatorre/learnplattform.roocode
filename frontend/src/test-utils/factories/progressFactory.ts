@@ -1,4 +1,5 @@
 import { Factory } from 'fishery';
+
 import { IUserProgress, ICourseProgressSummary } from '@/types/progress';
 
 export const userProgressFactory = Factory.define<IUserProgress>(({ sequence }) => ({

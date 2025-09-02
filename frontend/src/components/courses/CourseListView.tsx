@@ -1,5 +1,6 @@
-import React from 'react';
 import { Grid } from '@mui/material';
+import React from 'react';
+
 import CourseCard from '@/components/courses/CourseCard';
 import CourseList from '@/components/courses/CourseList';
 import { ICourse } from '@/types';

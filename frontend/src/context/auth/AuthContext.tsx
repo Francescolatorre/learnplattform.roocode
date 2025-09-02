@@ -16,9 +16,9 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { AUTH_CONFIG, ROUTE_CONFIG } from '@/config/appConfig';
 import authService from '@/services/auth/authService';
 import { IUser, UserRoleEnum } from '@/types/userTypes';
-import { AUTH_CONFIG, ROUTE_CONFIG } from '@/config/appConfig';
 
 /**
  * AuthEvent types for tracking authentication-related events

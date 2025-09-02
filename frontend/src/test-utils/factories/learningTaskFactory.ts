@@ -1,4 +1,5 @@
 import { Factory } from 'fishery';
+
 import { ILearningTask } from '@/types/task';
 
 export const learningTaskFactory = Factory.define<ILearningTask>(({ sequence }) => ({

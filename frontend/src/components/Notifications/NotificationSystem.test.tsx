@@ -6,9 +6,9 @@
  * and multiple notification handling using mock implementations.
  */
 
-import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 // Mock notification function
 const mockNotify = vi.fn();

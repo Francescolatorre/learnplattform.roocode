@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { courseService } from './courseService';
+
 import { IUserProgress } from '@/types/progress';
+
+import { courseService } from './courseService';
 
 describe('CourseService', () => {
   describe('transformUserProgressToStudentSummary', () => {

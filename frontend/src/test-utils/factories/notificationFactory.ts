@@ -1,4 +1,5 @@
 import { Factory } from 'fishery';
+
 import { INotification } from '@/components/Notifications/types';
 
 export const notificationFactory = Factory.define<INotification>(({ sequence, associations }) => ({

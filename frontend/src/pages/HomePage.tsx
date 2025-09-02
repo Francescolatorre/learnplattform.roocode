@@ -1,8 +1,9 @@
 import { Container, Typography } from '@mui/material';
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context/auth/AuthContext';
+
 import { ROUTE_CONFIG } from '@/config/appConfig';
+import { useAuth } from '@/context/auth/AuthContext';
 import { TUserRole } from '@/types';
 
 type DashboardPaths = {

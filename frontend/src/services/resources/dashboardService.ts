@@ -1,5 +1,6 @@
-import { apiService } from '../api/apiService';
 import { IDashboardResponse } from '@/types/progress';
+
+import { apiService } from '../api/apiService';
 
 export const fetchDashboardData = async (userId: string | number): Promise<IDashboardResponse> => {
   try {

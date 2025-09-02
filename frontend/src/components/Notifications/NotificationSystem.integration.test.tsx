@@ -1,6 +1,7 @@
 import { render, screen, act, fireEvent } from '@testing-library/react';
-import { describe, it, beforeEach, afterEach, expect, vi } from 'vitest';
 import React from 'react';
+import { describe, it, beforeEach, afterEach, expect, vi } from 'vitest';
+
 import { NotificationProvider, useNotificationContext } from './NotificationProvider';
 import { NotificationSeverity } from './types';
 

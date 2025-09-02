@@ -1,9 +1,9 @@
-import React from 'react';
-import { Chip, Tooltip } from '@mui/material';
-import SchoolIcon from '@mui/icons-material/School';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import SchoolIcon from '@mui/icons-material/School';
+import { Chip, Tooltip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import React from 'react';
 
 /**
  * Interface for EnrollmentStatusIndicator props

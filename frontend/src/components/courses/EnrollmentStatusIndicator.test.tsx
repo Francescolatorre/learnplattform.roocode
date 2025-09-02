@@ -1,8 +1,9 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import EnrollmentStatusIndicator from './EnrollmentStatusIndicator';
+import { render, screen } from '@testing-library/react';
+import React from 'react';
 import { describe, it, expect } from 'vitest';
+
+import EnrollmentStatusIndicator from './EnrollmentStatusIndicator';
 
 // Create test themes
 const lightTheme = createTheme({ palette: { mode: 'light' } });

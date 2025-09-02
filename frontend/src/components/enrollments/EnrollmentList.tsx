@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import { ICourseEnrollment } from '@/types/entities';
 import { enrollmentService } from '@/services/resources/enrollmentService';
+import { ICourseEnrollment } from '@/types/entities';
 
 const EnrollmentList: React.FC = () => {
   const [enrollments, setEnrollments] = useState<ICourseEnrollment[]>([]);

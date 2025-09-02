@@ -1,5 +1,6 @@
-import { renderWithProviders } from '../../test-utils/renderWithProviders';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
+
+import { renderWithProviders } from '../../test-utils/renderWithProviders';
 
 test('renders Markdown preview with formatted HTML for description', async () => {
   // Import TaskCreation without any mocking of MarkdownRenderer

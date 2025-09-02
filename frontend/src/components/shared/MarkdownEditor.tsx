@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import {
   Box,
   Tabs,
@@ -16,7 +16,8 @@ import {
   Button,
 } from '@mui/material';
 import { SxProps } from '@mui/system';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import React, { useState } from 'react';
+
 import MarkdownRenderer from './MarkdownRenderer';
 
 interface IMarkdownEditorProps {

@@ -1,7 +1,8 @@
 // Added act import
-import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
+import React from 'react';
 import { vi } from 'vitest';
+
 import NotificationDemo from './NotificationDemo';
 import type { NotificationContextType } from './types';
 

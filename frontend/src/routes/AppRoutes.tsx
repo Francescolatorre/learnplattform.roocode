@@ -1,35 +1,35 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-import ProtectedRoute from '@/routes/ProtectedRoute';
 
 // Page imports with consistent naming (all end with "Page")
-import HomePage from '@/pages/HomePage';
+import AdminAnalyticsPage from '@/pages/admin/AdminAnalyticsPage';
+import AdminCoursesPage from '@/pages/admin/AdminCoursesPage';
+import AdminDashboardPage from '@/pages/admin/AdminDashboardPage';
+import AdminSettingsPage from '@/pages/admin/AdminSettingsPage';
+import AdminUsersPage from '@/pages/admin/AdminUsersPage';
 import LoginPage from '@/pages/auth/LoginPage';
+import CourseProgressPage from '@/pages/courses/CourseProgressPage';
+import InstructorCourseDetailPage from '@/pages/courses/InstructorCourseDetailsPage';
+import InstructorCoursesPage from '@/pages/courses/InstructorCoursesPage';
+import InstructorEditCoursePage from '@/pages/courses/InstructorEditCoursePage';
+import StudentCourseDetailsPage from '@/pages/courses/StudentCourseDetailsPage';
+import StudentCoursesPage from '@/pages/courses/StudentCoursesPage';
 import DashboardPage from '@/pages/DashboardPage';
+import HomePage from '@/pages/HomePage';
+import InstructorDashboardPage from '@/pages/instructor/InstructorDashboardPage';
+import CourseLearningTasksPage from '@/pages/learningTasks/CourseLearningTasksPage';
+import InstructorTasksPage from '@/pages/learningTasks/InstructorTasksPage';
+import StudentTasksPage from '@/pages/learningTasks/StudentTasksPage';
 import ProfilePage from '@/pages/ProfilePage';
 import RegisterFormPage from '@/pages/RegisterFormPage';
 
 // Student pages
-import StudentCoursesPage from '@/pages/courses/StudentCoursesPage';
-import StudentCourseDetailsPage from '@/pages/courses/StudentCourseDetailsPage';
-import StudentTasksPage from '@/pages/learningTasks/StudentTasksPage';
-import CourseProgressPage from '@/pages/courses/CourseProgressPage';
 
 // Instructor pages
-import InstructorDashboardPage from '@/pages/instructor/InstructorDashboardPage';
-import InstructorCoursesPage from '@/pages/courses/InstructorCoursesPage';
-import InstructorEditCoursePage from '@/pages/courses/InstructorEditCoursePage';
-import InstructorCourseDetailPage from '@/pages/courses/InstructorCourseDetailsPage';
-import InstructorTasksPage from '@/pages/learningTasks/InstructorTasksPage';
-import CourseLearningTasksPage from '@/pages/learningTasks/CourseLearningTasksPage';
 
 // Admin pages
-import AdminDashboardPage from '@/pages/admin/AdminDashboardPage';
-import AdminCoursesPage from '@/pages/admin/AdminCoursesPage';
-import AdminUsersPage from '@/pages/admin/AdminUsersPage';
-import AdminAnalyticsPage from '@/pages/admin/AdminAnalyticsPage';
-import AdminSettingsPage from '@/pages/admin/AdminSettingsPage';
+import ProtectedRoute from '@/routes/ProtectedRoute';
 
 /**
  * Main Application Routes Component

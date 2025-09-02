@@ -1,8 +1,9 @@
-import { ILearningTask } from '@/types';
-import React from 'react';
-import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import { Box, Typography } from '@mui/material';
+import React from 'react';
 import { Link } from 'react-router-dom';
+
+import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
+import { ILearningTask } from '@/types';
 
 interface TasksListProps {
   tasks: ILearningTask[];

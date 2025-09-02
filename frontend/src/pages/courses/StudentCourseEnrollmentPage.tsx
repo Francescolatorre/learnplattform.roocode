@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import GridViewIcon from '@mui/icons-material/GridView';
+import ViewListIcon from '@mui/icons-material/ViewList';
 import {
   Box,
   Typography,
@@ -11,16 +12,15 @@ import {
   Divider,
   Pagination,
 } from '@mui/material';
-import ViewListIcon from '@mui/icons-material/ViewList';
-import GridViewIcon from '@mui/icons-material/GridView';
 import { useQuery } from '@tanstack/react-query';
+import React, { useState, useEffect, useCallback } from 'react';
 
-import { useAuth } from '@/context/auth/AuthContext';
-import { courseService } from '@services/resources/courseService';
-import { ICourse, IPaginatedResponse } from '@/types';
 import CourseCard from '@/components/courses/CourseCard';
 import CourseList from '@/components/courses/CourseList';
 import useNotification from '@/components/Notifications/useNotification';
+import { useAuth } from '@/context/auth/AuthContext';
+import { ICourse, IPaginatedResponse } from '@/types';
+import { courseService } from '@services/resources/courseService';
 
 /**
  * Page for students to browse and enroll in courses

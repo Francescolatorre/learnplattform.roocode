@@ -4,8 +4,9 @@
  * Connects the authentication context with the axios interceptors.
  */
 
-import { useAuth } from './AuthContext';
 import { AUTH_CONFIG } from '../../config/appConfig';
+
+import { useAuth } from './AuthContext';
 
 /**
  * Hook that provides the necessary props for the AuthInterceptor component.

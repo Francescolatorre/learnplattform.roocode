@@ -10,10 +10,10 @@ import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import authService from '@/services/auth/authService';
 import useNotification from '@/components/Notifications/useNotification';
-import { resetPasswordSchema, type ResetPasswordSchema } from '@/validation/schemas';
+import authService from '@/services/auth/authService';
 import { type PasswordStrength, getPasswordStrengthLabel } from '@/utils/passwordValidation';
+import { resetPasswordSchema, type ResetPasswordSchema } from '@/validation/schemas';
 
 const ResetPasswordForm: React.FC = () => {
   const { token } = useParams<{ token: string }>();

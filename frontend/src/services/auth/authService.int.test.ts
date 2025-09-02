@@ -1,7 +1,9 @@
 import { describe, it, expect, afterAll } from 'vitest';
+
 import { AUTH_CONFIG } from '@/config/appConfig';
-import authService from './authService';
 import { TEST_USERS } from '@/test-utils/setupIntegrationTests';
+
+import authService from './authService';
 
 describe('authService Integration', () => {
   // Clear localStorage after all tests

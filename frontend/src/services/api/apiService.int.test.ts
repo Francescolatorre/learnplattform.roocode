@@ -1,7 +1,9 @@
-import { describe, it, expect } from 'vitest';
-import { apiService } from './apiService';
-import { TEST_USERS } from '@/test-utils/setupIntegrationTests';
 import axios from 'axios';
+import { describe, it, expect } from 'vitest';
+
+import { TEST_USERS } from '@/test-utils/setupIntegrationTests';
+
+import { apiService } from './apiService';
 
 const API_URL = 'http://localhost:8000';
 

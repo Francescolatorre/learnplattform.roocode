@@ -1,9 +1,9 @@
+import { Box, Typography, Paper, Divider, CircularProgress } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Typography, Paper, Divider, CircularProgress } from '@mui/material';
 
-import { ILearningTask } from '@/types/task';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
+import { ILearningTask } from '@/types/task';
 import LearningTaskService from '@services/resources/learningTaskService';
 
 const DetailedTaskViewPage: React.FC = () => {

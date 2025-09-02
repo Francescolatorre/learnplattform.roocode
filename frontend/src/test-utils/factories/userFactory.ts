@@ -1,5 +1,6 @@
 // src/test-utils/factories/userFactory.ts
 import { Factory } from 'fishery';
+
 import { IUser, UserRoleEnum } from '@/types/userTypes';
 
 export const userFactory = Factory.define<IUser>(({ sequence, params }) => ({

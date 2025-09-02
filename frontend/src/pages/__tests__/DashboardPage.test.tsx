@@ -1,11 +1,13 @@
-import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen, waitFor } from '@testing-library/react';
+import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
-import Dashboard from '../DashboardPage';
-import { fetchDashboardData } from '@services/resources/dashboardService';
+
 import { AuthProvider } from '@context/auth/AuthContext';
+import { fetchDashboardData } from '@services/resources/dashboardService';
+
+import Dashboard from '../DashboardPage';
 
 // Mock the dashboard service
 vi.mock('@services/resources/dashboardService', () => ({

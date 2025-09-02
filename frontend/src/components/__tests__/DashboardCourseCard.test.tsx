@@ -1,6 +1,8 @@
-import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
+import React from 'react';
+
 import { renderWithProviders } from '@/test-utils/renderWithProviders';
+
 import DashboardCourseCard from '../DashboardCourseCard';
 
 describe('DashboardCourseCard', () => {

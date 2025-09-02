@@ -1,8 +1,9 @@
 // ListView.tsx
-import React from 'react';
 import { List, ListItem } from '@mui/material';
-import { ICourse } from '@/types';
+import React from 'react';
+
 import CourseCard from '@/components/courses/CourseCard';
+import { ICourse } from '@/types';
 
 interface ListViewProps {
   courses: ICourse[];

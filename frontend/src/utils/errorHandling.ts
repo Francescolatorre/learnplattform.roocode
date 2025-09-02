@@ -1,7 +1,9 @@
 import { AxiosError } from 'axios';
-import { logger } from './logger';
+
 import { authEventService } from '@context/auth/AuthEventService';
 import { AuthEventType } from '@context/auth/types';
+
+import { logger } from './logger';
 
 /**
  * Error types that can be handled by the managed exception handler

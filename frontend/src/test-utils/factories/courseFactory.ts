@@ -1,5 +1,6 @@
 // src/test-utils/factories/userFactory.ts
 import { Factory } from 'fishery';
+
 import { ICourse } from '../../types/course';
 
 export const courseFactory = Factory.define<ICourse>(({ sequence, params }) => ({

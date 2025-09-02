@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import {
   Button,
   Dialog,
@@ -18,18 +17,20 @@ import {
   CircularProgress,
   Alert,
 } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { ICourse } from '@/types/course';
-import { ILearningTask } from '@/types/task';
-import { courseService } from '@/services/resources/courseService';
-import learningTaskService, { updateTask } from '@/services/resources/learningTaskService';
-import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
-import InfoCard from '@/components/shared/InfoCard';
-import TaskCreation from '@/components/taskCreation/TaskCreation';
 import CourseCreation from '@/components/courses/CourseCreation';
 import useNotification from '@/components/Notifications/useNotification';
-import { useQueryClient } from '@tanstack/react-query';
+import InfoCard from '@/components/shared/InfoCard';
+import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
+import TaskCreation from '@/components/taskCreation/TaskCreation';
+import { courseService } from '@/services/resources/courseService';
+import learningTaskService, { updateTask } from '@/services/resources/learningTaskService';
+import { ICourse } from '@/types/course';
+import { ILearningTask } from '@/types/task';
+
 
 // Hauptkomponente
 const InstructorCourseDetailPage: React.FC = () => {

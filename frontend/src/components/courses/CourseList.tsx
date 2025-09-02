@@ -1,5 +1,9 @@
-import React, { useState, ReactElement } from 'react';
-import { useNavigate } from 'react-router-dom';
+import SchoolIcon from '@mui/icons-material/Add';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import EditIcon from '@mui/icons-material/Edit';
+import PeopleIcon from '@mui/icons-material/People';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import {
   Button,
   List,
@@ -22,21 +26,19 @@ import {
   DialogContentText,
   DialogActions,
 } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import PeopleIcon from '@mui/icons-material/People';
-import SchoolIcon from '@mui/icons-material/Add';
-import AddIcon from '@mui/icons-material/Add';
 import { useQueryClient } from '@tanstack/react-query';
+import React, { useState, ReactElement } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import useNotification from '@/components/Notifications/useNotification';
-import { ICourse } from '@/types/course';
-import { formatDateRelative } from '@/utils/dateUtils';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import { useAuth } from '@/context/auth/AuthContext';
-import EnrollmentStatusIndicator from './EnrollmentStatusIndicator';
 import { courseService } from '@/services/resources/courseService';
+import { ICourse } from '@/types/course';
+import { formatDateRelative } from '@/utils/dateUtils';
+
 import CourseCreation from './CourseCreation';
+import EnrollmentStatusIndicator from './EnrollmentStatusIndicator';
 
 // Custom type extension for course with student count and enrollment status
 interface ICourseWithEnrollment extends ICourse {

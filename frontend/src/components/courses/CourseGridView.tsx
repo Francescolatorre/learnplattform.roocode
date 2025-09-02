@@ -1,8 +1,9 @@
 // GridView.tsx
-import React from 'react';
 import { Grid } from '@mui/material';
-import { ICourse } from '@/types';
+import React from 'react';
+
 import CourseCard from '@/components/courses/CourseCard';
+import { ICourse } from '@/types';
 
 interface GridViewProps {
   courses: ICourse[];

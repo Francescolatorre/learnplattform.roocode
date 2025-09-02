@@ -1,5 +1,3 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
 import {
   Card,
   CardContent,
@@ -11,6 +9,9 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
+import React from 'react';
+import { Link } from 'react-router-dom';
+
 import { useAuth } from '@/context/auth/AuthContext';
 import { enrollmentService } from '@/services/resources/enrollmentService';
 import { ICourse } from '@/types';

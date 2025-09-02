@@ -1,7 +1,8 @@
 import { Factory } from 'fishery';
+
+import { ICourse } from '@/types/course';
 import { ICourseEnrollment } from '@/types/entities';
 import { IUser } from '@/types/userTypes';
-import { ICourse } from '@/types/course';
 
 export const enrollmentFactory = Factory.define<ICourseEnrollment>(
   ({ sequence, associations }) => ({

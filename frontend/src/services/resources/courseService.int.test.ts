@@ -8,15 +8,18 @@
  */
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { TCourseStatus } from '@/types/course';
-import authService from '../auth/authService';
-import { courseService } from './courseService';
+
 import { TEST_USERS } from '@/test-utils/setupIntegrationTests';
+import { TCourseStatus } from '@/types/course';
+
+import authService from '../auth/authService';
+
+import { courseService } from './courseService';
 
 describe('courseService Integration', () => {
   let accessToken: string;
   let userId: number;
-  let testsPassed = {
+  const testsPassed = {
     createCourse: false,
   };
 

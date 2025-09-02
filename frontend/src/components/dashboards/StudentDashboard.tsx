@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import {
   Grid,
   Paper,
@@ -11,9 +10,10 @@ import {
   CardContent,
   LinearProgress,
 } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 
-import { IProgressResponse } from '@/types/progress';
 import { useApiService } from '@/services/api/apiClientContext';
+import { IProgressResponse } from '@/types/progress';
 
 interface StudentDashboardProps {
   userId: string;

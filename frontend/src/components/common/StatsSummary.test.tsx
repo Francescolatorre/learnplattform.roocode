@@ -1,7 +1,10 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
-import StatsSummary from './StatsSummary';
+import React from 'react';
+
 import { TCourseStatus } from '@/types/course';
+
+import StatsSummary from './StatsSummary';
+
 
 describe('StatsSummary Component', () => {
   const mockCourses = [

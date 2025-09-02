@@ -1,8 +1,9 @@
-import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import FilterableCourseList from '@/components/courses/FilterableCourseList';
+
 import StatsSummary from '@/components/common/StatsSummary';
+import FilterableCourseList from '@/components/courses/FilterableCourseList';
 import { courseService } from '@/services/resources/courseService';
 import type { ICourse } from '@/types';
 

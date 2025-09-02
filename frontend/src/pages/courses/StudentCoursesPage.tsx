@@ -1,5 +1,6 @@
-import React from 'react';
 import { Box } from '@mui/material';
+import React from 'react';
+
 import FilterableCourseList from '@/components/courses/FilterableCourseList';
 
 /**

@@ -1,12 +1,16 @@
 //src/context/auth/authinerceptor.tsx
 
-import React, { useEffect } from 'react';
 import { AxiosInstance } from 'axios';
+import React, { useEffect } from 'react';
+
+import { AUTH_CONFIG } from '../../config/appConfig';
+import axiosInstance from '../../services/api/axiosConfig';
+
+import { useAuth } from './AuthContext';
 import { authEventService } from './AuthEventService';
 import { AuthEventType } from './types';
-import axiosInstance from '../../services/api/axiosConfig';
-import { AUTH_CONFIG } from '../../config/appConfig';
-import { useAuth } from './AuthContext';
+
+
 
 // Extend Window interface to include apiClient
 declare global {

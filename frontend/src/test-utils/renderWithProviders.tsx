@@ -1,8 +1,9 @@
-import React from 'react';
-import { render, RenderOptions } from '@testing-library/react';
-import { NotificationProvider } from '../components/Notifications/NotificationProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, RenderOptions } from '@testing-library/react';
+import React from 'react';
 import { MemoryRouter, MemoryRouterProps } from 'react-router-dom';
+
+import { NotificationProvider } from '../components/Notifications/NotificationProvider';
 import { AuthProvider } from '../context/auth/AuthContext';
 
 interface ProvidersProps {

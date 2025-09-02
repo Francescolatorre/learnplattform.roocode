@@ -1,10 +1,13 @@
+import { screen } from '@testing-library/react';
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { screen } from '@testing-library/react';
-import CourseListView from './CourseListView';
+
+
 import { renderWithProviders } from '@/test-utils/renderWithProviders';
-import { courseFactory } from '@test-utils/factories/courseFactory';
 import { TCourseStatus } from '@/types';
+import { courseFactory } from '@test-utils/factories/courseFactory';
+
+import CourseListView from './CourseListView';
 
 const mockCourses = [
   courseFactory.build({

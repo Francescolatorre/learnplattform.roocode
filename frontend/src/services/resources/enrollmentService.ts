@@ -11,11 +11,11 @@
  */
 
 import { ICourseEnrollment, IEnrollmentStatus } from '@/types/entities';
+import { authEventService } from '@context/auth/AuthEventService';
+import { AuthEventType } from '@context/auth/types';
 import { API_CONFIG } from 'src/services/api/apiConfig';
 import { ApiService } from 'src/services/api/apiService';
 import { IPaginatedResponse } from 'src/types/paginatedResponse';
-import { authEventService } from '@context/auth/AuthEventService';
-import { AuthEventType } from '@context/auth/types';
 import { withManagedExceptions } from 'src/utils/errorHandling';
 
 /**

@@ -8,19 +8,20 @@
  * If you need to test the actual notification system, use NotificationProvider and do NOT mock useNotification.
  */
 
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import React from 'react';
 import { BrowserRouter, useParams } from 'react-router-dom';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import '@testing-library/jest-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import InstructorCourseDetailPage from './InstructorCourseDetailsPage';
+import useNotification from '@/components/Notifications/useNotification';
 import { courseService } from '@/services/resources/courseService';
 import learningTaskService, { updateTask } from '@/services/resources/learningTaskService';
-import useNotification from '@/components/Notifications/useNotification';
 import { courseFactory } from '@test-utils/factories/courseFactory';
 import { learningTaskFactory } from '@test-utils/factories/learningTaskFactory';
+
+import InstructorCourseDetailPage from './InstructorCourseDetailsPage';
 
 // Mock the required dependencies
 vi.mock('react-router-dom', async () => {

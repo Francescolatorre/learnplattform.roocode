@@ -3,18 +3,20 @@
  * Step 1: Only check that mocks are called when rendering the component.
  */
 
-import React from 'react';
-import { vi } from 'vitest';
-import StudentCourseDetailsPage from './StudentCourseDetailsPage';
-import { courseService } from '@services/resources/courseService';
-import { enrollmentService } from '@services/resources/enrollmentService';
-import { renderWithProviders } from '@/test-utils/renderWithProviders';
-import { courseFactory } from '@/test-utils/factories/courseFactory';
-import { learningTaskFactory } from '@/test-utils/factories/learningTaskFactory';
-import { IUser, UserRoleEnum } from '@/types/userTypes';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { waitFor } from '@testing-library/react';
 import { screen } from '@testing-library/react';
+import React from 'react';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { vi } from 'vitest';
+
+import { courseFactory } from '@/test-utils/factories/courseFactory';
+import { learningTaskFactory } from '@/test-utils/factories/learningTaskFactory';
+import { renderWithProviders } from '@/test-utils/renderWithProviders';
+import { IUser, UserRoleEnum } from '@/types/userTypes';
+import { courseService } from '@services/resources/courseService';
+import { enrollmentService } from '@services/resources/enrollmentService';
+
+import StudentCourseDetailsPage from './StudentCourseDetailsPage';
 
 // Mock the services
 vi.mock('@services/resources/courseService');

@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
 import { Box, TextField, Button, Typography, CircularProgress } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
 import useNotification from '@/components/Notifications/useNotification';
-import { useAuth } from '@context/auth/AuthContext';
 import { TUserRole } from '@/types';
+import { useAuth } from '@context/auth/AuthContext';
 
 interface ILoginFormInputs {
   username: string;

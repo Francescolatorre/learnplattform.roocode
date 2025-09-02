@@ -1,6 +1,4 @@
 console.log('File loaded');
-import TaskCreation from './TaskCreation';
-import { renderWithProviders } from '../../test-utils/renderWithProviders';
 import { screen } from '@testing-library/react';
 /**
  * TaskCreation.test.tsx
@@ -11,10 +9,15 @@ import { screen } from '@testing-library/react';
  *
  * If you need to test the actual notification system, use NotificationProvider and do NOT mock useNotification.
  */
-import React from 'react';
 import { fireEvent, waitFor } from '@testing-library/react';
+import React from 'react';
 import { describe, test, vi, beforeEach } from 'vitest';
+
 import { ILearningTask } from '@/types';
+
+import { renderWithProviders } from '../../test-utils/renderWithProviders';
+
+import TaskCreation from './TaskCreation';
 
 // Mock Notification Hook
 vi.mock('@/components/Notifications/useNotification', () => {
@@ -52,7 +55,7 @@ describe('TaskCreation Component', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
-  let mockOnClose = vi.fn();
+  const mockOnClose = vi.fn();
   let mockOnSave: (task: Partial<ILearningTask>) => Promise<void>;
 
   beforeEach(() => {

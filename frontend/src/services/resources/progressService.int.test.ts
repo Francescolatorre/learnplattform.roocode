@@ -1,9 +1,12 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+
+import { TEST_USERS } from '@/test-utils/setupIntegrationTests';
 import { TCourseStatus } from '@/types/';
+
 import authService from '../auth/authService';
+
 import { courseService } from './courseService';
 import progressService from './progressService';
-import { TEST_USERS } from '@/test-utils/setupIntegrationTests';
 
 /**
  * Integration test for progressService.

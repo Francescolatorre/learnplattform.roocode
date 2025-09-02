@@ -13,10 +13,10 @@ import { useQuery } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
+import DashboardCourseCard from '@/components/DashboardCourseCard';
 import { IDashboardResponse } from '@/types/progress';
 import { useAuth } from '@context/auth/AuthContext';
 import { fetchDashboardData } from '@services/resources/dashboardService';
-import DashboardCourseCard from '@/components/DashboardCourseCard';
 
 /**
  * Student Dashboard Page

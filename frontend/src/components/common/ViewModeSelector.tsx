@@ -1,7 +1,7 @@
-import React from 'react';
-import { Paper, Tabs, Tab } from '@mui/material';
 import GridViewIcon from '@mui/icons-material/GridView';
 import ViewListIcon from '@mui/icons-material/ViewList';
+import { Paper, Tabs, Tab } from '@mui/material';
+import React from 'react';
 
 interface ViewModeSelectorProps {
   viewMode: 'grid' | 'list';
