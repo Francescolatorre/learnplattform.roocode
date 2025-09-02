@@ -98,4 +98,3 @@ node_modules/lodash-es/_getNative.js
 frontend/coverage/clover.xml
 asts-for-llm/
 tree-sitter-*/
-.claude/settings.local.json
