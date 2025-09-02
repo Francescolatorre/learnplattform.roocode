@@ -54,7 +54,12 @@
       "Read(C:\\DEVELOPMENT\\projects\\learnplatfom2-pipeline-setup/**)",
       "Bash(gh run list:*)",
       "Bash(gh run view:*)",
-      "Bash(npx prettier:*)"
+      "Bash(npx prettier:*)",
+      "Bash(.venv/Scripts/python.exe -m pip install:*)",
+      "Bash(.venv/Scripts/python.exe -m black:*)",
+      "Bash(.venv/Scripts/python.exe :*)",
+      "Bash(.venv/Scripts/python.exe -m flake8:*)",
+      "Bash(npx vite:*)"
     ],
     "deny": [],
     "ask": []
