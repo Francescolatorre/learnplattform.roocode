@@ -3,6 +3,7 @@ import { defineConfig, devices } from '@playwright/test';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import { PerformanceOptimizer } from './e2e/utils/performanceOptimization';
 
 // Get the directory name equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -27,15 +28,16 @@ if (!fs.existsSync(outputDir)) {
 const config: Config = defineConfig({
   testDir: './e2e/tests',
   testMatch: ['**/*.spec.ts'],
-  timeout: 120 * 1000, // Increased timeout to 120s for slower operations
+  timeout: 60 * 1000, // Increased timeout for stability
+  globalSetup: './e2e/utils/globalSetup.ts',
 
   expect: {
-    timeout: 30000, // Increased to 30s for element expectations
-    toMatchTimeout: 5000, // Increased to 10s for text match
+    timeout: 10000, // Increased for stability
+    toMatchTimeout: 5000, // Increased for stability
   },
   fullyParallel: false,
   forbidOnly: process.env.CI === 'true',
-  retries: process.env.CI === 'true' ? 2 : 0, // Added 1 retry for local development
+  retries: process.env.CI === 'true' ? 2 : 1, // Added 1 retry for local development
   workers: process.env.CI === 'true' ? 1 : undefined,
   reporter: [
     ['html', { outputFolder: path.join(outputDir, 'playwright-report'), open: 'never' }],
@@ -46,12 +48,14 @@ const config: Config = defineConfig({
   outputDir: path.join(outputDir, 'test-artifacts'),
   use: {
     baseURL: process.env.BASE_URL || 'http://localhost:5173',
-    trace: 'retain-on-failure', // Changed to retain traces on failure
-    video: 'retain-on-failure', // Changed to retain videos on failure
-    screenshot: 'only-on-failure',
-    actionTimeout: 15000, // Added timeout for actions like click
-    navigationTimeout: 30000, // Added timeout for navigation
+    trace: 'retain-on-failure', // Only keep traces on failure for performance
+    video: 'retain-on-failure', // Only keep video on failure for performance
+    screenshot: 'only-on-failure', // Only screenshot on failure for performance
+    actionTimeout: 15000, // Increased timeout for stability
+    navigationTimeout: 30000, // Increased timeout for navigation stability
     testIdAttribute: 'data-testid', // Explicitly set testId attribute
+    // Performance optimization: Set optimal viewport
+    viewport: { width: 1280, height: 720 },
   },
 
   projects: [

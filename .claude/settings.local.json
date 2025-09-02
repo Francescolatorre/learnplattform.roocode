@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run lint)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx tsc:*)",
+      "Bash(timeout 30 npm run dev)",
+      "Bash(python manage.py makemigrations:*)",
+      "Bash(python manage.py:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run test:e2e:*)",
+      "Bash(curl:*)",
+      "Bash(python:*)",
+      "Bash(dir test-results)",
+      "Bash(npx playwright test:*)",
+      "Bash(npm run validate:test-setup:*)",
+      "Bash(find:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(timeout 30 npm run test:e2e:*)",
+      "Bash(timeout 15 npm run test:e2e -- e2e/tests/roles.spec.ts --max-failures=1 --headed)",
+      "Bash(timeout 45 npm run test:e2e:*)",
+      "Bash(timeout 60 npm run test:e2e:*)",
+      "Bash(git branch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git symbolic-ref:*)",
+      "Bash(git filter-repo:*)",
+      "Read(C:\\DEVELOPMENT\\projects\\learnplatfom2-pipeline-setup/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
