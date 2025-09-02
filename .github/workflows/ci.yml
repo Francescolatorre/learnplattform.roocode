@@ -28,6 +28,10 @@ jobs:
     name: Code Quality
     uses: ./.github/workflows/code-quality.yml
     secrets: inherit
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
 
   e2e-tests:
     name: E2E Tests
