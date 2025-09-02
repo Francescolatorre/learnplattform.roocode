@@ -92,6 +92,8 @@ secrets.yml
 node_modules/lodash-es/_getNative.js
 .vite/
 
+# Claude Code
+.claude/settings.local.json
 
 frontend/coverage/clover.xml
 asts-for-llm/
