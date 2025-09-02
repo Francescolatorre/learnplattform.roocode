@@ -29,7 +29,7 @@ const HomePage: React.FC = () => {
   // Show loading state while redirecting
   return (
     <Container maxWidth="md" sx={{ textAlign: 'center', mt: 5 }}>
-      <Typography variant="h3" gutterBottom>
+      <Typography variant="h1" component="h1" gutterBottom>
         Welcome to the Learning Platform
       </Typography>
       <Typography variant="h6" color="textSecondary" gutterBottom>

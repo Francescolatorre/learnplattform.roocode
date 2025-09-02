@@ -19,7 +19,9 @@ const App: React.FC = () => {
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <NavigationBar />
-            <AppRoutes />
+            <main role="main">
+              <AppRoutes />
+            </main>
           </ThemeProvider>
         </NotificationProvider>
       </ErrorBoundary>

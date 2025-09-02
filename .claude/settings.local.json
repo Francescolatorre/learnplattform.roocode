@@ -62,7 +62,8 @@
       "Bash(npx vite:*)",
       "Bash(npm install:*)",
       "Bash(npx husky:*)",
-      "Bash(npm run sort-imports:*)"
+      "Bash(npm run sort-imports:*)",
+      "Bash(npx axe:*)"
     ],
     "deny": [],
     "ask": []
