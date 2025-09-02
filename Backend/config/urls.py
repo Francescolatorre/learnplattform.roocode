@@ -23,21 +23,6 @@ All routes follow REST principles and include appropriate
 permission checks based on user roles.
 """
 
-from django.contrib import admin
-from django.urls import include, path
-from drf_yasg import openapi
-from drf_yasg.views import get_schema_view
-from rest_framework import permissions
-from rest_framework.authentication import get_authorization_header
-from rest_framework.decorators import api_view
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-from rest_framework_simplejwt.tokens import AccessToken
-from rest_framework_simplejwt.views import TokenRefreshView
-
 from core.progress_api import (
     CourseAnalyticsAPI,
     CourseStudentProgressAPI,
@@ -62,9 +47,27 @@ from core.views.dashboards import (
 )
 from core.views.enrollments import EnrollmentViewSet
 from core.views.misc import health_check
-from core.views.quizzes import QuizOptionViewSet, QuizQuestionViewSet, QuizTaskViewSet
+from core.views.quizzes import (
+    QuizOptionViewSet,
+    QuizQuestionViewSet,
+    QuizTaskViewSet,
+)
 from core.views.tasks import LearningTaskViewSet
 from core.views.users import UserProfileAPI, UserViewSet
+from django.contrib import admin
+from django.urls import include, path
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions
+from rest_framework.authentication import get_authorization_header
+from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework_simplejwt.views import TokenRefreshView
 
 # EnhancedTaskProgressViewSet and EnhancedQuizAttemptViewSet remain from progress_api
 

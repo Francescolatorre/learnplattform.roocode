@@ -9,7 +9,13 @@ import logging
 
 from rest_framework import permissions, viewsets
 
-from ..models import QuizAttempt, QuizOption, QuizQuestion, QuizResponse, QuizTask
+from ..models import (
+    QuizAttempt,
+    QuizOption,
+    QuizQuestion,
+    QuizResponse,
+    QuizTask,
+)
 from ..serializers import (
     QuizAttemptSerializer,
     QuizOptionSerializer,

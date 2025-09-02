@@ -14,13 +14,6 @@ Test cases:
 from typing import Any, Dict
 
 import pytest
-from django.contrib.auth.models import Group
-from django.core.cache import cache
-from django.urls import reverse
-from django.utils import timezone
-from rest_framework import status
-from rest_framework.test import APIClient
-
 from core.models import (
     Course,
     CourseEnrollment,
@@ -30,6 +23,12 @@ from core.models import (
     TaskProgress,
     User,
 )
+from django.contrib.auth.models import Group
+from django.core.cache import cache
+from django.urls import reverse
+from django.utils import timezone
+from rest_framework import status
+from rest_framework.test import APIClient
 
 
 @pytest.fixture

@@ -8,11 +8,10 @@ covering authentication, role-based permissions, and helper methods.
 from typing import Any
 
 import pytest
+from core.models import Course, CourseEnrollment
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from rest_framework.test import APIClient
-
-from core.models import Course, CourseEnrollment
 
 User = get_user_model()
 

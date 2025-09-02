@@ -18,9 +18,8 @@ from rest_framework.test import APIClient
 
 @pytest.mark.django_db
 def test_dashboard_endpoint(db):
-    from django.contrib.auth import get_user_model
-
     from core.models import Course, CourseEnrollment
+    from django.contrib.auth import get_user_model
 
     client = APIClient()
     User = get_user_model()
