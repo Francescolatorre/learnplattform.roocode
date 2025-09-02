@@ -14,21 +14,21 @@ Test cases:
 from typing import Any, Dict
 
 import pytest
-from django.urls import reverse
-from django.utils import timezone
 from django.contrib.auth.models import Group
 from django.core.cache import cache
+from django.urls import reverse
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
 from core.models import (
-    User,
     Course,
     CourseEnrollment,
     LearningTask,
-    TaskProgress,
-    QuizTask,
     QuizAttempt,
+    QuizTask,
+    TaskProgress,
+    User,
 )
 
 

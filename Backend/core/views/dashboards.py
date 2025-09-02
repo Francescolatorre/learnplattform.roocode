@@ -7,15 +7,16 @@ Includes:
 """
 
 import logging
-from django.db.models import Avg, Count, Case, When, Prefetch
+
 from django.core.cache import cache
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
+from django.db.models import Avg, Case, Count, Prefetch, When
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import NotFound
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from ..models import Course, CourseEnrollment, TaskProgress, QuizAttempt
+from ..models import Course, CourseEnrollment, QuizAttempt, TaskProgress
 from ..serializers import UserSerializer
 
 logger = logging.getLogger(__name__)

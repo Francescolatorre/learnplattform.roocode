@@ -7,11 +7,12 @@ Includes:
 """
 
 import logging
+
 from django.contrib.auth.models import AnonymousUser
-from rest_framework import viewsets, status
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.decorators import action
 
 from ..models import CourseEnrollment
 from ..serializers import CourseEnrollmentSerializer

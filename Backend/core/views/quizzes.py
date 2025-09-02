@@ -6,20 +6,16 @@ Includes:
 """
 
 import logging
-from rest_framework import viewsets, permissions
-from ..models import (
-    QuizTask,
-    QuizQuestion,
-    QuizOption,
-    QuizAttempt,
-    QuizResponse,
-)
+
+from rest_framework import permissions, viewsets
+
+from ..models import QuizAttempt, QuizOption, QuizQuestion, QuizResponse, QuizTask
 from ..serializers import (
-    QuizTaskSerializer,
-    QuizQuestionSerializer,
-    QuizOptionSerializer,
     QuizAttemptSerializer,
+    QuizOptionSerializer,
+    QuizQuestionSerializer,
     QuizResponseSerializer,
+    QuizTaskSerializer,
 )
 
 logger = logging.getLogger(__name__)

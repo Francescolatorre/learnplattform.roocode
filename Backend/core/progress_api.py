@@ -6,13 +6,14 @@ from django.shortcuts import get_object_or_404  # Used in analytics methods
 from django.utils import timezone
 from rest_framework import filters, permissions
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated  # Ensure correct import
-from rest_framework.response import Response
-from rest_framework.views import APIView  # Base class for analytics views
 from rest_framework.exceptions import (
     ValidationError,
 )  # Import for raising validation errors
+from rest_framework.permissions import IsAuthenticated  # Ensure correct import
+from rest_framework.response import Response
+from rest_framework.views import APIView  # Base class for analytics views
 
+from .base_viewset import BaseViewSet  # Import the base viewset
 from .models import QuizQuestion  # Added QuizQuestion import
 from .models import (
     Course,
@@ -30,7 +31,6 @@ from .serializers import (
     QuizResponseSerializer,
     TaskProgressSerializer,
 )
-from .base_viewset import BaseViewSet  # Import the base viewset
 
 
 # Custom permissions

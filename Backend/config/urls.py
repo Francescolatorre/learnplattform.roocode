@@ -47,24 +47,24 @@ from core.progress_api import (
     StudentProgressAPI,
     StudentQuizPerformanceAPI,
 )
+from core.views.auth import (
+    CustomTokenObtainPairView,
+    LogoutView,
+    RegisterView,
+    validate_token,
+)
+from core.views.courses import CourseVersionViewSet, CourseViewSet
 from core.views.dashboards import (
     AdminDashboardAPI,
     InstructorDashboardAPI,
-    admin_dashboard_summary,
     StudentDashboardAPI,
+    admin_dashboard_summary,
 )
-from core.views.courses import CourseViewSet, CourseVersionViewSet
-from core.views.auth import (
-    CustomTokenObtainPairView,
-    RegisterView,
-    LogoutView,
-    validate_token,
-)
-from core.views.users import UserProfileAPI, UserViewSet
-from core.views.tasks import LearningTaskViewSet
-from core.views.quizzes import QuizTaskViewSet, QuizQuestionViewSet, QuizOptionViewSet
 from core.views.enrollments import EnrollmentViewSet
 from core.views.misc import health_check
+from core.views.quizzes import QuizOptionViewSet, QuizQuestionViewSet, QuizTaskViewSet
+from core.views.tasks import LearningTaskViewSet
+from core.views.users import UserProfileAPI, UserViewSet
 
 # EnhancedTaskProgressViewSet and EnhancedQuizAttemptViewSet remain from progress_api
 

@@ -8,23 +8,24 @@ Includes:
 
 import logging
 from typing import Any, Optional
-from django.db import models
+
 from django.contrib.auth import get_user_model
+from django.db import models
 from django.http import Http404
-from rest_framework import viewsets, permissions, status
+from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
 from ..models import Course, CourseEnrollment, CourseVersion, LearningTask, TaskProgress
+from ..pagination import SafePageNumberPagination
+from ..permissions import IsInstructorOrAdmin
 from ..serializers import (
     CourseSerializer,
     CourseVersionSerializer,
     TaskProgressSerializer,
 )
-from ..permissions import IsInstructorOrAdmin
-from ..pagination import SafePageNumberPagination
 
 logger = logging.getLogger(__name__)
 

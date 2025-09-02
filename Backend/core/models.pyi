@@ -8,6 +8,7 @@ Includes models for users, courses, tasks, quizzes, and progress tracking.
 
 from datetime import datetime, timedelta
 from typing import Optional
+
 from django.db import models
 
 # Type stubs for Django models to help IDE understand dynamic model relationships

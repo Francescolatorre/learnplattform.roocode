@@ -8,10 +8,10 @@ and quiz questions.
 
 import logging
 import re
-from typing import Dict, Any, Tuple, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
-import markdown
 import bleach  # Updated import
+import markdown
 from django.utils.safestring import mark_safe
 from pygments import highlight
 from pygments.formatters.html import HtmlFormatter

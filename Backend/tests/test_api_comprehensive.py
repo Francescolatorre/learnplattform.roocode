@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import json
 import urllib.error
-import urllib.request
 import urllib.parse
+import urllib.request
 
 
 class ApiTest:

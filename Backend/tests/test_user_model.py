@@ -5,11 +5,13 @@ This module contains comprehensive tests for the User model functionality,
 covering authentication, role-based permissions, and helper methods.
 """
 
-import pytest
 from typing import Any
+
+import pytest
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from rest_framework.test import APIClient
+
 from core.models import Course, CourseEnrollment
 
 User = get_user_model()

@@ -18,19 +18,16 @@ Additional Routes:
 - /api/v1/students/<id>/dashboard/: Student dashboard data
 """
 
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from .views.courses import CourseViewSet, CourseVersionViewSet
-from .views.tasks import LearningTaskViewSet
-from .views.users import UserViewSet
-from .views.quizzes import (
-    QuizTaskViewSet,
-    QuizQuestionViewSet,
-    QuizOptionViewSet,
-)
+
+from .views.courses import CourseVersionViewSet, CourseViewSet
+from .views.dashboards import StudentDashboardAPI
 from .views.enrollments import EnrollmentViewSet
 from .views.misc import health_check
-from .views.dashboards import StudentDashboardAPI
+from .views.quizzes import QuizOptionViewSet, QuizQuestionViewSet, QuizTaskViewSet
+from .views.tasks import LearningTaskViewSet
+from .views.users import UserViewSet
 
 router = DefaultRouter()
 router.register(r"users", UserViewSet, basename="user")

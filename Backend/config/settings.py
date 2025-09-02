@@ -11,10 +11,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import logging
+import os
+import sys
 from datetime import timedelta
 from pathlib import Path
-import sys
-import os
 
 # Add the parent directory to system path to allow importing from root modules
 BASE_DIR = Path(__file__).resolve().parent.parent

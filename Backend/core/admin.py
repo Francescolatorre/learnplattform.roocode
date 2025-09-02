@@ -11,15 +11,16 @@ providing a user-friendly interface for content management. It includes:
 """
 
 from django.contrib import admin
-from .models import (  # Ensure parentheses are closed
+
+from .models import (
     Course,
+    CourseEnrollment,  # Ensure parentheses are closed
     LearningTask,
-    QuizTask,
-    CourseEnrollment,
+    QuizAttempt,
     QuizOption,
     QuizQuestion,
-    QuizAttempt,
     QuizResponse,
+    QuizTask,
     TaskProgress,
 )
 

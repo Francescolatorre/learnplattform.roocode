@@ -11,12 +11,14 @@ used across the platform's API endpoints. It includes features like:
 """
 
 import logging
-from rest_framework import viewsets, status
-from rest_framework.response import Response
+
+from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from rest_framework import status, viewsets
+from rest_framework.response import Response
+
 from .exception_handler import custom_exception_handler
-from django.contrib.auth.models import AnonymousUser
 
 logger = logging.getLogger(__name__)
 
