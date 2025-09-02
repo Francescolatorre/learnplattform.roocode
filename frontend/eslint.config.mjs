@@ -77,7 +77,7 @@ export default tseslint.config(
       // 'filename-rules/match': ['error', { pattern: '^[a-z][a-zA-Z]+Service$' }],
       'import/prefer-default-export': 'off',
       // 'import/no-default-export': 'error', // Too strict for React components
-      // 'import/group-exports': 'error', // Too strict for current codebase  
+      // 'import/group-exports': 'error', // Too strict for current codebase
       // 'import/exports-last': 'error', // Too strict for current codebase
 
       // Error Handling Rules Subtask

@@ -7,7 +7,6 @@ import { AuthEventType } from '@context/auth/types';
 import { withManagedExceptions, ManagedServiceError, ErrorType } from './errorHandling';
 import { logger } from './logger';
 
-
 // Mock dependencies
 vi.mock('./logger', () => ({
   logger: {

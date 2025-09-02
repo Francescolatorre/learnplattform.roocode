@@ -10,8 +10,6 @@ import { useAuth } from './AuthContext';
 import { authEventService } from './AuthEventService';
 import { AuthEventType } from './types';
 
-
-
 // Extend Window interface to include apiClient
 declare global {
   interface Window {

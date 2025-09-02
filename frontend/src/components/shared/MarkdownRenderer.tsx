@@ -136,7 +136,7 @@ const MarkdownRenderer = forwardRef<HTMLElement, IMarkdownRendererProps>(
     };
 
     // Component overrides for ReactMarkdown
-     
+
     const mdComponents: Components = isPreview
       ? {
           // In preview mode, use spans and divs to avoid nesting violations

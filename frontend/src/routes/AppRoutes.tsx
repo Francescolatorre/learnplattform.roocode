@@ -1,7 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-
 // Page imports with consistent naming (all end with "Page")
 import AdminAnalyticsPage from '@/pages/admin/AdminAnalyticsPage';
 import AdminCoursesPage from '@/pages/admin/AdminCoursesPage';

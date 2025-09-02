@@ -5,7 +5,6 @@ import { TCourseStatus } from '@/types/course';
 
 import StatsSummary from './StatsSummary';
 
-
 describe('StatsSummary Component', () => {
   const mockCourses = [
     {

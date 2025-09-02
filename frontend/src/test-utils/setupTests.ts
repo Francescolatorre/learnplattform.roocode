@@ -54,7 +54,7 @@ vi.mock('@/components/common/MarkdownRenderer', () => ({
 // Axios mock (now safe, after all variables/imports)
 vi.mock('axios', () => {
   // Import here to avoid hoisting issues
-   
+
   const { AxiosError } = require('axios');
   return {
     __esModule: true,

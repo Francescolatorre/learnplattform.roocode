@@ -31,7 +31,6 @@ import learningTaskService, { updateTask } from '@/services/resources/learningTa
 import { ICourse } from '@/types/course';
 import { ILearningTask } from '@/types/task';
 
-
 // Hauptkomponente
 const InstructorCourseDetailPage: React.FC = () => {
   // State for task creation modal
