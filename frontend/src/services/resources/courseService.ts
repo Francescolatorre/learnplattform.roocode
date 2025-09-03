@@ -2,7 +2,7 @@ import { ApiService } from '@/services/api/apiService';
 import { IStudentProgressSummary } from '@/types';
 import { ICourse, TCourseStatus } from '@/types/course';
 import { IUserProgress } from '@/types/progress';
-import { ILearningTask, ITaskProgress } from '@/types/task';
+import { ILearningTask, ITaskProgress } from '@/types/Task';
 import { IPaginatedResponse } from 'src/types/paginatedResponse';
 import { withManagedExceptions } from 'src/utils/errorHandling';
 

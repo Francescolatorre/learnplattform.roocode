@@ -27,7 +27,7 @@ import { format, parseISO } from 'date-fns';
 import React, { useState } from 'react';
 
 // Import directly from the common types
-import { ITaskProgress } from '@/types/task';
+import { ITaskProgress } from '@/types/Task';
 
 interface TaskDetailsViewProps {
   taskProgress: ITaskProgress[];

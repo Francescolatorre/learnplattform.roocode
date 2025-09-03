@@ -2,7 +2,7 @@ import { Box, Typography, Grid, Card, CardContent, Button } from '@mui/material'
 import { format, parseISO } from 'date-fns'; // Importing format and parseISO
 import React from 'react';
 
-import { ITaskProgress } from '@/types/task'; // Importing ITaskProgress
+import { ITaskProgress } from '@/types/Task'; // Importing ITaskProgress
 
 interface ExpandedTaskDetailsProps {
   task: ITaskProgress;

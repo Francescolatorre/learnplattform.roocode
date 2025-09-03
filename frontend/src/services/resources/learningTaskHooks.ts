@@ -1,4 +1,4 @@
-import { ITaskCreationData } from '@/types/task';
+import { ITaskCreationData } from '@/types/Task';
 
 import learningTaskService from './learningTaskService';
 

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
-import { ILearningTask } from '@/types/task';
+import { ILearningTask } from '@/types/Task';
 import LearningTaskService from 'src/services/resources/learningTaskService';
 
 const TaskViewPage: React.FC = () => {

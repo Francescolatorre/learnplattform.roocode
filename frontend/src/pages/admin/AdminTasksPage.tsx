@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 
-import { ILearningTask } from '@/types/task';
+import { ILearningTask } from '@/types/Task';
 import { DataTable, Column } from '@components/shared'; // Updated to use shared component
 import { useCourseTasks } from '@services/useCourseTasks';
 

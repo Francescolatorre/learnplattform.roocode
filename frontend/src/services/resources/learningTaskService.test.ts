@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import type { ILearningTask, ITaskCreationData } from '@/types/task';
+import type { ILearningTask, ITaskCreationData } from '@/types/Task';
 
 import { API_CONFIG } from '../api/apiConfig';
 

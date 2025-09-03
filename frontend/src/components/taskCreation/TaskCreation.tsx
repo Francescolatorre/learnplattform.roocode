@@ -14,7 +14,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import useNotification from '@/components/Notifications/useNotification';
 import { createTask, updateTask } from '@/services/resources/learningTaskService';
-import { ILearningTask } from '@/types/task';
+import { ILearningTask } from '@/types/Task';
 
 import MarkdownEditor from '../shared/MarkdownEditor';
 

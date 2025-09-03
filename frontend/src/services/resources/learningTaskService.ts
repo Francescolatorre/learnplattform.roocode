@@ -1,5 +1,5 @@
 import { IPaginatedResponse } from '@/types';
-import { ILearningTask, ITaskCreationData } from '@/types/task';
+import { ILearningTask, ITaskCreationData } from '@/types/Task';
 import { ApiService } from 'src/services/api/apiService';
 import { withManagedExceptions } from 'src/utils/errorHandling';
 import { logger } from 'src/utils/logger';

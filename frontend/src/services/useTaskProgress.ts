@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import type { ITaskProgress, IQuizHistory, ITaskProgressUpdateData } from '@/types/task';
+import type { ITaskProgress, IQuizHistory, ITaskProgressUpdateData } from '@/types/Task';
 
 import { apiService } from './api/apiService';
 

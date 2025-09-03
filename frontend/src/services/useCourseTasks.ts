@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { ILearningTask } from '@/types/task';
+import { ILearningTask } from '@/types/Task';
 import learningTaskService from 'src/services/resources/learningTaskService';
 
 // Return the same type as what learningTaskService.getAll returns

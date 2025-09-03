@@ -8,7 +8,7 @@ import { useTaskProgress, useUpdateTaskProgress } from 'src/services/useTaskProg
 const TaskViewPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { data: taskRaw, isLoading, error } = useTaskData(String(id));
-  const task = taskRaw as import('@/types/task').ILearningTask | undefined;
+  const task = taskRaw as import('@/types/Task').ILearningTask | undefined;
   const {
     data: progress,
     isLoading: progressLoading,

@@ -30,7 +30,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import useNotification from '@/components/Notifications/useNotification';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
-import { ILearningTask } from '@/types/task';
+import { ILearningTask } from '@/types/Task';
 import { useAuth } from '@context/auth/AuthContext';
 import { courseService } from '@services/resources/courseService';
 import LearningTaskService, {

@@ -20,7 +20,7 @@ import {
 import { format, parseISO } from 'date-fns'; // Importing format and parseISO
 import React from 'react';
 
-import { ITaskProgress } from '@/types/task';
+import { ITaskProgress } from '@/types/Task';
 
 interface TaskTableProps {
   tasks: ITaskProgress[];

@@ -23,7 +23,7 @@ import useNotification from '@/components/Notifications/useNotification';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import { ICourse } from '@/types/course';
 import { IPaginatedResponse } from '@/types/paginatedResponse';
-import { ILearningTask } from '@/types/task';
+import { ILearningTask } from '@/types/Task';
 import { useAuth } from '@context/auth/AuthContext';
 import { courseService } from '@services/resources/courseService';
 import { enrollmentService } from '@services/resources/enrollmentService';

@@ -29,7 +29,7 @@ import TaskCreation from '@/components/taskCreation/TaskCreation';
 import { courseService } from '@/services/resources/courseService';
 import learningTaskService, { updateTask } from '@/services/resources/learningTaskService';
 import { ICourse } from '@/types/course';
-import { ILearningTask } from '@/types/task';
+import { ILearningTask } from '@/types/Task';
 
 // Hauptkomponente
 const InstructorCourseDetailPage: React.FC = () => {
