@@ -3,7 +3,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 
-import NavigationBar from '@components/navigation/NavigationBar.tsx';
+import NavigationBar from '@components/navigation/NavigationBar';
 import { NotificationProvider } from '@components/Notifications/NotificationProvider';
 import { ErrorBoundary } from '@components/shared';
 import AppRoutes from '@routes/AppRoutes.tsx';
