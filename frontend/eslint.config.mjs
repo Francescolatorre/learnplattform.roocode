@@ -12,6 +12,8 @@ export default tseslint.config(
   {
     ignores: [
       'dist/**',
+      'html/**',
+      'build/**',
       'coverage/**',
       'assets/**',
       'test-results/**',
@@ -21,6 +23,9 @@ export default tseslint.config(
       '**/*.config.mjs',
       '**/*.config.cjs',
       'e2e/**',
+      'node_modules/**',
+      'scripts/**',
+      'run-markdown-tests.js',
     ],
   },
   // Base ESLint recommendations
