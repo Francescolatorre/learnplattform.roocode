@@ -21,7 +21,7 @@ const mockAxios = {
 };
 
 // Log timer state before any test setup
-// @ts-ignore
+// @ts-expect-error
 console.log(
   '🧪 [setup] BEFORE vi.useFakeTimers:',
   typeof vi.getMockedSystemTime === 'function' ? vi.getMockedSystemTime() : 'n/a'
@@ -33,7 +33,7 @@ import { configure } from '@testing-library/react';
 // Ensure MUI Snackbar/Modal portals render into the test container
 configure({ defaultHidden: true });
 // Log timer state after all test setup (but before tests)
-// @ts-ignore
+// @ts-expect-error
 console.log(
   '🧪 [setup] AFTER setup (no vi.useFakeTimers yet):',
   typeof vi.getMockedSystemTime === 'function' ? vi.getMockedSystemTime() : 'n/a'

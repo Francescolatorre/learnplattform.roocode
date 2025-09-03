@@ -77,6 +77,7 @@ describe('NotificationProvider', () => {
       React.useImperativeHandle(ref, () => ctx, [ctx]);
       return null;
     });
+    Harness.displayName = 'Harness';
     const harnessRef = React.createRef<any>();
     renderWithProvider(<Harness ref={harnessRef} />, { maxVisible: 2 });
 
@@ -110,6 +111,7 @@ describe('NotificationProvider', () => {
       React.useImperativeHandle(ref, () => ctx, [ctx]);
       return null;
     });
+    Harness.displayName = 'Harness';
     const harnessRef = React.createRef<any>();
     renderWithProvider(<Harness ref={harnessRef} />, { maxVisible: 2 });
 
@@ -134,6 +136,7 @@ describe('NotificationProvider', () => {
       React.useImperativeHandle(ref, () => ctx, [ctx]);
       return null;
     });
+    Harness.displayName = 'Harness';
     const harnessRef = React.createRef<any>();
     renderWithProvider(<Harness ref={harnessRef} />, { maxVisible: 1 });
 

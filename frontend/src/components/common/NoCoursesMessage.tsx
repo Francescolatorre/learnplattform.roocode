@@ -6,10 +6,10 @@ import { Link as RouterLink } from 'react-router-dom';
 const NoCoursesMessage: React.FC = () => (
   <Paper elevation={2} sx={{ p: 4, textAlign: 'center' }}>
     <Typography variant="h6" gutterBottom>
-      You haven't created any courses yet
+      You haven&apos;t created any courses yet
     </Typography>
     <Typography variant="body1" color="text.secondary" paragraph>
-      Start by creating your first course. You'll be able to add learning tasks and manage student
+      Start by creating your first course. You&apos;ll be able to add learning tasks and manage student
       enrollments.
     </Typography>
     <Button

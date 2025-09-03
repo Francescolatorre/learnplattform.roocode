@@ -45,7 +45,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ userId }) => {
 
   const { user_info, overall_stats, courses } = progressData;
 
-  const courseProgress = courses.map(course => ({
+  const _courseProgress = courses.map(course => ({
     completedTasks: course.completedTasks,
     totalTasks: course.totalTasks,
     averageScore: course.averageScore,

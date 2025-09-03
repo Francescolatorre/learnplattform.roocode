@@ -7,7 +7,7 @@ import {
   People as PeopleIcon,
   Settings as SettingsIcon,
   Analytics as AnalyticsIcon,
-  ExitToApp as ExitToAppIcon,
+  // ExitToApp as ExitToAppIcon,
 } from '@mui/icons-material';
 
 import { TUserRole } from '@/types';

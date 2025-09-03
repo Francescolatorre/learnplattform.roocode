@@ -80,7 +80,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   // Compute active and queue from all notifications
   const sorted = sortNotifications(state.all);
   const active = sorted.slice(0, maxVisible);
-  const queue = sorted.slice(maxVisible);
+  const _queue = sorted.slice(maxVisible);
 
   const contextValue: NotificationContextType = {
     addNotification,

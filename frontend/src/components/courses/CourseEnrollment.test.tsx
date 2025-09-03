@@ -1,4 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import React from 'react';
 import { vi } from 'vitest';
 
@@ -42,8 +43,6 @@ vi.mock('@services/resources/enrollmentService', () => ({
     unenrollFromCourseById: vi.fn(),
   },
 }));
-
-import { useQuery, useMutation } from '@tanstack/react-query';
 
 describe('CourseEnrollment Component', () => {
   beforeEach(() => {

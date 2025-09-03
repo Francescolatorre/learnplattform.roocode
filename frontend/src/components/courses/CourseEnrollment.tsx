@@ -185,7 +185,7 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({ courseId }) => {
             id="unenroll-dialog-description"
             data-testid="unenroll-dialog-description"
           >
-            Are you sure you want to unenroll from "{course.title}"? This action will remove you
+            Are you sure you want to unenroll from &quot;{course.title}&quot;? This action will remove you
             from the course. Your progress may be preserved if you re-enroll later.
           </DialogContentText>
         </DialogContent>

@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+// import { BrowserRouter } from 'react-router-dom';
 
 import { renderWithProviders } from '@/test-utils/renderWithProviders';
 import { TCourseStatus } from '@/types';

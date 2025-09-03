@@ -4,7 +4,7 @@ import React from 'react';
 import { vi } from 'vitest';
 
 import NotificationDemo from './NotificationDemo';
-import type { NotificationContextType } from './types';
+// import type { NotificationContextType } from './types';
 
 const mockAddNotification = vi.fn();
 const mockDismissNotification = vi.fn();

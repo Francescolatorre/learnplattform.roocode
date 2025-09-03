@@ -113,7 +113,7 @@ describe('NotificationToast', () => {
 
     // Find and trigger Snackbar onClose with clickaway reason
     const snackbar = container!.querySelector('.MuiSnackbar-root');
-    // @ts-ignore - Accessing private prop for testing
+    // @ts-expect-error - Accessing private prop for testing
     act(() => {
       snackbar?.__ON_CLOSE?.({}, 'clickaway');
     });

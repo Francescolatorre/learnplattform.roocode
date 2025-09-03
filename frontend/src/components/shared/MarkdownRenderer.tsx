@@ -1,12 +1,12 @@
+import { Box, Theme } from '@mui/material';
+import { SxProps } from '@mui/system';
 import React, { forwardRef } from 'react';
+import type { Components } from 'react-markdown';
 import { default as ReactMarkdown } from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import remarkGfm from 'remark-gfm';
 import 'highlight.js/styles/github.css';
-import { Box, Theme } from '@mui/material';
-import { SxProps } from '@mui/system';
-import type { Components } from 'react-markdown';
 
 interface IMarkdownRendererProps {
   /**
