@@ -120,7 +120,7 @@ jobs:
           echo "::endgroup::"
           
           echo "::group::Import sorting check"
-          isort --check-only --diff . || echo "::error::Import sorting issues found"
+          isort --check-only --diff . --profile django || echo "::error::Import sorting issues found"
           echo "::endgroup::"
           
           echo "::group::Flake8 linting"
