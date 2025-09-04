@@ -7,11 +7,11 @@ on:
         required: false
   push:
     paths:
-      - 'Backend/**'
+      - 'backend/**'
       - '.github/workflows/backend-tests.yml'
   pull_request:
     paths:
-      - 'Backend/**'
+      - 'backend/**'
       - '.github/workflows/backend-tests.yml'
 
 jobs:
@@ -48,45 +48,45 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('Backend/requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
       - name: Install dependencies
-        working-directory: Backend
+        working-directory: backend
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install coverage pytest-django pytest-cov safety bandit
 
       - name: Security check with Safety
-        working-directory: Backend
+        working-directory: backend
         run: |
           safety check --json --output safety-report.json || true
           safety check
 
       - name: Security check with Bandit
-        working-directory: Backend
+        working-directory: backend
         run: |
           bandit -r . -f json -o bandit-report.json || true
           bandit -r . --skip B101
 
       - name: Run Django system checks
-        working-directory: Backend
+        working-directory: backend
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_learningplatform
         run: |
           python manage.py check --deploy
 
       - name: Run migrations
-        working-directory: Backend
+        working-directory: backend
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_learningplatform
         run: |
           python manage.py migrate
 
       - name: Run tests with coverage
-        working-directory: Backend
+        working-directory: backend
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_learningplatform
         run: |
@@ -96,7 +96,7 @@ jobs:
         if: matrix.python-version == '3.11'
         uses: codecov/codecov-action@v3
         with:
-          file: ./Backend/coverage.xml
+          file: ./backend/coverage.xml
           flags: backend
           name: backend-coverage
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -107,9 +107,9 @@ jobs:
         with:
           name: backend-test-results-py${{ matrix.python-version }}
           path: |
-            Backend/htmlcov/
-            Backend/*-report.json
-            Backend/coverage.xml
+            backend/htmlcov/
+            backend/*-report.json
+            backend/coverage.xml
 
   lint:
     runs-on: ubuntu-latest
@@ -125,26 +125,26 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-lint-${{ hashFiles('Backend/requirements.txt') }}
+          key: ${{ runner.os }}-lint-${{ hashFiles('backend/requirements.txt') }}
 
       - name: Install linting dependencies
-        working-directory: Backend
+        working-directory: backend
         run: |
           python -m pip install --upgrade pip
           pip install black isort flake8 mypy django-stubs
 
       - name: Check code formatting with Black
-        working-directory: Backend
+        working-directory: backend
         run: black --check --diff .
 
       - name: Check import sorting with isort
-        working-directory: Backend
+        working-directory: backend
         run: isort --check-only --diff . --profile django
 
       - name: Lint with flake8
-        working-directory: Backend
+        working-directory: backend
         run: flake8 .
 
       - name: Type check with mypy
-        working-directory: Backend
+        working-directory: backend
         run: mypy . --ignore-missing-imports
