@@ -77,7 +77,7 @@ def try_login(username, password):
             try:
                 error_content = e.read().decode("utf-8")
                 print(f"Error details: {error_content}")
-            except:
+            except Exception:
                 print("Could not decode error response")
         except urllib.error.URLError as e:
             print(f"Connection failed: {e.reason}")

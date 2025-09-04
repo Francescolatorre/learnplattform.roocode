@@ -18,14 +18,14 @@ import time
 from django.conf import settings
 from django.utils.deprecation import MiddlewareMixin
 
-logger = logging.getLogger(__name__)
-
 # Add the parent directory to the Python path so we can import logs_setup
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from logs_setup import (  # Ensure this matches the updated definition
+from logs_setup import (  # noqa: E402
     log_request,
     log_response,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class RequestLoggingMiddleware(MiddlewareMixin):
@@ -177,7 +177,7 @@ class AuthLoggingMiddleware(MiddlewareMixin):
     def __call__(self, request):
         # Only log auth-related requests
         if any(request.path.startswith(path) for path in self.auth_paths):
-            request_data = log_request(
+            log_request(
                 request, logger=self.logger, log_headers=self.log_headers
             )
 

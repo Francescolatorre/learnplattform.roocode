@@ -198,7 +198,7 @@ def log_response(response, request_data=None, logger=None):
             response_data["body"] = json.loads(response.content.decode("utf-8"))
         else:
             response_data["body"] = response.content.decode("utf-8")
-    except Exception as e:
+    except Exception:
         logger.info("Response sent: %s", json.dumps(response_data))
     except Exception as e:
         logger.error("Failed to log response: %s", str(e))
