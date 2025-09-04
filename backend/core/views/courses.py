@@ -12,7 +12,7 @@ from typing import Any, Optional
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.http import Http404
-from rest_framework import permissions, status, viewsets
+from rest_framework import permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request

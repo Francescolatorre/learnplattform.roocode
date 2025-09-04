@@ -14,7 +14,6 @@ for development and production environments.
 import json
 import logging
 import logging.config
-import os
 from pathlib import Path
 
 # Use the current directory for logs

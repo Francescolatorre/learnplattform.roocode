@@ -9,9 +9,9 @@ Includes:
 import logging
 
 from django.core.cache import cache
+from django.db import models
 from django.db.models import Avg, Case, Count, Prefetch, When
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView

@@ -10,8 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-import logging
-import os
 import sys
 from datetime import timedelta
 from pathlib import Path
@@ -21,7 +19,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
 # Now we can import logs_setup after adding the path
-import logs_setup
 
 print("Python path:", sys.path)
 

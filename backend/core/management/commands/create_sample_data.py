@@ -1,7 +1,6 @@
 import random
 
 from django.core.management.base import BaseCommand
-from django.utils import timezone
 
 from core.models import Course, LearningTask, QuizOption, QuizQuestion, QuizTask, User
 

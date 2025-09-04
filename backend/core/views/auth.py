@@ -11,7 +11,7 @@ import logging
 from django.contrib.auth import get_user_model
 from rest_framework import generics, status
 from rest_framework.authentication import get_authorization_header
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
