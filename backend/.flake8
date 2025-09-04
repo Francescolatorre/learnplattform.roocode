@@ -1,13 +1,9 @@
 [flake8]
 max-line-length = 88
-extend-ignore = E203,W503
+extend-ignore = E203,W503,E501
 per-file-ignores =
     # Migrations are auto-generated
-    */migrations/*.py:E501,E203,W503
-    # Test files can have longer lines
-    */tests/*.py:E501
-    # Settings files
-    settings.py:E501
+    */migrations/*.py:E203,W503
 exclude = 
     .git,
     __pycache__,
