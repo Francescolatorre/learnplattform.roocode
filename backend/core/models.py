@@ -6,6 +6,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import QuerySet
 from django.utils import timezone
+
 from utils.markdown_utils import convert_markdown_to_html
 
 if TYPE_CHECKING:

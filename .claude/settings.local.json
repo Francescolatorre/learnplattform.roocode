@@ -64,7 +64,11 @@
       "Bash(npx husky:*)",
       "Bash(npm run sort-imports:*)",
       "Bash(npx axe:*)",
-      "Bash(npm run format:all:*)"
+      "Bash(npm run format:all:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(dir:*)",
+      "Read(/C:\\DEVELOPMENT\\projects\\learnplatfom2\\.github\\workflows/**)",
+      "Read(/C:\\DEVELOPMENT\\projects\\learnplatfom2\\backend/**)"
     ],
     "deny": [],
     "ask": []
