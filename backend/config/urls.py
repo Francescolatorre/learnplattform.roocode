@@ -73,7 +73,6 @@ router.register(r"quiz-options", QuizOptionViewSet)
 router.register(r"enrollments", EnrollmentViewSet)
 router.register(r"task-progress", EnhancedTaskProgressViewSet)
 router.register(r"quiz-attempts", EnhancedQuizAttemptViewSet)
-router.register(r"tasks", LearningTaskViewSet)
 
 # JWT auth URLs
 auth_urls = [
