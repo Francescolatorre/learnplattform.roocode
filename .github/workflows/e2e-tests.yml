@@ -135,7 +135,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd backend && pip install -r requirements.txt
-          cd frontend && npm ci
+          cd ../frontend && npm ci
 
       - name: Install Playwright
         working-directory: ./frontend
@@ -144,7 +144,7 @@ jobs:
       - name: Start services for visual testing
         run: |
           cd backend && python manage.py runserver 8000 &
-          cd frontend && npm run dev &
+          cd ../frontend && npm run dev &
           sleep 10
 
       - name: Run visual regression tests
