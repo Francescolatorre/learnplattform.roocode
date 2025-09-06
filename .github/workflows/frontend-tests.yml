@@ -19,7 +19,7 @@ jobs:
         node-version: [18, 20, 22]
     
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -68,7 +68,7 @@ jobs:
   lint-and-format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Node.js 20
         uses: actions/setup-node@v4
@@ -99,7 +99,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Node.js 20
         uses: actions/setup-node@v4
@@ -125,7 +125,7 @@ jobs:
   accessibility:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Node.js 20
         uses: actions/setup-node@v4
@@ -154,7 +154,7 @@ jobs:
   bundle-analysis:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Node.js 20
         uses: actions/setup-node@v4
