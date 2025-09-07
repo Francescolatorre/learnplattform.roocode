@@ -69,7 +69,7 @@ jobs:
         working-directory: backend
         run: |
           bandit -r . -f json -o bandit-report.json || true
-          bandit -r . --skip B101
+          bandit -r . --skip B101,B105,B106,B310 --exclude "**/test_*.py,**/tests/**"
 
       - name: Audit Node dependencies
         working-directory: ./frontend

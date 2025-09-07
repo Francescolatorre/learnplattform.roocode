@@ -1,4 +1,4 @@
-import random
+import secrets
 
 from django.core.management.base import BaseCommand
 
@@ -218,7 +218,7 @@ This assessment will test your knowledge of {course_title}.
                     )
 
                     # Create options for the question
-                    correct_option = random.randint(1, 4)
+                    correct_option = secrets.randbelow(4) + 1
                     for k in range(1, 5):
                         QuizOption.objects.create(
                             question=question,
