@@ -28,17 +28,18 @@ if (!fs.existsSync(outputDir)) {
 const config: Config = defineConfig({
   testDir: './e2e/tests',
   testMatch: ['**/*.spec.ts'],
-  timeout: 60 * 1000, // Increased timeout for stability
+  timeout: 30 * 1000, // MVP: Reduced timeout for faster feedback
+  globalTimeout: 15 * 60 * 1000, // MVP: 15 minute max for entire suite
   globalSetup: './e2e/utils/globalSetup.ts',
 
   expect: {
-    timeout: 10000, // Increased for stability
-    toMatchTimeout: 5000, // Increased for stability
+    timeout: 5000, // MVP: Reduced for faster feedback
+    toMatchTimeout: 3000, // MVP: Reduced for faster feedback
   },
-  fullyParallel: false,
+  fullyParallel: true, // MVP: Enable parallel execution
   forbidOnly: process.env.CI === 'true',
-  retries: process.env.CI === 'true' ? 2 : 1, // Added 1 retry for local development
-  workers: process.env.CI === 'true' ? 1 : undefined,
+  retries: process.env.CI === 'true' ? 1 : 0, // MVP: Reduced retries
+  workers: process.env.CI === 'true' ? 2 : undefined, // MVP: Allow 2 workers in CI
   reporter: [
     ['html', { outputFolder: path.join(outputDir, 'playwright-report'), open: 'never' }],
     ['junit', { outputFile: path.join(outputDir, 'junit-report.xml') }],
@@ -47,12 +48,12 @@ const config: Config = defineConfig({
   // Configure outputDir for all test artifacts including screenshots
   outputDir: path.join(outputDir, 'test-artifacts'),
   use: {
-    baseURL: process.env.BASE_URL || 'http://localhost:5173',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || process.env.BASE_URL || 'http://localhost:3000', // MVP: Match CI setup
     trace: 'retain-on-failure', // Only keep traces on failure for performance
     video: 'retain-on-failure', // Only keep video on failure for performance
     screenshot: 'only-on-failure', // Only screenshot on failure for performance
-    actionTimeout: 15000, // Increased timeout for stability
-    navigationTimeout: 30000, // Increased timeout for navigation stability
+    actionTimeout: 10000, // MVP: Reduced timeout for faster feedback
+    navigationTimeout: 15000, // MVP: Reduced timeout for faster feedback
     testIdAttribute: 'data-testid', // Explicitly set testId attribute
     // Performance optimization: Set optimal viewport
     viewport: { width: 1280, height: 720 },
@@ -63,20 +64,23 @@ const config: Config = defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
+    // MVP: Firefox and WebKit disabled for faster pipeline
+    // TODO: Re-enable post-MVP
+    // {
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] },
+    // },
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    // },
   ],
-  webServer: {
+  webServer: process.env.CI === 'true' ? undefined : {
+    // MVP: In CI, servers are started manually; locally use dev server
     command: 'npm run dev',
     url: process.env.BASE_URL || 'http://localhost:5173',
-    reuseExistingServer: process.env.CI !== 'true',
-    timeout: 120 * 1000,
+    reuseExistingServer: true,
+    timeout: 60 * 1000, // MVP: Reduced timeout
   },
 });
 
