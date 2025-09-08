@@ -16,10 +16,15 @@ export class DashboardPage extends BasePage {
     'header .MuiToolbar-root',
   ];
   readonly logoutButtonSelectors = [
+    // MVP: Material-UI ListItemButton selectors for logout
+    'li:has-text("Logout")', // Material-UI ListItemButton renders as <li>
+    '.MuiListItemButton-root:has-text("Logout")',
+    '[role="button"]:has-text("Logout")',
+    '.MuiDrawer-root *:has-text("Logout")', // Inside the drawer
+    // Fallback selectors
     'button:has-text("Logout")',
     'a:has-text("Logout")',
     '[data-testid="logout-button"]',
-    '.logout-button',
   ];
 
   /**

@@ -256,15 +256,23 @@ export class LoginPage extends BasePage {
       });
 
       // 4. Wait for the next relevant response (fallback for immediate login)
-      try {
-        const response = await this.page.waitForResponse(
-          response =>
-            (response.url().includes('/auth/login/') ||
-              response.url().includes('/auth/token/') ||
-              response.url().includes('/api/auth/')) &&
-            response.status() === 200,
-          { timeout: 5000 }
-        );
+      // MVP: Only wait for network response if we haven't already captured tokens
+      const hasExistingTokens = await this.page.evaluate(() => {
+        return !!(localStorage.getItem('accessToken') || 
+                  localStorage.getItem('authToken') || 
+                  localStorage.getItem('token'));
+      });
+
+      if (!hasExistingTokens) {
+        try {
+          const response = await this.page.waitForResponse(
+            response =>
+              (response.url().includes('/auth/login/') ||
+                response.url().includes('/auth/token/') ||
+                response.url().includes('/api/auth/')) &&
+              response.status() === 200,
+            { timeout: 3000 } // MVP: Reduced timeout
+          );
 
         const responseData = await response.json().catch(() => ({}));
         const token =
@@ -280,8 +288,11 @@ export class LoginPage extends BasePage {
             localStorage.setItem('jwt', token);
           }, token);
         }
-      } catch (error) {
-        console.warn('Failed to capture auth token from network:', error);
+        } catch (error) {
+          console.warn('Failed to capture auth token from network:', error);
+        }
+      } else {
+        console.log('Auth tokens already exist, skipping network wait');
       }
 
       console.log('Network listeners set up for authentication');
