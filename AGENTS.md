@@ -118,4 +118,73 @@ tsc --noEmit
 
 ---
 
+## 8. Claude Code Configuration & Slash Commands
+
+### Project Context
+
+This is a Django + React project with:
+- Backend: Django 4.2.9, DRF, JWT authentication
+- Frontend: React 18, TypeScript, Material UI, Zustand, React Query
+- Testing: pytest (backend), Vitest/Playwright (frontend)
+- Project structure with LearningTasks vs DevTasks distinction
+
+### Slash Commands
+
+#### /handover
+**Purpose**: Generate comprehensive handover document for session transitions
+**Usage**: `/handover [optional: specific area]`
+**Action**: Create detailed handover with project state, active work, next steps, and commit summary
+
+#### /status  
+**Purpose**: Quick project status check
+**Usage**: `/status`
+**Action**: Git status, test results, active tasks, blockers overview
+
+#### /validate
+**Purpose**: Run all programmatic checks
+**Usage**: `/validate [backend|frontend|all]`
+**Action**: Execute comprehensive validation (tests, linting, type checks)
+
+#### /dependabot-merge
+**Purpose**: Handle Dependabot PRs with automated conflict resolution
+**Usage**: `/dependabot-merge [pr-number|all]`
+**Action**: Analyze dependencies, resolve conflicts, run tests, merge safely
+
+### Session Handover Process
+
+When transitioning between Claude Code sessions:
+1. Check `memory_bank/temp/session-handover.md` for current work status
+2. Review active todo list using TodoWrite tool
+3. Complete any pending commits/pushes before starting new work
+4. Update handover document with new session progress
+
+### Development Workflow Integration
+
+**Session Start Protocol:**
+1. Run `/status` to understand current state
+2. Review memory_bank/activeContext.md
+3. Check for failing validations
+4. Plan session objectives
+
+**Session End Protocol:**
+1. Run programmatic checks to ensure code quality
+2. Execute `/handover` to document session
+3. Update memory_bank/progress.md
+4. Commit clean, working state
+
+### File Structure Context
+```
+project/
+├── Backend/           # Django backend
+├── frontend/          # React frontend  
+├── memory_bank/       # Project documentation
+│   ├── tasks/         # DevTask documentation
+│   ├── ADRs/          # Architecture Decision Records
+│   ├── activeContext.md  # Current development focus
+│   └── progress.md    # Development progress tracking
+└── AGENTS.md          # This file (binding conventions)
+```
+
+---
+
 Mit dieser Struktur erfüllt eure AGENTS.md die Anforderungen des Systemprompts und bietet klare, projektbezogene Anweisungen für Agenten und Entwickler.
