@@ -17,7 +17,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        browser: [chromium, firefox, webkit]
+        browser: [chromium]
+        # MVP: Chrome-only testing for faster pipeline
+        # TODO: Re-enable firefox, webkit post-MVP
     
     services:
       postgres:

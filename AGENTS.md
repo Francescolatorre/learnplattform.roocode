@@ -28,6 +28,13 @@ Diese Datei gilt für das gesamte Repository, sofern keine spezifischeren AGENTS
 - Nutze data-testid für UI-Elemente in Tests.
 - Routing: React Router v7 mit `startTransition`-Flag.
 
+### MVP Browser Testing Strategy
+
+- **Primary Browser**: Chrome/Chromium only for E2E tests during MVP development
+- **Rationale**: Focus on core functionality, faster CI pipeline, sufficient coverage
+- **Future**: Firefox/Safari testing added post-MVP for production readiness
+- **Visual Regression**: Chrome-only sufficient for MVP UI consistency
+
 ### Allgemein
 
 - Vertikale Slices: Backend, API, Frontend, Tests immer zusammenhängend implementieren.

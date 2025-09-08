@@ -20,7 +20,8 @@ jobs:
         run: safety check --json > safety_results.json
 
       - name: Upload safety results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: safety-results
           path: safety_results.json
