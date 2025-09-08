@@ -82,7 +82,7 @@
     "@vitest/ui": "^3.2.4",
     "cross-env": "^7.0.3",
     "dependency-cruiser": "^16.10.1",
-    "eslint": "^9.34.0",
+    "eslint": "^9.35.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-define-config": "^2.1.0",
     "eslint-import-resolver-typescript": "^4.3.3",
