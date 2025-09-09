@@ -59,6 +59,23 @@ const InstructorCourseDetailPage: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  // Handler for task creation that refetches tasks after successful creation
+  const handleTaskCreate = async (taskData: Partial<ILearningTask>) => {
+    // Ensure course ID is included in task data
+    const taskWithCourse = {
+      ...taskData,
+      course: Number(courseId),
+      title: taskData.title || '',
+      description: taskData.description || '',
+    };
+    
+    // Create the task using the service
+    await learningTaskService.create(taskWithCourse);
+    // Refetch tasks to update the UI
+    const tasksResponse = await learningTaskService.getAllTasksByCourseId(courseId!);
+    setTasks(tasksResponse.sort((a, b) => a.order - b.order));
+  };
+
   // Handle opening task details modal
   const handleOpenTaskDetails = (task: ILearningTask) => {
     setSelectedTask(task);
@@ -146,26 +163,27 @@ const InstructorCourseDetailPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  // Extract fetchCourseDetails so it can be used for refetching after task creation
+  const fetchCourseDetails = async () => {
     if (!courseId) return;
+    
+    try {
+      setIsLoading(true);
+      const courseResult = await courseService.getCourseDetails(courseId);
+      setCourse(courseResult);
 
-    const fetchCourseDetails = async () => {
-      try {
-        setIsLoading(true);
-        const courseResult = await courseService.getCourseDetails(courseId);
-        setCourse(courseResult);
+      const tasksResponse = await learningTaskService.getAllTasksByCourseId(courseId);
+      setTasks(tasksResponse.sort((a, b) => a.order - b.order));
 
-        const tasksResponse = await learningTaskService.getAllTasksByCourseId(courseId);
-        setTasks(tasksResponse.sort((a, b) => a.order - b.order));
+      setIsLoading(false);
+    } catch (err) {
+      console.error('Failed to fetch course details:', err);
+      setError(err instanceof Error ? err.message : 'Unknown error');
+      setIsLoading(false);
+    }
+  };
 
-        setIsLoading(false);
-      } catch (err) {
-        console.error('Failed to fetch course details:', err);
-        setError(err instanceof Error ? err.message : 'Unknown error');
-        setIsLoading(false);
-      }
-    };
-
+  useEffect(() => {
     fetchCourseDetails();
   }, [courseId]);
 
@@ -341,7 +359,12 @@ const InstructorCourseDetailPage: React.FC = () => {
       />
 
       {/* TaskCreation modal for creating new tasks */}
-      <TaskCreation open={isModalOpen} onClose={handleCloseModal} courseId={courseId} />
+      <TaskCreation 
+        open={isModalOpen} 
+        onClose={handleCloseModal} 
+        courseId={courseId} 
+        onSave={handleTaskCreate}
+      />
 
       {/* TaskCreation modal for editing existing tasks */}
       <TaskCreation

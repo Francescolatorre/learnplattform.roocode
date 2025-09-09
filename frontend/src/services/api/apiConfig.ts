@@ -43,8 +43,8 @@ export const API_CONFIG = {
       analytics: (courseId: string | number): string => `/api/v1/courses/${courseId}/analytics/`,
       taskAnalytics: (courseId: string | number): string =>
         `/api/v1/courses/${courseId}/task-analytics/`,
-      // Corrected based on Swagger - this should use the tasks endpoint, not a course subpath
-      tasks: (courseId: string | number): string => `/api/v1/tasks/course/${courseId}/`,
+      // Corrected to match Django backend - using learning-tasks endpoint
+      tasks: (courseId: string | number): string => `/api/v1/learning-tasks/course/${courseId}/`,
     },
     courseVersions: {
       list: '/api/v1/course-versions/',
@@ -54,12 +54,12 @@ export const API_CONFIG = {
       delete: (versionId: string | number): string => `/api/v1/course-versions/${versionId}/`,
     },
     tasks: {
-      list: '/api/v1/tasks/',
-      create: '/api/v1/tasks/',
-      details: (taskId: string | number): string => `/api/v1/tasks/${taskId}/`,
-      update: (taskId: string | number): string => `/api/v1/tasks/${taskId}/`,
-      delete: (taskId: string | number): string => `/api/v1/tasks/${taskId}/`,
-      byCourse: (courseId: string | number): string => `/api/v1/tasks/course/${courseId}/`,
+      list: '/api/v1/learning-tasks/',
+      create: '/api/v1/learning-tasks/',
+      details: (taskId: string | number): string => `/api/v1/learning-tasks/${taskId}/`,
+      update: (taskId: string | number): string => `/api/v1/learning-tasks/${taskId}/`,
+      delete: (taskId: string | number): string => `/api/v1/learning-tasks/${taskId}/`,
+      byCourse: (courseId: string | number): string => `/api/v1/learning-tasks/course/${courseId}/`,
       // Legacy endpoint references for backward compatibility
       legacyList: '/api/v1/learning-tasks/',
       legacyCreate: '/api/v1/learning-tasks/',

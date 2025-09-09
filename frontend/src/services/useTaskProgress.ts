@@ -10,7 +10,7 @@ import { apiService } from './api/apiService';
 export const useTaskProgress = (taskId: string | number) => {
   return useQuery<ITaskProgress>({
     queryKey: ['taskProgress', taskId],
-    queryFn: async () => apiService.get<ITaskProgress>(`/api/v1/tasks/${taskId}/progress/`),
+    queryFn: async () => apiService.get<ITaskProgress>(`/api/v1/learning-tasks/${taskId}/progress/`),
     enabled: !!taskId,
     refetchOnWindowFocus: false,
   });
@@ -35,7 +35,7 @@ export const useUpdateTaskProgress = (taskId: string | number) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: ITaskProgressUpdateData) =>
-      apiService.patch<ITaskProgress>(`/api/v1/tasks/${taskId}/progress/`, data),
+      apiService.patch<ITaskProgress>(`/api/v1/learning-tasks/${taskId}/progress/`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['taskProgress', taskId] });
     },

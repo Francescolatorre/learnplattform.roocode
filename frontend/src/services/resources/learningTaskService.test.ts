@@ -105,27 +105,27 @@ describe('learningTaskService', () => {
   it('update calls apiService.patch and returns updated task', async () => {
     mockPatch.mockResolvedValueOnce(mockTask);
     const result = await learningTaskService.update('1', { title: 'Updated' });
-    expect(mockPatch).toHaveBeenCalledWith('/api/v1/tasks/1/', { title: 'Updated' });
+    expect(mockPatch).toHaveBeenCalledWith('/api/v1/learning-tasks/1/', { title: 'Updated' });
     expect(result).toEqual(mockTask);
   });
 
   it('delete calls apiService.delete', async () => {
     mockDelete.mockResolvedValueOnce(undefined);
     await learningTaskService.delete('1');
-    expect(mockDelete).toHaveBeenCalledWith('/api/v1/tasks/1/');
+    expect(mockDelete).toHaveBeenCalledWith('/api/v1/learning-tasks/1/');
   });
 
   it('getByStudentId returns tasks if found', async () => {
     mockGet.mockResolvedValueOnce({ results: [mockTask] });
     const result = await learningTaskService.getByStudentId('42');
-    expect(mockGet).toHaveBeenCalledWith('/api/v1/tasks/?student=42');
+    expect(mockGet).toHaveBeenCalledWith('/api/v1/learning-tasks/?student=42');
     expect(result).toEqual([mockTask]);
   });
 
   it('getByStudentId throws if not found', async () => {
     mockGet.mockResolvedValueOnce({ results: [] });
     await expect(learningTaskService.getByStudentId('999')).rejects.toThrow('Tasks not found');
-    expect(mockGet).toHaveBeenCalledWith('/api/v1/tasks/?student=999');
+    expect(mockGet).toHaveBeenCalledWith('/api/v1/learning-tasks/?student=999');
   });
 
   it('getByCourseId returns tasks from results', async () => {

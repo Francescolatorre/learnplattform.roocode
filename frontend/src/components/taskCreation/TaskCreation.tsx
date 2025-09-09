@@ -44,7 +44,6 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
     title: '',
     description: '',
     is_published: false,
-    ...task,
   });
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,26 +55,37 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
 
   // Update form data when the dialog opens or task changes
   useEffect(() => {
-    // Only update form when dialog opens or when task changes
-    if (open) {
-      // Reset form data only when the modal is first opened or when the task prop changes
-      if (!previouslyOpen || JSON.stringify(task) !== JSON.stringify(prevTaskRef.current)) {
+    // Only reset form when dialog is first opened (not on every re-render)
+    if (open && !previouslyOpen) {
+      // Initialize form data when modal opens
+      setFormData({
+        title: '',
+        description: '',
+        is_published: false,
+        ...task,
+      });
+      prevTaskRef.current = task;
+    }
+    
+    // Handle task prop changes (for editing mode)
+    if (open && previouslyOpen && JSON.stringify(task) !== JSON.stringify(prevTaskRef.current)) {
+      // Only update if task actually changed (not just re-rendered)
+      if (Object.keys(task).length > 0) {
         setFormData({
           title: '',
           description: '',
           is_published: false,
           ...task,
         });
-        // Update the reference to the current task
-        prevTaskRef.current = task;
       }
+      prevTaskRef.current = task;
     }
 
     // Track open state changes
     if (previouslyOpen !== open) {
       setPreviouslyOpen(open);
     }
-  }, [open, previouslyOpen, task]);
+  }, [open, previouslyOpen]); // Removed 'task' from dependencies to prevent reset on every render
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
