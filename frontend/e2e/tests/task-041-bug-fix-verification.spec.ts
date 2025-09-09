@@ -13,8 +13,8 @@ import { test, expect } from '@playwright/test';
  */
 test.describe('TASK-041: Task Creation Title Input Fix', () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate to instructor course page (using course ID from bug report)
-    await page.goto('http://localhost:5173/instructor/courses/703');
+    // Navigate to instructor course page (using existing course ID 727)
+    await page.goto('http://localhost:5174/instructor/courses/727');
     await page.waitForLoadState('networkidle');
   });
 

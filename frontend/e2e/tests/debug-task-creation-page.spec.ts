@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Debug: Instructor Courses Page Content', () => {
   test('check page content and available buttons', async ({ page }) => {
     // Navigate to instructor course page
-    await page.goto('http://localhost:5173/instructor/courses/703');
+    await page.goto('http://localhost:5174/instructor/courses/727');
     await page.waitForLoadState('networkidle');
     
     // Take a screenshot to see what's there
