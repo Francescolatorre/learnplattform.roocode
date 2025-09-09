@@ -48,7 +48,7 @@ class RequestLoggingMiddleware(MiddlewareMixin):
         self.logger.setLevel(logging.DEBUG)
         self.verbose_routes = [
             "/api/v1/courses/",
-            "/api/v1/tasks/course/",
+            "/api/v1/learning-tasks/course/",
             "/api/v1/enrollments/",  # Updated to use the consolidated endpoint
             "/api/v1/courses/student-progress/",
             "/api/v1/learning-tasks/",
