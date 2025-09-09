@@ -16,7 +16,11 @@ import {
   Divider,
   CircularProgress,
   Alert,
+  IconButton,
+  Tooltip,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import InfoIcon from '@mui/icons-material/Info';
 import { useQueryClient } from '@tanstack/react-query';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -46,6 +50,11 @@ const InstructorCourseDetailPage: React.FC = () => {
   // State for task edit modal
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [taskToEdit, setTaskToEdit] = useState<ILearningTask | null>(null);
+
+  // State for task deletion
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState<boolean>(false);
+  const [taskToDelete, setTaskToDelete] = useState<ILearningTask | null>(null);
+  const [taskProgressCounts, setTaskProgressCounts] = useState<Record<string, { inProgress: number; completed: number }>>({});
 
   const notify = useNotification();
   const queryClient = useQueryClient();
@@ -157,6 +166,63 @@ const InstructorCourseDetailPage: React.FC = () => {
     }
   };
 
+  // Handle task deletion confirmation
+  const handleOpenDeleteConfirm = (task: ILearningTask) => {
+    setTaskToDelete(task);
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const handleCloseDeleteConfirm = () => {
+    setIsDeleteConfirmOpen(false);
+    setTaskToDelete(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!taskToDelete) return;
+
+    try {
+      await learningTaskService.delete(String(taskToDelete.id));
+      
+      // Remove the task from the local state
+      setTasks(tasks.filter(task => task.id !== taskToDelete.id));
+      
+      // Invalidate related queries
+      if (courseId) {
+        queryClient.invalidateQueries({ queryKey: ['courseTasks', courseId] });
+        queryClient.invalidateQueries({ queryKey: ['learningTasks', courseId] });
+      }
+
+      notify('Task deleted successfully', 'success');
+      handleCloseDeleteConfirm();
+    } catch (err) {
+      console.error('Failed to delete task:', err);
+      notify(err instanceof Error ? err.message : 'Failed to delete task', 'error');
+    }
+  };
+
+  // Check if task can be deleted (no student progress)
+  const canDeleteTask = (task: ILearningTask): boolean => {
+    const progressCount = taskProgressCounts[String(task.id)];
+    if (!progressCount) return true; // No progress data means no students started
+    return progressCount.inProgress === 0 && progressCount.completed === 0;
+  };
+
+  // Get tooltip text for non-deletable tasks
+  const getDeletionTooltip = (task: ILearningTask): string => {
+    const progressCount = taskProgressCounts[String(task.id)];
+    if (!progressCount) return '';
+    
+    const { inProgress, completed } = progressCount;
+    const total = inProgress + completed;
+    if (total === 0) return '';
+    
+    const parts = [];
+    if (inProgress > 0) parts.push(`${inProgress} in progress`);
+    if (completed > 0) parts.push(`${completed} completed`);
+    
+    return `Cannot delete: ${parts.join(', ')} (${total} student${total === 1 ? '' : 's'})`;
+  };
+
   const { courseId } = useParams<{ courseId: string }>();
   const [course, setCourse] = useState<ICourse | null>(null);
   const [tasks, setTasks] = useState<ILearningTask[]>([]);
@@ -173,7 +239,13 @@ const InstructorCourseDetailPage: React.FC = () => {
       setCourse(courseResult);
 
       const tasksResponse = await learningTaskService.getAllTasksByCourseId(courseId);
-      setTasks(tasksResponse.sort((a, b) => a.order - b.order));
+      const sortedTasks = tasksResponse.sort((a, b) => a.order - b.order);
+      setTasks(sortedTasks);
+
+      // Fetch progress counts for all tasks
+      const taskIds = sortedTasks.map(task => String(task.id));
+      const progressCounts = await learningTaskService.getTaskProgressCounts(taskIds);
+      setTaskProgressCounts(progressCounts);
 
       setIsLoading(false);
     } catch (err) {
@@ -333,6 +405,35 @@ const InstructorCourseDetailPage: React.FC = () => {
                       </>
                     }
                   />
+                  
+                  {/* Task Action Buttons */}
+                  <Box sx={{ ml: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {canDeleteTask(task) ? (
+                      <Tooltip title="Delete task">
+                        <IconButton
+                          color="error"
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent opening task details
+                            handleOpenDeleteConfirm(task);
+                          }}
+                          size="small"
+                          data-testid={`delete-task-${task.id}`}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
+                    ) : (
+                      <Tooltip title={getDeletionTooltip(task)}>
+                        <IconButton
+                          disabled
+                          size="small"
+                          data-testid={`delete-task-disabled-${task.id}`}
+                        >
+                          <InfoIcon color="disabled" />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </Box>
                 </ListItem>
               ))}
             </List>
@@ -436,6 +537,37 @@ const InstructorCourseDetailPage: React.FC = () => {
               Edit Task
             </Button>
           )}
+        </DialogActions>
+      </Dialog>
+
+      {/* Task Deletion Confirmation Dialog */}
+      <Dialog
+        open={isDeleteConfirmOpen}
+        onClose={handleCloseDeleteConfirm}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Confirm Task Deletion</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" paragraph>
+            Are you sure you want to delete the task "{taskToDelete?.title}"?
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            This action cannot be undone. The task will be permanently removed from the course.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteConfirm} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmDelete}
+            color="error"
+            variant="contained"
+            data-testid="confirm-delete-task"
+          >
+            Delete Task
+          </Button>
         </DialogActions>
       </Dialog>
     </Container>

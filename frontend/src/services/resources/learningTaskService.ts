@@ -253,6 +253,40 @@ class LearningTaskService {
     }
   );
 
+  /**
+   * Get progress counts for tasks (for deletion authorization check)
+   * @param taskIds Array of task IDs to check
+   * @returns Promise resolving to progress counts by task ID
+   */
+  getTaskProgressCounts = withManagedExceptions(
+    async (taskIds: string[]): Promise<Record<string, { inProgress: number; completed: number }>> => {
+      if (taskIds.length === 0) return {};
+      
+      // Create dedicated API service for this response type
+      const progressCountsApi = new ApiService<Record<string, { in_progress: number; completed: number }>>();
+      
+      const response = await progressCountsApi.post(
+        `${API_CONFIG.endpoints.tasks.list}progress-counts/`,
+        { task_ids: taskIds.map(id => parseInt(id)) }
+      );
+      
+      // Convert API response to expected format
+      const result: Record<string, { inProgress: number; completed: number }> = {};
+      Object.entries(response || {}).forEach(([taskId, counts]: [string, any]) => {
+        result[taskId] = {
+          inProgress: counts.in_progress || 0,
+          completed: counts.completed || 0,
+        };
+      });
+      
+      return result;
+    },
+    {
+      serviceName: 'LearningTaskService',
+      methodName: 'getTaskProgressCounts',
+    }
+  );
+
   // Helper methods
   /**
    * Prepares form data for API requests.
@@ -298,3 +332,5 @@ export const updateTask = async (
 ): Promise<ILearningTask> => learningTaskService.update(taskId, updatedData);
 export const deleteTask = async (taskId: string): Promise<void> =>
   learningTaskService.delete(taskId);
+export const getTaskProgressCounts = async (taskIds: string[]) =>
+  learningTaskService.getTaskProgressCounts(taskIds);
