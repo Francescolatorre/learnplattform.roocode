@@ -83,7 +83,7 @@
     "cross-env": "^7.0.3",
     "dependency-cruiser": "^16.10.1",
     "eslint": "^9.35.0",
-    "eslint-config-prettier": "^10.1.5",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-define-config": "^2.1.0",
     "eslint-import-resolver-typescript": "^4.3.3",
     "eslint-plugin-import": "^2.32.0",
