@@ -55,11 +55,8 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
 
   // Update form data when the dialog opens or task changes
   useEffect(() => {
-    console.log('useEffect triggered:', { open, previouslyOpen, task, formData });
-    
     // Only reset form when dialog is first opened (not on every re-render)
     if (open && !previouslyOpen) {
-      console.log('Modal opened - initializing form data');
       // Initialize form data when modal opens
       setFormData({
         title: '',
@@ -72,7 +69,6 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
     
     // Handle task prop changes (for editing mode)
     if (open && previouslyOpen && JSON.stringify(task) !== JSON.stringify(prevTaskRef.current)) {
-      console.log('Task prop changed - updating form data');
       // Only update if task actually changed (not just re-rendered)
       if (Object.keys(task).length > 0) {
         setFormData({
@@ -93,13 +89,10 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    console.log('handleChange called:', { name, value });
-    setFormData(prev => {
-      console.log('Previous formData:', prev);
-      const newData = { ...prev, [name]: value };
-      console.log('New formData:', newData);
-      return newData;
-    });
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
