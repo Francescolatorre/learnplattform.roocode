@@ -38,6 +38,7 @@ We establish a comprehensive Definition of Done that must be satisfied before an
 #### Code Quality
 - [ ] **Code Standards**: Code follows established coding standards and style guides
 - [ ] **Code Review**: All code has been peer-reviewed and approved
+- [ ] **Pull Request Required**: Code review conducted via Pull Request with CI/CD pipeline validation (never raw branch review)
 - [ ] **No Regressions**: Existing functionality remains unbroken
 - [ ] **Performance**: Performance requirements met (no degradation without justification)
 - [ ] **Security**: Security best practices followed, no new vulnerabilities introduced
@@ -208,6 +209,7 @@ A task would NOT be complete if:
 | Date | Version | Changes |
 |------|---------|---------|
 | 2025-09-09 | 1.0.0 | Initial Definition of Done based on TASK-042 lessons learned |
+| 2025-09-10 | 1.0.1 | Added PR-First Review Policy requirement to Code Quality section |
 
 ---
 

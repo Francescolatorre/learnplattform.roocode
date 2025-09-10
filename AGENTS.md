@@ -56,6 +56,12 @@ Diese Datei gilt für das gesamte Repository, sofern keine spezifischeren AGENTS
 - Pre-commit-Hooks müssen erfolgreich durchlaufen werden.
 - Keine bestehenden Commits ändern oder rebasen.
 
+### PR-First Review Policy
+- **MANDATORY**: All code reviews must be conducted via Pull Request
+- **PROCESS**: Always create PR before requesting review - never share raw branches
+- **RATIONALE**: User reviews PR with CI/CD pipeline validation for complete quality assessment
+- **WORKFLOW**: Commit → Push → Create PR → Request Review (not: Commit → Push → Request Review)
+
 ---
 
 ## 3. AGENTS.md Handling
@@ -202,11 +208,13 @@ This is a Django + React project with:
    - Update task documents with implementation details
    - Update `memory_bank/activeContext.md` and `memory_bank/progress.md`
    - Create/update any necessary technical documentation
-6. **Pull Request**: 
-   - Commit with proper message format: `[TASK-ID] [STATUS] [SUMMARY]`
+6. **Pull Request Creation** (REQUIRED BEFORE REVIEW):
+   - Commit with proper message format: `[TASK-ID] [STATUS] [SUMMARY]`  
    - Push branch to remote
    - Create pull request with comprehensive description including test plan
    - Link to task documentation
+   - **MANDATORY**: All reviews must be conducted via PR with CI/CD pipeline validation
+   - **PROCESS**: Never request review without creating PR first - user reviews PR + pipeline, not raw branch
 
 **Prerequisites**: Clean working directory, all previous commits pushed
 **Output**: Ready-to-review pull request with complete implementation and documentation
