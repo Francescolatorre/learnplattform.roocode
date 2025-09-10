@@ -215,6 +215,13 @@ This is a Django + React project with:
    - Link to task documentation
    - **MANDATORY**: All reviews must be conducted via PR with CI/CD pipeline validation
    - **PROCESS**: Never request review without creating PR first - user reviews PR + pipeline, not raw branch
+   
+   **Test Reporting Requirements:**
+   - Include test execution results (unit, integration, E2E)
+   - For UI changes: Screenshots/videos showing before/after behavior
+   - For bug fixes: Evidence that the fix resolves the reported issue
+   - For E2E tests: Playwright HTML report with videos (when applicable)
+   - Command: `npm run test:e2e -- --reporter=html` generates test reports with videos
 
 **Prerequisites**: Clean working directory, all previous commits pushed
 **Output**: Ready-to-review pull request with complete implementation and documentation
