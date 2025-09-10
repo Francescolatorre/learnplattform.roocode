@@ -34,7 +34,7 @@ interface ICourseCardProps {
  *
  * @returns A card component displaying course information
  */
-const CourseCard: React.FC<ICourseCardProps> = ({ course, isInstructorView: _isInstructorView }) => {
+const CourseCard: React.FC<ICourseCardProps> = ({ course }) => {
   const { isAuthenticated } = useAuth();
 
   // Enhanced query configuration for more reliable data fetching

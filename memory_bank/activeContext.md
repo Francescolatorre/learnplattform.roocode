@@ -13,25 +13,36 @@
 ✅ **Performance**: E2E tests improved from 30+ min → 19 min runtime
 ✅ **Configuration**: Fixed authentication flows and port mismatches
 
-## CRITICAL TASKS (Top 5 Only)
+## CRITICAL TASKS (Top 6 - Urgent Bug Added)
+
+### 🚨 URGENT - NEW CRITICAL BUG
+1. **TASK-045-DEFECT-Student-Task-View-Navigation** [OPEN - CRITICAL]
+   - **DISCOVERED**: During TASK-042 testing (2025-09-09)
+   - **IMPACT**: Students cannot view task details - redirected to profile page instead
+   - **USER JOURNEY BROKEN**: Students enrolled in courses cannot access assignments
+   - **ACTION REQUIRED**: Immediate investigation and fix
+   - Estimated: 4-6 hours
 
 ### ACTIVE DEVELOPMENT
-1. **TASK-043-SECURITY-GitHub-Code-Scanning-Remediation** [BACKLOG - High Priority]
+2. **TASK-043-SECURITY-GitHub-Code-Scanning-Remediation** [BACKLOG - High Priority]
    - Address all security findings from GitHub code scanning
    - Estimated: 8-12 hours
    
-2. **TASK-044-E2E-Test-Pipeline-Stabilization** [REQUIRES REFINEMENT]
+3. **TASK-044-E2E-Test-Pipeline-Stabilization** [REQUIRES REFINEMENT]
    - Fix E2E test reliability for local and CI environments
    - Status: Awaiting technical deep-dive session
 
-### MAINTENANCE PRIORITY
-3. **TASK-042-UI-Task-Deletion** [DRAFT]
-   - Instructor task deletion functionality
+### RECENTLY COMPLETED
+4. **TASK-042-UI-Task-Deletion** [COMPLETED ✅]
+   - Instructor task deletion functionality with comprehensive role-based access control
+   - Status: Pull Request #30 created and ready for review
+   - Implementation: Complete with audit logging, progress protection, and UI/UX polish
    
-4. **TASK-041-DEFECT-Cannot-create-task** [OPEN]
-   - Critical bug fix for task creation flow
+5. **TASK-041-DEFECT-Cannot-create-task** [COMPLETED ✅]
+   - Critical bug fix for task creation flow - Fully resolved
 
-5. **TASK-012-INFRA-TypeScript-Services-Standard** [IN PROGRESS]
+### MAINTENANCE PRIORITY
+6. **TASK-012-INFRA-TypeScript-Services-Standard** [IN PROGRESS]
    - Enforce TypeScript service standardization
 
 ## Current Blockers

@@ -45,11 +45,11 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ userId }) => {
 
   const { user_info, overall_stats, courses } = progressData;
 
-  const _courseProgress = courses.map(course => ({
-    completedTasks: course.completedTasks,
-    totalTasks: course.totalTasks,
-    averageScore: course.averageScore,
-  }));
+  // const _courseProgress = courses.map(course => ({ // For potential future chart data
+  //   completedTasks: course.completedTasks,
+  //   totalTasks: course.totalTasks,
+  //   averageScore: course.averageScore,
+  // }));
 
   return (
     <Grid container spacing={3}>

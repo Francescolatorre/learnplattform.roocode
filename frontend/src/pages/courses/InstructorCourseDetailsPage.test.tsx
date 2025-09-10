@@ -46,6 +46,7 @@ vi.mock('@/services/resources/courseService', () => ({
 vi.mock('@/services/resources/learningTaskService', () => ({
   default: {
     getAllTasksByCourseId: vi.fn(),
+    getTaskProgressCounts: vi.fn(),
   },
   updateTask: vi.fn(),
 }));
@@ -137,6 +138,7 @@ describe('InstructorCourseDetailsPage', () => {
     (useParams as any).mockReturnValue({ courseId: mockCourseId });
     (courseService.getCourseDetails as any).mockResolvedValue(mockCourse);
     (learningTaskService.getAllTasksByCourseId as any).mockResolvedValue(mockTasks);
+    (learningTaskService.getTaskProgressCounts as any).mockResolvedValue({});
     (updateTask as any).mockResolvedValue({ ...mockTasks[0], title: 'Updated Task Title' });
     vi.mocked(useNotification).mockReturnValue(mockNotify);
   });

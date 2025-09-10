@@ -38,15 +38,15 @@ interface FilterableCourseListProps {
 }
 
 const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
-  initialCourses: _initialCourses,
+  initialCourses,
   title = 'Courses',
   clientSideFiltering = false,
-  filterPredicate: _filterPredicate = (course, searchTerm) =>
+  filterPredicate = (course, searchTerm) =>
     course.title.toLowerCase().includes(searchTerm.toLowerCase()),
   emptyMessage = 'No courses available.',
   noResultsMessage = 'No courses match your search criteria.',
   showStatusFilter = false,
-  showCreatorFilter: _showCreatorFilter = false,
+  showCreatorFilter = false,
   onCoursesLoaded,
   pageSize = 20,
   onPageChange,

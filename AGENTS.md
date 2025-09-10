@@ -39,9 +39,11 @@ Diese Datei gilt für das gesamte Repository, sofern keine spezifischeren AGENTS
 
 - Vertikale Slices: Backend, API, Frontend, Tests immer zusammenhängend implementieren.
 - Tests sind Pflicht (Unit, Integration, E2E).
+- **E2E Testing Standards**: E2E test failures are delivery blockers (no exceptions). Always verify UI navigation paths exist for implemented features. Test all interfaces where a feature appears, not just one.
 - Dokumentiere alle APIs und komplexe Logik.
 - Accessibility: ARIA, Tastatur-Navigation.
 - Performance: Lazy Loading, Memoization, optimierte Queries.
+- **Definition of Done**: All tasks must satisfy ADR-020 Definition of Done before completion.
 
 ---
 
@@ -93,6 +95,7 @@ Diese Datei gilt für das gesamte Repository, sofern keine spezifischeren AGENTS
 - ADRs im Ordner `memory_bank/ADRs/` pflegen.
 - Aktuellen Entwicklungsfokus in `memory_bank/activeContext.md` dokumentieren.
 - Fortschritt in `memory_bank/progress.md` nachhalten.
+- **Definition of Done (ADR-020)**: Mandatory checklist for task completion including scope coverage, testing, documentation, and security validation.
 
 ---
 
@@ -157,6 +160,26 @@ This is a Django + React project with:
 **Usage**: `/dependabot-merge [pr-number|all]`
 **Action**: Analyze dependencies, resolve conflicts, run tests, merge safely
 
+#### /processImprovement
+**Purpose**: Automatically derive lightweight process updates from session learnings without over-engineering
+**Usage**: `/processImprovement [session-summary|current-issues]`
+**Action**: Analyze session patterns and derive minimal, targeted process improvements:
+
+**Analysis Steps:**
+1. **Issue Pattern Recognition**: Review recent session challenges, blockers, and repeated problems
+2. **Root Cause Analysis**: Identify underlying process gaps (not individual mistakes)
+3. **Impact Assessment**: Focus on high-impact, low-overhead improvements
+4. **Existing Process Review**: Check current ADRs, agents.md, and Definition of Done
+5. **Lightweight Solution Design**: Create simple rules, checklists, or guidelines
+
+**Update Targets:**
+- Add 1-3 critical checkboxes to Definition of Done (ADR-020)
+- Insert targeted guidance in agents.md (1-2 sentences max)
+- Create simple decision trees or checklists
+- Avoid: Complex workflows, heavy documentation, elaborate processes
+
+**Output**: Specific file updates with rationale, focusing on "make the right thing easy, wrong thing obvious"
+
 #### /nextTask
 **Purpose**: Identify, develop, and deliver the next critical task end-to-end
 **Usage**: `/nextTask [task-id]` (optional: specify task, otherwise auto-select highest priority)
@@ -174,6 +197,7 @@ This is a Django + React project with:
    - Execute comprehensive testing (Unit + Integration + E2E where applicable)
    - Run linting, formatting, and type checking
    - Ensure all programmatic checks pass
+   - **Validate Definition of Done**: Follow ADR-020 Definition of Done checklist before task completion
 5. **Documentation**: 
    - Update task documents with implementation details
    - Update `memory_bank/activeContext.md` and `memory_bank/progress.md`
