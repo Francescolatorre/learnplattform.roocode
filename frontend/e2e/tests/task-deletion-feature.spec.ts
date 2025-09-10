@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { ADMIN_USER, loginAs } from '../utils/authHelpers';
+import { loginAsInstructor } from '../utils/auth-helpers';
 
 test.describe('Task Deletion Feature', () => {
   test.beforeEach(async ({ page }) => {
-    await loginAs(page, ADMIN_USER);
+    await loginAsInstructor(page);
   });
 
   test('instructor can see delete button for tasks without student progress', async ({ page }) => {

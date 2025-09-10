@@ -87,10 +87,12 @@ Feature: Task Deletion
 * Notification system for success and error states.
 * Audit logging for task deletions.
 * API endpoint: DELETE /api/courses/{courseId}/tasks/{taskId}
-* InstructorDashboardPage and related frontend components must be updated.
+* **ALL TASK MANAGEMENT INTERFACES** must be updated:
+  - InstructorCourseDetailsPage (/instructor/courses/{id}) - inline task list
+  - InstructorTasksPage (/instructor/courses/{id}/tasks) - dedicated task management page
 * Backend task service and progress tracking modules require adjustment.
 * Ensure concurrency safety for simultaneous deletion attempts.
-* Regression tests for task list and student views.
+* Regression tests for task list and student views on **BOTH** interfaces.
 
 ---
 
@@ -180,11 +182,15 @@ Feature: Task Deletion
 ### Subtask-7: Documentation & API Spec Update
 
 * **ID:** TASK-042-SUB-007
-* **Status:** DRAFT
-* **Estimated Hours:**
+* **Status:** ✅ COMPLETED
+* **Estimated Hours:** 2
 * **Dependencies:** SUB-002
 * **Description:** Update API documentation, user guides, and developer docs for new deletion logic and restrictions.
 * **Validation:** Docs reflect all new behaviors and edge cases.
+* **Deliverables:**
+  - ✅ Updated task specification with scope clarification
+  - ✅ Created comprehensive user guide: `INSTRUCTOR-GUIDE-Task-Management.md`
+  - ✅ Added lessons learned section for future scope prevention
 
 ---
 
@@ -254,18 +260,38 @@ await api.deleteTask(courseId, taskId);
 
 ### Implementation Review
 
-* [ ] Code follows standards
-* [ ] Tests are complete
-* [ ] Documentation is updated
-* [ ] Performance is verified
-* [ ] Security is validated
+* [✅] Code follows standards
+* [✅] Tests are complete
+* [✅] Documentation is updated
+* [✅] Performance is verified
+* [✅] Security is validated
 
 ### Documentation Review
 
-* [ ] API documentation is complete
-* [ ] Examples are provided
-* [ ] Configuration is documented
-* [ ] Deployment/release notes are added
+* [✅] API documentation is complete
+* [✅] Examples are provided
+* [✅] Configuration is documented
+* [✅] Deployment/release notes are added
+
+### Task-Specific Definition of Done ✅
+
+* [✅] **UI Interfaces**: Delete functionality implemented on ALL task management interfaces
+  - [✅] InstructorCourseDetailsPage.tsx (/instructor/courses/{id})
+  - [✅] InstructorTasksPage.tsx (/instructor/courses/{id}/tasks)
+* [✅] **Role-Based Access**: Only instructors/admins can see and use delete buttons
+* [✅] **Progress Protection**: Delete buttons only shown for tasks without student progress
+* [✅] **Confirmation Flow**: Confirmation dialog with clear messaging and cancel option
+* [✅] **Backend Logic**: Enhanced API endpoint with progress checking and audit logging
+* [✅] **Soft Delete**: Tasks soft-deleted with is_deleted/deleted_at fields
+* [✅] **Audit Logging**: Complete audit trail for all deletion operations with AuditLog model
+* [✅] **Error Handling**: Graceful error handling and user notifications
+* [✅] **Database Changes**: Migration created and applied for new fields
+* [✅] **API Testing**: Backend functionality validated through manual testing
+* [✅] **E2E Testing**: Comprehensive tests covering both UI interfaces
+* [✅] **User Documentation**: Complete instructor guide created
+* [✅] **Technical Documentation**: Task specification updated with lessons learned
+* [✅] **Security Validation**: Role-based permissions and data protection verified
+* [✅] **Scope Coverage**: All locations where tasks can be managed include delete functionality
 
 ---
 
@@ -347,12 +373,15 @@ await api.deleteTask(courseId, taskId);
 
 ### 🔧 **TECHNICAL DETAILS**
 
-#### **Files Modified**
-1. `frontend/src/pages/courses/InstructorCourseDetailsPage.tsx` - Main UI implementation
-2. `frontend/src/services/resources/learningTaskService.ts` - API service methods
-3. `backend/core/views/tasks.py` - Enhanced deletion logic and audit logging
-4. `backend/core/models.py` - Added AuditLog model and soft delete fields
-5. `frontend/e2e/tests/task-deletion-feature.spec.ts` - E2E test coverage
+#### **Files Modified/Created**
+1. `frontend/src/pages/courses/InstructorCourseDetailsPage.tsx` - Main UI implementation (course details page)
+2. `frontend/src/pages/learningTasks/InstructorTasksPage.tsx` - **ADDED** - Dedicated task management page implementation
+3. `frontend/src/services/resources/learningTaskService.ts` - API service methods
+4. `backend/core/views/tasks.py` - Enhanced deletion logic and audit logging
+5. `backend/core/models.py` - Added AuditLog model and soft delete fields
+6. `frontend/e2e/tests/task-deletion-feature.spec.ts` - E2E test coverage (original)
+7. `frontend/e2e/tests/tasks/task-deletion-comprehensive.spec.ts` - **ADDED** - Comprehensive tests for both interfaces
+8. `memory_bank/Documentation/INSTRUCTOR-GUIDE-Task-Management.md` - **ADDED** - Comprehensive user documentation
 
 #### **API Endpoints**
 - `DELETE /api/v1/learning-tasks/{id}/` - Enhanced with progress checking
@@ -392,6 +421,50 @@ The implementation is **production-ready** with:
 - ✅ UI/UX polish
 - ✅ Database migrations
 - ✅ Test coverage
+
+### ⚠️ **CRITICAL LESSONS LEARNED**
+
+#### **Scope Discovery Issue (2025-09-09)**
+**Problem**: Initially implemented delete functionality only on `InstructorCourseDetailsPage.tsx` but missed the dedicated task management page `InstructorTasksPage.tsx` at `/instructor/courses/{id}/tasks`.
+
+**Root Cause**: 
+- Task specification didn't explicitly enumerate ALL task management interfaces
+- Discovery process didn't include comprehensive UI audit for task management locations
+- Assumed single task management interface without verification
+
+**Resolution**:
+- Added delete functionality to `InstructorTasksPage.tsx`
+- Created comprehensive E2E tests covering both interfaces
+- Updated documentation to explicitly list all affected interfaces
+
+**Prevention Measures**:
+1. **UI Discovery Protocol**: For any task affecting "task management", always:
+   ```bash
+   # 1. Search for all task-related pages
+   find frontend/src -name "*.tsx" -exec grep -l "task\|Task" {} \;
+   
+   # 2. Search for all task management routes
+   grep -r "tasks\|Task" frontend/src/routes/
+   
+   # 3. Search for components that display task lists
+   grep -r "LearningTask\|ILearningTask" frontend/src/
+   ```
+
+2. **Scope Verification Checklist**: Before implementation, verify:
+   - [ ] All pages where tasks are displayed
+   - [ ] All pages where tasks can be managed
+   - [ ] All user roles that interact with tasks
+   - [ ] All routes containing task-related functionality
+
+3. **Documentation Standard**: Always specify:
+   ```markdown
+   **UI INTERFACES AFFECTED:**
+   - Page 1: /path/to/page - Description
+   - Page 2: /path/to/page - Description  
+   - Component: ComponentName.tsx - Description
+   ```
+
+This scope miss cost 2+ hours of additional implementation and could have been prevented with better discovery protocols.
 
 ---
 ---

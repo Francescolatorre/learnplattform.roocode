@@ -1,3 +1,5 @@
+import DeleteIcon from '@mui/icons-material/Delete';
+import InfoIcon from '@mui/icons-material/Info';
 import {
   Button,
   Dialog,
@@ -19,8 +21,6 @@ import {
   IconButton,
   Tooltip,
 } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import InfoIcon from '@mui/icons-material/Info';
 import { useQueryClient } from '@tanstack/react-query';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';

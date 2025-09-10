@@ -1,40 +1,54 @@
 # TASK TRIAGE - BRUTAL PRIORITIZATION
 
-**PMO Decision Date**: 2025-09-08  
-**Total Tasks Audited**: 44 → 41 (3 completed tasks archived)  
-**Reduction Target**: 5 CRITICAL PRIORITIES ONLY
+**PMO Decision Date**: 2025-09-10 (Updated)  
+**Total Tasks Audited**: 44 → 42 (3 completed, 1 new critical added)  
+**Reduction Target**: 6 CRITICAL PRIORITIES (Emergency Addition)
 
 ---
 
 ## PMO TRIAGE DECISIONS
 
-### 🚨 **TIER 1: CRITICAL - IMMEDIATE ACTION** (5 Tasks Max)
+### 🚨 **TIER 1: CRITICAL - IMMEDIATE ACTION** (7 Tasks Max)
 
-#### **RANK 1: TASK-041-DEFECT-Cannot-create-task** 
+#### **RANK 1: TASK-045-DEFECT-Student-Task-View-Navigation** 
+- **Priority**: CRITICAL  
+- **Impact**: BLOCKS ALL STUDENT TASK ACCESS
+- **Business Risk**: Students cannot view/complete assignments
+- **Action**: IMMEDIATE INVESTIGATION & FIX REQUIRED
+- **Discovery**: Found during TASK-042 testing (2025-09-09)
+
+#### **RANK 2: TASK-046-CRITICAL-Dependency-Security-CodeQuality**
+- **Priority**: CRITICAL
+- **Impact**: SECURITY VULNERABILITIES + 9 FAILING TESTS  
+- **Business Risk**: Production security exposure, unreliable deployments
+- **Action**: IMMEDIATE SECURITY PATCHING + TEST FIXES REQUIRED
+- **Discovery**: Dependabot audit analysis (2025-09-10)
+
+#### **RANK 3: TASK-041-DEFECT-Cannot-create-task** 
 - **Priority**: CRITICAL  
 - **Impact**: BLOCKS ALL INSTRUCTOR FUNCTIONALITY
 - **Business Risk**: Instructors cannot create course content
-- **Action**: IMMEDIATE RESOLUTION REQUIRED
+- **Status**: ✅ COMPLETED (2025-09-09)
 
-#### **RANK 2: TASK-044-E2E-Test-Pipeline-Stabilization**
+#### **RANK 4: TASK-044-E2E-Test-Pipeline-Stabilization**
 - **Priority**: CRITICAL
 - **Impact**: BLOCKS RELIABLE DEPLOYMENTS  
 - **Business Risk**: Cannot guarantee code quality
 - **Action**: REFINEMENT SESSION + IMPLEMENTATION
 
-#### **RANK 3: TASK-043-SECURITY-GitHub-Code-Scanning-Remediation**
+#### **RANK 5: TASK-043-SECURITY-GitHub-Code-Scanning-Remediation**
 - **Priority**: HIGH
 - **Impact**: SECURITY COMPLIANCE RISK
 - **Business Risk**: Vulnerability exposure
 - **Action**: SYSTEMATIC REMEDIATION
 
-#### **RANK 4: TASK-042-UI-Task-Deletion**
+#### **RANK 6: TASK-042-UI-Task-Deletion**
 - **Priority**: HIGH  
 - **Impact**: INSTRUCTOR WORKFLOW COMPLETION
 - **Business Risk**: Incomplete course management
-- **Action**: AFTER TASK-041 RESOLUTION
+- **Status**: ✅ COMPLETED (2025-09-09)
 
-#### **RANK 5: TASK-012-INFRA-TypeScript-Services-Standard**
+#### **RANK 7: TASK-012-INFRA-TypeScript-Services-Standard**
 - **Priority**: MEDIUM
 - **Impact**: CODE QUALITY & CONSISTENCY
 - **Business Risk**: Technical debt accumulation
