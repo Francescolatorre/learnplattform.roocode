@@ -3,13 +3,13 @@
 ## Task Metadata
 
 * **Task-ID:** TASK-045
-* **Status:** OPEN
+* **Status:** COMPLETED
 * **Owner:** Frontend Development
 * **Priority:** Critical
-* **Last Updated:** 2025-09-09
+* **Last Updated:** 2025-09-10
 * **Estimated Hours:** 4-6
-* **Hours Spent:** 0
-* **Remaining Hours:** 4-6
+* **Hours Spent:** 2
+* **Remaining Hours:** 0
 
 ---
 
@@ -195,6 +195,8 @@
 | Date       | Status | Notes                           |
 |------------|--------|---------------------------------|
 | 2025-09-09 | OPEN   | Bug discovered during TASK-042 testing |
+| 2025-09-10 | IN PROGRESS | Started implementation on fix/TASK-045-student-task-navigation-bug branch |
+| 2025-09-10 | COMPLETED | Fixed component naming issue - LearningTaskViewPage export mismatch resolved |
 
 ---
 
@@ -209,8 +211,22 @@
 ### Investigation Notes
 - Bug appears to be in frontend routing configuration
 - Likely affects all students across all courses
-- May be related to recent navigation changes
+- May be related to recent navigation changes  
 - Profile page redirection suggests authentication/routing conflict
+
+### Root Cause Analysis (COMPLETED)
+**Issue**: Component import/export name mismatch
+- `AppRoutes.tsx` imports `LearningTaskViewPage` 
+- `LearningTaskViewPage.tsx` exported `TaskViewPage` as default
+- When React Router tries to render the component, it fails due to undefined component
+- Fallback route `path="*"` redirects to `/profile` (AppRoutes.tsx:207)
+
+### Solution Implemented
+**Files Modified:**
+- `frontend/src/pages/learningTasks/LearningTaskViewPage.tsx:9` - Changed `TaskViewPage` → `LearningTaskViewPage`
+- `frontend/src/pages/learningTasks/LearningTaskViewPage.tsx:101` - Updated export to match
+
+**Result**: Students can now navigate to `/tasks/:taskId` and see task details instead of being redirected to profile page.
 
 ---
 

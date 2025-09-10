@@ -6,7 +6,7 @@ import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import { ILearningTask } from '@/types/Task';
 import LearningTaskService from 'src/services/resources/learningTaskService';
 
-const TaskViewPage: React.FC = () => {
+const LearningTaskViewPage: React.FC = () => {
   const { taskId } = useParams<{ taskId: string }>();
   const [task, setTask] = useState<ILearningTask | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -98,4 +98,4 @@ const TaskViewPage: React.FC = () => {
   );
 };
 
-export default TaskViewPage;
+export default LearningTaskViewPage;
