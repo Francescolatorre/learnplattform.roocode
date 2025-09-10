@@ -19,6 +19,7 @@ import HomePage from '@/pages/HomePage';
 import InstructorDashboardPage from '@/pages/instructor/InstructorDashboardPage';
 import CourseLearningTasksPage from '@/pages/learningTasks/CourseLearningTasksPage';
 import InstructorTasksPage from '@/pages/learningTasks/InstructorTasksPage';
+import LearningTaskViewPage from '@/pages/learningTasks/LearningTaskViewPage';
 import StudentTasksPage from '@/pages/learningTasks/StudentTasksPage';
 import ProfilePage from '@/pages/ProfilePage';
 import RegisterFormPage from '@/pages/RegisterFormPage';
@@ -64,6 +65,14 @@ const AppRoutes: React.FC = () => {
         element={
           <ProtectedRoute allowedRoles={['student', 'instructor']}>
             <StudentCourseDetailsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/tasks/:taskId"
+        element={
+          <ProtectedRoute allowedRoles={['student', 'instructor', 'admin']}>
+            <LearningTaskViewPage />
           </ProtectedRoute>
         }
       />
