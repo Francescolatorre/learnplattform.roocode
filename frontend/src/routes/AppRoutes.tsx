@@ -1,7 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-
 // Page imports with consistent naming (all end with "Page")
 import AdminAnalyticsPage from '@/pages/admin/AdminAnalyticsPage';
 import AdminCoursesPage from '@/pages/admin/AdminCoursesPage';
@@ -71,7 +70,9 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/tasks/:taskId"
         element={
-          <ProtectedRoute allowedRoles={[UserRoleEnum.STUDENT, UserRoleEnum.INSTRUCTOR, UserRoleEnum.ADMIN]}>
+          <ProtectedRoute
+            allowedRoles={[UserRoleEnum.STUDENT, UserRoleEnum.INSTRUCTOR, UserRoleEnum.ADMIN]}
+          >
             <LearningTaskViewPage />
           </ProtectedRoute>
         }
@@ -79,7 +80,9 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/tasks"
         element={
-          <ProtectedRoute allowedRoles={[UserRoleEnum.STUDENT, UserRoleEnum.INSTRUCTOR, UserRoleEnum.ADMIN]}>
+          <ProtectedRoute
+            allowedRoles={[UserRoleEnum.STUDENT, UserRoleEnum.INSTRUCTOR, UserRoleEnum.ADMIN]}
+          >
             <StudentTasksPage />
           </ProtectedRoute>
         }
@@ -87,7 +90,9 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/profile"
         element={
-          <ProtectedRoute allowedRoles={[UserRoleEnum.STUDENT, UserRoleEnum.INSTRUCTOR, UserRoleEnum.ADMIN]}>
+          <ProtectedRoute
+            allowedRoles={[UserRoleEnum.STUDENT, UserRoleEnum.INSTRUCTOR, UserRoleEnum.ADMIN]}
+          >
             <ProfilePage />
           </ProtectedRoute>
         }

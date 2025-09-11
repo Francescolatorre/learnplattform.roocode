@@ -9,7 +9,6 @@ const apiClient = axios.create({
   },
 });
 
-
 interface PasswordResetResponse {
   detail: string;
 }

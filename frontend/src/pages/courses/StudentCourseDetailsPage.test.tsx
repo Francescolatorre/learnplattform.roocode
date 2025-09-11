@@ -62,7 +62,6 @@ const mockTasks = {
   ],
 };
 
-
 describe('StudentCourseDetailsPage (clean mock call check)', () => {
   beforeEach(() => {
     vi.clearAllMocks();

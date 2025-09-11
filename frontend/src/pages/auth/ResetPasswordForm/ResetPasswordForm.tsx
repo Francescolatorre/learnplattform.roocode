@@ -12,7 +12,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import useNotification from '@/components/Notifications/useNotification';
 import authService from '@/services/auth/authService';
-import { type PasswordStrength, getPasswordStrengthLabel, validatePassword } from '@/utils/passwordValidation';
+import {
+  type PasswordStrength,
+  getPasswordStrengthLabel,
+  validatePassword,
+} from '@/utils/passwordValidation';
 import { resetPasswordSchema, type ResetPasswordSchema } from '@/validation/schemas';
 
 const ResetPasswordForm: React.FC = () => {

@@ -146,9 +146,7 @@ const InstructorDashboard: React.FC = () => {
                     Average Completion
                   </Typography>
                 </Box>
-                <Typography variant="h4">
-                  {dashboardData?.averageCompletionRate || 0}%
-                </Typography>
+                <Typography variant="h4">{dashboardData?.averageCompletionRate || 0}%</Typography>
               </CardContent>
             </Card>
           </Grid>
@@ -161,9 +159,7 @@ const InstructorDashboard: React.FC = () => {
                     Tasks Needing Attention
                   </Typography>
                 </Box>
-                <Typography variant="h4">
-                  {dashboardData?.totalTasks || 0}
-                </Typography>
+                <Typography variant="h4">{dashboardData?.totalTasks || 0}</Typography>
               </CardContent>
             </Card>
           </Grid>
@@ -291,38 +287,36 @@ const InstructorDashboard: React.FC = () => {
       </Box>
 
       {/* Tasks Requiring Attention Section */}
-      {dashboardData?.totalTasks &&
-        dashboardData.recentActivity.length > 0 && (
-          <Paper elevation={2} sx={{ p: 3, mt: 4 }}>
-            <Typography variant="h5" gutterBottom>
-              Tasks Requiring Attention
-            </Typography>
-            <List>
-              {dashboardData.recentActivity.map(task => (
-                <ListItem
-                  key={`${task.courseId}-${task.studentId}`}
-                  divider
-                  component={RouterLink}
-                  to={`/courses/${task.courseId}/tasks/${task.studentId}`}
-                  sx={{
-                    textDecoration: 'none',
-                    color: 'inherit',
-                    '&:hover': {
-                      backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                    },
-                  }}
-                >
-                  <ListItemText
-                    primary={task.description}
-                    secondary={`Course: ${task.courseName} • ${task.studentId} students waiting`}
-                  />
-                  <Chip label={`${task.studentId} pending`} color="warning" size="small" />
-                </ListItem>
-              ))}
-            </List>
-          </Paper>
-        )}
-
+      {dashboardData?.totalTasks && dashboardData.recentActivity.length > 0 && (
+        <Paper elevation={2} sx={{ p: 3, mt: 4 }}>
+          <Typography variant="h5" gutterBottom>
+            Tasks Requiring Attention
+          </Typography>
+          <List>
+            {dashboardData.recentActivity.map(task => (
+              <ListItem
+                key={`${task.courseId}-${task.studentId}`}
+                divider
+                component={RouterLink}
+                to={`/courses/${task.courseId}/tasks/${task.studentId}`}
+                sx={{
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                  },
+                }}
+              >
+                <ListItemText
+                  primary={task.description}
+                  secondary={`Course: ${task.courseName} • ${task.studentId} students waiting`}
+                />
+                <Chip label={`${task.studentId} pending`} color="warning" size="small" />
+              </ListItem>
+            ))}
+          </List>
+        </Paper>
+      )}
 
       {/* Quick Links Section */}
       <Paper elevation={2} sx={{ p: 3, mt: 4 }}>

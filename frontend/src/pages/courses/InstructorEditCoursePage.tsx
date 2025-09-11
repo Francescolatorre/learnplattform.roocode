@@ -76,7 +76,11 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
   }, [user, navigate, notify]);
 
   // Fetch course data if editing an existing course
-  const { data: courseData, isLoading: isLoadingCourse, error: courseError } = useQuery({
+  const {
+    data: courseData,
+    isLoading: isLoadingCourse,
+    error: courseError,
+  } = useQuery({
     queryKey: ['course', courseId],
     queryFn: () => courseService.getCourseDetails(courseId as string) as Promise<ICourse>,
     enabled: !isNew && !!courseId,

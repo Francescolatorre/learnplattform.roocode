@@ -132,7 +132,6 @@ describe('enrollmentService Integration', () => {
     enrollmentService.setAuthToken(testData.student.token);
   }
 
-
   describe('Enrollment Lifecycle', () => {
     beforeEach(() => {
       useStudentAuth();
@@ -167,11 +166,15 @@ describe('enrollmentService Integration', () => {
       const enrollments = await enrollmentService.fetchUserEnrollments();
 
       // Assert: Array contains at least our test enrollment
-      const enrollmentArray = Array.isArray(enrollments) ? enrollments : (enrollments as any).results || [];
+      const enrollmentArray = Array.isArray(enrollments)
+        ? enrollments
+        : (enrollments as any).results || [];
 
       expect(Array.isArray(enrollmentArray)).toBe(true);
 
-      const testEnrollment = enrollmentArray.find((e: any) => e.id === testData.enrollments.regular.id);
+      const testEnrollment = enrollmentArray.find(
+        (e: any) => e.id === testData.enrollments.regular.id
+      );
       expect(testEnrollment).toBeDefined();
     });
 
