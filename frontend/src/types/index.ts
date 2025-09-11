@@ -6,6 +6,7 @@
 
 // Re-export all types from their respective files
 export type { UserRoleEnum, IUser, IAuthState, IRegisterRequest } from './userTypes';
+export type { TUserRole } from '../context/auth/types';
 export type {
   TCourseStatus,
   ICourseVersion,
