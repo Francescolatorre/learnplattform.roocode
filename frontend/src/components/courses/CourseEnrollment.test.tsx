@@ -438,7 +438,7 @@ describe('CourseEnrollment Component', () => {
 
     // Set up the unenroll mutation mock
     const mockUnenrollMutate = vi.fn();
-    (useMutation as any).mockImplementation(({ mutationFn }) => {
+    (useMutation as any).mockImplementation(({ mutationFn }: { mutationFn: any }) => {
       // Create different mock objects based on the mutation function
       if (mutationFn && String(mutationFn).includes('unenroll')) {
         return {
@@ -549,7 +549,7 @@ describe('CourseEnrollment Component', () => {
     });
 
     // Mock successful unenrollment
-    (useMutation as any).mockImplementation(({ mutationFn }) => {
+    (useMutation as any).mockImplementation(({ mutationFn }: { mutationFn: any }) => {
       // Return different mock based on the mutation function
       if (mutationFn && String(mutationFn).includes('unenroll')) {
         return {
@@ -600,7 +600,7 @@ describe('CourseEnrollment Component', () => {
     });
 
     // Mock unenrollment in progress
-    (useMutation as any).mockImplementation(({ mutationFn }) => {
+    (useMutation as any).mockImplementation(({ mutationFn }: { mutationFn: any }) => {
       // Return different mock based on the mutation function
       if (mutationFn && String(mutationFn).includes('unenroll')) {
         return {

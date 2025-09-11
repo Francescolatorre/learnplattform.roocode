@@ -24,7 +24,7 @@ export type {
   ITaskSubmissionData,
   IQuizHistory,
   ITaskProgressBase,
-} from './task';
+} from './Task';
 export type {
   TCompletionStatus,
   TQuizCompletionStatus,

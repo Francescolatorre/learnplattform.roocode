@@ -113,7 +113,7 @@ export const DataTable = <T,>({
                 return (
                   <TableRow
                     hover
-                    key={key}
+                    key={String(key)}
                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                     sx={{
                       cursor: onRowClick ? 'pointer' : 'default',
@@ -124,7 +124,7 @@ export const DataTable = <T,>({
                     {columns.map(column => {
                       const value = get(row, column.id);
                       return (
-                        <TableCell key={`${key}-${column.id}`} align={column.align}>
+                        <TableCell key={`${String(key)}-${column.id}`} align={column.align}>
                           {column.format ? column.format(value, row) : String(value)}
                         </TableCell>
                       );
