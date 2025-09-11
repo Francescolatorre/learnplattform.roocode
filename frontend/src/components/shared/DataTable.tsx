@@ -125,12 +125,12 @@ export const DataTable = <T,>({
                     {columns.map(column => {
                       const value = get(row, column.id);
                       return (
-                        <TableCell key={`${reactKey}-${column.id}`} align={column.align}>
-                          {column.format 
-                            ? column.format(value, row) 
-                            : value != null 
-                              ? typeof value === 'symbol' 
-                                ? value.toString() 
+                        <TableCell key={`${reactKey}-${String(column.id)}`} align={column.align}>
+                          {column.format
+                            ? column.format(value, row)
+                            : value != null
+                              ? typeof value === 'symbol'
+                                ? value.toString()
                                 : String(value)
                               : ''}
                         </TableCell>

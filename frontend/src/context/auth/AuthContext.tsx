@@ -220,7 +220,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         id: String(userProfile.id),
         username: userProfile.username,
         email: userProfile.email,
-        role: userProfile.role || 'student',
+        role: (userProfile.role as any) || 'student',
         display_name: userProfile.display_name,
         created_at: userProfile.created_at || new Date().toISOString(),
         updated_at: userProfile.updated_at || new Date().toISOString(),
