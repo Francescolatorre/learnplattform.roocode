@@ -8,7 +8,7 @@ Identify, develop, and deliver the next critical task end-to-end following the w
 **Task ID**: $ARGUMENTS (optional: specify task, otherwise auto-select highest priority)
 
 **Workflow Steps:**
-1. **Task Selection**: Analyze `memory_bank_optimized/workspace/analysis/activeContext.md` and `memory_bank_optimized/workspace/analysis/TASK-TRIAGE-PRIORITIES.md` to identify highest priority OPEN task, or use provided task-id
+1. **Task Selection**: Analyze `memory_bank/workspace/analysis/activeContext.md` and `memory_bank/workspace/analysis/TASK-TRIAGE-PRIORITIES.md` to identify highest priority OPEN task, or use provided task-id
 2. **Branch Creation**: Create feature branch following naming convention `feature/[task-id]-[brief-description]` or `fix/[task-id]-[brief-description]`
 3. **Development**: 
    - Move task status from OPEN → IN PROGRESS in task documents
@@ -21,7 +21,7 @@ Identify, develop, and deliver the next critical task end-to-end following the w
    - Ensure all programmatic checks pass
 5. **Documentation**: 
    - Update task documents with implementation details
-   - Update `memory_bank_optimized/workspace/analysis/activeContext.md` and `memory_bank_optimized/workspace/analysis/progress.md`
+   - Update `memory_bank/workspace/analysis/activeContext.md` and `memory_bank/workspace/analysis/progress.md`
    - Create/update any necessary technical documentation
 6. **Pull Request**: 
    - Commit with proper message format: `[TASK-ID] [STATUS] [SUMMARY]`

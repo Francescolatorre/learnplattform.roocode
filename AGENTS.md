@@ -97,10 +97,10 @@ Diese Datei gilt für das gesamte Repository, sofern keine spezifischeren AGENTS
 ## 6. Special Project Rules
 
 - LearningTask ≠ DevTask (immer klar trennen).
-- DevTasks: Aktive in `memory_bank_optimized/current/decisions/`, abgeschlossene in `memory_bank_optimized/history/completed/` dokumentieren.
-- ADRs: Aktive in `memory_bank_optimized/current/decisions/`, veraltete in `memory_bank_optimized/history/superseded/` pflegen.
-- Aktuellen Entwicklungsfokus in `memory_bank_optimized/workspace/analysis/activeContext.md` dokumentieren.
-- Fortschritt in `memory_bank_optimized/workspace/analysis/progress.md` nachhalten.
+- DevTasks: Aktive in `memory_bank/current/decisions/`, abgeschlossene in `memory_bank/history/completed/` dokumentieren.
+- ADRs: Aktive in `memory_bank/current/decisions/`, veraltete in `memory_bank/history/superseded/` pflegen.
+- Aktuellen Entwicklungsfokus in `memory_bank/workspace/analysis/activeContext.md` dokumentieren.
+- Fortschritt in `memory_bank/workspace/analysis/progress.md` nachhalten.
 - **Definition of Done (ADR-020)**: Mandatory checklist for task completion including scope coverage, testing, documentation, and security validation.
 
 ---
@@ -192,7 +192,7 @@ This is a Django + React project with:
 **Action**: Complete task development workflow following defined processes:
 
 **Workflow Steps:**
-1. **Task Selection**: Analyze `memory_bank_optimized/workspace/analysis/activeContext.md` and `memory_bank_optimized/workspace/analysis/TASK-TRIAGE-PRIORITIES.md` to identify highest priority OPEN task, or use provided task-id
+1. **Task Selection**: Analyze `memory_bank/workspace/analysis/activeContext.md` and `memory_bank/workspace/analysis/TASK-TRIAGE-PRIORITIES.md` to identify highest priority OPEN task, or use provided task-id
 2. **Branch Creation**: Create feature branch following naming convention `feature/[task-id]-[brief-description]` or `fix/[task-id]-[brief-description]`
 3. **Development**: 
    - Move task status from OPEN → IN PROGRESS in task documents
@@ -206,7 +206,7 @@ This is a Django + React project with:
    - **Validate Definition of Done**: Follow ADR-020 Definition of Done checklist before task completion
 5. **Documentation**: 
    - Update task documents with implementation details
-   - Update `memory_bank_optimized/workspace/analysis/activeContext.md` and `memory_bank_optimized/workspace/analysis/progress.md`
+   - Update `memory_bank/workspace/analysis/activeContext.md` and `memory_bank/workspace/analysis/progress.md`
    - Create/update any necessary technical documentation
 6. **Pull Request Creation** (REQUIRED BEFORE REVIEW):
    - Commit with proper message format: `[TASK-ID] [STATUS] [SUMMARY]`  
@@ -229,7 +229,7 @@ This is a Django + React project with:
 ### Session Handover Process
 
 When transitioning between Claude Code sessions:
-1. Check `memory_bank_optimized/workspace/drafts/session-handover.md` for current work status
+1. Check `memory_bank/workspace/drafts/session-handover.md` for current work status
 2. Review active todo list using TodoWrite tool
 3. Complete any pending commits/pushes before starting new work
 4. Update handover document with new session progress
@@ -238,14 +238,14 @@ When transitioning between Claude Code sessions:
 
 **Session Start Protocol:**
 1. Run `/status` to understand current state
-2. Review memory_bank_optimized/workspace/analysis/activeContext.md
+2. Review memory_bank/workspace/analysis/activeContext.md
 3. Check for failing validations
 4. Plan session objectives
 
 **Session End Protocol:**
 1. Run programmatic checks to ensure code quality
 2. Execute `/handover` to document session
-3. Update memory_bank_optimized/workspace/analysis/progress.md
+3. Update memory_bank/workspace/analysis/progress.md
 4. Commit clean, working state
 
 ### File Structure Context
@@ -253,7 +253,7 @@ When transitioning between Claude Code sessions:
 project/
 ├── Backend/           # Django backend
 ├── frontend/          # React frontend  
-├── memory_bank_optimized/ # Optimized project documentation
+├── memory_bank/       # Optimized project documentation
 │   ├── current/       # Active working context
 │   │   ├── decisions/ # Active ADRs and task decisions  
 │   │   ├── standards/ # Coding standards and practices

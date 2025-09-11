@@ -1,9 +1,9 @@
 # memory-bank-organization
 ## Optimized Memory Bank Structure (2025-09-11)
-- `memory_bank_optimized/current/` - Active working context for ongoing tasks
-- `memory_bank_optimized/reference/` - Stable knowledge for consistent reference  
-- `memory_bank_optimized/history/` - Archived knowledge (completed tasks, superseded decisions)
-- `memory_bank_optimized/workspace/` - Temporary agent work areas (analysis, drafts, scratch)
+- `memory_bank/current/` - Active working context for ongoing tasks
+- `memory_bank/reference/` - Stable knowledge for consistent reference  
+- `memory_bank/history/` - Archived knowledge (completed tasks, superseded decisions)
+- `memory_bank/workspace/` - Temporary agent work areas (analysis, drafts, scratch)
 - Use `#` shortcut to add insights to appropriate folders based on context and lifecycle
 - Max ~50 files per active folder for optimal context loading
 
