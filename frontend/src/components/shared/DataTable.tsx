@@ -97,7 +97,7 @@ export const DataTable = <T,>({
             <TableRow>
               {columns.map(column => (
                 <TableCell
-                  key={column.id}
+                  key={String(column.id)}
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
                 >
