@@ -142,9 +142,7 @@ const CourseCreation: React.FC<CourseCreationProps> = ({
             error={error.includes('Title')}
             helperText={error.includes('Title') ? error : ''}
             margin="normal"
-            inputProps={{
-              'data-testid': 'course-title-input',
-            }}
+            data-testid="course-title-input"
           />
 
           <Box sx={{ mt: 3 }}>
@@ -209,9 +207,7 @@ const CourseCreation: React.FC<CourseCreationProps> = ({
                 checked={formData.is_published || false}
                 onChange={handleChange}
                 name="is_published"
-                inputProps={{
-                  'data-testid': 'course-publish-switch',
-                }}
+                data-testid="course-publish-switch"
               />
             }
             label="Publish Course"

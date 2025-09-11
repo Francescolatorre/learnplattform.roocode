@@ -39,11 +39,11 @@ interface IMarkdownRendererProps {
 }
 
 interface MarkdownComponentProps {
-  node?: unknown;
+  node?: any;
   inline?: boolean;
   className?: string;
   children?: React.ReactNode;
-  [key: string]: unknown;
+  [key: string]: any;
 }
 
 // Extended sanitization schema to allow specific attributes and elements
