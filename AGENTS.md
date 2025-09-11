@@ -97,10 +97,10 @@ Diese Datei gilt für das gesamte Repository, sofern keine spezifischeren AGENTS
 ## 6. Special Project Rules
 
 - LearningTask ≠ DevTask (immer klar trennen).
-- DevTasks im Ordner `memory_bank/tasks/` dokumentieren und Lifecycle beachten.
-- ADRs im Ordner `memory_bank/ADRs/` pflegen.
-- Aktuellen Entwicklungsfokus in `memory_bank/activeContext.md` dokumentieren.
-- Fortschritt in `memory_bank/progress.md` nachhalten.
+- DevTasks: Aktive in `memory_bank_optimized/current/decisions/`, abgeschlossene in `memory_bank_optimized/history/completed/` dokumentieren.
+- ADRs: Aktive in `memory_bank_optimized/current/decisions/`, veraltete in `memory_bank_optimized/history/superseded/` pflegen.
+- Aktuellen Entwicklungsfokus in `memory_bank_optimized/workspace/analysis/activeContext.md` dokumentieren.
+- Fortschritt in `memory_bank_optimized/workspace/analysis/progress.md` nachhalten.
 - **Definition of Done (ADR-020)**: Mandatory checklist for task completion including scope coverage, testing, documentation, and security validation.
 
 ---
@@ -253,11 +253,24 @@ When transitioning between Claude Code sessions:
 project/
 ├── Backend/           # Django backend
 ├── frontend/          # React frontend  
-├── memory_bank/       # Project documentation
-│   ├── tasks/         # DevTask documentation
-│   ├── ADRs/          # Architecture Decision Records
-│   ├── activeContext.md  # Current development focus
-│   └── progress.md    # Development progress tracking
+├── memory_bank_optimized/ # Optimized project documentation
+│   ├── current/       # Active working context
+│   │   ├── decisions/ # Active ADRs and task decisions  
+│   │   ├── standards/ # Coding standards and practices
+│   │   ├── schemas/   # API specs, data models
+│   │   └── workflows/ # Current processes and user journeys
+│   ├── reference/     # Stable knowledge assets
+│   │   ├── patterns/  # Reusable templates and examples
+│   │   ├── guides/    # How-to documentation and tutorials
+│   │   └── glossary/  # Terminology and definitions
+│   ├── history/       # Archived knowledge (searchable)
+│   │   ├── completed/ # Finished tasks and implementations
+│   │   ├── superseded/# Outdated decisions and investigations
+│   │   └── lessons/   # Retrospectives and learning summaries
+│   └── workspace/     # Temporary agent workspace
+│       ├── analysis/  # Current analysis work (activeContext, progress)
+│       ├── drafts/    # Work in progress documents
+│       └── scratch/   # Temporary notes and experiments
 └── AGENTS.md          # This file (binding conventions)
 ```
 
