@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
 import { useCallback } from 'react';
 
-import { useNotification } from '@/components/Notifications/useNotification';
+import useNotification from '@/components/Notifications/useNotification';
 
 /**
  * Hook for handling API errors consistently across the application

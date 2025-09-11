@@ -3,8 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
 import useNotification from '@/components/Notifications/useNotification';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { TUserRole } from '@/types';
+// TUserRole import removed as it was unused
 import { useAuth } from '@context/auth/AuthContext';
 
 interface ILoginFormInputs {
@@ -32,8 +31,7 @@ const LoginPage: React.FC = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ILoginFormInputs>();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { login, redirectToDashboard, getUserRole, user } = useAuth();
+  const { login, redirectToDashboard, user } = useAuth();
   const notify = useNotification();
 
   // Track login state to know when to watch for user data
