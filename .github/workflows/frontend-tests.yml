@@ -71,11 +71,11 @@ jobs:
           import os, django
           os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
           django.setup()
-          from django.contrib.auth.models import User
+          from core.models import User
           # Create instructor user
-          User.objects.create_user(username='instructor', password='instructor123', email='instructor@test.com')
+          User.objects.create_user(username='instructor', password='instructor123', email='instructor@test.com', role='instructor')
           # Create student user  
-          User.objects.create_user(username='student', password='student123', email='student@test.com')
+          User.objects.create_user(username='student', password='student123', email='student@test.com', role='student')
           print('Test users created successfully')
           "
 
