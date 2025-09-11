@@ -125,7 +125,13 @@ export const DataTable = <T,>({
                       const value = get(row, column.id);
                       return (
                         <TableCell key={`${String(key)}-${column.id}`} align={column.align}>
-                          {column.format ? column.format(value, row) : String(value)}
+                          {column.format 
+                            ? column.format(value, row) 
+                            : value != null 
+                              ? typeof value === 'symbol' 
+                                ? value.toString() 
+                                : String(value)
+                              : ''}
                         </TableCell>
                       );
                     })}
