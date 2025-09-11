@@ -100,7 +100,7 @@ const CourseList: React.FC<ICourseListProps> = ({
   };
 
   // Get status color based on course status
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): 'success' | 'default' | 'error' => {
     switch (status) {
       case 'published':
         return 'success';
@@ -281,7 +281,7 @@ const CourseList: React.FC<ICourseListProps> = ({
                       <Chip
                         size="small"
                         label={course.status}
-                        color={getStatusColor(course.status) as any}
+                        color={getStatusColor(course.status)}
                         data-testid={`course-status`}
                         data-value={course.status}
                       />

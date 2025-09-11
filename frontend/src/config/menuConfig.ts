@@ -20,7 +20,7 @@ export interface IMenuItem {
   text: string;
   path: string;
   roles: TUserRole[];
-  icon: any; // Using any for Material UI icons
+  icon: React.ComponentType; // Material UI icon component
   description: string;
 }
 
