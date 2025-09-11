@@ -129,12 +129,12 @@ describe('progressService', () => {
   });
 
   it('submitTask returns empty object', async () => {
-    const result = await progressService.submitTask('1', '2', {});
+    const result = await progressService.submitTask('1', '2', { content: 'test content' });
     expect(result).toEqual({});
   });
 
   it('gradeSubmission returns empty object', async () => {
-    const result = await progressService.gradeSubmission('1', '2', '3', {} as unknown);
+    const result = await progressService.gradeSubmission('1', '2', '3', { score: 85 });
     expect(result).toEqual({});
   });
 

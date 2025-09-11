@@ -89,7 +89,7 @@ describe('ApiService Integration', () => {
       username: TEST_USERS.student.username,
       password: TEST_USERS.student.password,
     });
-    const token = loginData.access;
+    const token = (loginData as any).access;
 
     // Create a proper authenticated instance
     const authedApi = axios.create({
