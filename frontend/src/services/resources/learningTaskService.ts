@@ -67,7 +67,7 @@ class LearningTaskService {
         formData.append('notifyUsers', String(notifyUsers));
         const response = await this.apiTask.post(API_CONFIG.endpoints.tasks.create, formData);
         return response;
-      } catch (err) {
+      } catch {
         throw new Error('Failed to create learning task');
       }
     },
@@ -259,17 +259,21 @@ class LearningTaskService {
    * @returns Promise resolving to progress counts by task ID
    */
   getTaskProgressCounts = withManagedExceptions(
-    async (taskIds: string[]): Promise<Record<string, { inProgress: number; completed: number }>> => {
+    async (
+      taskIds: string[]
+    ): Promise<Record<string, { inProgress: number; completed: number }>> => {
       if (taskIds.length === 0) return {};
-      
+
       // Create dedicated API service for this response type
-      const progressCountsApi = new ApiService<Record<string, { in_progress: number; completed: number }>>();
-      
+      const progressCountsApi = new ApiService<
+        Record<string, { in_progress: number; completed: number }>
+      >();
+
       const response = await progressCountsApi.post(
         `${API_CONFIG.endpoints.tasks.list}progress-counts/`,
         { task_ids: taskIds.map(id => parseInt(id)) }
       );
-      
+
       // Convert API response to expected format
       const result: Record<string, { inProgress: number; completed: number }> = {};
       Object.entries(response || {}).forEach(([taskId, counts]: [string, any]) => {
@@ -278,7 +282,7 @@ class LearningTaskService {
           completed: counts.completed || 0,
         };
       });
-      
+
       return result;
     },
     {

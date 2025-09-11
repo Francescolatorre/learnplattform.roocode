@@ -19,6 +19,21 @@ jobs:
         node-version: [20]
         # MVP: Only test Node 20 for faster pipeline
     
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: test_learningplatform
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
     steps:
       - uses: actions/checkout@v5
 
@@ -29,25 +44,72 @@ jobs:
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Install dependencies
+      - name: Install frontend dependencies
         working-directory: ./frontend
         run: |
           npm ci
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Setup test database
+        working-directory: ./backend
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_learningplatform
+        run: |
+          python manage.py migrate
+          # Create test users for integration tests
+          python -c "
+import os, django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+django.setup()
+from django.contrib.auth.models import User
+# Create instructor user
+User.objects.create_user(username='instructor', password='instructor123', email='instructor@test.com')
+# Create student user  
+User.objects.create_user(username='student', password='student123', email='student@test.com')
+print('Test users created successfully')
+"
+
+      - name: Start backend server
+        working-directory: ./backend
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_learningplatform
+        run: |
+          python manage.py runserver 8000 &
+          echo "Backend server started"
+          # Wait for server to be ready
+          for i in {1..30}; do
+            if curl -f http://localhost:8000/admin/ > /dev/null 2>&1; then
+              echo "Backend server is ready"
+              break
+            fi
+            echo "Waiting for backend server... ($i/30)"
+            sleep 2
+          done
 
       - name: Run unit tests
         working-directory: ./frontend
         run: |
           npm run test:unit
 
-      - name: Run integration tests (MVP - allow failures)
+      - name: Run integration tests
         working-directory: ./frontend
         run: |
-          npm run test:integration || echo "Integration tests have issues - MVP allows this"
+          npm run test:integration
 
-      - name: Run tests with coverage (MVP - allow failures)
+      - name: Run tests with coverage
         working-directory: ./frontend
         run: |
-          npm run test:coverage || echo "Coverage tests have issues - MVP allows this"
+          npm run test:coverage
 
       - name: Upload coverage to Codecov
         if: matrix.node-version == 20
@@ -82,20 +144,20 @@ jobs:
         working-directory: ./frontend
         run: npm ci
 
-      - name: Check code formatting with Prettier (MVP - warnings only)
+      - name: Check code formatting with Prettier
         working-directory: ./frontend
         run: |
-          npx prettier --check . || echo "Formatting issues found - MVP allows this"
+          npx prettier --check .
 
-      - name: Lint with ESLint (MVP - warnings only)
+      - name: Lint with ESLint
         working-directory: ./frontend
         run: |
-          npm run lint || echo "Linting issues found - MVP allows this"
+          npm run lint
 
-      - name: Type check with TypeScript (MVP - warnings only)
+      - name: Type check with TypeScript
         working-directory: ./frontend
         run: |
-          npx tsc --noEmit || echo "TypeScript issues found - MVP allows this"
+          npx tsc --noEmit
 
   build:
     runs-on: ubuntu-latest
@@ -113,9 +175,10 @@ jobs:
         working-directory: ./frontend
         run: npm ci
 
-      - name: Build application (MVP - allow warnings)
+      - name: Build application
         working-directory: ./frontend
-        run: npm run build:production || npm run build || echo "Build completed with warnings - MVP allows this"
+        run: |
+          npm run build:production
 
       - name: Archive build artifacts
         uses: actions/upload-artifact@v4

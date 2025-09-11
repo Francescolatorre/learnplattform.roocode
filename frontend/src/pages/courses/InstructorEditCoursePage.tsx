@@ -54,7 +54,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
     register,
     handleSubmit,
     reset,
-    formState: { errors, isValid },
+    formState: { errors, isValid: _isValid },
   } = useForm<ICourseFormData>({
     mode: 'onChange',
     defaultValues: {

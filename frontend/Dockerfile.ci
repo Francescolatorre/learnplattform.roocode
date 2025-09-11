@@ -1,0 +1,32 @@
+# Frontend CI Dockerfile for testing
+FROM node:20-slim
+
+# Set work directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Install serve globally for serving built files
+RUN npm install -g serve
+
+# Copy project
+COPY . .
+
+# Build the application
+RUN npm run build:production
+
+# Expose port
+EXPOSE 3000
+
+# Command will be overridden by docker-compose
+CMD ["npx", "serve", "-s", "dist", "-p", "3000"]

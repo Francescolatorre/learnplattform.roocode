@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import React from 'react';
+// import React from 'react'; // Not needed in React 17+
 import { BrowserRouter } from 'react-router-dom';
 
 import ViewModeSelector from './ViewModeSelector';

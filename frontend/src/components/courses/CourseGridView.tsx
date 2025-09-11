@@ -15,7 +15,7 @@ const CourseGridView: React.FC<GridViewProps> = ({ courses, isInstructorView }) 
     <Grid container spacing={3}>
       {courses.map(course => (
         <Grid item xs={12} sm={6} md={4} key={course.id}>
-          <CourseCard course={course} isInstructorView={isInstructorView} />
+          <CourseCard course={course} isInstructorView={isInstructorView ?? false} />
         </Grid>
       ))}
     </Grid>

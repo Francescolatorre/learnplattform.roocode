@@ -75,6 +75,13 @@ export default tseslint.config(
       // '@typescript-eslint/explicit-member-accessibility': ['error', { accessibility: 'explicit' }],
       // '@typescript-eslint/explicit-function-return-type': ['error', { allowExpressions: false }],
       '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
+      '@typescript-eslint/ban-ts-comment': 'warn',
+      '@typescript-eslint/no-empty-object-type': 'warn',
+      '@typescript-eslint/no-require-imports': 'warn',
       // '@typescript-eslint/explicit-module-boundary-types': 'error',
       // '@typescript-eslint/strict-boolean-expressions': 'error', // Requires project reference
 
@@ -129,6 +136,9 @@ export default tseslint.config(
     rules: {
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
+      'react/prop-types': 'off', // We use TypeScript for prop validation
+      'react/no-unescaped-entities': 'warn',
+      'react/jsx-no-comment-textnodes': 'warn',
     },
   },
 
@@ -160,10 +170,24 @@ export default tseslint.config(
 
   // Test-specific rules
   {
-    files: ['**/*.test.{js,ts,jsx,tsx}', '**/*.spec.{js,ts,jsx,tsx}'],
+    files: [
+      '**/*.test.{js,ts,jsx,tsx}',
+      '**/*.spec.{js,ts,jsx,tsx}',
+      '**/e2e/**/*',
+      '**/playwright*',
+    ],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/ban-ts-comment': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+      'react/prop-types': 'off',
+      'react/no-unescaped-entities': 'off',
+      'react/jsx-no-comment-textnodes': 'off',
       'no-console': 'off',
+      'import/order': 'off',
+      'import/no-unresolved': 'off',
     },
   },
 

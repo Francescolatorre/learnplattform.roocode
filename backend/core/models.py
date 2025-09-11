@@ -422,6 +422,7 @@ class AuditLog(models.Model):
     """
     Audit log for tracking important actions in the system.
     """
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="audit_logs")
     action = models.CharField(max_length=100)  # e.g., "task_deleted", "task_created"
     entity_type = models.CharField(max_length=50)  # e.g., "LearningTask", "Course"
@@ -430,15 +431,15 @@ class AuditLog(models.Model):
     details = models.JSONField(default=dict, blank=True)  # Additional context
     timestamp = models.DateTimeField(default=timezone.now)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
-    
+
     class Meta:
-        ordering = ['-timestamp']
+        ordering = ["-timestamp"]
         indexes = [
-            models.Index(fields=['user', '-timestamp']),
-            models.Index(fields=['action', '-timestamp']),
-            models.Index(fields=['entity_type', 'entity_id']),
+            models.Index(fields=["user", "-timestamp"]),
+            models.Index(fields=["action", "-timestamp"]),
+            models.Index(fields=["entity_type", "entity_id"]),
         ]
-    
+
     def __str__(self):
         return f"{self.user.username} - {self.action} - {self.entity_type}({self.entity_id}) - {self.timestamp}"
 

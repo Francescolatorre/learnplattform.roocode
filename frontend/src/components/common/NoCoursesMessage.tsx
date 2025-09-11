@@ -9,8 +9,8 @@ const NoCoursesMessage: React.FC = () => (
       You haven&apos;t created any courses yet
     </Typography>
     <Typography variant="body1" color="text.secondary" paragraph>
-      Start by creating your first course. You&apos;ll be able to add learning tasks and manage student
-      enrollments.
+      Start by creating your first course. You&apos;ll be able to add learning tasks and manage
+      student enrollments.
     </Typography>
     <Button
       component={RouterLink}

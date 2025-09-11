@@ -8,12 +8,12 @@
  * If you need to test the actual notification system, use NotificationProvider and do NOT mock useNotification.
  */
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import React from 'react';
 import { BrowserRouter, useParams } from 'react-router-dom';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import '@testing-library/jest-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import useNotification from '@/components/Notifications/useNotification';
 import { courseService } from '@/services/resources/courseService';
@@ -61,7 +61,7 @@ vi.mock('@/components/shared/MarkdownRenderer', () => ({
 
 // Mock the TaskCreation component fully to avoid hanging issues
 vi.mock('@/components/taskCreation/TaskCreation', () => ({
-  default: ({ open, onClose, courseId, task, isEditing, onSave }: any) => (
+  default: ({ open, onClose, courseId: _courseId, task, isEditing, onSave }: any) => (
     <div data-testid={isEditing ? 'task-edit-modal' : 'task-creation-modal'}>
       {isEditing ? 'Task Editing Modal' : 'Task Creation Modal'}
       {open && <span>Modal is open</span>}

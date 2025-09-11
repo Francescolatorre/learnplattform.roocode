@@ -1,4 +1,7 @@
 // src/test-utils/setupTests.ts
+import '@testing-library/jest-dom';
+import { configure } from '@testing-library/react';
+import React from 'react';
 import { vi } from 'vitest';
 // Axios Mocking (move up before vi.mock)
 const mockAxiosInstance = {
@@ -21,19 +24,16 @@ const mockAxios = {
 };
 
 // Log timer state before any test setup
-// @ts-expect-error
+// @ts-expect-error - Vitest fake timers debugging
 console.log(
   '🧪 [setup] BEFORE vi.useFakeTimers:',
   typeof vi.getMockedSystemTime === 'function' ? vi.getMockedSystemTime() : 'n/a'
 );
-import '@testing-library/jest-dom';
-import React from 'react';
-import { configure } from '@testing-library/react';
 
 // Ensure MUI Snackbar/Modal portals render into the test container
 configure({ defaultHidden: true });
 // Log timer state after all test setup (but before tests)
-// @ts-expect-error
+// @ts-expect-error - Vitest fake timers debugging
 console.log(
   '🧪 [setup] AFTER setup (no vi.useFakeTimers yet):',
   typeof vi.getMockedSystemTime === 'function' ? vi.getMockedSystemTime() : 'n/a'

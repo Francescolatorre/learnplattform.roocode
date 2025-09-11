@@ -39,7 +39,7 @@ test.describe('Task Deletion Feature', () => {
 
       // We should now be on the InstructorCourseDetailsPage which has the real task management
       console.log('Current URL after clicking course:', page.url());
-      
+
       // Verify we're on the course details page and scroll to tasks section
       await page.waitForTimeout(2000); // Give tasks time to load
 
@@ -110,18 +110,18 @@ test.describe('Task Deletion Feature', () => {
 
       // Wait for tasks to load and look for any deletable task (one with a delete button)
       await page.waitForTimeout(3000); // Give time for progress counts to load
-      
+
       const deleteButtons = page.locator('[data-testid^="delete-task-"]');
       const deleteButtonCount = await deleteButtons.count();
-      
+
       if (deleteButtonCount > 0) {
         console.log(`Found ${deleteButtonCount} deletable task(s)`);
-        
+
         // Get the first deletable task
         const firstDeleteButton = deleteButtons.first();
-        
+
         console.log(`Testing deletion of first available task`);
-        
+
         // Click delete button
         await firstDeleteButton.click();
 
@@ -156,7 +156,7 @@ test.describe('Task Deletion Feature', () => {
         expect(remainingDeleteButtons).toBeLessThan(deleteButtonCount);
 
         console.log('Task deletion confirmed - delete button count reduced');
-        
+
         // Success notification might appear - use more specific selector to avoid multiple matches
         const notification = page.locator('[data-testid="notification-toast"]');
         if (await notification.isVisible()) {
@@ -180,9 +180,9 @@ test.describe('Task Deletion Feature', () => {
     // Logout and login as student
     await page.goto('/logout');
     await page.waitForTimeout(1000); // Wait for logout
-    
+
     console.log('Attempting student login to verify delete buttons are not visible');
-    
+
     // Student login may show "Visit the Courses section" message when no courses enrolled
     // This is expected behavior, not an authentication error
     try {
@@ -190,14 +190,16 @@ test.describe('Task Deletion Feature', () => {
       console.log('Student login successful, checking for delete buttons');
     } catch (error) {
       if (error instanceof Error && error.message.includes('Visit the Courses section')) {
-        console.log('Student shows "Visit Courses section" message - this is expected when no enrollment');
+        console.log(
+          'Student shows "Visit Courses section" message - this is expected when no enrollment'
+        );
         // This is expected behavior for students with no enrolled courses
       } else {
         console.error('Unexpected login error:', error);
         throw error;
       }
     }
-    
+
     // Navigate to student courses page to verify no delete functionality
     await page.goto('/student/courses');
     await page.waitForLoadState('networkidle');
@@ -208,10 +210,12 @@ test.describe('Task Deletion Feature', () => {
     expect(deleteButtonCount).toBe(0);
 
     // Also check for delete icons or trash icons
-    const deleteIcons = page.locator('svg[data-testid="DeleteIcon"], .delete-icon, [aria-label*="delete" i]');
+    const deleteIcons = page.locator(
+      'svg[data-testid="DeleteIcon"], .delete-icon, [aria-label*="delete" i]'
+    );
     const deleteIconCount = await deleteIcons.count();
     expect(deleteIconCount).toBe(0);
-    
+
     console.log('Test passed - students cannot see delete buttons');
   });
 });

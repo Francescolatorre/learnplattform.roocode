@@ -23,13 +23,11 @@ import LearningTaskViewPage from '@/pages/learningTasks/LearningTaskViewPage';
 import StudentTasksPage from '@/pages/learningTasks/StudentTasksPage';
 import ProfilePage from '@/pages/ProfilePage';
 import RegisterFormPage from '@/pages/RegisterFormPage';
+import ProtectedRoute from '@/routes/ProtectedRoute';
 
 // Student pages
-
 // Instructor pages
-
 // Admin pages
-import ProtectedRoute from '@/routes/ProtectedRoute';
 
 /**
  * Main Application Routes Component

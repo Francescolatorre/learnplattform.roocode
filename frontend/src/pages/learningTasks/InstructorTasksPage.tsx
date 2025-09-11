@@ -1,5 +1,18 @@
 import { Delete as DeleteIcon, Info as InfoIcon } from '@mui/icons-material';
-import { Container, Typography, Paper, Button, CircularProgress, IconButton, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, Box } from '@mui/material';
+import {
+  Container,
+  Typography,
+  Paper,
+  Button,
+  CircularProgress,
+  IconButton,
+  Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Box,
+} from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -16,17 +29,20 @@ const InstructorTasksPage: React.FC = () => {
   const { data, isLoading, error, refetch } = useCourseTasks(courseId || '');
   const queryClient = useQueryClient();
   const notify = useNotification();
-  
+
   // Delete confirmation state
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<ILearningTask | null>(null);
-  const [progressCounts, setProgressCounts] = useState<Record<string, { inProgress: number; completed: number }>>({});
+  const [progressCounts, setProgressCounts] = useState<
+    Record<string, { inProgress: number; completed: number }>
+  >({});
 
   // Load progress counts for all tasks
   React.useEffect(() => {
     if (data && data.length > 0) {
       const taskIds = data.map(task => String(task.id));
-      learningTaskService.getTaskProgressCounts(taskIds)
+      learningTaskService
+        .getTaskProgressCounts(taskIds)
         .then(counts => setProgressCounts(counts))
         .catch(err => console.error('Failed to load progress counts:', err));
     }
@@ -40,7 +56,7 @@ const InstructorTasksPage: React.FC = () => {
   const getDeletionTooltip = (task: ILearningTask): string => {
     const counts = progressCounts[String(task.id)];
     if (!counts) return 'Loading...';
-    
+
     if (counts.inProgress > 0 && counts.completed > 0) {
       return `Cannot delete: ${counts.inProgress} student(s) in progress and ${counts.completed} completed`;
     } else if (counts.inProgress > 0) {
@@ -63,14 +79,14 @@ const InstructorTasksPage: React.FC = () => {
 
   const handleConfirmDelete = async () => {
     if (!taskToDelete) return;
-    
+
     try {
       await learningTaskService.delete(String(taskToDelete.id));
-      
+
       // Invalidate and refetch data
       queryClient.invalidateQueries({ queryKey: ['courseTasks', courseId] });
       await refetch();
-      
+
       notify('Task deleted successfully', 'success');
       handleCloseDeleteConfirm();
     } catch (err) {
@@ -134,7 +150,7 @@ const InstructorTasksPage: React.FC = () => {
                     <Tooltip title="Delete task">
                       <IconButton
                         color="error"
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation();
                           handleOpenDeleteConfirm(row);
                         }}
@@ -176,9 +192,9 @@ const InstructorTasksPage: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDeleteConfirm}>Cancel</Button>
-          <Button 
-            onClick={handleConfirmDelete} 
-            color="error" 
+          <Button
+            onClick={handleConfirmDelete}
+            color="error"
             variant="contained"
             data-testid="confirm-delete-task"
           >

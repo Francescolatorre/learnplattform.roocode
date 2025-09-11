@@ -33,7 +33,7 @@ describe('ApiService Integration', () => {
       console.log('ℹ️  Skipping test - backend server not available');
       return;
     }
-    
+
     const data = await apiService.get(`${API_URL}/health/`);
     expect(data).toHaveProperty('status', 'healthy');
   });
@@ -43,7 +43,7 @@ describe('ApiService Integration', () => {
       console.log('ℹ️  Skipping test - backend server not available');
       return;
     }
-    
+
     const data = await apiService.post(`${API_URL}/auth/login/`, {
       username: TEST_USERS.student.username,
       password: TEST_USERS.student.password,
@@ -57,7 +57,7 @@ describe('ApiService Integration', () => {
       console.log('ℹ️  Skipping test - backend server not available');
       return;
     }
-    
+
     try {
       await apiService.get(`${API_URL}/api/v1/courses/`);
       // Should not reach here
@@ -83,7 +83,7 @@ describe('ApiService Integration', () => {
       console.log('ℹ️  Skipping test - backend server not available');
       return;
     }
-    
+
     // Login to get token
     const loginData = await apiService.post(`${API_URL}/auth/login/`, {
       username: TEST_USERS.student.username,

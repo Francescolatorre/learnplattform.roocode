@@ -22,10 +22,7 @@ logger = logging.getLogger(__name__)
 
 # Add the parent directory to the Python path so we can import logs_setup
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from logs_setup import (  # noqa: E402
-    log_request,
-    log_response,
-)
+from logs_setup import log_request, log_response  # noqa: E402
 
 
 class RequestLoggingMiddleware(MiddlewareMixin):

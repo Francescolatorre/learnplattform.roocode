@@ -265,9 +265,9 @@ const MarkdownEditor: React.FC<IMarkdownEditorProps> = ({
           >
             `inline code`{'\n\n'}
             ```{'\n'}
-            // Code block{'\n'}
+            {/* Code block */}
             function example() {'{'}
-            return 'Hello World';
+            return &apos;Hello World&apos;;
             {'}'}
             {'\n'}
             ```

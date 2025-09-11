@@ -1,3 +1,5 @@
+import React from 'react';
+
 export interface InfoCardProps {
   title: string;
   children: React.ReactNode;

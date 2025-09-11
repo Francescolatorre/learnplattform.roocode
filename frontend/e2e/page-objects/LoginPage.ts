@@ -258,9 +258,11 @@ export class LoginPage extends BasePage {
       // 4. Wait for the next relevant response (fallback for immediate login)
       // MVP: Only wait for network response if we haven't already captured tokens
       const hasExistingTokens = await this.page.evaluate(() => {
-        return !!(localStorage.getItem('accessToken') || 
-                  localStorage.getItem('authToken') || 
-                  localStorage.getItem('token'));
+        return !!(
+          localStorage.getItem('accessToken') ||
+          localStorage.getItem('authToken') ||
+          localStorage.getItem('token')
+        );
       });
 
       if (!hasExistingTokens) {
@@ -274,20 +276,23 @@ export class LoginPage extends BasePage {
             { timeout: 3000 } // MVP: Reduced timeout
           );
 
-        const responseData = await response.json().catch(() => ({}));
-        const token =
-          responseData.access || responseData.token || responseData.accessToken || responseData.jwt;
+          const responseData = await response.json().catch(() => ({}));
+          const token =
+            responseData.access ||
+            responseData.token ||
+            responseData.accessToken ||
+            responseData.jwt;
 
-        if (token) {
-          console.log('Retrieved auth token from network response');
-          this._authToken = token;
-          await this.page.evaluate(token => {
-            localStorage.setItem('accessToken', token);
-            localStorage.setItem('authToken', token);
-            localStorage.setItem('token', token);
-            localStorage.setItem('jwt', token);
-          }, token);
-        }
+          if (token) {
+            console.log('Retrieved auth token from network response');
+            this._authToken = token;
+            await this.page.evaluate(token => {
+              localStorage.setItem('accessToken', token);
+              localStorage.setItem('authToken', token);
+              localStorage.setItem('token', token);
+              localStorage.setItem('jwt', token);
+            }, token);
+          }
         } catch (error) {
           console.warn('Failed to capture auth token from network:', error);
         }

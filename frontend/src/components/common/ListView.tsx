@@ -34,7 +34,7 @@ const ListView: React.FC<ListViewProps> = ({ courses, isInstructorView = false }
             p: 1,
           }}
         >
-          <CourseCard course={course} isInstructorView={isInstructorView} viewMode="list" />
+          <CourseCard course={course} isInstructorView={isInstructorView} />
         </ListItem>
       ))}
     </List>

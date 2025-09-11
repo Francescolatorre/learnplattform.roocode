@@ -261,7 +261,7 @@ const CourseLearningTasksPage: React.FC = () => {
         notify('Task updated successfully', 'success');
       } else {
         // Create new task
-        const { id, ...taskDataWithoutId } = taskData;
+        const { id: _id, ...taskDataWithoutId } = taskData;
         const newTask = await createLearningTask({
           ...taskDataWithoutId,
           course: Number(courseId!),

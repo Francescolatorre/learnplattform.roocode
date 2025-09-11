@@ -226,6 +226,7 @@ const MarkdownRenderer = forwardRef<HTMLElement, IMarkdownRendererProps>(
             </div>
           ),
           // Keep inline elements as spans
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           a: ({ children, href, ...props }: MarkdownComponentProps) => (
             <span
               className="markdown-a"

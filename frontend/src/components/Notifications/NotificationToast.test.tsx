@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import React from 'react';
+// import React from 'react'; // Not needed in React 17+
 
 import { NotificationToast } from './NotificationToast';
 import { INotification } from './types';
@@ -113,9 +113,9 @@ describe('NotificationToast', () => {
 
     // Find and trigger Snackbar onClose with clickaway reason
     const snackbar = container!.querySelector('.MuiSnackbar-root');
-    // @ts-expect-error - Accessing private prop for testing
     act(() => {
-      snackbar?.__ON_CLOSE?.({}, 'clickaway');
+      // @ts-expect-error - Accessing private prop for testing
+      (snackbar as any)?.__ON_CLOSE?.({}, 'clickaway');
     });
 
     expect(mockDismiss).not.toHaveBeenCalled();

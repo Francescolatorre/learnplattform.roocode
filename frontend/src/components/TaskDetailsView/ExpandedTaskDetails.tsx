@@ -77,7 +77,7 @@ const ExpandedTaskDetails: React.FC<ExpandedTaskDetailsProps> = ({
           variant="contained"
           color="primary"
           disabled={task.status === 'completed' || task.status === 'graded'}
-          onClick={() => onStartTask(String(task.taskId ?? ''))}
+          onClick={() => onStartTask(String(task.task ?? ''))}
         >
           {task.status === 'not_started'
             ? 'Start Task'

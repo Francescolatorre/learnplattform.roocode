@@ -31,7 +31,7 @@ const ResetPasswordForm: React.FC = () => {
   const {
     control,
     handleSubmit,
-    watch,
+    watch: _watch,
     formState: { errors },
   } = useForm<ResetPasswordSchema>({
     resolver: zodResolver(resetPasswordSchema),

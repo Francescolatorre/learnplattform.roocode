@@ -9,7 +9,7 @@ export const userProgressFactory = Factory.define<IUserProgress>(({ sequence }) 
 }));
 
 export const courseProgressSummaryFactory = Factory.define<ICourseProgressSummary>(
-  ({ sequence }) => ({
+  ({ sequence: _sequence }) => ({
     completedTasks: Math.floor(Math.random() * 10),
     totalTasks: 10,
     averageScore: Math.floor(Math.random() * 100),
