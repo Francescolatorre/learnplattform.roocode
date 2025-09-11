@@ -3,7 +3,7 @@ import { defineConfig, devices } from '@playwright/test';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import { PerformanceOptimizer } from './e2e/utils/performanceOptimization';
+// import { PerformanceOptimizer } from './e2e/utils/performanceOptimization';
 
 // Get the directory name equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -34,7 +34,7 @@ const config: Config = defineConfig({
 
   expect: {
     timeout: 5000, // MVP: Reduced for faster feedback
-    toMatchTimeout: 3000, // MVP: Reduced for faster feedback
+    // toMatchTimeout: 3000, // MVP: Reduced for faster feedback - removed as not valid
   },
   fullyParallel: true, // MVP: Enable parallel execution
   forbidOnly: process.env.CI === 'true',
@@ -48,7 +48,7 @@ const config: Config = defineConfig({
   // Configure outputDir for all test artifacts including screenshots
   outputDir: path.join(outputDir, 'test-artifacts'),
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || process.env.BASE_URL || 'http://localhost:3000', // MVP: Match CI setup
+    baseURL: process.env.BASE_URL || 'http://localhost:3000', // MVP: Match CI setup
     trace: 'retain-on-failure', // Only keep traces on failure for performance
     video: 'retain-on-failure', // Only keep video on failure for performance
     screenshot: 'only-on-failure', // Only screenshot on failure for performance

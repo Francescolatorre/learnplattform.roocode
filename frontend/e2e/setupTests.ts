@@ -558,7 +558,7 @@ export const login = async (
     console.error('Failed to detect authenticated state', error);
     await page.screenshot({ path: getScreenshotPath(`login-auth-check-failed-${Date.now()}.png`) });
     throw new Error(
-      `Login appeared to succeed but we couldn't detect authenticated state: ${error.message}`
+      `Login appeared to succeed but we couldn't detect authenticated state: ${(error as Error).message}`
     );
   }
 
@@ -756,7 +756,7 @@ export class UserSession {
       const htmlContent = await this.page.content();
       console.log('Page content excerpt:', htmlContent.substring(0, 500) + '...');
 
-      throw new Error(`Failed to verify authentication as ${role}: ${error.message}`);
+      throw new Error(`Failed to verify authentication as ${role}: ${(error as Error).message}`);
     }
   }
 
@@ -840,7 +840,7 @@ export async function waitForGlobalLoadingToDisappear(page: Page, timeout = 2000
         ];
 
         // Return true if none are visible (loading has finished)
-        return loaders.every(loader => !loader || !loader.isVisible);
+        return loaders.every(loader => !loader || !(loader as any).isVisible);
       },
       { timeout }
     );

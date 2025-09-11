@@ -216,7 +216,7 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({ taskProgress }) => {
             </TableHead>
             <TableBody>
               {sortedTasks.map(task => (
-                <React.Fragment key={task.taskId}>
+                <React.Fragment key={task.task}>
                   <TableRow
                     hover
                     sx={{
@@ -242,10 +242,10 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({ taskProgress }) => {
                     <TableCell>
                       <IconButton
                         size="small"
-                        onClick={() => toggleTaskExpansion(String(task.taskId || ''))}
+                        onClick={() => toggleTaskExpansion(String(task.task || ''))}
                         aria-label="show more"
                       >
-                        {expandedTaskId === String(task.taskId) ? (
+                        {expandedTaskId === String(task.task) ? (
                           <ExpandLessIcon />
                         ) : (
                           <ExpandMoreIcon />
@@ -256,7 +256,7 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({ taskProgress }) => {
                   <TableRow>
                     <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                       <Collapse
-                        in={expandedTaskId === String(task.taskId)}
+                        in={expandedTaskId === String(task.task)}
                         timeout="auto"
                         unmountOnExit
                       >

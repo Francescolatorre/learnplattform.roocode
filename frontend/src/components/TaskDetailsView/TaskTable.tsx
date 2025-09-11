@@ -80,16 +80,16 @@ const TaskTable: React.FC<TaskTableProps> = ({
                 <TableCell>
                   <IconButton
                     size="small"
-                    onClick={() => onToggleTaskExpansion(task.taskId || '')}
+                    onClick={() => onToggleTaskExpansion(task.task || '')}
                     aria-label="show more"
                   >
-                    {expandedTaskId === task.taskId ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                    {expandedTaskId === task.task ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                   </IconButton>
                 </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                  <Collapse in={expandedTaskId === task.taskId} timeout="auto" unmountOnExit>
+                  <Collapse in={expandedTaskId === task.task} timeout="auto" unmountOnExit>
                     <Box sx={{ margin: 2 }}>
                       <Typography variant="h6" gutterBottom component="div">
                         Task Details
