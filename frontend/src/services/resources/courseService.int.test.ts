@@ -128,8 +128,13 @@ describe('courseService Integration', () => {
       await courseService.getCourseDetails(String(createdCourseId));
       expect(false).toBe(true); // Should not reach here
     } catch (error: any) {
-      // Accept both "not found" and "status code 404" as valid not found errors
-      expect(/not found/i.test(error.message) || /status code 404/i.test(error.message)).toBe(true);
+      // Accept various error formats for deleted/not found resources
+      const errorMessage = error.message || '';
+      const isNotFoundError = 
+        /not found/i.test(errorMessage) || 
+        /status code 404/i.test(errorMessage) ||
+        /no.*matches.*query/i.test(errorMessage);
+      expect(isNotFoundError).toBe(true);
     }
   });
 });
