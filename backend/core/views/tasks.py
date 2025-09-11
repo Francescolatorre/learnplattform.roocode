@@ -24,18 +24,20 @@ from ..permissions import IsInstructorOrAdmin, IsTaskCreatorOrAdmin
 logger = logging.getLogger(__name__)
 
 
-def create_audit_log(user, action, entity_type, entity_id, entity_name="", details=None, request=None):
+def create_audit_log(
+    user, action, entity_type, entity_id, entity_name="", details=None, request=None
+):
     """
     Utility function to create audit log entries.
     """
     ip_address = None
     if request:
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
         if x_forwarded_for:
-            ip_address = x_forwarded_for.split(',')[0]
+            ip_address = x_forwarded_for.split(",")[0]
         else:
-            ip_address = request.META.get('REMOTE_ADDR')
-    
+            ip_address = request.META.get("REMOTE_ADDR")
+
     AuditLog.objects.create(
         user=user,
         action=action,
@@ -82,38 +84,50 @@ class LearningTaskViewSet(viewsets.ModelViewSet):
         Only allow deletion if no students have started the task.
         """
         instance = self.get_object()
-        
+
         # Check permissions - must be instructor/admin and course creator
-        if not (request.user.is_staff or request.user.is_superuser or 
-                (hasattr(request.user, 'role') and request.user.role in ['instructor', 'admin'] and 
-                 instance.course.creator == request.user)):
+        if not (
+            request.user.is_staff
+            or request.user.is_superuser
+            or (
+                hasattr(request.user, "role")
+                and request.user.role in ["instructor", "admin"]
+                and instance.course.creator == request.user
+            )
+        ):
             raise PermissionDenied("You don't have permission to delete this task.")
-        
+
         # Check if any students have progress on this task
-        progress_count = TaskProgress.objects.filter(task=instance).exclude(
-            status='not_started'
-        ).count()
-        
+        progress_count = (
+            TaskProgress.objects.filter(task=instance)
+            .exclude(status="not_started")
+            .count()
+        )
+
         if progress_count > 0:
             # Get detailed counts for the error message
-            in_progress = TaskProgress.objects.filter(task=instance, status='in_progress').count()
-            completed = TaskProgress.objects.filter(task=instance, status='completed').count()
-            
+            in_progress = TaskProgress.objects.filter(
+                task=instance, status="in_progress"
+            ).count()
+            completed = TaskProgress.objects.filter(
+                task=instance, status="completed"
+            ).count()
+
             return Response(
                 {
                     "error": "Cannot delete task with student progress",
                     "message": f"Task has student progress: {in_progress} in progress, {completed} completed",
                     "students_affected": progress_count,
-                    "can_delete": False
+                    "can_delete": False,
                 },
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
         # If no progress, perform soft delete
         instance.is_deleted = True
         instance.deleted_at = timezone.now()
         instance.save()
-        
+
         # Create audit log entry
         create_audit_log(
             user=request.user,
@@ -130,18 +144,18 @@ class LearningTaskViewSet(viewsets.ModelViewSet):
             },
             request=request,
         )
-        
+
         logger.info(
             f"Task {instance.id} '{instance.title}' soft deleted by user {request.user.id}"
         )
-        
+
         return Response(
             {
                 "message": "Task deleted successfully",
                 "task_id": instance.id,
-                "deleted_at": instance.deleted_at
+                "deleted_at": instance.deleted_at,
             },
-            status=status.HTTP_200_OK
+            status=status.HTTP_200_OK,
         )
 
     @action(detail=False, methods=["post"], url_path="progress-counts")
@@ -151,24 +165,26 @@ class LearningTaskViewSet(viewsets.ModelViewSet):
         Expects: {"task_ids": [1, 2, 3, ...]}
         Returns: {"task_id": {"in_progress": count, "completed": count}, ...}
         """
-        task_ids = request.data.get('task_ids', [])
+        task_ids = request.data.get("task_ids", [])
         if not task_ids:
-            return Response({"error": "task_ids required"}, status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response(
+                {"error": "task_ids required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
         # Filter tasks to those the user can access (same logic as get_queryset)
         queryset = self.get_queryset().filter(id__in=task_ids)
-        
+
         result = {}
         for task in queryset:
             progress_counts = TaskProgress.objects.filter(task=task).aggregate(
-                in_progress=Count('id', filter=Q(status='in_progress')),
-                completed=Count('id', filter=Q(status='completed'))
+                in_progress=Count("id", filter=Q(status="in_progress")),
+                completed=Count("id", filter=Q(status="completed")),
             )
             result[str(task.id)] = {
-                'in_progress': progress_counts['in_progress'] or 0,
-                'completed': progress_counts['completed'] or 0
+                "in_progress": progress_counts["in_progress"] or 0,
+                "completed": progress_counts["completed"] or 0,
             }
-        
+
         return Response(result)
 
     @action(detail=False, methods=["get"], url_path="course/(?P<course_id>[^/.]+)")

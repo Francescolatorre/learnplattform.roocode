@@ -66,6 +66,18 @@ jobs:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_learningplatform
         run: |
           python manage.py migrate
+          # Create test users for integration tests
+          python -c "
+import os, django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+django.setup()
+from django.contrib.auth.models import User
+# Create instructor user
+User.objects.create_user(username='instructor', password='instructor123', email='instructor@test.com')
+# Create student user  
+User.objects.create_user(username='student', password='student123', email='student@test.com')
+print('Test users created successfully')
+"
 
       - name: Start backend server
         working-directory: ./backend

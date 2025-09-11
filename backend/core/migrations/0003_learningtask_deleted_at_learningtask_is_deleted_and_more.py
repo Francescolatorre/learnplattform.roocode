@@ -7,7 +7,6 @@ import django.utils.timezone
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("core", "0002_alter_user_options_alter_user_managers_and_more"),
     ]

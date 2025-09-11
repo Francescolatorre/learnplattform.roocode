@@ -28,7 +28,9 @@ print("Python path:", sys.path)
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-hga%tq3swh&4ku=rtofde@+okle%!bn@6_m*jry3eq!2zl*4r9")
+SECRET_KEY = os.getenv(
+    "SECRET_KEY", "django-insecure-hga%tq3swh&4ku=rtofde@+okle%!bn@6_m*jry3eq!2zl*4r9"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
