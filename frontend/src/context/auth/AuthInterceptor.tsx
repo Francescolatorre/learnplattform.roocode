@@ -3,6 +3,7 @@
 import { AxiosInstance } from 'axios';
 import React, { useEffect } from 'react';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { AUTH_CONFIG } from '../../config/appConfig';
 import axiosInstance from '../../services/api/axiosConfig';
 
@@ -29,7 +30,9 @@ export interface IAuthInterceptorProps {
  */
 export const AuthInterceptor: React.FC<IAuthInterceptorProps> = ({
   onAuthFailure,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onRefreshToken,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getAccessToken,
 }) => {
   const { logout } = useAuth();

@@ -454,7 +454,7 @@ const CourseList: React.FC<ICourseListProps> = ({
         <DialogTitle id="delete-dialog-title">Confirm Course Deletion</DialogTitle>
         <DialogContent>
           <DialogContentText id="delete-dialog-description">
-            Are you sure you want to delete the course "{selectedCourse?.title}"? This action cannot
+            Are you sure you want to delete the course &quot;{selectedCourse?.title}&quot;? This action cannot
             be undone.
           </DialogContentText>
         </DialogContent>

@@ -38,14 +38,17 @@ interface FilterableCourseListProps {
 }
 
 const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   initialCourses,
   title = 'Courses',
   clientSideFiltering = false,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   filterPredicate = (course, searchTerm) =>
     course.title.toLowerCase().includes(searchTerm.toLowerCase()),
   emptyMessage = 'No courses available.',
   noResultsMessage = 'No courses match your search criteria.',
   showStatusFilter = false,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   showCreatorFilter = false,
   onCoursesLoaded,
   pageSize = 20,

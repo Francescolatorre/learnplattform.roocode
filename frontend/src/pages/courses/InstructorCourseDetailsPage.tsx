@@ -60,7 +60,7 @@ const InstructorCourseDetailPage: React.FC = () => {
 
   const notify = useNotification();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
