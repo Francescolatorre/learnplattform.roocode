@@ -120,7 +120,7 @@ const InstructorDashboard: React.FC = () => {
                     Active Courses
                   </Typography>
                 </Box>
-                <Typography variant="h4">{dashboardData?.active_courses || 0}</Typography>
+                <Typography variant="h4">{dashboardData?.totalCourses || 0}</Typography>
               </CardContent>
             </Card>
           </Grid>
@@ -133,7 +133,7 @@ const InstructorDashboard: React.FC = () => {
                     Total Students
                   </Typography>
                 </Box>
-                <Typography variant="h4">{dashboardData?.total_students || 0}</Typography>
+                <Typography variant="h4">{dashboardData?.totalStudents || 0}</Typography>
               </CardContent>
             </Card>
           </Grid>
@@ -147,7 +147,7 @@ const InstructorDashboard: React.FC = () => {
                   </Typography>
                 </Box>
                 <Typography variant="h4">
-                  {dashboardData?.average_course_completion || 0}%
+                  {dashboardData?.averageCompletionRate || 0}%
                 </Typography>
               </CardContent>
             </Card>
@@ -162,7 +162,7 @@ const InstructorDashboard: React.FC = () => {
                   </Typography>
                 </Box>
                 <Typography variant="h4">
-                  {dashboardData?.tasks_requiring_attention?.length || 0}
+                  {dashboardData?.totalTasks || 0}
                 </Typography>
               </CardContent>
             </Card>
@@ -226,8 +226,8 @@ const InstructorDashboard: React.FC = () => {
                   </Typography>
 
                   {/* Course activity summary from dashboard data if available */}
-                  {dashboardData?.course_activity_summary?.find(
-                    activity => activity.course_id === course.id
+                  {dashboardData?.courseStats?.find(
+                    activity => activity.id === String(course.id)
                   ) && (
                     <Box
                       sx={{
@@ -240,24 +240,24 @@ const InstructorDashboard: React.FC = () => {
                       <Box>
                         <Typography variant="body2">
                           <strong>Students:</strong>{' '}
-                          {dashboardData.course_activity_summary.find(
-                            activity => activity.course_id === course.id
-                          )?.student_count || 0}
+                          {dashboardData.courseStats.find(
+                            activity => activity.id === String(course.id)
+                          )?.studentCount || 0}
                         </Typography>
                         <Typography variant="body2">
                           <strong>Average Progress:</strong>{' '}
-                          {dashboardData.course_activity_summary.find(
-                            activity => activity.course_id === course.id
-                          )?.average_progress || 0}
+                          {dashboardData.courseStats.find(
+                            activity => activity.id === String(course.id)
+                          )?.completionRate || 0}
                           %
                         </Typography>
                       </Box>
                       <Box sx={{ display: 'flex', justifyContent: 'center', minWidth: 80 }}>
                         <ProgressIndicator
                           value={
-                            dashboardData.course_activity_summary.find(
-                              activity => activity.course_id === course.id
-                            )?.average_progress || 0
+                            dashboardData.courseStats.find(
+                              activity => activity.id === String(course.id)
+                            )?.completionRate || 0
                           }
                           size={60}
                         />
@@ -291,19 +291,19 @@ const InstructorDashboard: React.FC = () => {
       </Box>
 
       {/* Tasks Requiring Attention Section */}
-      {dashboardData?.tasks_requiring_attention &&
-        dashboardData.tasks_requiring_attention.length > 0 && (
+      {dashboardData?.totalTasks &&
+        dashboardData.recentActivity.length > 0 && (
           <Paper elevation={2} sx={{ p: 3, mt: 4 }}>
             <Typography variant="h5" gutterBottom>
               Tasks Requiring Attention
             </Typography>
             <List>
-              {dashboardData.tasks_requiring_attention.map(task => (
+              {dashboardData.recentActivity.map(task => (
                 <ListItem
-                  key={`${task.course_id}-${task.task_id}`}
+                  key={`${task.courseId}-${task.studentId}`}
                   divider
                   component={RouterLink}
-                  to={`/courses/${task.course_id}/tasks/${task.task_id}`}
+                  to={`/courses/${task.courseId}/tasks/${task.studentId}`}
                   sx={{
                     textDecoration: 'none',
                     color: 'inherit',
@@ -313,62 +313,16 @@ const InstructorDashboard: React.FC = () => {
                   }}
                 >
                   <ListItemText
-                    primary={task.task_title}
-                    secondary={`Course: ${task.course_title} • ${task.students_pending} students waiting`}
+                    primary={task.description}
+                    secondary={`Course: ${task.courseName} • ${task.studentId} students waiting`}
                   />
-                  <Chip label={`${task.students_pending} pending`} color="warning" size="small" />
+                  <Chip label={`${task.studentId} pending`} color="warning" size="small" />
                 </ListItem>
               ))}
             </List>
           </Paper>
         )}
 
-      {/* Performance Analytics Section */}
-      {dashboardData?.performance_analytics && (
-        <Paper elevation={2} sx={{ p: 3, mt: 4 }}>
-          <Typography variant="h5" gutterBottom>
-            Performance Analytics
-          </Typography>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <Card variant="outlined" sx={{ mb: 2 }}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Best Performing Course
-                  </Typography>
-                  <Typography variant="body1">
-                    {dashboardData.performance_analytics.best_performing_course.course_title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Average Score:{' '}
-                    {dashboardData.performance_analytics.best_performing_course.average_score.toFixed(
-                      1
-                    )}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Card variant="outlined" sx={{ mb: 2 }}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Most Engaged Course
-                  </Typography>
-                  <Typography variant="body1">
-                    {dashboardData.performance_analytics.most_engaged_course.course_title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Engagement Score:{' '}
-                    {dashboardData.performance_analytics.most_engaged_course.engagement_score.toFixed(
-                      1
-                    )}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        </Paper>
-      )}
 
       {/* Quick Links Section */}
       <Paper elevation={2} sx={{ p: 3, mt: 4 }}>

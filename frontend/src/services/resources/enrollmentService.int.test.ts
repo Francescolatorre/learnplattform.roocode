@@ -93,7 +93,7 @@ describe('enrollmentService Integration', () => {
       const baseCourseData = {
         version: 1,
         status: 'published' as TCourseStatus,
-        visibility: 'public',
+        visibility: 'public' as const,
         creator: testData.instructor.userId,
       };
 
@@ -133,9 +133,6 @@ describe('enrollmentService Integration', () => {
     enrollmentService.setAuthToken(testData.student.token);
   }
 
-  function useInstructorAuth() {
-    enrollmentService.setAuthToken(testData.instructor.token);
-  }
 
   describe('Enrollment Lifecycle', () => {
     beforeEach(() => {

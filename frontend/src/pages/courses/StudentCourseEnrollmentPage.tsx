@@ -77,13 +77,13 @@ const StudentCourseEnrollmentPage: React.FC = () => {
     },
     retry: 1,
     staleTime: 0, // Always validate on mount
-    cacheTime: 1000 * 60 * 5, // Cache for 5 minutes
+    gcTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 
   // Calculate total pages when data is loaded
   useEffect(() => {
     if (coursesData && 'count' in coursesData) {
-      const calculatedTotalPages = Math.ceil(coursesData.count / pageSize);
+      const calculatedTotalPages = Math.ceil((coursesData.count as number) / pageSize);
       setTotalPages(calculatedTotalPages);
       console.info('StudentCourseEnrollmentPage: Total pages calculated:', calculatedTotalPages);
     }
@@ -138,13 +138,13 @@ const StudentCourseEnrollmentPage: React.FC = () => {
   };
 
   // Get the current page courses
-  const courses = coursesData && 'results' in coursesData ? coursesData.results : [];
+  const courses = coursesData && 'results' in coursesData ? (coursesData.results as ICourse[]) : [];
 
   // Render grid view of courses
   const renderGridView = () => {
     console.debug(
       'StudentCourseEnrollmentPage: Rendering grid view with',
-      courses.length,
+      (courses as ICourse[]).length,
       'courses'
     );
     return (

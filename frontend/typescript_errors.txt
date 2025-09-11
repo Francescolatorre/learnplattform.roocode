@@ -1,0 +1,31 @@
+src/services/api/apiService.int.test.ts(92,19): error TS18046: 'loginData' is of type 'unknown'.
+src/services/auth/authService.test.ts(35,10): error TS2614: Module '"axios"' has no exported member 'mockGet'. Did you mean to use 'import mockGet from "axios"' instead?
+src/services/auth/authService.test.ts(35,19): error TS2614: Module '"axios"' has no exported member 'mockPost'. Did you mean to use 'import mockPost from "axios"' instead?
+src/services/resources/enrollmentService.int.test.ts(171,86): error TS2339: Property 'results' does not exist on type 'never'.
+src/services/resources/enrollmentService.int.test.ts(175,51): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/services/resources/enrollmentService.int.test.ts(183,11): error TS2322: Type 'IEnrollmentStatus' is not assignable to type 'TCompletionStatus | undefined'.
+src/services/resources/enrollmentService.int.test.ts(183,19): error TS2352: Conversion of type 'string' to type 'IEnrollmentStatus' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+src/services/resources/enrollmentService.test.ts(106,5): error TS2304: Cannot find name 'mockDelete'.
+src/services/resources/learningTaskHooks.test.ts(15,36): error TS2503: Cannot find namespace 'vi'.
+src/services/resources/learningTaskService.int.test.ts(40,7): error TS2304: Cannot find name 'userId'.
+src/services/resources/learningTaskService.int.test.ts(54,7): error TS2304: Cannot find name 'userId'.
+src/services/resources/progressService.int.test.ts(43,7): error TS2304: Cannot find name 'userId'.
+src/services/resources/progressService.int.test.ts(61,7): error TS2304: Cannot find name 'userId'.
+src/services/resources/progressService.test.ts(132,63): error TS2345: Argument of type '{}' is not assignable to parameter of type 'ITaskSubmissionData'.
+  Property 'content' is missing in type '{}' but required in type 'ITaskSubmissionData'.
+src/services/resources/progressService.test.ts(137,73): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'IGradingData'.
+vite.config.ts(43,3): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Object literal may only specify known properties, and 'test' does not exist in type 'UserConfigExport'.
+vitest.config.ts(6,13): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type 'Plugin<any>' is not assignable to type 'PluginOption'.
+      Type 'Plugin<any>' is not assignable to type 'Plugin$1<any>'.
+        Types of property 'hotUpdate' are incompatible.
+          Type 'ObjectHook<(this: HotUpdatePluginContext, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<void | EnvironmentModuleNode[]>> | undefined' is not assignable to type 'ObjectHook<(this: MinimalPluginContext & { environment: DevEnvironment; }, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<...>> | undefined'.
+            Type '(this: HotUpdatePluginContext, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<void | EnvironmentModuleNode[]>' is not assignable to type 'ObjectHook<(this: MinimalPluginContext & { environment: DevEnvironment; }, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<...>> | undefined'.
+              Type '(this: HotUpdatePluginContext, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<void | EnvironmentModuleNode[]>' is not assignable to type '(this: MinimalPluginContext & { environment: DevEnvironment; }, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<...>'.
+                The 'this' types of each signature are incompatible.
+                  Type 'MinimalPluginContext & { environment: DevEnvironment; }' is not assignable to type 'HotUpdatePluginContext'.
+                    Types of property 'environment' are incompatible.
+                      Property 'options' is missing in type 'import("C:/DEVELOPMENT/projects/learnplatfom2/frontend/node_modules/vitest/node_modules/vite/dist/node/index").DevEnvironment' but required in type 'import("C:/DEVELOPMENT/projects/learnplatfom2/frontend/node_modules/vite/dist/node/index").DevEnvironment'.

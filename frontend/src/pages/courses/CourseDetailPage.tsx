@@ -40,7 +40,7 @@ const CourseDetailPage: React.FC = () => {
         </Typography>
 
         <Box sx={{ mb: 3, display: 'flex', gap: 1 }}>
-          <Chip icon={<Person />} label={course.creator_details.display_name} />
+          <Chip icon={<Person />} label={course.instructor_name || 'Unknown Instructor'} />
           <Chip icon={<Visibility />} label={course.visibility} />
           <Chip
             icon={<DateRange />}

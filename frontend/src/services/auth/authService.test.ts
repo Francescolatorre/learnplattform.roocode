@@ -3,36 +3,29 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { AUTH_CONFIG } from '@/config/appConfig';
 
 // First, mock axios before any other imports
-vi.mock('axios', () => {
-  const mockGet = vi.fn();
-  const mockPost = vi.fn();
+const mockGet = vi.fn();
+const mockPost = vi.fn();
 
-  return {
-    default: {
-      create: () => ({
-        get: mockGet,
-        post: mockPost,
-        put: vi.fn(),
-        patch: vi.fn(),
-        delete: vi.fn(),
-        interceptors: {
-          request: { use: vi.fn(), eject: vi.fn() },
-          response: { use: vi.fn(), eject: vi.fn() },
+vi.mock('axios', () => ({
+  default: {
+    create: () => ({
+      get: mockGet,
+      post: mockPost,
+      put: vi.fn(),
+      patch: vi.fn(),
+      delete: vi.fn(),
+      interceptors: {
+        request: { use: vi.fn(), eject: vi.fn() },
+        response: { use: vi.fn(), eject: vi.fn() },
+      },
+      defaults: {
+        headers: {
+          'Content-Type': 'application/json',
         },
-        defaults: {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      }),
-    },
-    mockGet,
-    mockPost,
-  };
-});
-
-// Import mocks from the axios mock
-import { mockGet, mockPost } from 'axios';
+      },
+    }),
+  },
+}));
 
 // Now import authService which will use our mocked axios
 import authService from './authService';
