@@ -22,7 +22,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 import { menuConfig } from '@/config/menuConfig';
 import { useAuth } from '@/context/auth/AuthContext';
-import { TUserRole } from '@/types';
+import { TUserRole } from '@/context/auth/types';
 
 /**
  * Main NavigationBar component for the application
