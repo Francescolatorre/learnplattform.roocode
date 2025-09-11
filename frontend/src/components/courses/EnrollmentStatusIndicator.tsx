@@ -96,8 +96,10 @@ const EnrollmentStatusIndicator: React.FC<IEnrollmentStatusIndicatorProps> = ({
         sx={{
           fontWeight: 'bold',
           backgroundColor: isDarkMode
-            ? (theme.palette[color === 'default' ? 'grey' : color] as any)?.light || theme.palette.grey[300]
-            : (theme.palette[color === 'default' ? 'grey' : color] as any)?.dark || theme.palette.grey[700],
+            ? (theme.palette[color === 'default' ? 'grey' : color] as any)?.light ||
+              theme.palette.grey[300]
+            : (theme.palette[color === 'default' ? 'grey' : color] as any)?.dark ||
+              theme.palette.grey[700],
           color: '#fff',
           '& .MuiChip-icon': {
             color: '#fff', // Make icon same color as text
