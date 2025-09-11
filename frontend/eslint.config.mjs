@@ -75,7 +75,10 @@ export default tseslint.config(
       // '@typescript-eslint/explicit-member-accessibility': ['error', { accessibility: 'explicit' }],
       // '@typescript-eslint/explicit-function-return-type': ['error', { allowExpressions: false }],
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
       '@typescript-eslint/ban-ts-comment': 'warn',
       '@typescript-eslint/no-empty-object-type': 'warn',
       '@typescript-eslint/no-require-imports': 'warn',
@@ -167,7 +170,12 @@ export default tseslint.config(
 
   // Test-specific rules
   {
-    files: ['**/*.test.{js,ts,jsx,tsx}', '**/*.spec.{js,ts,jsx,tsx}', '**/e2e/**/*', '**/playwright*'],
+    files: [
+      '**/*.test.{js,ts,jsx,tsx}',
+      '**/*.spec.{js,ts,jsx,tsx}',
+      '**/e2e/**/*',
+      '**/playwright*',
+    ],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': 'off',

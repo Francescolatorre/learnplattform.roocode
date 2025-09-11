@@ -9,7 +9,7 @@ const apiClient = axios.create({
   },
 });
 
-interface LoginResponse {
+interface _LoginResponse {
   user: {
     refresh: string;
   };
@@ -17,7 +17,7 @@ interface LoginResponse {
   refresh: string;
 }
 
-interface RegisterData {
+interface _RegisterData {
   username: string;
   email: string;
   password: string;
@@ -173,7 +173,7 @@ const authService = {
 
         clearTimeout(timeoutId);
         return response.status === 200;
-      } catch (error) {
+      } catch {
         clearTimeout(timeoutId);
 
         // If error is due to token expiration, try to refresh the token

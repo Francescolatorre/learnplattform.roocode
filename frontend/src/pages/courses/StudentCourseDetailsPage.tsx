@@ -54,8 +54,8 @@ const StudentCourseDetailsPage: React.FC = () => {
    */
   const {
     data: enrollmentStatus,
-    isLoading: isEnrollmentLoading,
-    error: enrollmentError,
+    isLoading: _isEnrollmentLoading,
+    error: _enrollmentError,
   } = useQuery({
     queryKey: ['enrollment', courseIdNum],
     queryFn: () => enrollmentService.getEnrollmentStatus(courseIdNum),

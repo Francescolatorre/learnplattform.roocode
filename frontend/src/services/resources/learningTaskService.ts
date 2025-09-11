@@ -67,7 +67,7 @@ class LearningTaskService {
         formData.append('notifyUsers', String(notifyUsers));
         const response = await this.apiTask.post(API_CONFIG.endpoints.tasks.create, formData);
         return response;
-      } catch (err) {
+      } catch {
         throw new Error('Failed to create learning task');
       }
     },
