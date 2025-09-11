@@ -298,7 +298,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Get user role function
   const getUserRole = useCallback((): UserRoleEnum => {
     if (!user) {
-      return 'guest';
+      return UserRoleEnum.GUEST;
     }
 
     if (
@@ -309,7 +309,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     console.warn('User exists but has invalid or missing role:', user);
-    return 'guest';
+    return UserRoleEnum.GUEST;
   }, [user]);
 
   // Redirect to dashboard based on role
