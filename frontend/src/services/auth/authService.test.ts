@@ -2,10 +2,14 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import { AUTH_CONFIG } from '@/config/appConfig';
 
-// First, mock axios before any other imports
-const mockGet = vi.fn();
-const mockPost = vi.fn();
+// Use vi.hoisted to ensure mocks are available at import time
+const { mockGet, mockPost } = vi.hoisted(() => {
+  const mockGet = vi.fn();
+  const mockPost = vi.fn();
+  return { mockGet, mockPost };
+});
 
+// Mock axios before any other imports
 vi.mock('axios', () => ({
   default: {
     create: () => ({
