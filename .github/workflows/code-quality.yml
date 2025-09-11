@@ -116,34 +116,34 @@ jobs:
         working-directory: backend
         run: |
           echo "::group::Black formatting check"
-          black --check --diff . || echo "::error::Code formatting issues found"
+          black --check --diff .
           echo "::endgroup::"
           
           echo "::group::Import sorting check"
-          isort --check-only --diff . --profile django || echo "::error::Import sorting issues found"
+          isort --check-only --diff . --profile django
           echo "::endgroup::"
           
           echo "::group::Flake8 linting"
-          flake8 . || echo "::error::Linting issues found"
+          flake8 .
           echo "::endgroup::"
           
           echo "::group::MyPy type checking"
-          mypy . --ignore-missing-imports || echo "::warning::Type checking issues found"
+          mypy . --ignore-missing-imports || echo "::warning::Type checking issues found - allowing for now"
           echo "::endgroup::"
 
       - name: Lint TypeScript/JavaScript
         working-directory: ./frontend
         run: |
           echo "::group::Prettier formatting check"
-          npx prettier --check . || echo "::error::Formatting issues found"
+          npx prettier --check .
           echo "::endgroup::"
           
           echo "::group::ESLint"
-          npm run lint || echo "::error::Linting issues found"
+          npm run lint
           echo "::endgroup::"
           
           echo "::group::TypeScript compilation check"
-          npx tsc --noEmit || echo "::error::TypeScript compilation issues found"
+          npx tsc --noEmit
           echo "::endgroup::"
 
   performance-audit:

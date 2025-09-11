@@ -39,15 +39,15 @@ jobs:
         run: |
           npm run test:unit
 
-      - name: Run integration tests (MVP - allow failures)
+      - name: Run integration tests
         working-directory: ./frontend
         run: |
-          npm run test:integration || echo "Integration tests have issues - MVP allows this"
+          npm run test:integration
 
-      - name: Run tests with coverage (MVP - allow failures)
+      - name: Run tests with coverage
         working-directory: ./frontend
         run: |
-          npm run test:coverage || echo "Coverage tests have issues - MVP allows this"
+          npm run test:coverage
 
       - name: Upload coverage to Codecov
         if: matrix.node-version == 20
@@ -82,20 +82,20 @@ jobs:
         working-directory: ./frontend
         run: npm ci
 
-      - name: Check code formatting with Prettier (MVP - warnings only)
+      - name: Check code formatting with Prettier
         working-directory: ./frontend
         run: |
-          npx prettier --check . || echo "Formatting issues found - MVP allows this"
+          npx prettier --check .
 
-      - name: Lint with ESLint (MVP - warnings only)
+      - name: Lint with ESLint
         working-directory: ./frontend
         run: |
-          npm run lint || echo "Linting issues found - MVP allows this"
+          npm run lint
 
-      - name: Type check with TypeScript (MVP - warnings only)
+      - name: Type check with TypeScript
         working-directory: ./frontend
         run: |
-          npx tsc --noEmit || echo "TypeScript issues found - MVP allows this"
+          npx tsc --noEmit
 
   build:
     runs-on: ubuntu-latest
@@ -113,9 +113,10 @@ jobs:
         working-directory: ./frontend
         run: npm ci
 
-      - name: Build application (MVP - allow warnings)
+      - name: Build application
         working-directory: ./frontend
-        run: npm run build:production || npm run build || echo "Build completed with warnings - MVP allows this"
+        run: |
+          npm run build:production
 
       - name: Archive build artifacts
         uses: actions/upload-artifact@v4
