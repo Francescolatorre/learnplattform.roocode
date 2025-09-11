@@ -49,7 +49,7 @@ describe('CourseEnrollment Component', () => {
     vi.clearAllMocks();
 
     // Default mock implementation for useQuery and useMutation
-    (useQuery as any).mockImplementation(({ queryKey }) => {
+    (useQuery as any).mockImplementation(({ queryKey }: { queryKey: string[] }) => {
       // Mock for course data
       if (queryKey[0] === 'course') {
         return {
@@ -120,7 +120,7 @@ describe('CourseEnrollment Component', () => {
   });
 
   it('shows success message and view tasks button when user is enrolled', () => {
-    (useQuery as any).mockImplementation(({ queryKey }) => {
+    (useQuery as any).mockImplementation(({ queryKey }: { queryKey: string[] }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -152,7 +152,7 @@ describe('CourseEnrollment Component', () => {
   });
 
   it('shows different message when enrollment status is completed', () => {
-    (useQuery as any).mockImplementation(({ queryKey }) => {
+    (useQuery as any).mockImplementation(({ queryKey }: { queryKey: string[] }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -183,7 +183,7 @@ describe('CourseEnrollment Component', () => {
   });
 
   it('shows different message when enrollment status is dropped', () => {
-    (useQuery as any).mockImplementation(({ queryKey }) => {
+    (useQuery as any).mockImplementation(({ queryKey }: { queryKey: string[] }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -216,7 +216,7 @@ describe('CourseEnrollment Component', () => {
   });
 
   it('shows warning when course is not published', () => {
-    (useQuery as any).mockImplementation(({ queryKey }) => {
+    (useQuery as any).mockImplementation(({ queryKey }: { queryKey: string[] }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -282,7 +282,7 @@ describe('CourseEnrollment Component', () => {
   // Unenroll functionality tests
   it('shows unenroll button when user is actively enrolled', () => {
     // Mock the enrollment status as active
-    (useQuery as any).mockImplementation(({ queryKey }) => {
+    (useQuery as any).mockImplementation(({ queryKey }: { queryKey: string[] }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -313,7 +313,7 @@ describe('CourseEnrollment Component', () => {
 
   it('does not show unenroll button when enrollment status is "completed"', () => {
     // Mock the enrollment status as completed
-    (useQuery as any).mockImplementation(({ queryKey }) => {
+    (useQuery as any).mockImplementation(({ queryKey }: { queryKey: string[] }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -344,7 +344,7 @@ describe('CourseEnrollment Component', () => {
 
   it('does not show unenroll button when enrollment status is "dropped"', () => {
     // Mock the enrollment status as dropped
-    (useQuery as any).mockImplementation(({ queryKey }) => {
+    (useQuery as any).mockImplementation(({ queryKey }: { queryKey: string[] }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -375,7 +375,7 @@ describe('CourseEnrollment Component', () => {
 
   it('shows unenroll confirmation dialog when unenroll button is clicked', () => {
     // Mock the enrollment status as active
-    (useQuery as any).mockImplementation(({ queryKey }) => {
+    (useQuery as any).mockImplementation(({ queryKey }: { queryKey: string[] }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -412,7 +412,7 @@ describe('CourseEnrollment Component', () => {
 
   it('calls unenrollment mutation when confirmation is confirmed', () => {
     // Mock the enrollment status as active
-    (useQuery as any).mockImplementation(({ queryKey }) => {
+    (useQuery as any).mockImplementation(({ queryKey }: { queryKey: string[] }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -479,7 +479,7 @@ describe('CourseEnrollment Component', () => {
 
   it('closes the dialog when cancel button is clicked', () => {
     // Mock the enrollment status as active
-    (useQuery as any).mockImplementation(({ queryKey }) => {
+    (useQuery as any).mockImplementation(({ queryKey }: { queryKey: string[] }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -524,7 +524,7 @@ describe('CourseEnrollment Component', () => {
 
   it('shows a success message after successful unenrollment', () => {
     // Mock the enrollment status as active
-    (useQuery as any).mockImplementation(({ queryKey }) => {
+    (useQuery as any).mockImplementation(({ queryKey }: { queryKey: string[] }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
@@ -575,7 +575,7 @@ describe('CourseEnrollment Component', () => {
 
   it('shows loading state during unenrollment process', () => {
     // Mock the enrollment status as active
-    (useQuery as any).mockImplementation(({ queryKey }) => {
+    (useQuery as any).mockImplementation(({ queryKey }: { queryKey: string[] }) => {
       if (queryKey[0] === 'course') {
         return {
           data: {
