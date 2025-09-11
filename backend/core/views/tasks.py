@@ -18,7 +18,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ..models import AuditLog, LearningTask, TaskProgress
-from ..permissions import IsInstructorOrAdmin, IsTaskCreatorOrAdmin
 from ..serializers import LearningTaskSerializer, TaskProgressSerializer
 
 logger = logging.getLogger(__name__)
