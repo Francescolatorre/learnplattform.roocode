@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/react';
-import React from 'react';
+// import React from 'react'; // Not needed in React 17+
 
 import { renderWithProviders } from '@/test-utils/renderWithProviders';
 
