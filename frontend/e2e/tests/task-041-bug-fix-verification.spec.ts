@@ -2,13 +2,13 @@ import { test, expect } from '@playwright/test';
 
 /**
  * TASK-041 Bug Fix Verification Test
- * 
+ *
  * This test verifies that the critical bug where task title input field
  * auto-clears typed characters has been resolved.
- * 
+ *
  * Bug: Task title input field becomes non-functional, immediately removing
  * any typed characters, preventing task creation.
- * 
+ *
  * Fix: Resolved useEffect dependency issues causing form data resets
  */
 test.describe('TASK-041: Task Creation Title Input Fix', () => {
@@ -29,12 +29,12 @@ test.describe('TASK-041: Task Creation Title Input Fix', () => {
     await expect(modal).toBeVisible({ timeout: 5000 });
 
     // Step 3: Locate the task title input field
-    const titleInput = page.locator('input[name="title"]').or(
-      page.locator('input').filter({ hasText: /task title/i })
-    ).or(
-      page.locator('label', { hasText: /task title/i }).locator('~ input')
-    ).first();
-    
+    const titleInput = page
+      .locator('input[name="title"]')
+      .or(page.locator('input').filter({ hasText: /task title/i }))
+      .or(page.locator('label', { hasText: /task title/i }).locator('~ input'))
+      .first();
+
     await expect(titleInput).toBeVisible({ timeout: 5000 });
 
     // Step 4: Click in the title field to focus it
@@ -52,7 +52,7 @@ test.describe('TASK-041: Task Creation Title Input Fix', () => {
     // Step 7: Additional verification - type more text
     const additionalText = ' - Additional Text';
     await titleInput.type(additionalText, { delay: 50 });
-    
+
     // Verify combined text
     await expect(titleInput).toHaveValue(testText + additionalText);
 
@@ -73,7 +73,7 @@ test.describe('TASK-041: Task Creation Title Input Fix', () => {
     // Type quickly without delays
     const rapidText = 'RapidTypingTest';
     await titleInput.fill(rapidText);
-    
+
     // Verify text is retained even with rapid input
     await expect(titleInput).toHaveValue(rapidText);
 
@@ -83,7 +83,7 @@ test.describe('TASK-041: Task Creation Title Input Fix', () => {
   test('task title input should work after modal reopen', async ({ page }) => {
     // Test opening/closing modal multiple times (regression test)
     const createTaskButton = page.locator('button', { hasText: /create task|add task/i });
-    
+
     // Open modal first time
     await createTaskButton.click();
     let modal = page.locator('[role="dialog"]').or(page.locator('.MuiDialog-root'));
@@ -102,7 +102,7 @@ test.describe('TASK-041: Task Creation Title Input Fix', () => {
     // Test title input works on second open
     const titleInput = page.locator('input[name="title"]').first();
     await titleInput.click();
-    
+
     const testText = 'Second Open Test';
     await titleInput.fill(testText);
     await expect(titleInput).toHaveValue(testText);
@@ -124,10 +124,11 @@ test.describe('TASK-041: Task Creation Title Input Fix', () => {
     await expect(titleInput).toHaveValue('Complete Workflow Test Task');
 
     // Fill description field (required for submission)
-    const descriptionField = page.locator('textarea').or(
-      page.locator('[data-testid="markdown-editor"]')
-    ).first();
-    
+    const descriptionField = page
+      .locator('textarea')
+      .or(page.locator('[data-testid="markdown-editor"]'))
+      .first();
+
     if (await descriptionField.isVisible()) {
       await descriptionField.fill('Test description for task creation');
     }

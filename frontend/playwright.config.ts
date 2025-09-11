@@ -75,13 +75,16 @@ const config: Config = defineConfig({
     //   use: { ...devices['Desktop Safari'] },
     // },
   ],
-  webServer: process.env.CI === 'true' ? undefined : {
-    // MVP: In CI, servers are started manually; locally use dev server
-    command: 'npm run dev',
-    url: process.env.BASE_URL || 'http://localhost:5173',
-    reuseExistingServer: true,
-    timeout: 60 * 1000, // MVP: Reduced timeout
-  },
+  webServer:
+    process.env.CI === 'true'
+      ? undefined
+      : {
+          // MVP: In CI, servers are started manually; locally use dev server
+          command: 'npm run dev',
+          url: process.env.BASE_URL || 'http://localhost:5173',
+          reuseExistingServer: true,
+          timeout: 60 * 1000, // MVP: Reduced timeout
+        },
 });
 
 export default config;

@@ -10,7 +10,8 @@ import { apiService } from './api/apiService';
 export const useTaskProgress = (taskId: string | number) => {
   return useQuery<ITaskProgress>({
     queryKey: ['taskProgress', taskId],
-    queryFn: async () => apiService.get<ITaskProgress>(`/api/v1/learning-tasks/${taskId}/progress/`),
+    queryFn: async () =>
+      apiService.get<ITaskProgress>(`/api/v1/learning-tasks/${taskId}/progress/`),
     enabled: !!taskId,
     refetchOnWindowFocus: false,
   });

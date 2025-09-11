@@ -407,7 +407,7 @@ export const login = async (
   // Use more flexible selectors to find form elements
   // Wait for login page to fully load
   await page.waitForSelector('form, [data-testid="login-username-input"]', { timeout: 10000 });
-  
+
   try {
     // Look for username field with multiple possible selectors
     await page.fill(
@@ -445,7 +445,7 @@ export const login = async (
   }
 
   try {
-    // Look for login button with multiple possible selectors  
+    // Look for login button with multiple possible selectors
     await page.click(
       '[data-testid="login-submit-button"], ' +
         'button[type="submit"], ' +
@@ -474,24 +474,29 @@ export const login = async (
 
     if (await errorNotification.isVisible()) {
       const errorText = await errorNotification.textContent();
-      
+
       // Check if this is the "Visit the Courses section" message - this is NOT an error for students
       if (errorText && errorText.includes('Visit the Courses section')) {
-        console.log('Student sees "Visit the Courses section" message - this is expected behavior for students without enrolled courses');
+        console.log(
+          'Student sees "Visit the Courses section" message - this is expected behavior for students without enrolled courses'
+        );
         // Don't throw error - this is expected behavior
         return {
           access: 'mockAccessToken',
           refresh: 'mockRefreshToken',
         };
       }
-      
+
       // Check for actual login errors
-      if (errorText && (errorText.includes('Invalid credentials') || errorText.includes('Login failed'))) {
+      if (
+        errorText &&
+        (errorText.includes('Invalid credentials') || errorText.includes('Login failed'))
+      ) {
         console.error(`Login failed with message: ${errorText}`);
         await page.screenshot({ path: getScreenshotPath(`login-failed-error-${Date.now()}.png`) });
         throw new Error(`Login failed: ${errorText}`);
       }
-      
+
       console.log('Found notification but not a login error:', errorText);
     }
   } catch (err) {

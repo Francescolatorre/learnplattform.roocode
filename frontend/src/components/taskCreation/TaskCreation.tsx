@@ -66,7 +66,7 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
       });
       prevTaskRef.current = task;
     }
-    
+
     // Handle task prop changes (for editing mode)
     if (open && previouslyOpen && JSON.stringify(task) !== JSON.stringify(prevTaskRef.current)) {
       // Only update if task actually changed (not just re-rendered)

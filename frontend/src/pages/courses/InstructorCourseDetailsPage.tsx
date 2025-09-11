@@ -54,7 +54,9 @@ const InstructorCourseDetailPage: React.FC = () => {
   // State for task deletion
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState<boolean>(false);
   const [taskToDelete, setTaskToDelete] = useState<ILearningTask | null>(null);
-  const [taskProgressCounts, setTaskProgressCounts] = useState<Record<string, { inProgress: number; completed: number }>>({});
+  const [taskProgressCounts, setTaskProgressCounts] = useState<
+    Record<string, { inProgress: number; completed: number }>
+  >({});
 
   const notify = useNotification();
   const queryClient = useQueryClient();
@@ -77,7 +79,7 @@ const InstructorCourseDetailPage: React.FC = () => {
       title: taskData.title || '',
       description: taskData.description || '',
     };
-    
+
     // Create the task using the service
     await learningTaskService.create(taskWithCourse);
     // Refetch tasks to update the UI
@@ -182,10 +184,10 @@ const InstructorCourseDetailPage: React.FC = () => {
 
     try {
       await learningTaskService.delete(String(taskToDelete.id));
-      
+
       // Remove the task from the local state
       setTasks(tasks.filter(task => task.id !== taskToDelete.id));
-      
+
       // Invalidate related queries
       if (courseId) {
         queryClient.invalidateQueries({ queryKey: ['courseTasks', courseId] });
@@ -211,15 +213,15 @@ const InstructorCourseDetailPage: React.FC = () => {
   const getDeletionTooltip = (task: ILearningTask): string => {
     const progressCount = taskProgressCounts[String(task.id)];
     if (!progressCount) return '';
-    
+
     const { inProgress, completed } = progressCount;
     const total = inProgress + completed;
     if (total === 0) return '';
-    
+
     const parts = [];
     if (inProgress > 0) parts.push(`${inProgress} in progress`);
     if (completed > 0) parts.push(`${completed} completed`);
-    
+
     return `Cannot delete: ${parts.join(', ')} (${total} student${total === 1 ? '' : 's'})`;
   };
 
@@ -232,7 +234,7 @@ const InstructorCourseDetailPage: React.FC = () => {
   // Extract fetchCourseDetails so it can be used for refetching after task creation
   const fetchCourseDetails = async () => {
     if (!courseId) return;
-    
+
     try {
       setIsLoading(true);
       const courseResult = await courseService.getCourseDetails(courseId);
@@ -405,14 +407,14 @@ const InstructorCourseDetailPage: React.FC = () => {
                       </>
                     }
                   />
-                  
+
                   {/* Task Action Buttons */}
                   <Box sx={{ ml: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                     {canDeleteTask(task) ? (
                       <Tooltip title="Delete task">
                         <IconButton
                           color="error"
-                          onClick={(e) => {
+                          onClick={e => {
                             e.stopPropagation(); // Prevent opening task details
                             handleOpenDeleteConfirm(task);
                           }}
@@ -460,10 +462,10 @@ const InstructorCourseDetailPage: React.FC = () => {
       />
 
       {/* TaskCreation modal for creating new tasks */}
-      <TaskCreation 
-        open={isModalOpen} 
-        onClose={handleCloseModal} 
-        courseId={courseId} 
+      <TaskCreation
+        open={isModalOpen}
+        onClose={handleCloseModal}
+        courseId={courseId}
         onSave={handleTaskCreate}
       />
 
@@ -541,12 +543,7 @@ const InstructorCourseDetailPage: React.FC = () => {
       </Dialog>
 
       {/* Task Deletion Confirmation Dialog */}
-      <Dialog
-        open={isDeleteConfirmOpen}
-        onClose={handleCloseDeleteConfirm}
-        maxWidth="sm"
-        fullWidth
-      >
+      <Dialog open={isDeleteConfirmOpen} onClose={handleCloseDeleteConfirm} maxWidth="sm" fullWidth>
         <DialogTitle>Confirm Task Deletion</DialogTitle>
         <DialogContent>
           <Typography variant="body1" paragraph>
