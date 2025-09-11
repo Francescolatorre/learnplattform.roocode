@@ -1,23 +1,30 @@
 # TASK TRIAGE - BRUTAL PRIORITIZATION
 
 **PMO Decision Date**: 2025-09-10 (Updated)  
-**Total Tasks Audited**: 44 → 42 (3 completed, 1 new critical added)  
+**Total Tasks Audited**: 44 → 43 (3 completed, 2 new critical added)  
 **Reduction Target**: 6 CRITICAL PRIORITIES (Emergency Addition)
 
 ---
 
 ## PMO TRIAGE DECISIONS
 
-### 🚨 **TIER 1: CRITICAL - IMMEDIATE ACTION** (7 Tasks Max)
+### 🚨 **TIER 1: CRITICAL - IMMEDIATE ACTION** (8 Tasks Max)
 
 #### **RANK 1: TASK-045-DEFECT-Student-Task-View-Navigation** 
-- **Priority**: CRITICAL  
+- **Priority**: CRITICAL ✅ COMPLETED  
 - **Impact**: BLOCKS ALL STUDENT TASK ACCESS
 - **Business Risk**: Students cannot view/complete assignments
-- **Action**: IMMEDIATE INVESTIGATION & FIX REQUIRED
+- **Status**: ✅ COMPLETED (2025-09-10) - PR #33 created with component naming fix
 - **Discovery**: Found during TASK-042 testing (2025-09-09)
 
-#### **RANK 2: TASK-046-CRITICAL-Dependency-Security-CodeQuality**
+#### **RANK 2: TASK-047-CI-Test-Suite-Enablement**
+- **Priority**: HIGH-CRITICAL
+- **Impact**: PIPELINE RELIABILITY + CODE QUALITY ASSURANCE
+- **Business Risk**: Cannot guarantee deployment quality, false security from failing tests
+- **Action**: ENABLE ALL CI TESTS, REMOVE "ALLOW FAILURES" CONFIGS
+- **Discovery**: Integration test failures in CI pipeline (2025-09-10)
+
+#### **RANK 3: TASK-046-CRITICAL-Dependency-Security-CodeQuality**
 - **Priority**: CRITICAL
 - **Impact**: SECURITY VULNERABILITIES + 9 FAILING TESTS  
 - **Business Risk**: Production security exposure, unreliable deployments
