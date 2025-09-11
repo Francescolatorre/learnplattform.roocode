@@ -8,18 +8,18 @@ Includes:
 
 import logging
 
+from django.core.exceptions import PermissionDenied
+from django.db.models import Count, Q
+from django.utils import timezone
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.db.models import Count, Q
-from django.core.exceptions import PermissionDenied
-from django.utils import timezone
 
-from ..models import LearningTask, TaskProgress, AuditLog
-from ..serializers import LearningTaskSerializer, TaskProgressSerializer
+from ..models import AuditLog, LearningTask, TaskProgress
 from ..permissions import IsInstructorOrAdmin, IsTaskCreatorOrAdmin
+from ..serializers import LearningTaskSerializer, TaskProgressSerializer
 
 logger = logging.getLogger(__name__)
 

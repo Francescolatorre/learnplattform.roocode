@@ -14,6 +14,7 @@ import os
 import sys
 from datetime import timedelta
 from pathlib import Path
+
 import dj_database_url
 
 # Add the parent directory to system path to allow importing from root modules
