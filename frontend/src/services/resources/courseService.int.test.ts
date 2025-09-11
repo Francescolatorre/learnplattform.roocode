@@ -130,8 +130,8 @@ describe('courseService Integration', () => {
     } catch (error: any) {
       // Accept various error formats for deleted/not found resources
       const errorMessage = error.message || '';
-      const isNotFoundError = 
-        /not found/i.test(errorMessage) || 
+      const isNotFoundError =
+        /not found/i.test(errorMessage) ||
         /status code 404/i.test(errorMessage) ||
         /no.*matches.*query/i.test(errorMessage);
       expect(isNotFoundError).toBe(true);
