@@ -158,7 +158,7 @@ describe('Error Notification System', () => {
           severity: 'error',
           duration: 2000,
         });
-      }, []);
+      }, [notifyError]);
       return <div>Component content</div>;
     };
     render(
