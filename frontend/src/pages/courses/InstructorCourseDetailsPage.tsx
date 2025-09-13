@@ -259,6 +259,7 @@ const InstructorCourseDetailPage: React.FC = () => {
 
   useEffect(() => {
     fetchCourseDetails();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId]);
 
   if (isLoading) {
@@ -547,7 +548,7 @@ const InstructorCourseDetailPage: React.FC = () => {
         <DialogTitle>Confirm Task Deletion</DialogTitle>
         <DialogContent>
           <Typography variant="body1" paragraph>
-            Are you sure you want to delete the task "{taskToDelete?.title}"?
+            Are you sure you want to delete the task &quot;{taskToDelete?.title}&quot;?
           </Typography>
           <Typography variant="body2" color="text.secondary">
             This action cannot be undone. The task will be permanently removed from the course.

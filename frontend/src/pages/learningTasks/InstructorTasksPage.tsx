@@ -184,7 +184,7 @@ const InstructorTasksPage: React.FC = () => {
         <DialogTitle>Confirm Task Deletion</DialogTitle>
         <DialogContent>
           <Typography variant="body1">
-            Are you sure you want to delete the task "{taskToDelete?.title}"?
+            Are you sure you want to delete the task &quot;{taskToDelete?.title}&quot;?
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
             This action cannot be undone.

@@ -182,7 +182,7 @@ const InstructorDashboard: React.FC = () => {
               No Courses Created Yet
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              You haven't created any courses yet. Create your first course to get started.
+              You haven&apos;t created any courses yet. Create your first course to get started.
             </Typography>
             <Button
               component={RouterLink}

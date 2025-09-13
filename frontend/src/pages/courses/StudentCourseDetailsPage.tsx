@@ -98,7 +98,7 @@ const StudentCourseDetailsPage: React.FC = () => {
     const isEnrolled = !!primaryEnrollmentStatus || isCompletionVerified;
 
     return isAuthenticated && isEnrolled;
-  }, [isAuthenticated, courseDetails, enrollmentStatus, courseId]);
+  }, [isAuthenticated, courseDetails, enrollmentStatus]);
 
   /**
    * Query to fetch learning tasks associated with the course
