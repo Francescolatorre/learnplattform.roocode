@@ -76,14 +76,22 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
   }, [user, navigate, notify]);
 
   // Fetch course data if editing an existing course
-  const { data: courseData, isLoading: isLoadingCourse } = useQuery({
+  const {
+    data: courseData,
+    isLoading: isLoadingCourse,
+    error: courseError,
+  } = useQuery({
     queryKey: ['course', courseId],
     queryFn: () => courseService.getCourseDetails(courseId as string) as Promise<ICourse>,
     enabled: !isNew && !!courseId,
-    onError: (error: any) => {
-      notify(error.message || 'Failed to load course data', 'error');
-    },
   });
+
+  // Handle course loading error
+  useEffect(() => {
+    if (courseError) {
+      notify((courseError as Error).message || 'Failed to load course data', 'error');
+    }
+  }, [courseError, notify]);
 
   // Reset form when course data is loaded
   useEffect(() => {
@@ -356,7 +364,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
                     checked={field.value}
                     onChange={field.onChange}
                     disabled={mutation.isPending}
-                    inputProps={{ 'data-testid': 'course-publish-switch' }}
+                    inputProps={{ 'data-testid': 'course-publish-switch' } as any}
                   />
                 }
                 label="Publish Course"

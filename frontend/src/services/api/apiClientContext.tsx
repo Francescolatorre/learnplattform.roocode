@@ -1,9 +1,8 @@
 import { AxiosInstance } from 'axios';
 import React, { createContext, useContext, useMemo } from 'react';
 
-import { createApiClient } from '../../context/auth/AuthInterceptor';
-
 import { ApiService } from './apiService';
+import axiosInstance from './axiosConfig';
 
 // Create context for ApiService instead of raw AxiosInstance
 const ApiServiceContext = createContext<ApiService<unknown> | undefined>(undefined);
@@ -11,15 +10,15 @@ const ApiServiceContext = createContext<ApiService<unknown> | undefined>(undefin
 // Provider component
 export const ApiServiceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Create the base axios instance
-  const axiosInstance = useMemo(() => createApiClient(), []);
+  const axiosClient = useMemo(() => axiosInstance, []);
 
   // Create a shared ApiService instance using the configured axios instance
   const apiServiceInstance = useMemo(() => {
     const service = new ApiService();
     // Configure service with the authenticated axios instance
-    service.setAxiosInstance(axiosInstance);
+    service.setAxiosInstance(axiosClient);
     return service;
-  }, [axiosInstance]);
+  }, [axiosClient]);
 
   return (
     <ApiServiceContext.Provider value={apiServiceInstance}>{children}</ApiServiceContext.Provider>
@@ -39,7 +38,7 @@ export const useApiService = <T = unknown,>(): ApiService<T> => {
 const ApiClientContext = createContext<AxiosInstance | undefined>(undefined);
 
 export const ApiClientProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const apiClient = useMemo(() => createApiClient(), []);
+  const apiClient = useMemo(() => axiosInstance, []);
 
   return <ApiClientContext.Provider value={apiClient}>{children}</ApiClientContext.Provider>;
 };

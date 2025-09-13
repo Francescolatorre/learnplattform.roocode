@@ -24,6 +24,7 @@ import StudentTasksPage from '@/pages/learningTasks/StudentTasksPage';
 import ProfilePage from '@/pages/ProfilePage';
 import RegisterFormPage from '@/pages/RegisterFormPage';
 import ProtectedRoute from '@/routes/ProtectedRoute';
+import { UserRoleEnum } from '@/types/userTypes';
 
 // Student pages
 // Instructor pages
@@ -45,7 +46,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/dashboard"
         element={
-          <ProtectedRoute allowedRoles={['student']}>
+          <ProtectedRoute allowedRoles={[UserRoleEnum.STUDENT]}>
             <DashboardPage />
           </ProtectedRoute>
         }
@@ -53,7 +54,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/courses"
         element={
-          <ProtectedRoute allowedRoles={['student']}>
+          <ProtectedRoute allowedRoles={[UserRoleEnum.STUDENT]}>
             <StudentCoursesPage />
           </ProtectedRoute>
         }
@@ -61,7 +62,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/courses/:courseId"
         element={
-          <ProtectedRoute allowedRoles={['student', 'instructor']}>
+          <ProtectedRoute allowedRoles={[UserRoleEnum.STUDENT, UserRoleEnum.INSTRUCTOR]}>
             <StudentCourseDetailsPage />
           </ProtectedRoute>
         }
@@ -69,7 +70,9 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/tasks/:taskId"
         element={
-          <ProtectedRoute allowedRoles={['student', 'instructor', 'admin']}>
+          <ProtectedRoute
+            allowedRoles={[UserRoleEnum.STUDENT, UserRoleEnum.INSTRUCTOR, UserRoleEnum.ADMIN]}
+          >
             <LearningTaskViewPage />
           </ProtectedRoute>
         }
@@ -77,7 +80,9 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/tasks"
         element={
-          <ProtectedRoute allowedRoles={['student', 'instructor', 'admin']}>
+          <ProtectedRoute
+            allowedRoles={[UserRoleEnum.STUDENT, UserRoleEnum.INSTRUCTOR, UserRoleEnum.ADMIN]}
+          >
             <StudentTasksPage />
           </ProtectedRoute>
         }
@@ -85,7 +90,9 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/profile"
         element={
-          <ProtectedRoute allowedRoles={['student', 'instructor', 'admin']}>
+          <ProtectedRoute
+            allowedRoles={[UserRoleEnum.STUDENT, UserRoleEnum.INSTRUCTOR, UserRoleEnum.ADMIN]}
+          >
             <ProfilePage />
           </ProtectedRoute>
         }
@@ -95,7 +102,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/instructor/dashboard"
         element={
-          <ProtectedRoute allowedRoles={['instructor', 'admin']}>
+          <ProtectedRoute allowedRoles={[UserRoleEnum.INSTRUCTOR, UserRoleEnum.ADMIN]}>
             <InstructorDashboardPage />
           </ProtectedRoute>
         }
@@ -103,7 +110,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/instructor/courses"
         element={
-          <ProtectedRoute allowedRoles={['instructor', 'admin']}>
+          <ProtectedRoute allowedRoles={[UserRoleEnum.INSTRUCTOR, UserRoleEnum.ADMIN]}>
             <InstructorCoursesPage />
           </ProtectedRoute>
         }
@@ -111,7 +118,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/instructor/courses/new"
         element={
-          <ProtectedRoute allowedRoles={['instructor', 'admin']}>
+          <ProtectedRoute allowedRoles={[UserRoleEnum.INSTRUCTOR, UserRoleEnum.ADMIN]}>
             <InstructorEditCoursePage isNew={true} />
           </ProtectedRoute>
         }
@@ -119,7 +126,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/instructor/courses/:courseId/edit"
         element={
-          <ProtectedRoute allowedRoles={['instructor', 'admin']}>
+          <ProtectedRoute allowedRoles={[UserRoleEnum.INSTRUCTOR, UserRoleEnum.ADMIN]}>
             <InstructorEditCoursePage />
           </ProtectedRoute>
         }
@@ -127,7 +134,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/instructor/courses/:courseId"
         element={
-          <ProtectedRoute allowedRoles={['instructor', 'admin']}>
+          <ProtectedRoute allowedRoles={[UserRoleEnum.INSTRUCTOR, UserRoleEnum.ADMIN]}>
             <InstructorCourseDetailPage />
           </ProtectedRoute>
         }
@@ -136,7 +143,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/instructor/courses/:courseId/tasks"
         element={
-          <ProtectedRoute allowedRoles={['instructor', 'admin']}>
+          <ProtectedRoute allowedRoles={[UserRoleEnum.INSTRUCTOR, UserRoleEnum.ADMIN]}>
             <InstructorTasksPage />
           </ProtectedRoute>
         }
@@ -144,7 +151,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/instructor/courses/:courseId/tasks/:taskId/edit"
         element={
-          <ProtectedRoute allowedRoles={['instructor', 'admin']}>
+          <ProtectedRoute allowedRoles={[UserRoleEnum.INSTRUCTOR, UserRoleEnum.ADMIN]}>
             <CourseLearningTasksPage />
           </ProtectedRoute>
         }
@@ -154,7 +161,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/admin/dashboard"
         element={
-          <ProtectedRoute allowedRoles={['admin']}>
+          <ProtectedRoute allowedRoles={[UserRoleEnum.ADMIN]}>
             <AdminDashboardPage />
           </ProtectedRoute>
         }
@@ -162,7 +169,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/admin/courses"
         element={
-          <ProtectedRoute allowedRoles={['admin']}>
+          <ProtectedRoute allowedRoles={[UserRoleEnum.ADMIN]}>
             <AdminCoursesPage />
           </ProtectedRoute>
         }
@@ -170,7 +177,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/admin/users"
         element={
-          <ProtectedRoute allowedRoles={['admin']}>
+          <ProtectedRoute allowedRoles={[UserRoleEnum.ADMIN]}>
             <AdminUsersPage />
           </ProtectedRoute>
         }
@@ -178,7 +185,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/admin/analytics"
         element={
-          <ProtectedRoute allowedRoles={['admin']}>
+          <ProtectedRoute allowedRoles={[UserRoleEnum.ADMIN]}>
             <AdminAnalyticsPage />
           </ProtectedRoute>
         }
@@ -186,7 +193,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/admin/settings"
         element={
-          <ProtectedRoute allowedRoles={['admin']}>
+          <ProtectedRoute allowedRoles={[UserRoleEnum.ADMIN]}>
             <AdminSettingsPage />
           </ProtectedRoute>
         }
@@ -195,7 +202,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/progress"
         element={
-          <ProtectedRoute allowedRoles={['student']}>
+          <ProtectedRoute allowedRoles={[UserRoleEnum.STUDENT]}>
             <CourseProgressPage />
           </ProtectedRoute>
         }

@@ -35,8 +35,9 @@ export const NotificationToast: React.FC<NotificationToastProps> = ({
   // Only render up to maxVisible notifications (enforced at the display layer)
   const visibleNotifications = notifications.slice(
     0, // fallback to 3 if not set
-    typeof (window as any).NOTIFICATION_MAX_VISIBLE === 'number'
-      ? (window as any).NOTIFICATION_MAX_VISIBLE
+    typeof (window as unknown as { NOTIFICATION_MAX_VISIBLE?: number }).NOTIFICATION_MAX_VISIBLE ===
+      'number'
+      ? (window as unknown as { NOTIFICATION_MAX_VISIBLE: number }).NOTIFICATION_MAX_VISIBLE
       : 3
   );
 

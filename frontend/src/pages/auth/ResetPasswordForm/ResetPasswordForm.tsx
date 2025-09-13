@@ -12,7 +12,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import useNotification from '@/components/Notifications/useNotification';
 import authService from '@/services/auth/authService';
-import { type PasswordStrength, getPasswordStrengthLabel } from '@/utils/passwordValidation';
+import {
+  type PasswordStrength,
+  getPasswordStrengthLabel,
+  validatePassword,
+} from '@/utils/passwordValidation';
 import { resetPasswordSchema, type ResetPasswordSchema } from '@/validation/schemas';
 
 const ResetPasswordForm: React.FC = () => {
@@ -152,7 +156,7 @@ const ResetPasswordForm: React.FC = () => {
           </Box>
         )}
         <Controller
-          name="confirmPassword"
+          name="password_confirm"
           control={control}
           defaultValue=""
           render={({ field }) => (
@@ -162,8 +166,8 @@ const ResetPasswordForm: React.FC = () => {
               type="password"
               fullWidth
               margin="normal"
-              error={!!errors.confirmPassword}
-              helperText={errors.confirmPassword?.message}
+              error={!!errors.password_confirm}
+              helperText={errors.password_confirm?.message}
             />
           )}
         />

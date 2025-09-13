@@ -22,7 +22,7 @@ const TokenRefreshHandler: React.FC = () => {
       if (refreshToken && isAuthenticated) {
         // Use authService directly to refresh the token
         const authService = (await import('@services/auth/authService')).default;
-        const { access } = await authService.refreshToken(refreshToken);
+        const { access } = await authService.refreshToken();
 
         // Update localStorage with new access token
         localStorage.setItem('accessToken', access);

@@ -150,8 +150,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               id: String(userProfile.id),
               username: userProfile.username,
               email: userProfile.email,
-              role: userProfile.role || 'student',
+              role: (userProfile.role as any) || 'student',
               display_name: userProfile.display_name,
+              created_at: userProfile.created_at || new Date().toISOString(),
+              updated_at: userProfile.updated_at || new Date().toISOString(),
             };
 
             console.info('AuthContext: User profile fetched successfully', {
@@ -218,8 +220,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         id: String(userProfile.id),
         username: userProfile.username,
         email: userProfile.email,
-        role: userProfile.role || 'student',
+        role: (userProfile.role as any) || 'student',
         display_name: userProfile.display_name,
+        created_at: userProfile.created_at || new Date().toISOString(),
+        updated_at: userProfile.updated_at || new Date().toISOString(),
       };
 
       // Update state with user data (kept only in memory)
@@ -298,7 +302,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Get user role function
   const getUserRole = useCallback((): UserRoleEnum => {
     if (!user) {
-      return 'guest';
+      return UserRoleEnum.GUEST;
     }
 
     if (
@@ -309,7 +313,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     console.warn('User exists but has invalid or missing role:', user);
-    return 'guest';
+    return UserRoleEnum.GUEST;
   }, [user]);
 
   // Redirect to dashboard based on role

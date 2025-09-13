@@ -136,7 +136,7 @@ const InstructorTasksPage: React.FC = () => {
             { id: 'description', label: 'Description' },
             { id: 'order', label: 'Order' },
             {
-              id: 'actions',
+              id: 'actions' as keyof ILearningTask,
               label: 'Actions',
               format: (value: unknown, row: ILearningTask) => (
                 <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>

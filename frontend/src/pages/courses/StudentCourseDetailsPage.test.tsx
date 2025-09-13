@@ -5,14 +5,12 @@
 
 import { waitFor } from '@testing-library/react';
 import { screen } from '@testing-library/react';
-import React from 'react';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { vi } from 'vitest';
 
 import { courseFactory } from '@/test-utils/factories/courseFactory';
 import { learningTaskFactory } from '@/test-utils/factories/learningTaskFactory';
 import { renderWithProviders } from '@/test-utils/renderWithProviders';
-import { IUser, UserRoleEnum } from '@/types/userTypes';
 import { courseService } from '@services/resources/courseService';
 import { enrollmentService } from '@services/resources/enrollmentService';
 
@@ -27,7 +25,7 @@ vi.mock('@/components/Notifications/useNotification', () => ({
 vi.mock('@context/auth/AuthContext', async importOriginal => {
   const actual = await importOriginal();
   return {
-    ...actual,
+    ...(actual as Record<string, unknown>),
     useAuth: () => ({
       user: {
         id: '1',
@@ -63,8 +61,6 @@ const mockTasks = {
     learningTaskFactory.build({ id: 2, course: 1, title: 'Task 2' }),
   ],
 };
-
-const mockEnrollmentStatus = { enrolled: true, completed: false };
 
 describe('StudentCourseDetailsPage (clean mock call check)', () => {
   beforeEach(() => {
@@ -116,12 +112,12 @@ describe('StudentCourseDetailsPage (clean mock call check)', () => {
     // Wait for course details to be displayed
     await waitFor(() => {
       expect(screen.getByText(mockCourse.title)).toBeInTheDocument();
-      expect(screen.getByText(mockCourse.description)).toBeInTheDocument();
+      expect(screen.getByText(mockCourse.description || '')).toBeInTheDocument();
     });
 
     // Wait for and check that tasks are listed by testid
     for (const task of mockTasks.results) {
-      const taskTitle = await screen.findByTestId(`task-title-${task.id}`);
+      const taskTitle = await screen.findByTestId(`task-title-${task.id || 'unknown'}`);
       expect(taskTitle).toHaveTextContent(task.title);
     }
   });

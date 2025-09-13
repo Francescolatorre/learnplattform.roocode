@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 import { useTaskCreation } from './learningTaskHooks';
 import learningTaskService from './learningTaskService';
@@ -12,7 +12,7 @@ describe('useTaskCreation', () => {
 
   beforeEach(() => {
     mockCreate.mockReset();
-    (learningTaskService.create as vi.Mock) = mockCreate;
+    (learningTaskService.create as any) = mockCreate;
   });
 
   it('should call learningTaskService.create with correct courseId and taskData', async () => {

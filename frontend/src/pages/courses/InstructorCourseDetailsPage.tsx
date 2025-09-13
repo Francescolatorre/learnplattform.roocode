@@ -23,7 +23,7 @@ import {
 } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import CourseCreation from '@/components/courses/CourseCreation';
 import useNotification from '@/components/Notifications/useNotification';
@@ -60,7 +60,7 @@ const InstructorCourseDetailPage: React.FC = () => {
 
   const notify = useNotification();
   const queryClient = useQueryClient();
-  const _navigate = useNavigate();
+  // const navigate = useNavigate(); // Removed unused variable
 
   const handleOpenModal = () => {
     setIsModalOpen(true);

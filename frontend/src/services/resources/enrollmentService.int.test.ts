@@ -2,7 +2,6 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 
 import { TEST_USERS, cleanupTestEnvironment } from '@/test-utils/setupIntegrationTests';
 import { TCourseStatus } from '@/types/course';
-import { IEnrollmentStatus } from '@/types/entities';
 
 import authService from '../auth/authService';
 
@@ -93,7 +92,7 @@ describe('enrollmentService Integration', () => {
       const baseCourseData = {
         version: 1,
         status: 'published' as TCourseStatus,
-        visibility: 'public',
+        visibility: 'public' as const,
         creator: testData.instructor.userId,
       };
 
@@ -133,10 +132,6 @@ describe('enrollmentService Integration', () => {
     enrollmentService.setAuthToken(testData.student.token);
   }
 
-  function useInstructorAuth() {
-    enrollmentService.setAuthToken(testData.instructor.token);
-  }
-
   describe('Enrollment Lifecycle', () => {
     beforeEach(() => {
       useStudentAuth();
@@ -171,11 +166,15 @@ describe('enrollmentService Integration', () => {
       const enrollments = await enrollmentService.fetchUserEnrollments();
 
       // Assert: Array contains at least our test enrollment
-      const enrollmentArray = Array.isArray(enrollments) ? enrollments : enrollments.results || [];
+      const enrollmentArray = Array.isArray(enrollments)
+        ? enrollments
+        : (enrollments as any).results || [];
 
       expect(Array.isArray(enrollmentArray)).toBe(true);
 
-      const testEnrollment = enrollmentArray.find(e => e.id === testData.enrollments.regular.id);
+      const testEnrollment = enrollmentArray.find(
+        (e: any) => e.id === testData.enrollments.regular.id
+      );
       expect(testEnrollment).toBeDefined();
     });
 
@@ -183,7 +182,7 @@ describe('enrollmentService Integration', () => {
       // Act: Update enrollment to completed
       const updatedEnrollment = await enrollmentService.updateEnrollment(
         testData.enrollments.regular.id,
-        { status: 'completed' as IEnrollmentStatus }
+        { status: 'completed' as any }
       );
 
       // Assert: Status was updated

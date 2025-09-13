@@ -3,8 +3,7 @@
 import { AxiosInstance } from 'axios';
 import React, { useEffect } from 'react';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { AUTH_CONFIG } from '../../config/appConfig';
+// AUTH_CONFIG not currently used but may be needed for future interceptor configuration
 import axiosInstance from '../../services/api/axiosConfig';
 
 import { useAuth } from './AuthContext';

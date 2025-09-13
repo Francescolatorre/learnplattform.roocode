@@ -265,6 +265,8 @@ const CourseLearningTasksPage: React.FC = () => {
         const newTask = await createLearningTask({
           ...taskDataWithoutId,
           course: Number(courseId!),
+          title: taskDataWithoutId.title || 'Untitled Task',
+          description: taskDataWithoutId.description || 'No description',
         });
         setTasks([...tasks, newTask]);
         notify('Task created successfully', 'success');

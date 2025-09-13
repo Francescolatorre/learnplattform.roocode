@@ -9,22 +9,6 @@ const apiClient = axios.create({
   },
 });
 
-interface _LoginResponse {
-  user: {
-    refresh: string;
-  };
-  access: string;
-  refresh: string;
-}
-
-interface _RegisterData {
-  username: string;
-  email: string;
-  password: string;
-  password2: string;
-  role?: string;
-}
-
 interface PasswordResetResponse {
   detail: string;
 }
@@ -35,6 +19,8 @@ interface UserProfile {
   email: string;
   role: string;
   display_name?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 /**

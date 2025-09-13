@@ -24,7 +24,15 @@ describe('StatsSummary Component', () => {
   ];
 
   test('renders StatsSummary correctly', () => {
-    render(<StatsSummary courses={mockCourses} totalCourses={mockCourses.length} />);
+    render(
+      <StatsSummary
+        courses={mockCourses}
+        totalCourses={mockCourses.length}
+        totalStudents={50}
+        publishedCourses={2}
+        tasksNeedingAttention={3}
+      />
+    );
     const summaryElement = screen.getByText(/total courses/i);
     expect(summaryElement).toBeInTheDocument();
   });

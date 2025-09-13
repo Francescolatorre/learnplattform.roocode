@@ -69,7 +69,7 @@ export interface ITaskProgress extends IBaseTaskProgress {
   title?: string;
   description?: string;
   timeSpent?: number | null; // Formatted version of time_spent
-  
+
   // Quiz/task specific fields (optional)
   attempts?: number;
   maxAttempts?: number;
@@ -78,7 +78,7 @@ export interface ITaskProgress extends IBaseTaskProgress {
   taskType?: string;
   score?: number;
   maxScore?: number;
-  
+
   // Legacy compatibility
   taskId?: number; // Use 'task' instead
 }

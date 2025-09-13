@@ -97,7 +97,7 @@ export const DataTable = <T,>({
             <TableRow>
               {columns.map(column => (
                 <TableCell
-                  key={column.id}
+                  key={String(column.id)}
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
                 >
@@ -108,12 +108,13 @@ export const DataTable = <T,>({
           </TableHead>
           <TableBody>
             {displayData.length > 0 ? (
-              displayData.map(row => {
+              displayData.map((row, index) => {
                 const key = keyExtractor(row);
+                const reactKey = typeof key === 'symbol' ? `symbol-${index}` : String(key);
                 return (
                   <TableRow
                     hover
-                    key={key}
+                    key={reactKey}
                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                     sx={{
                       cursor: onRowClick ? 'pointer' : 'default',
@@ -124,8 +125,14 @@ export const DataTable = <T,>({
                     {columns.map(column => {
                       const value = get(row, column.id);
                       return (
-                        <TableCell key={`${key}-${column.id}`} align={column.align}>
-                          {column.format ? column.format(value, row) : String(value)}
+                        <TableCell key={`${reactKey}-${String(column.id)}`} align={column.align}>
+                          {column.format
+                            ? column.format(value, row)
+                            : value != null
+                              ? typeof value === 'symbol'
+                                ? value.toString()
+                                : String(value)
+                              : ''}
                         </TableCell>
                       );
                     })}
