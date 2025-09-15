@@ -34,8 +34,22 @@ const authService = {
   async login(username: string, password: string): Promise<{ access: string; refresh: string }> {
     const response = await apiClient.post('/auth/login/', { username, password }); // Added trailing slash to handle APPEND_SLASH setting
 
+    console.log('Auth login debug:', {
+      responseType: typeof response,
+      response: response,
+      hasData: response && 'data' in response,
+      responseKeys: response ? Object.keys(response) : 'no keys'
+    });
+
     // Handle both unit test format (direct data) and integration test format (full Axios response)
     const data = response && 'data' in response ? response.data : response;
+
+    console.log('Auth login data:', {
+      dataType: typeof data,
+      data: data,
+      hasAccess: data && 'access' in data,
+      hasRefresh: data && 'refresh' in data
+    });
 
     if (!data || typeof data !== 'object') {
       throw new Error('Login failed: No response data received from server.');
