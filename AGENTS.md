@@ -29,12 +29,35 @@ Diese Datei gilt für das gesamte Repository, sofern keine spezifischeren AGENTS
 - Routing: React Router v7 mit `startTransition`-Flag.
 
 #### TypeScript Service Architecture (2025 Standards - TASK-012)
-- **Modern Services**: Use `modernCourseService`, `modernLearningTaskService`, etc. for new development
+- **Modern Services**: Use `modernCourseService`, `modernLearningTaskService`, `modernEnrollmentService`, `modernProgressService` for new development
 - **Pattern**: Composition over inheritance with single API client via `ModernApiClient`
-- **Migration**: 3-phase strategy - currently in Phase 1 (parallel implementation) with 100% backward compatibility
-- **Factory**: Use `ServiceFactory` for dependency injection and testing
-- **Location**: `frontend/src/services/` with comprehensive documentation in README.md
+- **Migration**: 3-phase strategy - currently in Phase 2 (gradual adoption) with Zustand state integration complete
+- **Factory**: Use `ServiceFactory` for dependency injection and service instantiation
+- **State Integration**: Modern services integrate with Zustand stores via `serviceIntegration.ts` utilities
 - **Performance**: 80% memory reduction per service (40KB → 8KB) vs legacy implementation
+- **Documentation**: TSDoc comments, API examples, and migration patterns documented in service files
+
+**Service Usage Guidelines:**
+```typescript
+// ✅ Modern Pattern (Use for new development)
+import { modernCourseService } from '@/services/resources/modernCourseService';
+import { useModernCourseStore } from '@/store/modernCourseStore';
+
+// Service Layer
+const courses = await modernCourseService.getCourses();
+
+// Store Integration (with caching, error handling)
+const { courses, loading, error, fetchCourses } = useModernCourseStore();
+
+// ⚠️ Legacy Pattern (Backward compatible, being phased out)
+import { fetchCourses } from '@/services/resources/courseService';
+```
+
+**State Management Integration:**
+- Modern services integrate with Zustand stores via standardized patterns
+- Type-safe hooks with automatic loading states and error handling
+- Intelligent caching with TTL and size limits
+- Optimistic updates and pagination support
 
 ### MVP Browser Testing Strategy
 
