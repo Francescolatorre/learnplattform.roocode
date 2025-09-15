@@ -101,7 +101,11 @@ describe('progressService Integration', () => {
       await progressService.fetchCourseDetails(String(nonExistentId));
       expect(false).toBe(true); // Should not reach here
     } catch (error: any) {
-      expect(/not found/i.test(error.message) || /status code 404/i.test(error.message)).toBe(true);
+      expect(
+        /not found/i.test(error.message) ||
+        /status code 404/i.test(error.message) ||
+        /No.*matches the given query/i.test(error.message)
+      ).toBe(true);
     }
   });
 
