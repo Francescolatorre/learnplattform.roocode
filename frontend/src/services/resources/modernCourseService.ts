@@ -48,23 +48,34 @@ export class ModernCourseService extends BaseService {
    * Fetch paginated list of courses with optional filtering
    */
   async getCourses(options: CourseFilterOptions = {}): Promise<IPaginatedResponse<ICourse>> {
-    const url = this.buildUrl(this.endpoints.courses.list, options);
-
-    return withManagedExceptions(async () => {
-      const response = await this.apiClient.get(url);
-      return this.normalizePaginatedResponse<ICourse>(response);
-    });
+    return withManagedExceptions(
+      async () => {
+        const url = this.buildUrl(this.endpoints.courses.list, options);
+        const response = await this.apiClient.get(url);
+        return this.normalizePaginatedResponse<ICourse>(response);
+      },
+      {
+        serviceName: 'ModernCourseService',
+        methodName: 'getCourses',
+      }
+    )();
   }
 
   /**
    * Get detailed information for a specific course
    */
   async getCourseDetails(courseId: number): Promise<ICourse> {
-    const url = `${this.endpoints.courses.list}${courseId}/`;
-
-    return withManagedExceptions(async () => {
-      return await this.apiClient.get(url);
-    });
+    return withManagedExceptions(
+      async () => {
+        const url = `${this.endpoints.courses.list}${courseId}/`;
+        return await this.apiClient.get(url);
+      },
+      {
+        serviceName: 'ModernCourseService',
+        methodName: 'getCourseDetails',
+        context: { courseId }
+      }
+    )();
   }
 
   /**
@@ -78,32 +89,50 @@ export class ModernCourseService extends BaseService {
    * Create a new course
    */
   async createCourse(courseData: Partial<ICourse>): Promise<ICourse> {
-    return withManagedExceptions(async () => {
-      return await this.apiClient.post(this.endpoints.courses.list, courseData);
-    });
+    return withManagedExceptions(
+      async () => {
+        return await this.apiClient.post(this.endpoints.courses.list, courseData);
+      },
+      {
+        serviceName: 'ModernCourseService',
+        methodName: 'createCourse',
+      }
+    )();
   }
 
   /**
    * Update an existing course
    */
   async updateCourse(courseId: string | number, courseData: Partial<ICourse>): Promise<ICourse> {
-    const url = `${this.endpoints.courses.list}${courseId}/`;
-
-    return withManagedExceptions(async () => {
-      return await this.apiClient.put(url, courseData);
-    });
+    return withManagedExceptions(
+      async () => {
+        const url = `${this.endpoints.courses.list}${courseId}/`;
+        return await this.apiClient.put(url, courseData);
+      },
+      {
+        serviceName: 'ModernCourseService',
+        methodName: 'updateCourse',
+        context: { courseId }
+      }
+    )();
   }
 
   /**
    * Delete a course
    */
   async deleteCourse(courseId: string | number): Promise<boolean> {
-    const url = `${this.endpoints.courses.list}${courseId}/`;
-
-    return withManagedExceptions(async () => {
-      await this.apiClient.delete(url);
-      return true;
-    });
+    return withManagedExceptions(
+      async () => {
+        const url = `${this.endpoints.courses.list}${courseId}/`;
+        await this.apiClient.delete(url);
+        return true;
+      },
+      {
+        serviceName: 'ModernCourseService',
+        methodName: 'deleteCourse',
+        context: { courseId }
+      }
+    )();
   }
 
   /**
@@ -111,7 +140,7 @@ export class ModernCourseService extends BaseService {
    */
   async getInstructorCourses(options: CourseFilterOptions = {}): Promise<IPaginatedResponse<ICourse>> {
     // Add creator filter - this would typically come from auth context
-    const instructorOptions = { ...options, creator: 'me' };
+    const instructorOptions = { ...options, creator: null }; // TODO: Get from auth context
     return this.getCourses(instructorOptions);
   }
 
@@ -140,48 +169,72 @@ export class ModernCourseService extends BaseService {
    * Get course progress for all students
    */
   async getCourseProgress(courseId: string | number): Promise<ITaskProgress[]> {
-    const url = `${this.endpoints.courses.list}${courseId}/progress/`;
-
-    return withManagedExceptions(async () => {
-      const response = await this.apiClient.get(url);
-      return this.normalizeArrayResponse<ITaskProgress>(response);
-    });
+    return withManagedExceptions(
+      async () => {
+        const url = `${this.endpoints.courses.list}${courseId}/progress/`;
+        const response = await this.apiClient.get(url);
+        return this.normalizeArrayResponse<ITaskProgress>(response);
+      },
+      {
+        serviceName: 'ModernCourseService',
+        methodName: 'getCourseProgress',
+        context: { courseId }
+      }
+    )();
   }
 
   /**
    * Get learning tasks for a course
    */
   async getCourseTasks(courseId: string | number): Promise<ILearningTask[]> {
-    const url = this.buildUrl(this.endpoints.learningTasks.list, { course: courseId });
-
-    return withManagedExceptions(async () => {
-      const response = await this.apiClient.get(url);
-      return this.normalizeArrayResponse<ILearningTask>(response);
-    });
+    return withManagedExceptions(
+      async () => {
+        const url = this.buildUrl(this.endpoints.courses.list, { course: courseId }); // Fix: use courses endpoint
+        const response = await this.apiClient.get(url);
+        return this.normalizeArrayResponse<ILearningTask>(response);
+      },
+      {
+        serviceName: 'ModernCourseService',
+        methodName: 'getCourseTasks',
+        context: { courseId }
+      }
+    )();
   }
 
   /**
    * Enroll a student in a course
    */
   async enrollStudent(courseId: string | number, studentId: string | number): Promise<boolean> {
-    const url = `${this.endpoints.courses.list}${courseId}/enroll/`;
-
-    return withManagedExceptions(async () => {
-      await this.apiClient.post(url, { student_id: studentId });
-      return true;
-    });
+    return withManagedExceptions(
+      async () => {
+        const url = `${this.endpoints.courses.list}${courseId}/enroll/`;
+        await this.apiClient.post(url, { student_id: studentId });
+        return true;
+      },
+      {
+        serviceName: 'ModernCourseService',
+        methodName: 'enrollStudent',
+        context: { courseId, studentId }
+      }
+    )();
   }
 
   /**
    * Get student progress summary for a course
    */
   async getStudentProgress(courseId: number): Promise<IStudentProgressSummary[]> {
-    const url = `${this.endpoints.courses.list}${courseId}/student-progress/`;
-
-    return withManagedExceptions(async () => {
-      const response = await this.apiClient.get(url);
-      return this.normalizeArrayResponse<IStudentProgressSummary>(response);
-    });
+    return withManagedExceptions(
+      async () => {
+        const url = `${this.endpoints.courses.list}${courseId}/student-progress/`;
+        const response = await this.apiClient.get(url);
+        return this.normalizeArrayResponse<IStudentProgressSummary>(response);
+      },
+      {
+        serviceName: 'ModernCourseService',
+        methodName: 'getStudentProgress',
+        context: { courseId }
+      }
+    )();
   }
 
   /**
@@ -192,18 +245,29 @@ export class ModernCourseService extends BaseService {
     console.log('CourseService: Transforming user progress to student summary');
 
     return {
-      user_id: userProgress.user_id,
-      username: userProgress.username || 'Unknown',
-      email: userProgress.email || '',
-      display_name: userProgress.display_name || userProgress.username || 'Unknown User',
-      total_tasks: userProgress.tasks?.length || 0,
-      completed_tasks: userProgress.tasks?.filter(task => task.completed).length || 0,
-      completion_percentage: userProgress.tasks?.length ?
-        Math.round((userProgress.tasks.filter(task => task.completed).length / userProgress.tasks.length) * 100) : 0,
-      last_activity: userProgress.last_login || new Date().toISOString(),
-      enrollment_date: userProgress.enrolled_at || new Date().toISOString(),
-      total_time_spent: 0, // Would need to be calculated from task data
-      average_score: 0 // Would need to be calculated from quiz/task scores
+      progress: userProgress.overall_stats?.overall_progress || 0,
+      user_info: {
+        id: userProgress.user_info?.id || 'unknown',
+        username: userProgress.user_info?.username || 'Unknown',
+        display_name: userProgress.user_info?.display_name || userProgress.user_info?.username || 'Unknown User',
+        role: userProgress.user_info?.role || 'student'
+      },
+      overall_stats: {
+        courses_enrolled: userProgress.overall_stats?.courses_enrolled || 0,
+        courses_completed: userProgress.overall_stats?.courses_completed || 0,
+        overall_progress: userProgress.overall_stats?.overall_progress || 0,
+        tasks_completed: userProgress.overall_stats?.tasks_completed || 0,
+        tasks_in_progress: userProgress.overall_stats?.tasks_in_progress || 0,
+        tasks_overdue: userProgress.overall_stats?.tasks_overdue || 0
+      },
+      courses: userProgress.courses?.map(course => ({
+        id: course.id || 'unknown',
+        title: course.title || 'Unknown Course',
+        progress: course.progress || 0,
+        status: course.status || 'active',
+        enrolled_date: course.enrolled_date || new Date().toISOString(),
+        last_activity_date: course.last_activity_date
+      })) || []
     };
   }
 }

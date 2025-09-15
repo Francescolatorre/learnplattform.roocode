@@ -17,7 +17,7 @@ These tasks meet Definition of Ready and can be included in upcoming sprints.
 #### Modern Service Migration (TASK-012 Phase 2)
 | Task ID | Title | Story Points | Assignee | Dependencies |
 |---------|--------|--------------|----------|---------------|
-| TASK-027-B | Modern Service State Integration | 5 | [Unassigned] | TASK-012 complete |
+| TASK-027-B | Modern Service State Integration | 5 | Claude Code | TASK-012 complete |
 | TASK-XXX | Migrate TaskCreation Component to Modern Services | 3 | [Unassigned] | None |
 | TASK-XXX | Migrate CourseDetails Component to Modern Services | 5 | [Unassigned] | None |
 
