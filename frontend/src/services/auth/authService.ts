@@ -33,13 +33,13 @@ const authService = {
    */
   async login(username: string, password: string): Promise<{ access: string; refresh: string }> {
     const response = await apiClient.post('/auth/login/', { username, password }); // Added trailing slash to handle APPEND_SLASH setting
-    if (!response || typeof response !== 'object' || !('data' in response) || !response.data) {
+    if (!response || typeof response !== 'object') {
       throw new Error('Login failed: No response data received from server.');
     }
-    if (!response.data.access || !response.data.refresh) {
+    if (!response.access || !response.refresh) {
       throw new Error('Login failed: Malformed response from server.');
     }
-    return response.data;
+    return response;
   },
 
   /**
@@ -97,18 +97,18 @@ const authService = {
         refresh: refreshToken,
       });
 
-      if (!response || typeof response !== 'object' || !('data' in response) || !response.data) {
+      if (!response || typeof response !== 'object') {
         throw new Error('Token refresh failed: No response data received from server.');
       }
 
-      if (!response.data.access) {
+      if (!response.access) {
         throw new Error('Token refresh failed: Malformed response from server.');
       }
 
       // Update access token in localStorage
-      localStorage.setItem(AUTH_CONFIG.tokenStorageKey, response.data.access);
+      localStorage.setItem(AUTH_CONFIG.tokenStorageKey, response.access);
 
-      return response.data;
+      return response;
     } catch (error: unknown) {
       if (
         typeof error === 'object' &&
@@ -197,27 +197,27 @@ const authService = {
       role: 'student', // Default role, change as needed
     });
 
-    if (!response || typeof response !== 'object' || !('data' in response) || !response.data) {
+    if (!response || typeof response !== 'object') {
       throw new Error('Registration failed: No response data received from server.');
     }
 
     // If registration returns tokens, store them
-    if (response.data.access && response.data.refresh) {
-      localStorage.setItem(AUTH_CONFIG.tokenStorageKey, response.data.access);
-      localStorage.setItem(AUTH_CONFIG.refreshTokenStorageKey, response.data.refresh);
+    if (response.access && response.refresh) {
+      localStorage.setItem(AUTH_CONFIG.tokenStorageKey, response.access);
+      localStorage.setItem(AUTH_CONFIG.refreshTokenStorageKey, response.refresh);
     }
 
-    return response.data;
+    return response;
   },
 
   async requestPasswordReset(email: string): Promise<PasswordResetResponse> {
     const response = await apiClient.post<PasswordResetResponse>('/auth/password-reset/', {
       email,
     });
-    if (!response || typeof response !== 'object' || !('data' in response) || !response.data) {
+    if (!response || typeof response !== 'object') {
       throw new Error('Password reset request failed: No response data received from server.');
     }
-    return response.data;
+    return response;
   },
 
   async resetPassword(token: string, newPassword: string): Promise<PasswordResetResponse> {
@@ -225,10 +225,10 @@ const authService = {
       token,
       new_password: newPassword,
     });
-    if (!response || typeof response !== 'object' || !('data' in response) || !response.data) {
+    if (!response || typeof response !== 'object') {
       throw new Error('Password reset failed: No response data received from server.');
     }
-    return response.data;
+    return response;
   },
 
   /**
@@ -249,11 +249,11 @@ const authService = {
         },
       });
 
-      if (!response || typeof response !== 'object' || !('data' in response) || !response.data) {
+      if (!response || typeof response !== 'object') {
         throw new Error('Get user profile failed: No response data received from server.');
       }
 
-      return response.data;
+      return response;
     } catch (error) {
       console.error('Failed to fetch user profile:', error);
       throw error;
