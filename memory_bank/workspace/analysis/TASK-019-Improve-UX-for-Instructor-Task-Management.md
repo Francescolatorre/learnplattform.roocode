@@ -46,6 +46,8 @@ Design and implement an intuitive, responsive, and efficient user interface for 
 - Optimize rendering performance
 - Support internationalization
 - Implement responsive design
+- **Service Migration**: IN-SCOPE - migrate to modern task and course services
+- Use modern service patterns for improved performance
 
 ## Validation Criteria
 
@@ -77,7 +79,8 @@ Design and implement an intuitive, responsive, and efficient user interface for 
 - Frontend Implementation: 5 story points
 - Performance Optimization: 2 story points
 - Accessibility Testing: 2 story points
-- Total: 12 story points
+- Service Migration (Task + Course services): 2 story points
+- Total: 14 story points (+2 for service migration)
 
 ## Potential Risks
 

@@ -1,0 +1,12 @@
+# P2 - Medium Priority Tasks
+
+Medium priority tasks to be addressed within 2-4 sprints. Should represent 40-50% of total backlog.
+
+## Criteria for P2:
+- Feature enhancements and improvements
+- Moderate usability improvements
+- Technical debt and architecture improvements
+- Non-critical performance optimizations
+- Important documentation gaps
+
+Place P2 task files in this directory.

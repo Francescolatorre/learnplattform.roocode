@@ -71,7 +71,7 @@ describe('authService', () => {
   describe('login', () => {
     it('should post credentials and return tokens', async () => {
       const mockData = { access: 'a', refresh: 'r' };
-      mockPost.mockResolvedValueOnce({ data: mockData });
+      mockPost.mockResolvedValueOnce(mockData);
 
       const result = await authService.login('user', 'pass');
 
@@ -94,7 +94,7 @@ describe('authService', () => {
         return null;
       });
 
-      mockPost.mockResolvedValueOnce({ data: {} });
+      mockPost.mockResolvedValueOnce({});
 
       await authService.logout();
 
@@ -140,7 +140,7 @@ describe('authService', () => {
         return null;
       });
 
-      mockPost.mockResolvedValueOnce({ data: mockData });
+      mockPost.mockResolvedValueOnce(mockData);
 
       const result = await authService.refreshToken();
 
@@ -170,7 +170,7 @@ describe('authService', () => {
   describe('register', () => {
     it('should post registration data and return login response', async () => {
       const mockData = { user: { id: 1, username: 'user' }, access: 'a', refresh: 'r' };
-      mockPost.mockResolvedValueOnce({ data: mockData });
+      mockPost.mockResolvedValueOnce(mockData);
 
       const result = await authService.register('username', 'email', 'password');
 
@@ -196,7 +196,7 @@ describe('authService', () => {
   describe('requestPasswordReset', () => {
     it('should post email and return response', async () => {
       const mockData = { detail: 'sent' };
-      mockPost.mockResolvedValueOnce({ data: mockData });
+      mockPost.mockResolvedValueOnce(mockData);
 
       const result = await authService.requestPasswordReset('mail@example.com');
 
@@ -218,7 +218,7 @@ describe('authService', () => {
   describe('resetPassword', () => {
     it('should post token and new password and return response', async () => {
       const mockData = { detail: 'reset' };
-      mockPost.mockResolvedValueOnce({ data: mockData });
+      mockPost.mockResolvedValueOnce(mockData);
 
       const result = await authService.resetPassword('token', 'newpass');
 
@@ -239,7 +239,7 @@ describe('authService', () => {
   describe('getUserProfile', () => {
     it('should get user profile with access token', async () => {
       const mockData = { id: 1, username: 'user', email: 'user@example.com', role: 'student' };
-      mockGet.mockResolvedValueOnce({ data: mockData });
+      mockGet.mockResolvedValueOnce(mockData);
 
       // Test with provided token
       const result = await authService.getUserProfile('token');

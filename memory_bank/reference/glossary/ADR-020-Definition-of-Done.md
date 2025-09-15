@@ -43,6 +43,13 @@ We establish a comprehensive Definition of Done that must be satisfied before an
 - [ ] **Performance**: Performance requirements met (no degradation without justification)
 - [ ] **Security**: Security best practices followed, no new vulnerabilities introduced
 
+#### Service Layer Architecture (TASK-012 Standards)
+- [ ] **Modern Service Pattern**: New service implementations use ModernApiClient composition pattern (not multiple API instances)
+- [ ] **Migration Compliance**: Service changes follow 3-phase migration strategy maintaining backward compatibility
+- [ ] **Factory Pattern**: Complex service instantiation uses ServiceFactory for dependency injection
+- [ ] **Performance Validation**: Service memory usage and performance improvements validated (target: 80% reduction vs legacy)
+- [ ] **Documentation**: Service implementation documented in `frontend/src/services/README.md` with usage examples
+
 #### Scope Coverage
 - [ ] **Complete Implementation**: ALL affected interfaces/components updated
 - [ ] **UI Navigation Audit**: All features accessible through intended user navigation paths (no zombie features)

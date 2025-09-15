@@ -28,6 +28,8 @@ Focus on advanced UI enhancements for task management, specifically targeting ac
   - Improved task list view with pagination.
   - Accessibility features such as keyboard navigation and screen reader support.
   - Performance optimization for rendering large task lists.
+- **Service Migration**: IN-SCOPE - migrate to modern task services for performance optimization
+- **Service Focus**: Optimize large dataset handling through modern service patterns
 
 ---
 

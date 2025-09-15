@@ -28,11 +28,13 @@ Progress tracking is a critical component of effective learning experiences. It 
   - Task submission interface (from TASK-UI-004)
   - Course navigation components
   - User authentication system
+- **Service Migration:** IN-SCOPE - migrate to modern progress and course services
 - **Technical Constraints:**
   - Must integrate with existing task and submission data models
   - Must be responsive for mobile and desktop use
   - Must meet WCAG 2.1 AA accessibility standards
   - Must support real-time updates when possible
+  - Must use modern service patterns for data fetching
 
 ### Functional Requirements
 
@@ -134,7 +136,8 @@ Progress tracking is a critical component of effective learning experiences. It 
 - Module Progress View: 1 story point
 - Performance Analysis View: 2 story points
 - Activity History View: 1 story point
-- Total: 6 story points
+- Service Migration (Progress + Course services): 2 story points
+- Total: 8 story points (+2 for service migration)
 
 ### Completion Status
 

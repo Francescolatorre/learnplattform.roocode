@@ -5,12 +5,14 @@
 - **Task-ID:** TASK-031
 - **Status:** TODO
 - **Priority:** Medium
-- **Effort:** 5 story points
+- **Effort:** 6 story points (+1 for service integration patterns)
 
 ## Requirements
 
 - Develop stateless UI components using Material UI.
 - Ensure components receive data through props and maintain independence from global state.
+- **Service Migration**: IN-SCOPE - establish modern service integration patterns in components
+- **Service Focus**: Create reusable service integration patterns for data-fetching components
 
 ## Detailed List of Components
 

@@ -1,0 +1,12 @@
+# P1 - High Priority Tasks
+
+High priority tasks to be addressed within 1-2 sprints. Should represent 15-25% of total backlog.
+
+## Criteria for P1:
+- Core feature workflows impaired
+- Significant performance degradation
+- Major usability issues affecting primary use cases
+- High-impact features ready for implementation
+- Tasks blocking other high-priority work
+
+Place P1 task files in this directory.

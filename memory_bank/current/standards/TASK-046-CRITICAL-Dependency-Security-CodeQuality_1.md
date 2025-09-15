@@ -69,7 +69,7 @@ Fix: npm audit fix --force (breaking change)
 ### **Test Stability**
 - [ ] All 9 failing tests pass
 - [ ] React act() warnings eliminated
-- [ ] Missing `getTaskProgressCounts` function implemented/fixed
+- [ ] Missing `getTaskProgressCounts` function implemented/fixed using modern service pattern
 - [ ] Test suite runs clean (0 failures)
 
 ### **Code Quality**
@@ -94,11 +94,12 @@ Fix: npm audit fix --force (breaking change)
 3. Execute `npm audit fix --force` or find alternative solution
 4. Verify syntax highlighting functionality intact
 
-### **Phase 2: Test Fixes (Day 2-3)**
-1. Investigate missing `getTaskProgressCounts` function
-2. Wrap React state updates in act() properly
-3. Fix InstructorCourseDetailsPage component issues
-4. Restore TaskCreation error handling tests
+### **Phase 2: Test Fixes + Service Migration (Day 2-3)**
+1. Implement missing `getTaskProgressCounts` function using modern service pattern
+2. Migrate affected service calls to modern architecture
+3. Wrap React state updates in act() properly
+4. Fix InstructorCourseDetailsPage component issues
+5. Restore TaskCreation error handling tests
 
 ### **Phase 3: Code Quality (Day 4-5)**
 1. Remove unused variables and imports
@@ -149,9 +150,10 @@ Fix: npm audit fix --force (breaking change)
 
 ## TIMELINE
 
-**Estimated Effort**: 3-5 days  
+**Estimated Effort**: 4-6 days (+1 day for service migration)  
 **Priority**: CRITICAL (insert as RANK 2 in Tier 1)  
-**Target Completion**: 2025-09-15  
+**Target Completion**: 2025-09-16  
+**Service Migration**: IN-SCOPE (implement missing functions using modern patterns)  
 
 ---
 
