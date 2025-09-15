@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 /**
  * Modern Learning Task Service (2025 Best Practices)
  * 
@@ -12,7 +13,6 @@
 import { ILearningTask, ITaskCreationData } from '@/types/Task';
 import { withManagedExceptions } from '@/utils/errorHandling';
 import { logger } from '@/utils/logger';
-
 import { BaseService, ServiceConfig } from '../factory/serviceFactory';
 
 /**

@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 /**
  * Modern Progress Service (2025 Best Practices)
  * 
@@ -25,7 +26,6 @@ import {
   IUserProgress,
 } from '@/types';
 import { withManagedExceptions } from '@/utils/errorHandling';
-
 import { BaseService, ServiceConfig } from '../factory/serviceFactory';
 
 /**

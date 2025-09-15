@@ -86,15 +86,19 @@ jobs:
         run: |
           python manage.py runserver 8000 &
           echo "Backend server started"
-          # Wait for server to be ready
-          for i in {1..30}; do
-            if curl -f http://localhost:8000/admin/ > /dev/null 2>&1; then
+          # Wait for server to be ready - check health endpoint and admin
+          for i in {1..45}; do
+            if curl -f http://localhost:8000/health/ > /dev/null 2>&1 && curl -f http://localhost:8000/admin/ > /dev/null 2>&1; then
               echo "Backend server is ready"
+              # Additional wait to ensure all services are fully initialized
+              sleep 3
               break
             fi
-            echo "Waiting for backend server... ($i/30)"
-            sleep 2
+            echo "Waiting for backend server... ($i/45)"
+            sleep 3
           done
+          # Verify server is actually responding
+          curl -f http://localhost:8000/health/ || (echo "Backend health check failed" && exit 1)
 
       - name: Run unit tests
         working-directory: ./frontend

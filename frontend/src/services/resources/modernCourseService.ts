@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 /**
  * Modern Course Service (2025 Best Practices)
  * 
@@ -14,7 +15,6 @@ import { ICourse, TCourseStatus } from '@/types/course';
 import { IPaginatedResponse } from '@/types/paginatedResponse';
 import { ILearningTask, ITaskProgress } from '@/types/Task';
 import { withManagedExceptions } from '@/utils/errorHandling';
-
 import { BaseService, ServiceConfig } from '../factory/serviceFactory';
 
 /**

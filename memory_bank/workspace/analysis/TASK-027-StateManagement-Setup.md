@@ -46,6 +46,12 @@ A robust state management system that efficiently handles the application's stat
 
 Architect
 
+## Service Migration
+
+**Related Ticket**: TASK-027-B (Modern Service Integration with Zustand)  
+**Migration Scope**: SEPARATE TICKET due to complexity  
+**Integration**: Complex service-store patterns require dedicated implementation
+
 ## Notes
 
-Ensure that the state management system is modular and easily extendable to accommodate future requirements.
+Ensure that the state management system is modular and easily extendable to accommodate future requirements. Service integration patterns will be handled in TASK-027-B to maintain separation of concerns.

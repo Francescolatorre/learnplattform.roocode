@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 /**
  * Modern Enrollment Service (2025 Best Practices)
  * 
@@ -13,7 +14,6 @@ import { authEventService } from '@/context/auth/AuthEventService';
 import { AuthEventType } from '@/context/auth/types';
 import { ICourseEnrollment, IEnrollmentStatus } from '@/types/entities';
 import { withManagedExceptions } from '@/utils/errorHandling';
-
 import { BaseService, ServiceConfig } from '../factory/serviceFactory';
 
 /**

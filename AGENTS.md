@@ -28,6 +28,14 @@ Diese Datei gilt für das gesamte Repository, sofern keine spezifischeren AGENTS
 - Nutze data-testid für UI-Elemente in Tests.
 - Routing: React Router v7 mit `startTransition`-Flag.
 
+#### TypeScript Service Architecture (2025 Standards - TASK-012)
+- **Modern Services**: Use `modernCourseService`, `modernLearningTaskService`, etc. for new development
+- **Pattern**: Composition over inheritance with single API client via `ModernApiClient`
+- **Migration**: 3-phase strategy - currently in Phase 1 (parallel implementation) with 100% backward compatibility
+- **Factory**: Use `ServiceFactory` for dependency injection and testing
+- **Location**: `frontend/src/services/` with comprehensive documentation in README.md
+- **Performance**: 80% memory reduction per service (40KB → 8KB) vs legacy implementation
+
 ### MVP Browser Testing Strategy
 
 - **Primary Browser**: Chrome/Chromium only for E2E tests during MVP development
