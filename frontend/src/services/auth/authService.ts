@@ -33,6 +33,13 @@ const authService = {
    */
   async login(username: string, password: string): Promise<{ access: string; refresh: string }> {
     const response = await apiClient.post('/auth/login/', { username, password }); // Added trailing slash to handle APPEND_SLASH setting
+    console.log('Auth login response:', {
+      response,
+      typeOfResponse: typeof response,
+      hasAccess: response && 'access' in response,
+      hasRefresh: response && 'refresh' in response,
+      keys: response ? Object.keys(response) : 'null/undefined'
+    });
     if (!response || typeof response !== 'object') {
       throw new Error('Login failed: No response data received from server.');
     }
