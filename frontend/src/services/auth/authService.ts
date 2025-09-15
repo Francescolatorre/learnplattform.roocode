@@ -33,20 +33,17 @@ const authService = {
    */
   async login(username: string, password: string): Promise<{ access: string; refresh: string }> {
     const response = await apiClient.post('/auth/login/', { username, password }); // Added trailing slash to handle APPEND_SLASH setting
-    console.log('Auth login response:', {
-      response,
-      typeOfResponse: typeof response,
-      hasAccess: response && 'access' in response,
-      hasRefresh: response && 'refresh' in response,
-      keys: response ? Object.keys(response) : 'null/undefined'
-    });
-    if (!response || typeof response !== 'object') {
+
+    // Handle both unit test format (direct data) and integration test format (full Axios response)
+    const data = response && 'data' in response ? response.data : response;
+
+    if (!data || typeof data !== 'object') {
       throw new Error('Login failed: No response data received from server.');
     }
-    if (!response.access || !response.refresh) {
+    if (!data.access || !data.refresh) {
       throw new Error('Login failed: Malformed response from server.');
     }
-    return response;
+    return data;
   },
 
   /**
@@ -104,18 +101,21 @@ const authService = {
         refresh: refreshToken,
       });
 
-      if (!response || typeof response !== 'object') {
+      // Handle both unit test format (direct data) and integration test format (full Axios response)
+      const data = response && 'data' in response ? response.data : response;
+
+      if (!data || typeof data !== 'object') {
         throw new Error('Token refresh failed: No response data received from server.');
       }
 
-      if (!response.access) {
+      if (!data.access) {
         throw new Error('Token refresh failed: Malformed response from server.');
       }
 
       // Update access token in localStorage
-      localStorage.setItem(AUTH_CONFIG.tokenStorageKey, response.access);
+      localStorage.setItem(AUTH_CONFIG.tokenStorageKey, data.access);
 
-      return response;
+      return data;
     } catch (error: unknown) {
       if (
         typeof error === 'object' &&
@@ -204,27 +204,33 @@ const authService = {
       role: 'student', // Default role, change as needed
     });
 
-    if (!response || typeof response !== 'object') {
+    // Handle both unit test format (direct data) and integration test format (full Axios response)
+    const data = response && 'data' in response ? response.data : response;
+
+    if (!data || typeof data !== 'object') {
       throw new Error('Registration failed: No response data received from server.');
     }
 
     // If registration returns tokens, store them
-    if (response.access && response.refresh) {
-      localStorage.setItem(AUTH_CONFIG.tokenStorageKey, response.access);
-      localStorage.setItem(AUTH_CONFIG.refreshTokenStorageKey, response.refresh);
+    if (data.access && data.refresh) {
+      localStorage.setItem(AUTH_CONFIG.tokenStorageKey, data.access);
+      localStorage.setItem(AUTH_CONFIG.refreshTokenStorageKey, data.refresh);
     }
 
-    return response;
+    return data;
   },
 
   async requestPasswordReset(email: string): Promise<PasswordResetResponse> {
     const response = await apiClient.post<PasswordResetResponse>('/auth/password-reset/', {
       email,
     });
-    if (!response || typeof response !== 'object') {
+    // Handle both unit test format (direct data) and integration test format (full Axios response)
+    const data = response && 'data' in response ? response.data : response;
+
+    if (!data || typeof data !== 'object') {
       throw new Error('Password reset request failed: No response data received from server.');
     }
-    return response;
+    return data;
   },
 
   async resetPassword(token: string, newPassword: string): Promise<PasswordResetResponse> {
@@ -232,10 +238,13 @@ const authService = {
       token,
       new_password: newPassword,
     });
-    if (!response || typeof response !== 'object') {
+    // Handle both unit test format (direct data) and integration test format (full Axios response)
+    const data = response && 'data' in response ? response.data : response;
+
+    if (!data || typeof data !== 'object') {
       throw new Error('Password reset failed: No response data received from server.');
     }
-    return response;
+    return data;
   },
 
   /**
@@ -256,11 +265,14 @@ const authService = {
         },
       });
 
-      if (!response || typeof response !== 'object') {
+      // Handle both unit test format (direct data) and integration test format (full Axios response)
+      const data = response && 'data' in response ? response.data : response;
+
+      if (!data || typeof data !== 'object') {
         throw new Error('Get user profile failed: No response data received from server.');
       }
 
-      return response;
+      return data;
     } catch (error) {
       console.error('Failed to fetch user profile:', error);
       throw error;
