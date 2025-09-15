@@ -1,0 +1,12 @@
+# P0 - Critical Priority Tasks
+
+Critical tasks requiring immediate attention. Should represent < 5% of total backlog.
+
+## Criteria for P0:
+- System availability issues
+- Data integrity risks
+- Critical security vulnerabilities
+- Compliance deadlines with legal implications
+- Complete business function blockage
+
+Place P0 task files in this directory.

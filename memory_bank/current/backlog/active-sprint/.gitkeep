@@ -1,0 +1,17 @@
+# Active Sprint
+
+This directory contains files for the current sprint in progress.
+
+## Contents:
+- Sprint planning document (copy from templates/sprint-planning-template.md)
+- Sprint goals and commitments
+- Daily standup notes (optional)
+- Sprint retrospective notes
+- Any sprint-specific documentation
+
+## File Naming Convention:
+- `sprint-XX-planning.md` - Sprint planning document
+- `sprint-XX-retrospective.md` - Sprint retrospective notes
+- `sprint-XX-notes.md` - Any additional sprint notes
+
+Replace XX with the sprint number.

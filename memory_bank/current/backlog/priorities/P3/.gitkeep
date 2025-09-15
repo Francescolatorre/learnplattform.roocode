@@ -1,0 +1,12 @@
+# P3 - Low Priority Tasks
+
+Low priority tasks addressed when convenient. Should represent 25-40% of total backlog.
+
+## Criteria for P3:
+- Future value features
+- Research and proof-of-concept work
+- Minor UI/UX improvements
+- Non-essential optimizations
+- Nice-to-have documentation
+
+Place P3 task files in this directory.

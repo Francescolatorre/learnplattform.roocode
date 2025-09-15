@@ -1,175 +1,162 @@
-# EPIC-XXX: [Major Feature/Initiative Name]
+# Epic Template
 
-## Epic Metadata
-- **Epic ID:** EPIC-XXX
-- **Type:** Epic
-- **Priority:** [P0/P1/P2/P3]
-- **Status:** [Planning/In Progress/Review/Complete/On Hold]
-- **Target Release:** [Release version or date]
-- **Epic Owner:** [Product owner or lead]
-- **Created:** [YYYY-MM-DD]
-- **Updated:** [YYYY-MM-DD]
+**ID:** EPIC-XXX
+**Title:** [Epic name - business capability or major feature]
+**Priority:** [P0 | P1 | P2 | P3]
+**Status:** [Planning | In Progress | Done | On Hold]
+**Target Quarter:** [Q1 2025 | Q2 2025 | etc.]
 
 ## Epic Overview
-**Vision:** [High-level description of what this epic will achieve]
+### Business Problem
+[What business problem does this epic solve? Why is it important?]
 
-**Business Objective:** [Why this epic is important to the Learning Platform]
+### Business Value
+[What value will this deliver? How will success be measured?]
 
-**Success Metrics:** [How success will be measured]
-- **Metric 1:** [Quantifiable success measure]
-- **Metric 2:** [Quantifiable success measure]
-- **Metric 3:** [Quantifiable success measure]
+### Target Users
+[Who will benefit from this epic? Primary and secondary users.]
 
-## User Value Proposition
-**Primary Users:** [Student/Instructor/Admin/All]
+## Epic Goals
+- [ ] [Specific, measurable goal 1]
+- [ ] [Specific, measurable goal 2]
+- [ ] [Specific, measurable goal 3]
 
-**Value Statement:** [Clear statement of value this epic provides]
+## Success Metrics
+- **Primary Metric:** [Key measure of success]
+- **Secondary Metrics:** [Additional measures]
+- **Baseline:** [Current state measurements]
+- **Target:** [Desired improvement]
 
-**User Journey Impact:** [How this epic improves the overall user experience]
+## User Stories (High Level)
+1. **As a** [user type], **I want to** [capability], **so that** [benefit]
+2. **As a** [user type], **I want to** [capability], **so that** [benefit]
+3. **As a** [user type], **I want to** [capability], **so that** [benefit]
 
-## Scope and Requirements
+## Architecture Impact Assessment
+### Services Affected
+- [ ] Course Management
+- [ ] Learning Task System
+- [ ] User Enrollment
+- [ ] Progress Tracking
+- [ ] Authentication
+- [ ] Notifications
 
+### Technology Stack Impact
+- **Backend:** [Django changes required]
+- **Frontend:** [React/TypeScript changes required]
+- **Database:** [Schema changes, new tables]
+- **Modern Services:** [New services to create/modify]
+
+### Performance Considerations
+- [Load impact assessment]
+- [Scalability requirements]
+- [Performance targets]
+
+## Dependencies
+### External Dependencies
+- [Third-party integrations]
+- [Infrastructure requirements]
+- [Compliance requirements]
+
+### Internal Dependencies
+- [Other epics or major features]
+- [Platform capabilities needed]
+- [Team dependencies]
+
+## Scope Definition
 ### In Scope
-- [Major capability 1]
-- [Major capability 2]
-- [Major capability 3]
+- [Clearly defined capabilities included]
+- [Specific features and functionality]
 
 ### Out of Scope
-- [What is explicitly not included]
+- [Explicitly excluded items]
 - [Future considerations]
 - [Nice-to-have features for later]
 
-### Acceptance Criteria for Epic
-- [ ] **Epic Criterion 1:** [High-level acceptance criterion]
-- [ ] **Epic Criterion 2:** [High-level acceptance criterion]
-- [ ] **Epic Criterion 3:** [High-level acceptance criterion]
-
-## Learning Platform Integration
-
-### Architecture Impact
-- **Frontend Components:** [Major component areas affected]
-- **Backend Services:** [Service areas requiring changes]
-- **Database:** [Data model impacts]
-- **Modern Service Migration:** [Alignment with TASK-012 Phase 2]
-
-### User Role Integration
-- **Student Experience:** [How students will benefit]
-- **Instructor Experience:** [How instructors will benefit]
-- **Admin Experience:** [How administrators will benefit]
-
-### Performance and Scalability
-- **Performance Goals:** [Response time and throughput requirements]
-- **Scalability Requirements:** [User load and data volume considerations]
-- **Technical Constraints:** [Technology limitations to consider]
-
-## Epic Breakdown
-
-### Phase 1: Foundation (Sprint X-Y)
-**Objective:** [What this phase accomplishes]
-- [ ] **TASK-XXX:** [Foundation task 1]
-- [ ] **TASK-XXX:** [Foundation task 2]
-- [ ] **TASK-XXX:** [Foundation task 3]
-
-### Phase 2: Core Features (Sprint Y-Z)
-**Objective:** [What this phase accomplishes]
-- [ ] **TASK-XXX:** [Core feature task 1]
-- [ ] **TASK-XXX:** [Core feature task 2]
-- [ ] **TASK-XXX:** [Core feature task 3]
-
-### Phase 3: Enhancement and Polish (Sprint Z-A)
-**Objective:** [What this phase accomplishes]
-- [ ] **TASK-XXX:** [Enhancement task 1]
-- [ ] **TASK-XXX:** [Enhancement task 2]
-- [ ] **TASK-XXX:** [Enhancement task 3]
-
-## Dependencies and Constraints
-
-### Epic Dependencies
-- **Prerequisite Epics:** [Other epics that must complete first]
-- **Parallel Epics:** [Epics running concurrently that may interact]
-- **Blocking Dependencies:** [External factors that could delay this epic]
-
-### Technical Constraints
-- **Technology Limitations:** [Current tech stack constraints]
-- **Integration Requirements:** [Required third-party integrations]
-- **Security Requirements:** [Security considerations and compliance needs]
-
-### Resource Constraints
-- **Team Capacity:** [Development team availability]
-- **Budget Constraints:** [Financial limitations]
-- **Timeline Constraints:** [Hard deadlines or commitments]
-
 ## Risk Assessment
+### High Risks
+- **Risk:** [Description]
+  - **Impact:** [Business/technical impact]
+  - **Probability:** [High/Medium/Low]
+  - **Mitigation:** [Prevention strategy]
 
-### High-Risk Areas
-| Risk | Probability | Impact | Mitigation Strategy |
-|------|-------------|---------|-------------------|
-| [Risk description] | [High/Medium/Low] | [High/Medium/Low] | [How to mitigate] |
+### Medium Risks
+- **Risk:** [Description]
+  - **Impact:** [Business/technical impact]
+  - **Probability:** [High/Medium/Low]
+  - **Mitigation:** [Prevention strategy]
 
-### Technical Risks
-- **Risk 1:** [Technical challenge and mitigation]
-- **Risk 2:** [Technical challenge and mitigation]
+## Effort Estimation
+### High-Level Sizing
+- **Total Story Points:** [Estimated range]
+- **Development Sprints:** [Estimated sprints needed]
+- **Team Members:** [Number of developers needed]
 
-### Business Risks
-- **Risk 1:** [Business challenge and mitigation]
-- **Risk 2:** [Business challenge and mitigation]
+### Resource Requirements
+- **Frontend Development:** [Person-sprints]
+- **Backend Development:** [Person-sprints]
+- **Testing:** [Person-sprints]
+- **DevOps/Infrastructure:** [Person-sprints]
 
-## Success Criteria and Testing
+## Implementation Strategy
+### Phase 1: Foundation
+- [Core infrastructure tasks]
+- [Basic functionality]
 
-### Epic-Level Testing Strategy
-- **Integration Testing:** [Cross-component testing approach]
-- **User Acceptance Testing:** [How UAT will be conducted]
-- **Performance Testing:** [Load and stress testing plans]
-- **Security Testing:** [Security validation approach]
+### Phase 2: Core Features
+- [Main feature implementation]
+- [Primary user flows]
 
-### Release Criteria
-- [ ] All tasks in epic completed
-- [ ] Epic acceptance criteria validated
-- [ ] Performance benchmarks met
+### Phase 3: Enhancement
+- [Advanced features]
+- [Performance optimization]
+- [User experience polish]
+
+## Acceptance Criteria (Epic Level)
+- [ ] All user stories completed and accepted
+- [ ] Success metrics targets achieved
+- [ ] Performance requirements met
 - [ ] Security requirements satisfied
-- [ ] User documentation complete
-- [ ] Training materials prepared (if needed)
+- [ ] Documentation complete
+- [ ] Training materials created
+
+## Related Tasks
+### Must Have (P0/P1)
+- [ ] TASK-XXX: [Critical task description]
+- [ ] TASK-XXX: [Critical task description]
+
+### Should Have (P2)
+- [ ] TASK-XXX: [Important task description]
+- [ ] TASK-XXX: [Important task description]
+
+### Could Have (P3)
+- [ ] TASK-XXX: [Nice to have task description]
+
+## Assumptions
+- [Business assumptions]
+- [Technical assumptions]
+- [Resource assumptions]
+
+## Constraints
+- [Time constraints]
+- [Resource constraints]
+- [Technical constraints]
+- [Regulatory constraints]
 
 ## Communication Plan
+### Stakeholders
+- **Business Owner:** [Name and involvement]
+- **Product Manager:** [Name and involvement]
+- **Technical Lead:** [Name and involvement]
+- **Development Team:** [Names and roles]
 
-### Stakeholder Updates
-- **Weekly Updates:** [Who receives progress updates]
-- **Milestone Reviews:** [Formal review points and attendees]
-- **Issue Escalation:** [Process for addressing blockers]
-
-### User Communication
-- **Feature Announcements:** [How users will be informed]
-- **Training Plans:** [User education and support]
-- **Feedback Collection:** [How user feedback will be gathered]
-
-## Related Documentation
-- **Design Documents:** [Links to mockups, user flows, wireframes]
-- **Technical Specifications:** [Architecture decisions, API specs]
-- **Research and Analysis:** [User research, competitive analysis]
-- **Compliance Documentation:** [Security, privacy, accessibility requirements]
+### Review Schedule
+- **Weekly Updates:** [Day and time]
+- **Sprint Reviews:** [Schedule]
+- **Stakeholder Demos:** [Frequency]
 
 ---
-
-## Epic Progress Tracking
-
-### Overall Progress
-**Completion Status:** [X]% complete ([Y] of [Z] tasks completed)
-
-**Current Phase:** [Phase name and status]
-
-**Next Milestone:** [Upcoming milestone and target date]
-
-### Sprint Progress
-| Sprint | Tasks Planned | Tasks Completed | Sprint Goal Status |
-|--------|---------------|-----------------|-------------------|
-| Sprint X | [Count] | [Count] | [On Track/At Risk/Delayed] |
-
-### Issue Log
-| Date | Issue | Impact | Resolution | Status |
-|------|-------|--------|------------|---------|
-| YYYY-MM-DD | [Issue description] | [High/Medium/Low] | [Resolution plan] | [Open/Resolved] |
-
-### Milestone History
-| Milestone | Target Date | Actual Date | Status | Notes |
-|-----------|-------------|-------------|--------|-------|
-| [Milestone 1] | YYYY-MM-DD | YYYY-MM-DD | [Complete/In Progress/Delayed] | [Notes] |
+**Created:** [Date]
+**Created By:** [Product Manager/Tech Lead]
+**Last Updated:** [Date]
+**Next Review:** [Date]
