@@ -1,7 +1,7 @@
 /* eslint-disable import/order */
 /**
  * Modern Course Service (2025 Best Practices)
- * 
+ *
  * Demonstrates the improved architecture:
  * - Composition over inheritance
  * - Single API client instance
@@ -32,7 +32,7 @@ export interface CourseFilterOptions {
 
 /**
  * Modern Course Service implementation
- * 
+ *
  * Key improvements:
  * - Single API client (composition over multiple instances)
  * - Cleaner method signatures with better type inference
@@ -48,275 +48,162 @@ export class ModernCourseService extends BaseService {
    * Fetch paginated list of courses with optional filtering
    */
   async getCourses(options: CourseFilterOptions = {}): Promise<IPaginatedResponse<ICourse>> {
-    return withManagedExceptions(
-      async () => {
-        const url = this.buildUrl(this.endpoints.courses.list, options);
-        const response = await this.apiClient.get(url);
-        return this.normalizePaginatedResponse<ICourse>(response);
-      },
-      {
-        serviceName: 'ModernCourseService',
-        methodName: 'getCourses',
-      }
-    )();
+    const url = this.buildUrl(this.endpoints.courses.list, options);
+
+    return withManagedExceptions(async () => {
+      const response = await this.apiClient.get(url);
+      return this.normalizePaginatedResponse<ICourse>(response);
+    });
   }
 
   /**
    * Get detailed information for a specific course
    */
-  async getCourseById(courseId: string): Promise<ICourse> {
-    return withManagedExceptions(
-      async () => {
-        const response = await this.apiClient.get<ICourse>(
-          this.endpoints.courses.details(courseId)
-        );
-        
-        if (!response) {
-          throw new Error(`Course with ID ${courseId} not found`);
-        }
-        
-        return response;
-      },
-      {
-        serviceName: 'ModernCourseService',
-        methodName: 'getCourseById',
-      }
-    )();
+  async getCourseDetails(courseId: number): Promise<ICourse> {
+    const url = `${this.endpoints.courses.list}${courseId}/`;
+
+    return withManagedExceptions(async () => {
+      return await this.apiClient.get(url);
+    });
+  }
+
+  /**
+   * Get course by ID (alias for getCourseDetails for backward compatibility)
+   */
+  async getCourseById(courseId: string | number): Promise<ICourse> {
+    return this.getCourseDetails(Number(courseId));
   }
 
   /**
    * Create a new course
    */
   async createCourse(courseData: Partial<ICourse>): Promise<ICourse> {
-    return withManagedExceptions(
-      async () => {
-        return this.apiClient.post<ICourse>(
-          this.endpoints.courses.create,
-          courseData
-        );
-      },
-      {
-        serviceName: 'ModernCourseService',
-        methodName: 'createCourse',
-      }
-    )();
+    return withManagedExceptions(async () => {
+      return await this.apiClient.post(this.endpoints.courses.list, courseData);
+    });
   }
 
   /**
    * Update an existing course
    */
-  async updateCourse(courseId: string, courseData: Partial<ICourse>): Promise<ICourse> {
-    return withManagedExceptions(
-      async () => {
-        return this.apiClient.patch<ICourse>(
-          this.endpoints.courses.update(courseId),
-          courseData
-        );
-      },
-      {
-        serviceName: 'ModernCourseService',
-        methodName: 'updateCourse',
-      }
-    )();
+  async updateCourse(courseId: string | number, courseData: Partial<ICourse>): Promise<ICourse> {
+    const url = `${this.endpoints.courses.list}${courseId}/`;
+
+    return withManagedExceptions(async () => {
+      return await this.apiClient.put(url, courseData);
+    });
   }
 
   /**
    * Delete a course
    */
-  async deleteCourse(courseId: string): Promise<void> {
-    return withManagedExceptions(
-      async () => {
-        await this.apiClient.delete<void>(
-          this.endpoints.courses.delete(courseId)
-        );
-      },
-      {
-        serviceName: 'ModernCourseService',
-        methodName: 'deleteCourse',
-      }
-    )();
+  async deleteCourse(courseId: string | number): Promise<boolean> {
+    const url = `${this.endpoints.courses.list}${courseId}/`;
+
+    return withManagedExceptions(async () => {
+      await this.apiClient.delete(url);
+      return true;
+    });
   }
 
   /**
-   * Get courses where current user is instructor
+   * Get courses for instructor (filtered by creator)
    */
   async getInstructorCourses(options: CourseFilterOptions = {}): Promise<IPaginatedResponse<ICourse>> {
-    return withManagedExceptions(
-      async () => {
-        const url = this.buildUrl(this.endpoints.courses.instructorCourses, options);
-        const response = await this.apiClient.get(url);
-        return this.normalizePaginatedResponse<ICourse>(response);
-      },
-      {
-        serviceName: 'ModernCourseService',
-        methodName: 'getInstructorCourses',
-      }
-    )();
+    // Add creator filter - this would typically come from auth context
+    const instructorOptions = { ...options, creator: 'me' };
+    return this.getCourses(instructorOptions);
   }
 
   /**
    * Update course status
    */
-  async updateCourseStatus(courseId: string, status: TCourseStatus): Promise<ICourse> {
-    return withManagedExceptions(
-      async () => {
-        return this.apiClient.patch<ICourse>(
-          this.endpoints.courses.updateStatus(courseId),
-          { status }
-        );
-      },
-      {
-        serviceName: 'ModernCourseService',
-        methodName: 'updateCourseStatus',
-      }
-    )();
+  async updateCourseStatus(courseId: string | number, status: TCourseStatus): Promise<ICourse> {
+    return this.updateCourse(courseId, { status });
   }
 
   /**
    * Archive a course
    */
-  async archiveCourse(courseId: string): Promise<ICourse> {
+  async archiveCourse(courseId: string | number): Promise<ICourse> {
     return this.updateCourseStatus(courseId, 'archived');
   }
 
   /**
    * Publish a course
    */
-  async publishCourse(courseId: string): Promise<ICourse> {
+  async publishCourse(courseId: string | number): Promise<ICourse> {
     return this.updateCourseStatus(courseId, 'published');
   }
 
   /**
-   * Get course progress for current user
+   * Get course progress for all students
    */
-  async getCourseProgress(courseId: string): Promise<ITaskProgress[]> {
-    return withManagedExceptions(
-      async () => {
-        const response = await this.apiClient.get(
-          this.endpoints.courses.progress(courseId)
-        );
-        return this.normalizeArrayResponse<ITaskProgress>(response);
-      },
-      {
-        serviceName: 'ModernCourseService',
-        methodName: 'getCourseProgress',
-      }
-    )();
+  async getCourseProgress(courseId: string | number): Promise<ITaskProgress[]> {
+    const url = `${this.endpoints.courses.list}${courseId}/progress/`;
+
+    return withManagedExceptions(async () => {
+      const response = await this.apiClient.get(url);
+      return this.normalizeArrayResponse<ITaskProgress>(response);
+    });
   }
 
   /**
    * Get learning tasks for a course
    */
-  async getCourseTasks(courseId: string): Promise<IPaginatedResponse<ILearningTask>> {
-    return withManagedExceptions(
-      async () => {
-        const response = await this.apiClient.get(
-          this.endpoints.tasks.byCourse(courseId)
-        );
-        return this.normalizePaginatedResponse<ILearningTask>(response);
-      },
-      {
-        serviceName: 'ModernCourseService',
-        methodName: 'getCourseTasks',
-      }
-    )();
+  async getCourseTasks(courseId: string | number): Promise<ILearningTask[]> {
+    const url = this.buildUrl(this.endpoints.learningTasks.list, { course: courseId });
+
+    return withManagedExceptions(async () => {
+      const response = await this.apiClient.get(url);
+      return this.normalizeArrayResponse<ILearningTask>(response);
+    });
   }
 
   /**
-   * Enroll student in course
+   * Enroll a student in a course
    */
-  async enrollStudent(courseId: string | number, studentId: string | number): Promise<unknown> {
-    return withManagedExceptions(
-      async () => {
-        const enrollmentData = { 
-          course: courseId, 
-          student: studentId 
-        };
-        return this.apiClient.post(
-          this.endpoints.enrollments.create,
-          enrollmentData
-        );
-      },
-      {
-        serviceName: 'ModernCourseService',
-        methodName: 'enrollStudent',
-      }
-    )();
+  async enrollStudent(courseId: string | number, studentId: string | number): Promise<boolean> {
+    const url = `${this.endpoints.courses.list}${courseId}/enroll/`;
+
+    return withManagedExceptions(async () => {
+      await this.apiClient.post(url, { student_id: studentId });
+      return true;
+    });
   }
 
   /**
-   * Transform user progress to student summary
-   * (Utility method - could be moved to a separate utility class)
+   * Get student progress summary for a course
    */
-  transformUserProgressToStudentSummary(progress: IUserProgress): IStudentProgressSummary {
+  async getStudentProgress(courseId: number): Promise<IStudentProgressSummary[]> {
+    const url = `${this.endpoints.courses.list}${courseId}/student-progress/`;
+
+    return withManagedExceptions(async () => {
+      const response = await this.apiClient.get(url);
+      return this.normalizeArrayResponse<IStudentProgressSummary>(response);
+    });
+  }
+
+  /**
+   * Transform user progress data to student progress summary
+   * This utility method helps with data transformation patterns
+   */
+  transformUserProgressToStudentSummary(userProgress: IUserProgress): IStudentProgressSummary {
+    console.log('CourseService: Transforming user progress to student summary');
+
     return {
-      progress: progress.percentage,
-      user_info: {
-        id: progress.id.toString(),
-        username: progress.label,
-        display_name: progress.label,
-        role: 'student',
-      },
-      overall_stats: {
-        courses_enrolled: 1,
-        courses_completed: 0,
-        overall_progress: progress.percentage,
-        tasks_completed: 0,
-        tasks_in_progress: 0,
-        tasks_overdue: 0,
-      },
-      courses: [
-        {
-          id: progress.id.toString(),
-          title: progress.label,
-          progress: progress.percentage,
-          status: 'active',
-          enrolled_date: new Date().toISOString(),
-          last_activity_date: new Date().toISOString(),
-        },
-      ],
+      user_id: userProgress.user_id,
+      username: userProgress.username || 'Unknown',
+      email: userProgress.email || '',
+      display_name: userProgress.display_name || userProgress.username || 'Unknown User',
+      total_tasks: userProgress.tasks?.length || 0,
+      completed_tasks: userProgress.tasks?.filter(task => task.completed).length || 0,
+      completion_percentage: userProgress.tasks?.length ?
+        Math.round((userProgress.tasks.filter(task => task.completed).length / userProgress.tasks.length) * 100) : 0,
+      last_activity: userProgress.last_login || new Date().toISOString(),
+      enrollment_date: userProgress.enrolled_at || new Date().toISOString(),
+      total_time_spent: 0, // Would need to be calculated from task data
+      average_score: 0 // Would need to be calculated from quiz/task scores
     };
   }
 }
-
-// Create singleton instance using the factory
-import { ServiceFactory } from '../factory/serviceFactory';
-const serviceFactory = ServiceFactory.getInstance();
-export const modernCourseService = serviceFactory.getService(ModernCourseService);
-
-// Backward compatibility exports (to be deprecated)
-export const fetchCourses = (options?: CourseFilterOptions) => 
-  modernCourseService.getCourses(options);
-
-export const getCourseDetails = (courseId: string) => 
-  modernCourseService.getCourseById(courseId);
-
-export const createCourse = (courseData: Partial<ICourse>) => 
-  modernCourseService.createCourse(courseData);
-
-export const updateCourse = (courseId: string, courseData: Partial<ICourse>) => 
-  modernCourseService.updateCourse(courseId, courseData);
-
-export const deleteCourse = (courseId: string) => 
-  modernCourseService.deleteCourse(courseId);
-
-export const fetchInstructorCourses = (options?: CourseFilterOptions) => 
-  modernCourseService.getInstructorCourses(options);
-
-export const updateCourseStatus = (courseId: string, status: TCourseStatus) => 
-  modernCourseService.updateCourseStatus(courseId, status);
-
-export const archiveCourse = (courseId: string) => 
-  modernCourseService.archiveCourse(courseId);
-
-export const publishCourse = (courseId: string) => 
-  modernCourseService.publishCourse(courseId);
-
-export const fetchCourseProgress = (courseId: string) => 
-  modernCourseService.getCourseProgress(courseId);
-
-export const getCourseTasks = (courseId: string) => 
-  modernCourseService.getCourseTasks(courseId);
-
-export const enrollStudent = (courseId: string | number, studentId: string | number) => 
-  modernCourseService.enrollStudent(courseId, studentId);
