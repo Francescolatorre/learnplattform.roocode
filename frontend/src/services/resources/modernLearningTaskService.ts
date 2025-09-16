@@ -1,13 +1,40 @@
 /* eslint-disable import/order */
 /**
  * Modern Learning Task Service (2025 Best Practices)
- * 
- * Key improvements over the original implementation:
- * - Single API client using composition
+ *
+ * Provides comprehensive task management functionality for the learning platform
+ * with modern TypeScript patterns and improved architecture.
+ *
+ * ## Key Features
+ * - Task CRUD operations with type safety
+ * - File upload handling with progress tracking
+ * - Submission management with status tracking
+ * - Integration with ServiceFactory for dependency injection
+ * - Comprehensive error handling with managed exceptions
+ *
+ * ## Architecture Improvements
+ * - Single API client using composition over inheritance
  * - Cleaner method signatures with better type inference
- * - Functional approach with minimal state
- * - Better error handling patterns
- * - Simplified FormData handling
+ * - Functional approach with minimal state management
+ * - Standardized error handling patterns
+ * - Simplified FormData handling for file uploads
+ *
+ * ## Usage Examples
+ * ```typescript
+ * // Get all tasks for a course
+ * const tasks = await modernLearningTaskService.getAllTasks({ course: courseId });
+ *
+ * // Create a new task
+ * const newTask = await modernLearningTaskService.createTask(taskData);
+ *
+ * // Submit task with file
+ * const submission = await modernLearningTaskService.submitTask(taskId, submissionData);
+ * ```
+ *
+ * @see ServiceFactory For service instantiation and dependency injection
+ * @see BaseService For shared service functionality
+ * @see ILearningTask For task data structure
+ * @since 2025-09-15 (TASK-012 Modern Service Architecture)
  */
 
 import { ILearningTask, ITaskCreationData } from '@/types/Task';

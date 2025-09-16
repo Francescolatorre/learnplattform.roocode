@@ -1,13 +1,49 @@
 /* eslint-disable import/order */
 /**
  * Modern Progress Service (2025 Best Practices)
- * 
- * Key improvements:
- * - Single API client using composition
- * - Better error handling patterns  
- * - Cleaner method signatures
- * - Functional approach with minimal state
- * - Simplified response handling
+ *
+ * Comprehensive progress tracking and analytics service for the learning platform
+ * with modern TypeScript architecture and optimized data handling.
+ *
+ * ## Key Features
+ * - Student progress tracking across courses and tasks
+ * - Dashboard data aggregation and analytics
+ * - Quiz attempt monitoring and analysis
+ * - Course structure analytics for instructors
+ * - Task submission and grading workflow management
+ *
+ * ## Architecture Improvements
+ * - Single API client using composition over inheritance
+ * - Better error handling with managed exceptions
+ * - Cleaner method signatures with improved type safety
+ * - Functional approach with minimal state management
+ * - Simplified response handling and data normalization
+ *
+ * ## Usage Examples
+ * ```typescript
+ * // Get student progress summary
+ * const progress = await modernProgressService.getStudentProgressByUser(studentId);
+ *
+ * // Get dashboard data
+ * const dashboard = await modernProgressService.getDashboardData();
+ *
+ * // Submit task progress
+ * await modernProgressService.submitTaskProgress(taskId, progressData);
+ *
+ * // Get instructor analytics
+ * const analytics = await modernProgressService.getInstructorDashboardData();
+ * ```
+ *
+ * ## Data Types
+ * This service handles multiple complex data structures for comprehensive
+ * progress tracking including user progress, task submissions, quiz attempts,
+ * and analytical summaries.
+ *
+ * @see IUserProgress For user progress data structure
+ * @see ITaskProgress For task-specific progress tracking
+ * @see IDashboardResponse For dashboard data aggregation
+ * @see IInstructorDashboardData For instructor analytics
+ * @since 2025-09-15 (TASK-012 Modern Service Architecture)
  */
 
 import {

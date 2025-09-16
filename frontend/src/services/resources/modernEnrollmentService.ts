@@ -1,13 +1,44 @@
 /* eslint-disable import/order */
 /**
  * Modern Enrollment Service (2025 Best Practices)
- * 
- * Key improvements:
- * - Single API client using composition
- * - Simplified authentication handling
- * - Better error handling patterns
- * - Cleaner separation of concerns
- * - Reduced complexity and state management
+ *
+ * Manages student enrollment operations with modern TypeScript architecture
+ * and integrated authentication handling.
+ *
+ * ## Key Features
+ * - Course enrollment and unenrollment operations
+ * - Enrollment status tracking and management
+ * - User profile caching for performance optimization
+ * - Integration with AuthEventService for real-time updates
+ * - Comprehensive enrollment analytics and reporting
+ *
+ * ## Architecture Improvements
+ * - Single API client using composition over inheritance
+ * - Simplified authentication event handling
+ * - Better error handling with managed exceptions
+ * - Cleaner separation of concerns between auth and enrollment
+ * - Reduced complexity and optimized state management
+ *
+ * ## Usage Examples
+ * ```typescript
+ * // Enroll student in course
+ * const response = await modernEnrollmentService.enrollInCourse(courseId);
+ *
+ * // Get enrollment status
+ * const status = await modernEnrollmentService.getEnrollmentStatus(courseId);
+ *
+ * // Get all user enrollments
+ * const enrollments = await modernEnrollmentService.getEnrollments();
+ * ```
+ *
+ * ## Authentication Integration
+ * This service automatically handles authentication state changes and
+ * invalidates relevant caches when user context changes.
+ *
+ * @see AuthEventService For authentication event handling
+ * @see ICourseEnrollment For enrollment data structure
+ * @see IEnrollmentStatus For status tracking
+ * @since 2025-09-15 (TASK-012 Modern Service Architecture)
  */
 
 import { authEventService } from '@/context/auth/AuthEventService';
