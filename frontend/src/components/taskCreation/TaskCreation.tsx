@@ -13,7 +13,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import React, { useState, useEffect, useRef } from 'react';
 
 import useNotification from '@/components/Notifications/useNotification';
-import { createTask, updateTask } from '@/services/resources/learningTaskService';
+import { modernLearningTaskService } from '@/services/resources/modernLearningTaskService';
 import { ILearningTask } from '@/types/Task';
 
 import MarkdownEditor from '../shared/MarkdownEditor';
@@ -147,10 +147,10 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
         };
 
         if (isEditing && formData.id) {
-          await updateTask(String(formData.id), taskData);
+          await modernLearningTaskService.updateTask(String(formData.id), taskData);
           notify('Task updated successfully', 'success');
         } else {
-          await createTask(taskData);
+          await modernLearningTaskService.createTask(taskData);
           notify('Task created successfully', 'success');
         }
 
