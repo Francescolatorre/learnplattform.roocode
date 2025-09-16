@@ -32,10 +32,12 @@ vi.mock('@/components/Notifications/useNotification', () => {
     default: () => mockNotify,
   };
 });
-// Mock learning task service
-vi.mock('@/services/resources/learningTaskService', () => ({
-  createTask: vi.fn().mockResolvedValue({ id: 1, title: 'Test Task' }),
-  updateTask: vi.fn().mockResolvedValue({ id: 1, title: 'Updated Task' }),
+// Mock modern learning task service
+vi.mock('@/services/resources/modernLearningTaskService', () => ({
+  modernLearningTaskService: {
+    createTask: vi.fn().mockResolvedValue({ id: 1, title: 'Test Task' }),
+    updateTask: vi.fn().mockResolvedValue({ id: 1, title: 'Updated Task' }),
+  },
 }));
 /**
  * By default, mock MarkdownRenderer to avoid highlight.js/react-markdown issues in test env.
