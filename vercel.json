@@ -1,0 +1,49 @@
+{
+  "version": 2,
+  "name": "learning-platform",
+  "framework": "vite",
+  "buildCommand": "cd frontend && npm run build",
+  "outputDirectory": "frontend/dist",
+  "installCommand": "cd frontend && npm ci",
+  "functions": {
+    "backend/manage.py": {
+      "runtime": "python3.11"
+    }
+  },
+  "env": {
+    "VITE_API_BASE_URL": "@vite_api_base_url",
+    "DATABASE_URL": "@database_url",
+    "SECRET_KEY": "@secret_key",
+    "DEBUG": "false",
+    "ALLOWED_HOSTS": "@allowed_hosts",
+    "CORS_ALLOWED_ORIGINS": "@cors_allowed_origins"
+  },
+  "build": {
+    "env": {
+      "VITE_API_BASE_URL": "@vite_api_base_url"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/backend/manage.py/$1"
+    },
+    {
+      "src": "/admin/(.*)",
+      "dest": "/backend/manage.py/admin/$1"
+    },
+    {
+      "src": "/health",
+      "dest": "/backend/manage.py/health/"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/dist/$1"
+    }
+  ],
+  "regions": ["iad1"],
+  "github": {
+    "enabled": true,
+    "autoAlias": true
+  }
+}

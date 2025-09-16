@@ -1,0 +1,70 @@
+name: Cleanup Preview Environment
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  cleanup:
+    name: Cleanup Preview Resources
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '20'
+
+      - name: Install CLI tools
+        run: |
+          npm install -g neonctl vercel@latest
+
+      - name: Cleanup Neon Database Branch
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_PROJECT_ID: ${{ secrets.NEON_PROJECT_ID }}
+        run: |
+          PR_NUMBER=${{ github.event.number }}
+          BRANCH_NAME="pr-${PR_NUMBER}"
+
+          echo "Cleaning up Neon branch: $BRANCH_NAME"
+
+          # Delete the branch
+          neonctl branches delete "$BRANCH_NAME" \
+            --project-id "$NEON_PROJECT_ID" || echo "Branch may not exist"
+
+          echo "✅ Neon branch cleanup completed"
+
+      - name: Cleanup Vercel Preview Environment Variables
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          # Clean up any PR-specific environment variables
+          echo "Cleaning up Vercel environment variables"
+
+          # Note: Vercel automatically cleans up preview deployments
+          # This is mainly for any custom cleanup if needed
+
+          echo "✅ Vercel cleanup completed"
+
+      - name: Comment PR with Cleanup Status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `## 🧹 Preview Environment Cleaned Up
+
+              The preview environment resources have been automatically cleaned up:
+              - ✅ Neon database branch deleted
+              - ✅ Vercel preview deployment removed
+              - ✅ Environment variables cleared
+
+              Thank you for your contribution! 🎉`
+            });

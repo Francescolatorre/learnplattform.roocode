@@ -1,0 +1,197 @@
+name: Deploy Preview Environment
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - 'backend/**'
+      - 'vercel.json'
+      - '.github/workflows/deploy-preview.yml'
+
+env:
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '20'
+
+jobs:
+  setup-neon-branch:
+    name: Setup Neon Database Branch
+    runs-on: ubuntu-latest
+    outputs:
+      database_url: ${{ steps.neon.outputs.database_url }}
+      branch_name: ${{ steps.neon.outputs.branch_name }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Neon CLI
+        run: npm install -g neonctl
+
+      - name: Create Neon branch for PR
+        id: neon
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_PROJECT_ID: ${{ secrets.NEON_PROJECT_ID }}
+        run: |
+          # Extract PR number and create branch name
+          PR_NUMBER=${{ github.event.number }}
+          BRANCH_NAME="pr-${PR_NUMBER}"
+
+          echo "Creating Neon branch: $BRANCH_NAME"
+
+          # Create branch from main
+          neonctl branches create \
+            --name "$BRANCH_NAME" \
+            --parent main \
+            --project-id "$NEON_PROJECT_ID"
+
+          # Get connection string
+          DATABASE_URL=$(neonctl connection-string \
+            --branch "$BRANCH_NAME" \
+            --project-id "$NEON_PROJECT_ID")
+
+          echo "database_url=$DATABASE_URL" >> $GITHUB_OUTPUT
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
+          echo "✅ Neon branch created: $BRANCH_NAME"
+
+  deploy-preview:
+    name: Deploy to Vercel Preview
+    runs-on: ubuntu-latest
+    needs: setup-neon-branch
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          # Set environment variables for this deployment
+          vercel env add DATABASE_URL "${{ needs.setup-neon-branch.outputs.database_url }}" preview --token="$VERCEL_TOKEN"
+          vercel env add NEON_BRANCH_NAME "${{ needs.setup-neon-branch.outputs.branch_name }}" preview --token="$VERCEL_TOKEN"
+          vercel env add DEBUG "false" preview --token="$VERCEL_TOKEN"
+          vercel env add ALLOWED_HOSTS "*.vercel.app" preview --token="$VERCEL_TOKEN"
+          vercel env add CORS_ALLOWED_ORIGINS "https://*.vercel.app" preview --token="$VERCEL_TOKEN"
+
+          # Deploy to preview
+          DEPLOYMENT_URL=$(vercel deploy --token="$VERCEL_TOKEN" --env VITE_API_BASE_URL="$DEPLOYMENT_URL")
+
+          echo "Preview deployed to: $DEPLOYMENT_URL"
+          echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
+
+      - name: Run Database Migrations
+        env:
+          DATABASE_URL: ${{ needs.setup-neon-branch.outputs.database_url }}
+        run: |
+          # Install Python dependencies
+          cd backend
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+          # Run migrations
+          python manage.py migrate --noinput
+
+          # Create test data if needed
+          python manage.py loaddata test_fixtures.json || echo "No fixtures found"
+
+      - name: Run Preview Tests
+        env:
+          PREVIEW_URL: ${{ env.DEPLOYMENT_URL }}
+          API_BASE_URL: ${{ env.DEPLOYMENT_URL }}/api
+        run: |
+          # Wait for deployment to be ready
+          for i in {1..30}; do
+            if curl -f "$PREVIEW_URL/health" 2>/dev/null; then
+              echo "Preview environment is ready!"
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "Preview environment failed to start"
+              exit 1
+            fi
+            echo "Waiting for preview environment... ($i/30)"
+            sleep 10
+          done
+
+          # Run smoke tests against preview
+          cd frontend
+          npm ci
+          npx playwright install chromium
+          PLAYWRIGHT_BASE_URL="$PREVIEW_URL" npx playwright test e2e/smoke/ --project=chromium
+
+      - name: Comment PR with Preview URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' && comment.body.includes('Preview Environment')
+            );
+
+            const body = `## 🚀 Preview Environment Ready
+
+            **Preview URL:** ${{ env.DEPLOYMENT_URL }}
+            **Database Branch:** ${{ needs.setup-neon-branch.outputs.branch_name }}
+
+            ### Quick Links:
+            - 📱 [Frontend Preview](${{ env.DEPLOYMENT_URL }})
+            - 🔧 [API Health Check](${{ env.DEPLOYMENT_URL }}/health)
+            - 👥 [Admin Panel](${{ env.DEPLOYMENT_URL }}/admin)
+
+            ### Test Credentials:
+            - **Student:** \`student\` / \`student123\`
+            - **Instructor:** \`instructor\` / \`instructor123\`
+
+            ---
+            *This preview will be automatically cleaned up when the PR is closed.*`;
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }
+
+  cleanup-on-failure:
+    name: Cleanup on Failure
+    runs-on: ubuntu-latest
+    needs: [setup-neon-branch, deploy-preview]
+    if: failure()
+    steps:
+      - name: Cleanup Neon Branch
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_PROJECT_ID: ${{ secrets.NEON_PROJECT_ID }}
+        run: |
+          npm install -g neonctl
+          neonctl branches delete "${{ needs.setup-neon-branch.outputs.branch_name }}" \
+            --project-id "$NEON_PROJECT_ID" || echo "Branch may not exist"
