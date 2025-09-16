@@ -13,7 +13,8 @@
  * - Security token storage patterns
  */
 
-import { describe, it, expect, beforeEach, vi, Mock } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import type { Mock } from 'vitest';
 
 import { ModernAuthService, modernAuthService } from './modernAuthService';
 import { UserRoleEnum } from '@/types/userTypes';

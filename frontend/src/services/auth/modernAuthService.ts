@@ -46,8 +46,9 @@
  */
 
 import { AUTH_CONFIG } from '@/config/appConfig';
-import { IUser, UserRoleEnum } from '@/types/userTypes';
 import { withManagedExceptions } from '@/utils/errorHandling';
+
+import { IUser, UserRoleEnum } from '@/types/userTypes';
 import { BaseService, ServiceConfig } from '../factory/serviceFactory';
 
 /**
@@ -189,9 +190,9 @@ export class ModernAuthService extends BaseService {
               }
             );
           }
-        } catch (error) {
+        } catch (logoutError) {
           // Log error but don't throw - still want to clean up locally
-          console.warn('Logout API call failed, cleaning up locally:', error);
+          console.warn('Logout API call failed, cleaning up locally:', logoutError);
         } finally {
           // Always clean up localStorage
           this.clearTokens();
