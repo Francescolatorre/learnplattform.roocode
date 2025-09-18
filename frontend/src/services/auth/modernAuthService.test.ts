@@ -276,13 +276,15 @@ describe('ModernAuthService', () => {
     });
 
     it('should attempt token refresh on validation failure', async () => {
+      // Set up localStorage to return access token first, then refresh token
       mockLocalStorage.getItem
         .mockReturnValueOnce(mockTokens.access) // For initial validation
-        .mockReturnValueOnce(mockTokens.refresh); // For refresh attempt
+        .mockReturnValueOnce(mockTokens.refresh) // For refresh attempt
+        .mockReturnValueOnce(mockTokens.refresh); // Might be called again
 
       mockApiClient.post
         .mockRejectedValueOnce(new Error('Token expired')) // Validation fails
-        .mockResolvedValueOnce({ access: 'new-token' }); // Refresh succeeds
+        .mockResolvedValueOnce({ access: 'new-token', refresh: 'new-refresh' }); // Refresh succeeds
 
       const result = await authService.validateToken();
 
@@ -292,12 +294,13 @@ describe('ModernAuthService', () => {
 
     it('should return false if both validation and refresh fail', async () => {
       mockLocalStorage.getItem
-        .mockReturnValueOnce(mockTokens.access)
-        .mockReturnValueOnce(mockTokens.refresh);
+        .mockReturnValueOnce(mockTokens.access) // For initial validation
+        .mockReturnValueOnce(mockTokens.refresh) // For refresh attempt
+        .mockReturnValueOnce(mockTokens.refresh); // Might be called again
 
       mockApiClient.post
-        .mockRejectedValueOnce(new Error('Token expired'))
-        .mockRejectedValueOnce(new Error('Refresh failed'));
+        .mockRejectedValueOnce(new Error('Token expired')) // Validation fails
+        .mockRejectedValueOnce(new Error('Refresh failed')); // Refresh also fails
 
       const result = await authService.validateToken();
 
