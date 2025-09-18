@@ -5,7 +5,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 
 import { ICourse } from '@/types/course';
-import { courseService } from 'src/services/resources/courseService';
+import { modernCourseService } from '@/services/resources/modernCourseService';
 
 const CourseDetailPage: React.FC = () => {
   const { id } = useParams() as { id: string | undefined };
@@ -16,7 +16,7 @@ const CourseDetailPage: React.FC = () => {
     error,
   } = useQuery<ICourse>({
     queryKey: ['course', id],
-    queryFn: () => courseService.getCourseDetails(id!),
+    queryFn: () => modernCourseService.getCourseDetails(Number(id!)),
     enabled: Boolean(id),
   });
 

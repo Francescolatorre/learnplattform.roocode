@@ -312,3 +312,6 @@ export class ModernCourseService extends BaseService {
     };
   }
 }
+
+// Export service instance for easy consumption
+export const modernCourseService = new ModernCourseService();
