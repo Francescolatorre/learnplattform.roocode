@@ -1,10 +1,11 @@
 import { Box, TextField, Button, Typography, CircularProgress } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 
 import useNotification from '@/components/Notifications/useNotification';
-// TUserRole import removed as it was unused
-import { useAuth } from '@context/auth/AuthContext';
+import { ROUTE_CONFIG } from '@/config/appConfig';
+import { useAuthStore } from '@/store/modernAuthStore';
 
 interface ILoginFormInputs {
   username: string;
@@ -31,7 +32,8 @@ const LoginPage: React.FC = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ILoginFormInputs>();
-  const { login, redirectToDashboard, user } = useAuth();
+  const { login, user, isLoading } = useAuthStore();
+  const navigate = useNavigate();
   const notify = useNotification();
 
   // Track login state to know when to watch for user data
@@ -43,20 +45,16 @@ const LoginPage: React.FC = () => {
     if (hasLoggedIn && user) {
       console.info('LoginPage: User data updated after login:', user);
 
-      // Get the role directly from user object instead of getUserRole
+      // Get the role directly from user object
       const role = user.role;
       console.info(`LoginPage: User role from user object: ${role}`);
 
-      // Only redirect if we have a valid role
-      if (role && role !== 'guest') {
-        console.info(`LoginPage: Valid role detected: ${role}, redirecting`);
-        redirectToDashboard();
-      } else {
-        console.warn('LoginPage: No valid role found in user object, using fallback redirect');
-        redirectToDashboard();
-      }
+      // Navigate to appropriate dashboard based on role
+      const dashboardPath = ROUTE_CONFIG.dashboardPaths[role] || ROUTE_CONFIG.defaultRedirect;
+      console.info(`LoginPage: Redirecting to: ${dashboardPath}`);
+      navigate(dashboardPath, { replace: true });
     }
-  }, [user, hasLoggedIn, redirectToDashboard]);
+  }, [user, hasLoggedIn, navigate]);
 
   const handleLogin = async (data: ILoginFormInputs) => {
     try {
@@ -128,10 +126,10 @@ const LoginPage: React.FC = () => {
             type="submit"
             variant="contained"
             color="primary"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isLoading}
             data-testid="login-submit-button"
           >
-            {isSubmitting ? <CircularProgress size={24} /> : 'Login'}
+            {isSubmitting || isLoading ? <CircularProgress size={24} /> : 'Login'}
           </Button>
         </Box>
       </form>
