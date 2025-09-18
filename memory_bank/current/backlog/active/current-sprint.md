@@ -24,16 +24,23 @@ Core infrastructure modernization completed in previous sessions.
 | TASK-050 | AuthStore Migration to Modern Services | 6 | ✅ MERGED | 2025-09-16 |
 | TASK-054 | NavigationBar Component Migration + CI Fixes | 3 | ✅ COMPLETED | 2025-09-18 |
 
-### 📅 Next Phase 2B Tasks (20-25 story points)
-Ready for next coding session - component migration phase.
+### 📅 Phase 2B Component Migration Tasks (28 story points total)
+Comprehensive component migration plan created by Requirements Engineer.
 
-| Task ID | Title | Story Points | Priority | Status | Next Session Target |
-|---------|--------|--------------|----------|---------|-------------------|
-| TASK-051 | CourseDetails Component Migration | 5 | HIGH | 📅 PLANNED | ✅ Primary Target |
-| TASK-052 | LoginForm Component Migration | 3 | HIGH | 📅 PLANNED | Secondary |
-| TASK-053 | RegisterForm Component Migration | 3 | HIGH | 📅 PLANNED | Secondary |
-| TASK-055 | AppHeader Component Migration | 4 | MEDIUM | 📅 PLANNED | Future session |
-| TASK-056 | ProtectedRoute Component Migration | 3 | MEDIUM | 📅 PLANNED | Future session |
+#### High Priority Tasks (11 story points)
+| Task ID | Title | Story Points | Priority | Status | Target Session |
+|---------|--------|--------------|----------|---------|----------------|
+| TASK-051 | Course Details Components Migration | 5 | HIGH | 📅 READY | ✅ **Next Session Primary** |
+| TASK-052 | Authentication Components Migration | 3 | HIGH | 📅 READY | Secondary |
+| TASK-053 | Course Management Components Migration | 3 | HIGH | 📅 READY | Week 2 |
+
+#### Medium Priority Tasks (17 story points)
+| Task ID | Title | Story Points | Priority | Status | Target Session |
+|---------|--------|--------------|----------|---------|----------------|
+| TASK-055 | Admin Dashboard Components Migration | 8 | MEDIUM | 📋 PLANNED | Week 2-3 |
+| TASK-056 | Additional Course Components Migration | 6 | MEDIUM | 📋 PLANNED | Week 3 |
+| TASK-057 | Learning Task Components Migration | 4 | MEDIUM | 📋 PLANNED | Week 3-4 |
+| TASK-058 | Navigation/Layout Components Migration | 2 | LOW | 📋 PLANNED | Future Sprint |
 
 ### Sprint Burn-down
 Track daily progress of story points remaining.
