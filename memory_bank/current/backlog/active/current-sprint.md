@@ -22,6 +22,7 @@ Core infrastructure modernization completed in previous sessions.
 | TASK-048 | TaskCreation Component Migration | 3 | ✅ MERGED | 2025-09-16 |
 | TASK-049 | TaskStore Migration to Modern Services | 5 | ✅ MERGED | 2025-09-16 |
 | TASK-050 | AuthStore Migration to Modern Services | 6 | ✅ MERGED | 2025-09-16 |
+| TASK-054 | NavigationBar Component Migration + CI Fixes | 3 | ✅ COMPLETED | 2025-09-18 |
 
 ### 📅 Next Phase 2B Tasks (20-25 story points)
 Ready for next coding session - component migration phase.
@@ -31,7 +32,6 @@ Ready for next coding session - component migration phase.
 | TASK-051 | CourseDetails Component Migration | 5 | HIGH | 📅 PLANNED | ✅ Primary Target |
 | TASK-052 | LoginForm Component Migration | 3 | HIGH | 📅 PLANNED | Secondary |
 | TASK-053 | RegisterForm Component Migration | 3 | HIGH | 📅 PLANNED | Secondary |
-| TASK-054 | UserProfileMenu Component Migration | 3 | MEDIUM | 📅 PLANNED | If time permits |
 | TASK-055 | AppHeader Component Migration | 4 | MEDIUM | 📅 PLANNED | Future session |
 | TASK-056 | ProtectedRoute Component Migration | 3 | MEDIUM | 📅 PLANNED | Future session |
 
