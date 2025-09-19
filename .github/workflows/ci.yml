@@ -65,17 +65,13 @@ jobs:
           docker build -t ghcr.io/${REPO_OWNER}/learnplatform-backend:${{ github.sha }} .
           docker push ghcr.io/${REPO_OWNER}/learnplatform-backend:${{ github.sha }}
 
-      - name: Install Railway CLI
-        run: |
-          curl -fsSL https://railway.app/install.sh | sh
-          echo "$HOME/.railway/bin" >> $GITHUB_PATH
-
       - name: Deploy to Railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          CI: true
         run: |
-          echo "Using Railway token for authentication"
-          railway up --detach
+          npx @railway/cli link --project 2eb61cd2-5948-48ed-bc2d-bd7b6b37367c --environment production
+          npx @railway/cli up --detach
 
   summary:
     name: Test Summary
