@@ -14,12 +14,22 @@
 ### Ready for Sprint Planning
 These tasks meet Definition of Ready and can be included in upcoming sprints.
 
-#### Modern Service Migration (TASK-012 Phase 2)
-| Task ID | Title | Story Points | Assignee | Dependencies |
-|---------|--------|--------------|----------|---------------|
-| TASK-027-B | Modern Service State Integration | 5 | Claude Code | TASK-012 complete |
-| TASK-XXX | Migrate TaskCreation Component to Modern Services | 3 | [Unassigned] | None |
-| TASK-XXX | Migrate CourseDetails Component to Modern Services | 5 | [Unassigned] | None |
+#### Modern Service Migration (Phase 2B - Component Migration)
+**Requirements Engineer Analysis Complete**: 6 structured migration tasks created
+
+| Task ID | Title | Story Points | Priority | Status |
+|---------|--------|--------------|----------|---------|
+| TASK-051 | Course Details Components Migration | 5 | HIGH | 📅 **Ready - Next Session Primary Target** |
+| TASK-052 | Authentication Components Migration | 3 | HIGH | 📅 Ready - Login/Register Components |
+| TASK-053 | Course Management Components Migration | 3 | HIGH | 📅 Ready - Instructor Course Tools |
+
+#### Additional Phase 2B Tasks (Medium Priority)
+| Task ID | Title | Story Points | Priority | Status |
+|---------|--------|--------------|----------|---------|
+| TASK-055 | Admin Dashboard Components Migration | 8 | MEDIUM | 📋 Planned - Administrative Interface |
+| TASK-056 | Additional Course Components Migration | 6 | MEDIUM | 📋 Planned - Extended Course Features |
+| TASK-057 | Learning Task Components Migration | 4 | MEDIUM | 📋 Planned - Task Management UI |
+| TASK-058 | Navigation/Layout Components Migration | 2 | LOW | 📋 Planned - Layout Components |
 
 #### Core Feature Enhancements
 | Task ID | Title | Story Points | Assignee | Dependencies |

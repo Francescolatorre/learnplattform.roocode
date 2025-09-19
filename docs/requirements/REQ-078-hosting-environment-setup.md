@@ -78,16 +78,58 @@
   - Test auto-deployment from development branch
   - Create Django superuser for admin access
 
-### Day 3-4: Frontend + Integration
-- **Vercel Frontend Setup** (2 hours)
-  - Connect frontend directory to Vercel
-  - Configure build settings for Vite
-  - Set environment variables for API endpoints
+### Day 3-4: Frontend + Integration (Monorepo Strategy)
+- **Vercel Frontend Setup - 4-Step Approach** (6 hours total)
 
-- **API Integration** (4 hours)
-  - Configure CORS between frontend and backend
-  - Test API endpoints from deployed frontend
-  - Verify authentication flows work
+#### Step 1: Local Frontend Build Testing (1.5 hours)
+```bash
+# Test build process in monorepo context
+cd frontend
+npm install
+npm run build
+# Verify dist/ output and asset paths
+# Check TypeScript compilation
+# Validate Vite aliases (@components, @services)
+```
+
+#### Step 2: Separate Vercel Project for Frontend (2 hours)
+```json
+// Vercel Project Settings (CHOSEN APPROACH)
+{
+  "name": "learnplatform-frontend",
+  "rootDirectory": "frontend",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install"
+}
+```
+- **Option 1:** Separate Vercel Project dedicated to frontend only
+- Clean separation of concerns (frontend independent of backend)
+- Set Root Directory to `frontend` (critical for monorepo)
+- Enable PR preview deployments
+- Standard Vite Build with Vercel auto-detection
+
+#### Step 3: Hardcoded Development URLs (1.5 hours)
+```typescript
+// Environment Variables Strategy (CHOSEN APPROACH)
+// Development (local)
+VITE_API_BASE_URL=http://localhost:8000/api/v1
+
+// Vercel Preview (hardcoded, will be replaced)
+VITE_API_BASE_URL=http://localhost:8000/api/v1
+
+// Production (Railway - to be updated later)
+VITE_API_BASE_URL=https://your-railway-app.railway.app/api/v1
+```
+- **Option 1 Approach:** Hardcoded development URLs initially
+- Simple configuration for immediate deployment
+- API calls will fail gracefully until Railway backend ready
+- Easy replacement once Railway provides actual URL
+
+#### Step 4: Railway Integration (1 hour)
+- Update API URLs once Railway backend is deployed
+- Test cross-origin requests
+- Verify authentication flow
 
 ### Day 5: CI/CD + Testing
 - **GitHub Actions Basic Setup** (3 hours)
@@ -99,6 +141,102 @@
   - Test complete user flow across deployed environments
   - Verify Django Admin access
   - Document access URLs and credentials
+
+## Monorepo-Specific Implementation Details
+
+### Vercel Monorepo Challenges & Solutions
+
+#### Challenge 1: Build Context
+**Problem:** Vercel runs in project root, but frontend needs `frontend/` context
+**Solution:** Set `rootDirectory: "frontend"` in Vercel project settings
+
+#### Challenge 2: Path Resolution
+**Problem:** Vite aliases and TypeScript paths may break in deployment
+**Solution:** Verify `vite.config.ts` paths work in production build
+
+#### Challenge 3: Environment Variables
+**Problem:** API URLs unknown during frontend development
+**Solution:** Phased deployment with mock URLs, then Railway integration
+
+### Technical Configuration for Monorepo
+
+#### Vercel.json Configuration (Standard Vite Build)
+```json
+{
+  "name": "learnplatform-frontend",
+  "version": 2,
+  "buildCommand": "npm install && npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install",
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+}
+```
+**Chosen Strategy:** Standard Vite Build with Vercel auto-detection
+- Minimal configuration overhead
+- Leverages Vercel's built-in Vite support
+- Automatic optimization and caching
+
+#### Environment Variables Management
+```typescript
+// frontend/.env.example
+VITE_API_BASE_URL=http://localhost:8000/api/v1
+VITE_ENVIRONMENT=development
+VITE_ADMIN_URL=http://localhost:8000/admin/
+
+// Vercel Environment Variables (set via dashboard)
+VITE_API_BASE_URL=https://your-railway-app.railway.app/api/v1
+VITE_ENVIRONMENT=preview
+VITE_ADMIN_URL=https://your-railway-app.railway.app/admin-preprod/
+```
+
+### Build Validation Checklist
+
+#### Pre-Deployment Validation
+- [ ] `cd frontend && npm run build` succeeds
+- [ ] `dist/` directory contains index.html and assets
+- [ ] No TypeScript compilation errors
+- [ ] Vite aliases resolve correctly
+- [ ] Environment variables properly injected
+
+#### Post-Deployment Validation
+- [ ] Vercel URL loads React application
+- [ ] React Router navigation works (SPA routing)
+- [ ] Asset loading successful (CSS, JS, images)
+- [ ] API calls fail gracefully (until backend ready)
+- [ ] Browser dev tools show no critical errors
+
+### Deployment Pipeline Integration
+
+#### Branch Strategy
+```
+feature/REQ-078-hosting-environment-setup
+├── Push triggers Vercel preview deployment
+├── Railway deployment (blocked - pipeline fixes needed)
+└── Integration testing once both deployed
+```
+
+#### Success Metrics
+- [ ] Frontend deploys independently of backend
+- [ ] Vercel preview URLs work for PR reviews
+- [ ] Mock API configuration validates frontend functionality
+- [ ] Easy transition to Railway backend when ready
 
 ## Technical Configuration
 
