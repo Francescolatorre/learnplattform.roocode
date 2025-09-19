@@ -74,8 +74,6 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
-          railway link 2eb61cd2-5948-48ed-bc2d-bd7b6b37367c
-          railway service learnplattform.roocode
           railway up --detach
 
   summary:
