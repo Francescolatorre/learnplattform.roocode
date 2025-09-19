@@ -123,19 +123,19 @@ describe('progressService', () => {
     expect(result).toEqual([]);
   });
 
-  it('updateTaskProgress returns empty object', async () => {
+  it('updateTaskProgress returns success response', async () => {
     const result = await progressService.updateTaskProgress('1', '2', {});
-    expect(result).toEqual({});
+    expect(result).toEqual({ success: true });
   });
 
-  it('submitTask returns empty object', async () => {
+  it('submitTask returns success response', async () => {
     const result = await progressService.submitTask('1', '2', { content: 'test content' });
-    expect(result).toEqual({});
+    expect(result).toEqual({ success: true });
   });
 
-  it('gradeSubmission returns empty object', async () => {
+  it('gradeSubmission returns success response', async () => {
     const result = await progressService.gradeSubmission('1', '2', '3', { score: 85 });
-    expect(result).toEqual({});
+    expect(result).toEqual({ success: true });
   });
 
   it('fetchCourseDetails returns course if found', async () => {
