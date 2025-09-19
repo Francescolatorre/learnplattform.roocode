@@ -47,8 +47,8 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import { IUser, UserRoleEnum } from '@/types/userTypes';
 import { modernAuthService, IRegistrationData } from '@/services/auth/modernAuthService';
+import { IUser, UserRoleEnum } from '@/types/userTypes';
 
 /**
  * Authentication state interface

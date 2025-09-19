@@ -27,7 +27,7 @@ interface TaskState {
   clearError: () => void;
 }
 
-const useTaskStore = create<TaskState>((set, get) => ({
+const useTaskStore = create<TaskState>((set, _get) => ({
   // State
   learningTasks: [],
   isLoading: false,

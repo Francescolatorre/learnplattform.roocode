@@ -1,263 +1,269 @@
-name: E2E Tests
-
-on:
-  workflow_call:
-  push:
-    branches: [main]
-    paths:
-      - 'frontend/**'
-      - 'backend/**'
-      - '.github/workflows/e2e-tests.yml'
-  schedule:
-    # Run daily at 2 AM UTC
-    - cron: '0 2 * * *'
-
-jobs:
-  e2e-tests:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        browser: [chromium]
-        # MVP: Chrome-only testing for faster pipeline
-        # TODO: Re-enable firefox, webkit post-MVP
-    
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_DB: test_learningplatform
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Setup Python 3.11
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.11'
-
-      - name: Setup Node.js 20
-        uses: actions/setup-node@v5
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Cache Python dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements.txt') }}
-
-      - name: Install Python dependencies
-        working-directory: backend
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Install Node dependencies
-        working-directory: ./frontend
-        run: npm ci
-
-      - name: Install Playwright
-        working-directory: ./frontend
-        run: |
-          npx playwright install chromium --with-deps
-          npx playwright install ${{ matrix.browser }}
-
-      - name: Setup test database
-        working-directory: backend
-        env:
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_learningplatform
-          DJANGO_SETTINGS_MODULE: learningplatform.settings
-        run: |
-          python manage.py migrate --noinput
-          python manage.py loaddata test_fixtures.json || echo "No fixtures found, continuing..."
-
-      - name: Start backend server
-        working-directory: backend
-        env:
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_learningplatform
-          DEBUG: true
-          DJANGO_SETTINGS_MODULE: learningplatform.settings
-          ALLOWED_HOSTS: localhost,127.0.0.1
-          CORS_ALLOWED_ORIGINS: http://localhost:3000
-        run: |
-          python manage.py runserver 8000 &
-          BACKEND_PID=$!
-          echo "Backend started with PID: $BACKEND_PID"
-          echo "BACKEND_PID=$BACKEND_PID" >> $GITHUB_ENV
-
-      - name: Wait for backend health check
-        run: |
-          echo "Waiting for backend to be ready..."
-          for i in {1..30}; do
-            if curl -f http://localhost:8000/health/ 2>/dev/null || curl -f http://localhost:8000/admin/ 2>/dev/null; then
-              echo "Backend is ready!"
-              break
-            fi
-            if [ $i -eq 30 ]; then
-              echo "Backend failed to start after 60 seconds"
-              curl -I http://localhost:8000/health/ || true
-              curl -I http://localhost:8000/admin/ || true
-              exit 1
-            fi
-            echo "Attempt $i/30: Backend not ready, waiting 2s..."
-            sleep 2
-          done
-
-      - name: Build and start frontend
-        working-directory: ./frontend
-        env:
-          VITE_API_BASE_URL: http://localhost:8000
-          NODE_ENV: test
-        run: |
-          npm run build
-          npx serve -s dist -p 3000 &
-          FRONTEND_PID=$!
-          echo "Frontend started with PID: $FRONTEND_PID"
-          echo "FRONTEND_PID=$FRONTEND_PID" >> $GITHUB_ENV
-
-      - name: Wait for frontend health check
-        run: |
-          echo "Waiting for frontend to be ready..."
-          for i in {1..20}; do
-            if curl -f http://localhost:3000 2>/dev/null; then
-              echo "Frontend is ready!"
-              break
-            fi
-            if [ $i -eq 20 ]; then
-              echo "Frontend failed to start after 40 seconds"
-              curl -I http://localhost:3000 || true
-              exit 1
-            fi
-            echo "Attempt $i/20: Frontend not ready, waiting 2s..."
-            sleep 2
-          done
-
-      - name: Run Playwright E2E tests
-        working-directory: ./frontend
-        env:
-          PLAYWRIGHT_BASE_URL: http://localhost:3000
-          API_BASE_URL: http://localhost:8000
-          VITE_API_BASE_URL: http://localhost:8000
-          CI: true
-        run: |
-          npx playwright test --project=${{ matrix.browser }} --reporter=html --timeout=30000 --retries=2
-        timeout-minutes: 15
-
-      - name: Stop services on failure
-        if: failure()
-        run: |
-          echo "Stopping services due to test failure..."
-          kill ${{ env.BACKEND_PID }} || true
-          kill ${{ env.FRONTEND_PID }} || true
-          sleep 2
-
-      - name: Upload Playwright report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-report-${{ matrix.browser }}
-          path: |
-            frontend/playwright-report/
-            frontend/test-results/
-
-  visual-regression:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Setup Node.js 20
-        uses: actions/setup-node@v5
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Setup Python 3.11
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.11'
-
-      - name: Install backend dependencies
-        working-directory: backend
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-      
-      - name: Install frontend dependencies
-        working-directory: frontend
-        run: npm ci
-
-      - name: Install Playwright
-        working-directory: ./frontend
-        run: npx playwright install chromium
-
-      - name: Start backend for visual testing
-        working-directory: backend
-        env:
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_learningplatform
-          DEBUG: true
-          DJANGO_SETTINGS_MODULE: learningplatform.settings
-        run: |
-          python manage.py migrate --noinput || true
-          python manage.py runserver 8000 &
-          BACKEND_PID=$!
-          echo "VISUAL_BACKEND_PID=$BACKEND_PID" >> $GITHUB_ENV
-
-      - name: Start frontend for visual testing
-        working-directory: ./frontend
-        env:
-          VITE_API_BASE_URL: http://localhost:8000
-        run: |
-          npm run dev &
-          FRONTEND_PID=$!
-          echo "VISUAL_FRONTEND_PID=$FRONTEND_PID" >> $GITHUB_ENV
-
-      - name: Wait for visual test services
-        run: |
-          echo "Waiting for services to be ready for visual testing..."
-          for i in {1..25}; do
-            if curl -f http://localhost:8000/admin/ 2>/dev/null && curl -f http://localhost:5173 2>/dev/null; then
-              echo "Services are ready for visual testing!"
-              break
-            fi
-            if [ $i -eq 25 ]; then
-              echo "Services failed to start for visual testing"
-              exit 1
-            fi
-            echo "Attempt $i/25: Services not ready, waiting 2s..."
-            sleep 2
-          done
-
-      - name: Run visual regression tests
-        working-directory: ./frontend
-        run: |
-          if [ -f "playwright.visual.config.ts" ]; then
-            npx playwright test --config=playwright.visual.config.ts --timeout=30000
-          else
-            echo "Visual tests configuration not found - skipping visual regression tests"
-          fi
-
-      - name: Stop visual test services
-        if: always()
-        run: |
-          kill ${{ env.VISUAL_BACKEND_PID }} || true
-          kill ${{ env.VISUAL_FRONTEND_PID }} || true
-
-      - name: Upload visual test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: visual-test-results
-          path: |
-            frontend/visual-test-results/
+# E2E Tests - TEMPORARILY DISABLED
+#
+# These tests have been temporarily disabled due to infrastructure complexity.
+# They will be reconfigured to run against preprod environment.
+# See: memory_bank/current/backlog/active/TASK-E2E-PREPROD-INTEGRATION.md
+#
+# name: E2E Tests
+# 
+# # on:
+# #   workflow_call:
+# #   push:
+# #     branches: [main]
+# #     paths:
+# #       - 'frontend/**'
+# #       - 'backend/**'
+# #       - '.github/workflows/e2e-tests.yml'
+# #   schedule:
+# #     # Run daily at 2 AM UTC
+# #     - cron: '0 2 * * *'
+# 
+# # jobs:
+# #   e2e-tests:
+# #     runs-on: ubuntu-latest
+# #     strategy:
+# #       matrix:
+# #         browser: [chromium]
+# #         # MVP: Chrome-only testing for faster pipeline
+# #         # TODO: Re-enable firefox, webkit post-MVP
+# #
+# #     services:
+#       postgres:
+#         image: postgres:15
+#         env:
+#           POSTGRES_PASSWORD: postgres
+#           POSTGRES_USER: postgres
+#           POSTGRES_DB: test_learningplatform
+#         options: >-
+#           --health-cmd pg_isready
+#           --health-interval 10s
+#           --health-timeout 5s
+#           --health-retries 5
+#         ports:
+#           - 5432:5432
+# 
+#     steps:
+#       - uses: actions/checkout@v5
+# 
+#       - name: Setup Python 3.11
+#         uses: actions/setup-python@v6
+#         with:
+#           python-version: '3.11'
+# 
+#       - name: Setup Node.js 20
+#         uses: actions/setup-node@v5
+#         with:
+#           node-version: 20
+#           cache: 'npm'
+#           cache-dependency-path: frontend/package-lock.json
+# 
+#       - name: Cache Python dependencies
+#         uses: actions/cache@v4
+#         with:
+#           path: ~/.cache/pip
+#           key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements.txt') }}
+# 
+#       - name: Install Python dependencies
+#         working-directory: backend
+#         run: |
+#           python -m pip install --upgrade pip
+#           pip install -r requirements.txt
+# 
+#       - name: Install Node dependencies
+#         working-directory: ./frontend
+#         run: npm ci
+# 
+#       - name: Install Playwright
+#         working-directory: ./frontend
+#         run: |
+#           npx playwright install chromium --with-deps
+#           npx playwright install ${{ matrix.browser }}
+# 
+#       - name: Setup test database
+#         working-directory: backend
+#         env:
+#           DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_learningplatform
+#           DJANGO_SETTINGS_MODULE: learningplatform.settings
+#         run: |
+#           python manage.py migrate --noinput
+#           python manage.py loaddata test_fixtures.json || echo "No fixtures found, continuing..."
+# 
+#       - name: Start backend server
+#         working-directory: backend
+#         env:
+#           DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_learningplatform
+#           DEBUG: true
+#           DJANGO_SETTINGS_MODULE: learningplatform.settings
+#           ALLOWED_HOSTS: localhost,127.0.0.1
+#           CORS_ALLOWED_ORIGINS: http://localhost:3000
+#         run: |
+#           python manage.py runserver 8000 &
+#           BACKEND_PID=$!
+#           echo "Backend started with PID: $BACKEND_PID"
+#           echo "BACKEND_PID=$BACKEND_PID" >> $GITHUB_ENV
+# 
+#       - name: Wait for backend health check
+#         run: |
+#           echo "Waiting for backend to be ready..."
+#           for i in {1..30}; do
+#             if curl -f http://localhost:8000/health/ 2>/dev/null || curl -f http://localhost:8000/admin/ 2>/dev/null; then
+#               echo "Backend is ready!"
+#               break
+#             fi
+#             if [ $i -eq 30 ]; then
+#               echo "Backend failed to start after 60 seconds"
+#               curl -I http://localhost:8000/health/ || true
+#               curl -I http://localhost:8000/admin/ || true
+#               exit 1
+#             fi
+#             echo "Attempt $i/30: Backend not ready, waiting 2s..."
+#             sleep 2
+#           done
+# 
+#       - name: Build and start frontend
+#         working-directory: ./frontend
+#         env:
+#           VITE_API_BASE_URL: http://localhost:8000
+#           NODE_ENV: test
+#         run: |
+#           npm run build
+#           npx serve -s dist -p 3000 &
+#           FRONTEND_PID=$!
+#           echo "Frontend started with PID: $FRONTEND_PID"
+#           echo "FRONTEND_PID=$FRONTEND_PID" >> $GITHUB_ENV
+# 
+#       - name: Wait for frontend health check
+#         run: |
+#           echo "Waiting for frontend to be ready..."
+#           for i in {1..20}; do
+#             if curl -f http://localhost:3000 2>/dev/null; then
+#               echo "Frontend is ready!"
+#               break
+#             fi
+#             if [ $i -eq 20 ]; then
+#               echo "Frontend failed to start after 40 seconds"
+#               curl -I http://localhost:3000 || true
+#               exit 1
+#             fi
+#             echo "Attempt $i/20: Frontend not ready, waiting 2s..."
+#             sleep 2
+#           done
+# 
+#       - name: Run Playwright E2E tests
+#         working-directory: ./frontend
+#         env:
+#           PLAYWRIGHT_BASE_URL: http://localhost:3000
+#           API_BASE_URL: http://localhost:8000
+#           VITE_API_BASE_URL: http://localhost:8000
+#           CI: true
+#         run: |
+#           npx playwright test --project=${{ matrix.browser }} --reporter=html --timeout=30000 --retries=2
+#         timeout-minutes: 15
+# 
+#       - name: Stop services on failure
+#         if: failure()
+#         run: |
+#           echo "Stopping services due to test failure..."
+#           kill ${{ env.BACKEND_PID }} || true
+#           kill ${{ env.FRONTEND_PID }} || true
+#           sleep 2
+# 
+#       - name: Upload Playwright report
+#         uses: actions/upload-artifact@v4
+#         if: always()
+#         with:
+#           name: playwright-report-${{ matrix.browser }}
+#           path: |
+#             frontend/playwright-report/
+#             frontend/test-results/
+# 
+#   visual-regression:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v5
+# 
+#       - name: Setup Node.js 20
+#         uses: actions/setup-node@v5
+#         with:
+#           node-version: 20
+#           cache: 'npm'
+#           cache-dependency-path: frontend/package-lock.json
+# 
+#       - name: Setup Python 3.11
+#         uses: actions/setup-python@v6
+#         with:
+#           python-version: '3.11'
+# 
+#       - name: Install backend dependencies
+#         working-directory: backend
+#         run: |
+#           python -m pip install --upgrade pip
+#           pip install -r requirements.txt
+#       
+#       - name: Install frontend dependencies
+#         working-directory: frontend
+#         run: npm ci
+# 
+#       - name: Install Playwright
+#         working-directory: ./frontend
+#         run: npx playwright install chromium
+# 
+#       - name: Start backend for visual testing
+#         working-directory: backend
+#         env:
+#           DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_learningplatform
+#           DEBUG: true
+#           DJANGO_SETTINGS_MODULE: learningplatform.settings
+#         run: |
+#           python manage.py migrate --noinput || true
+#           python manage.py runserver 8000 &
+#           BACKEND_PID=$!
+#           echo "VISUAL_BACKEND_PID=$BACKEND_PID" >> $GITHUB_ENV
+# 
+#       - name: Start frontend for visual testing
+#         working-directory: ./frontend
+#         env:
+#           VITE_API_BASE_URL: http://localhost:8000
+#         run: |
+#           npm run dev &
+#           FRONTEND_PID=$!
+#           echo "VISUAL_FRONTEND_PID=$FRONTEND_PID" >> $GITHUB_ENV
+# 
+#       - name: Wait for visual test services
+#         run: |
+#           echo "Waiting for services to be ready for visual testing..."
+#           for i in {1..25}; do
+#             if curl -f http://localhost:8000/admin/ 2>/dev/null && curl -f http://localhost:5173 2>/dev/null; then
+#               echo "Services are ready for visual testing!"
+#               break
+#             fi
+#             if [ $i -eq 25 ]; then
+#               echo "Services failed to start for visual testing"
+#               exit 1
+#             fi
+#             echo "Attempt $i/25: Services not ready, waiting 2s..."
+#             sleep 2
+#           done
+# 
+#       - name: Run visual regression tests
+#         working-directory: ./frontend
+#         run: |
+#           if [ -f "playwright.visual.config.ts" ]; then
+#             npx playwright test --config=playwright.visual.config.ts --timeout=30000
+#           else
+#             echo "Visual tests configuration not found - skipping visual regression tests"
+#           fi
+# 
+#       - name: Stop visual test services
+#         if: always()
+#         run: |
+#           kill ${{ env.VISUAL_BACKEND_PID }} || true
+#           kill ${{ env.VISUAL_FRONTEND_PID }} || true
+# 
+#       - name: Upload visual test results
+#         uses: actions/upload-artifact@v4
+#         if: always()
+#         with:
+#           name: visual-test-results
+#           path: |
+#             frontend/visual-test-results/

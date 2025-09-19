@@ -8,25 +8,21 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import { ModernCourseService } from '@/services/resources/modernCourseService';
 import { ServiceFactory } from '@/services/factory/serviceFactory';
+import { ModernCourseService } from '@/services/resources/modernCourseService';
+import { IStudentProgressSummary } from '@/types';
 import { ICourse } from '@/types/course';
 import { IPaginatedResponse } from '@/types/paginatedResponse';
-import { IStudentProgressSummary } from '@/types';
 
 import {
   withAsyncOperation,
   ServiceStoreSlice,
   createServiceSlice,
-  StoreCache,
-  StoreError,
-  classifyError
+  StoreCache
 } from './utils/serviceIntegration';
 import {
-  createAsyncOperationHook,
   createCrudHooks,
-  createPaginatedHook,
-  PaginatedHook
+  createPaginatedHook
 } from './utils/storeHooks';
 
 // Course filter interface for search and pagination
@@ -100,9 +96,9 @@ const courseDetailsCache = new StoreCache<ICourse>({
 // Create the modern course store
 export const useModernCourseStore = create<CourseStoreState>()(
   devtools(
-    (set, get) => ({
+    (set, _get) => ({
       // Base service slice state
-      ...createServiceSlice<ICourse[]>([])((set, get) => ({} as any)),
+      ...createServiceSlice<ICourse[]>([])((setSlice, _getSlice) => ({} as Record<string, unknown>)),
 
       // Pagination state
       totalCount: 0,

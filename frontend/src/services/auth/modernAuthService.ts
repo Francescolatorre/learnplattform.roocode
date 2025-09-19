@@ -46,9 +46,9 @@
  */
 
 import { AUTH_CONFIG } from '@/config/appConfig';
+import { IUser, UserRoleEnum } from '@/types/userTypes';
 import { withManagedExceptions } from '@/utils/errorHandling';
 
-import { IUser, UserRoleEnum } from '@/types/userTypes';
 import { BaseService, ServiceConfig } from '../factory/serviceFactory';
 
 /**
@@ -269,7 +269,7 @@ export class ModernAuthService extends BaseService {
 
           clearTimeout(timeoutId);
           return response && response.status !== false;
-        } catch (error) {
+        } catch (_validationError) {
           // If validation fails, try to refresh token automatically
           const refreshToken = localStorage.getItem(AUTH_CONFIG.refreshTokenStorageKey);
           if (refreshToken) {
@@ -412,15 +412,15 @@ export class ModernAuthService extends BaseService {
   /**
    * Transform backend user profile to frontend IUser format
    */
-  private transformProfileToUser(profile: IUserProfile | any): IUser {
+  private transformProfileToUser(profile: IUserProfile | Record<string, unknown>): IUser {
     return {
       id: String(profile.id),
-      username: profile.username,
-      email: profile.email,
+      username: String(profile.username),
+      email: String(profile.email),
       role: (profile.role as UserRoleEnum) || UserRoleEnum.STUDENT,
-      display_name: profile.display_name,
-      created_at: profile.created_at || new Date().toISOString(),
-      updated_at: profile.updated_at || new Date().toISOString()
+      display_name: String(profile.display_name || ''),
+      created_at: String(profile.created_at || new Date().toISOString()),
+      updated_at: String(profile.updated_at || new Date().toISOString())
     };
   }
 }
