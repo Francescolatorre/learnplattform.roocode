@@ -16,24 +16,26 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import PasswordStrengthIndicator from '@components/shared/PasswordStrengthIndicator';
-import { useAuth } from '@context/auth/AuthContext';
+import { ROUTE_CONFIG } from '@/config/appConfig';
+import { useAuthStore } from '@/store/modernAuthStore';
+import { IRegistrationData } from '@/services/auth/modernAuthService';
 
 import { validatePassword, type PasswordStrength } from '../utils/passwordValidation';
 
 const RegisterFormPage: React.FC = () => {
-  const { login } = useAuth(); // Use login after successful registration
+  const { register, user, isLoading } = useAuthStore();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('user');
+  const [role, setRole] = useState('student');
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
     isValid: false,
     score: 0,
     feedback: [],
   });
+  const [hasRegistered, setHasRegistered] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,35 +46,64 @@ const RegisterFormPage: React.FC = () => {
     }
   }, [password]);
 
+  // Handle navigation after successful registration
+  useEffect(() => {
+    if (hasRegistered && user) {
+      console.info('RegisterFormPage: User registered successfully:', user);
+
+      // Navigate to appropriate dashboard based on role
+      const dashboardPath = ROUTE_CONFIG.dashboardPaths[user.role] || ROUTE_CONFIG.defaultRedirect;
+      console.info(`RegisterFormPage: Redirecting to: ${dashboardPath}`);
+      navigate(dashboardPath, { replace: true });
+    }
+  }, [user, hasRegistered, navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setIsLoading(true);
 
     // Validation checks
     if (!passwordStrength.isValid) {
       setError('Please address all password requirements');
-      setIsLoading(false);
       return;
     }
 
     if (password !== confirmPassword) {
       setError('Passwords do not match');
-      setIsLoading(false);
+      return;
+    }
+
+    if (!username.trim()) {
+      setError('Username is required');
+      return;
+    }
+
+    if (!email.trim()) {
+      setError('Email is required');
       return;
     }
 
     try {
-      // Call register API and log in the user automatically
-      await login(username, password);
-      // Navigate to dashboard or home
-      navigate('/dashboard');
+      const registrationData: IRegistrationData = {
+        username: username.trim(),
+        email: email.trim(),
+        password,
+        password2: confirmPassword,
+        role,
+      };
+
+      console.info('RegisterFormPage: Registration payload:', { ...registrationData, password: '[REDACTED]', password2: '[REDACTED]' });
+
+      // Call register API
+      await register(registrationData);
+      console.info('RegisterFormPage: Registration successful');
+
+      // Set registration state to trigger navigation
+      setHasRegistered(true);
     } catch (errorObj) {
-      // Rename 'err' to 'errorObj' and use it
       console.error('Registration failed:', errorObj);
-      setError('Registration failed. Please try again.');
-    } finally {
-      setIsLoading(false);
+      const errorMessage = errorObj instanceof Error ? errorObj.message : 'Registration failed. Please try again.';
+      setError(errorMessage);
     }
   };
 
@@ -97,7 +128,7 @@ const RegisterFormPage: React.FC = () => {
             onChange={e => setUsername(e.target.value)}
             error={!!error}
             disabled={isLoading}
-            inputProps={{ 'data-test-id': 'register-username-input' }}
+            inputProps={{ 'data-testid': 'register-username-input' }}
           />
           <TextField
             variant="outlined"
@@ -110,7 +141,7 @@ const RegisterFormPage: React.FC = () => {
             onChange={e => setEmail(e.target.value)}
             error={!!error}
             disabled={isLoading}
-            inputProps={{ 'data-test-id': 'register-email-input' }}
+            inputProps={{ 'data-testid': 'register-email-input' }}
           />
           <TextField
             variant="outlined"
@@ -123,7 +154,7 @@ const RegisterFormPage: React.FC = () => {
             onChange={e => setPassword(e.target.value)}
             error={!!error}
             disabled={isLoading}
-            inputProps={{ 'data-test-id': 'register-password-input' }}
+            inputProps={{ 'data-testid': 'register-password-input' }}
           />
           {password && (
             <PasswordStrengthIndicator
@@ -142,22 +173,22 @@ const RegisterFormPage: React.FC = () => {
             onChange={e => setConfirmPassword(e.target.value)}
             error={!!error}
             disabled={isLoading}
-            inputProps={{ 'data-test-id': 'register-confirm-password-input' }}
+            inputProps={{ 'data-testid': 'register-confirm-password-input' }}
           />
-          <FormControl fullWidth margin="normal" data-test-id="register-role-select">
+          <FormControl fullWidth margin="normal" data-testid="register-role-select">
             <InputLabel>Role</InputLabel>
             <Select
               value={role}
               label="Role"
               onChange={handleRoleChange}
               disabled={isLoading}
-              inputProps={{ 'data-test-id': 'register-role-select-input' }}
+              inputProps={{ 'data-testid': 'register-role-select-input' }}
             >
-              <MenuItem value="user" data-test-id="register-role-user-option">
-                User
+              <MenuItem value="student" data-test-id="register-role-student-option">
+                Student
               </MenuItem>
-              <MenuItem value="admin" data-test-id="register-role-admin-option">
-                Admin
+              <MenuItem value="instructor" data-test-id="register-role-instructor-option">
+                Instructor
               </MenuItem>
             </Select>
           </FormControl>
@@ -173,7 +204,7 @@ const RegisterFormPage: React.FC = () => {
             color="primary"
             sx={{ marginTop: 2 }}
             disabled={isLoading || !passwordStrength.isValid}
-            data-test-id="register-submit-button"
+            data-testid="register-submit-button"
           >
             {isLoading ? 'Registering...' : 'Register'}
           </Button>

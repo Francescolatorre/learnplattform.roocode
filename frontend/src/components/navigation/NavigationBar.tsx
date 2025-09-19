@@ -21,23 +21,25 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 import { menuConfig } from '@/config/menuConfig';
-import { useAuth } from '@/context/auth/AuthContext';
-import { TUserRole } from '@/context/auth/types';
+import { useAuthStore } from '@/store/modernAuthStore';
+import { UserRoleEnum } from '@/types/userTypes';
 
 /**
  * Main NavigationBar component for the application
  * Displays navigation links based on user role and provides login/logout functionality
  */
 const NavigationBar: React.FC = () => {
-  const { user, getUserRole, logout, isAuthenticated } = useAuth();
-  const userRole = getUserRole();
+  const { user, logout, isAuthenticated } = useAuthStore();
+  const userRole = user?.role;
   const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Filter menu based on user role
-  const filteredMenu = menuConfig.filter(menu => menu.roles.includes(userRole as TUserRole));
+  const filteredMenu = menuConfig.filter(menu =>
+    userRole ? menu.roles.includes(userRole as UserRoleEnum) : false
+  );
 
   console.info('MainNavigation rendered');
   console.info('menuConfig:', menuConfig);
