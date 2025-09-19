@@ -61,8 +61,9 @@ jobs:
 
       - name: Build and push backend image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/learnplatform-backend:${{ github.sha }} .
-          docker push ghcr.io/${{ github.repository_owner }}/learnplatform-backend:${{ github.sha }}
+          REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr 'A-Z' 'a-z')
+          docker build -t ghcr.io/${REPO_OWNER}/learnplatform-backend:${{ github.sha }} .
+          docker push ghcr.io/${REPO_OWNER}/learnplatform-backend:${{ github.sha }}
 
       - name: Install Railway CLI
         run: |
@@ -73,9 +74,10 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
+          REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr 'A-Z' 'a-z')
           railway login --token $RAILWAY_TOKEN
           railway service --name learnplattform.roocode
-          railway deploy --image ghcr.io/${{ github.repository_owner }}/learnplatform-backend:${{ github.sha }}
+          railway deploy --image ghcr.io/${REPO_OWNER}/learnplatform-backend:${{ github.sha }}
 
   summary:
     name: Test Summary
