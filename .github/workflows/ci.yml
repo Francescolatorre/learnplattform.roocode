@@ -74,10 +74,9 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
-          REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr 'A-Z' 'a-z')
           railway link 2eb61cd2-5948-48ed-bc2d-bd7b6b37367c
           railway service learnplattform.roocode
-          railway deploy --image ghcr.io/${REPO_OWNER}/learnplatform-backend:${{ github.sha }}
+          railway up --detach
 
   summary:
     name: Test Summary
