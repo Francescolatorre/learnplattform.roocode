@@ -54,7 +54,7 @@ from core.views.dashboards import (
     admin_dashboard_summary,
 )
 from core.views.enrollments import EnrollmentViewSet
-from core.views.misc import health_check
+from core.views.health import health_check
 from core.views.quizzes import QuizOptionViewSet, QuizQuestionViewSet, QuizTaskViewSet
 from core.views.tasks import LearningTaskViewSet
 from core.views.users import UserProfileAPI, UserViewSet
