@@ -20,7 +20,6 @@ import { modernLearningTaskService } from '@/services/resources/modernLearningTa
 describe('TaskStore', () => {
   beforeEach(() => {
     // Reset the store state before each test
-    const store = useTaskStore.getState();
     useTaskStore.setState({
       learningTasks: [],
       isLoading: false,
@@ -54,7 +53,7 @@ describe('TaskStore', () => {
       description: 'Test description',
       course: 1,
       is_published: true,
-      due_date: null,
+      order: 1,
       created_at: '2025-09-16T00:00:00Z',
       updated_at: '2025-09-16T00:00:00Z',
     };
@@ -62,7 +61,7 @@ describe('TaskStore', () => {
     describe('fetchLearningTasks', () => {
       test('should fetch learning tasks successfully', async () => {
         const mockTasks = [mockLearningTask];
-        (modernLearningTaskService.getTasks as ReturnType<typeof vi.fn>).mockResolvedValue(mockTasks);
+        (modernLearningTaskService.getAllTasks as ReturnType<typeof vi.fn>).mockResolvedValue(mockTasks);
 
         const store = useTaskStore.getState();
         await store.fetchLearningTasks('1');
@@ -71,12 +70,12 @@ describe('TaskStore', () => {
         expect(state.learningTasks).toEqual(mockTasks);
         expect(state.isLoading).toBe(false);
         expect(state.error).toBeNull();
-        expect(modernLearningTaskService.getTasks).toHaveBeenCalledWith('1');
+        expect(modernLearningTaskService.getAllTasks).toHaveBeenCalledWith({ course: '1' });
       });
 
       test('should handle fetch learning tasks error', async () => {
         const errorMessage = 'Failed to fetch tasks';
-        (modernLearningTaskService.getTasks as ReturnType<typeof vi.fn>).mockRejectedValue(new Error(errorMessage));
+        (modernLearningTaskService.getAllTasks as ReturnType<typeof vi.fn>).mockRejectedValue(new Error(errorMessage));
 
         const store = useTaskStore.getState();
         await store.fetchLearningTasks('1');
@@ -92,7 +91,7 @@ describe('TaskStore', () => {
         const promise = new Promise<ILearningTask[]>((resolve) => {
           resolvePromise = resolve;
         });
-        (modernLearningTaskService.getTasks as ReturnType<typeof vi.fn>).mockReturnValue(promise);
+        (modernLearningTaskService.getAllTasks as ReturnType<typeof vi.fn>).mockReturnValue(promise);
 
         const store = useTaskStore.getState();
         const fetchPromise = store.fetchLearningTasks('1');
@@ -132,7 +131,7 @@ describe('TaskStore', () => {
         (modernLearningTaskService.createTask as ReturnType<typeof vi.fn>).mockRejectedValue(new Error(errorMessage));
 
         const store = useTaskStore.getState();
-        await store.createLearningTask({ title: 'New Task' });
+        await store.createLearningTask({ title: 'New Task', description: 'Test description', course: 1 });
 
         const state = useTaskStore.getState();
         expect(state.learningTasks).toEqual([]);
@@ -286,12 +285,12 @@ describe('TaskStore', () => {
         description: 'Description',
         course: 1,
         is_published: true,
-        due_date: null,
+        order: 1,
         created_at: '2025-09-16T00:00:00Z',
         updated_at: '2025-09-16T00:00:00Z',
       };
 
-      (modernLearningTaskService.getTasks as ReturnType<typeof vi.fn>).mockResolvedValue([mockLearningTask]);
+      (modernLearningTaskService.getAllTasks as ReturnType<typeof vi.fn>).mockResolvedValue([mockLearningTask]);
 
       const store = useTaskStore.getState();
 

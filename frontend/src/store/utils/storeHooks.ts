@@ -266,20 +266,20 @@ export function createSubscriptionHook<TStore, TData>(
         store,
         (data: TData) => {
           // Update store with new data
-          if ('setSubscriptionData' in store) {
+          if ('setSubscriptionData' in (store as object)) {
             (store as any).setSubscriptionData(data);
           }
         },
         (error: string) => {
           // Update store with error
-          if ('setSubscriptionError' in store) {
+          if ('setSubscriptionError' in (store as object)) {
             (store as any).setSubscriptionError(error);
           }
         }
       );
 
       // Store cleanup function
-      if ('setSubscriptionCleanup' in store) {
+      if ('setSubscriptionCleanup' in (store as object)) {
         (store as any).setSubscriptionCleanup(cleanup);
       }
     }, [store]);
@@ -288,7 +288,7 @@ export function createSubscriptionHook<TStore, TData>(
       const cleanup = (state as any).subscriptionCleanup;
       if (cleanup) {
         cleanup();
-        if ('setSubscriptionCleanup' in store) {
+        if ('setSubscriptionCleanup' in (store as object)) {
           (store as any).setSubscriptionCleanup(null);
         }
       }

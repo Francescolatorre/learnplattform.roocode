@@ -51,7 +51,8 @@
  * @since 2025-09-15 (TASK-012 Modern Service Architecture)
  */
 
-import { IStudentProgressSummary, IUserProgress } from '@/types';
+import { IStudentProgressSummary } from '@/types';
+import { IUserProgress } from '@/types/gradingTypes';
 import { ICourse, TCourseStatus } from '@/types/course';
 import { IPaginatedResponse } from '@/types/paginatedResponse';
 import { ILearningTask, ITaskProgress } from '@/types/Task';
@@ -109,7 +110,7 @@ export class ModernCourseService extends BaseService {
     return withManagedExceptions(
       async () => {
         const url = `${this.endpoints.courses.list}${courseId}/`;
-        return await this.apiClient.get(url);
+        return await this.apiClient.get<ICourse>(url);
       },
       {
         serviceName: 'ModernCourseService',
@@ -132,7 +133,7 @@ export class ModernCourseService extends BaseService {
   async createCourse(courseData: Partial<ICourse>): Promise<ICourse> {
     return withManagedExceptions(
       async () => {
-        return await this.apiClient.post(this.endpoints.courses.list, courseData);
+        return await this.apiClient.post<ICourse>(this.endpoints.courses.list, courseData);
       },
       {
         serviceName: 'ModernCourseService',
@@ -148,7 +149,7 @@ export class ModernCourseService extends BaseService {
     return withManagedExceptions(
       async () => {
         const url = `${this.endpoints.courses.list}${courseId}/`;
-        return await this.apiClient.put(url, courseData);
+        return await this.apiClient.put<ICourse>(url, courseData);
       },
       {
         serviceName: 'ModernCourseService',
@@ -301,7 +302,7 @@ export class ModernCourseService extends BaseService {
         tasks_in_progress: userProgress.overall_stats?.tasks_in_progress || 0,
         tasks_overdue: userProgress.overall_stats?.tasks_overdue || 0
       },
-      courses: userProgress.courses?.map(course => ({
+      courses: userProgress.courses?.map((course: any) => ({
         id: course.id || 'unknown',
         title: course.title || 'Unknown Course',
         progress: course.progress || 0,

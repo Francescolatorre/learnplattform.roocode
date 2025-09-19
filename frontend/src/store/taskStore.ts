@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 import { modernLearningTaskService } from '@/services/resources/modernLearningTaskService';
-import { ILearningTask } from '@/types/Task';
+import { ILearningTask, ITaskCreationData } from '@/types/Task';
 
 interface TaskState {
   // Learning Tasks from API
@@ -14,7 +14,7 @@ interface TaskState {
 
   // Modern service-integrated actions
   fetchLearningTasks: (courseId?: string) => Promise<void>;
-  createLearningTask: (task: Partial<ILearningTask>) => Promise<void>;
+  createLearningTask: (task: ITaskCreationData) => Promise<void>;
   updateLearningTask: (taskId: string, updates: Partial<ILearningTask>) => Promise<void>;
   deleteLearningTask: (taskId: string) => Promise<void>;
 
@@ -38,7 +38,7 @@ const useTaskStore = create<TaskState>((set, _get) => ({
   fetchLearningTasks: async (courseId?: string) => {
     set({ isLoading: true, error: null });
     try {
-      const tasks = await modernLearningTaskService.getTasks(courseId);
+      const tasks = await modernLearningTaskService.getAllTasks(courseId ? { course: courseId } : {});
       set({ learningTasks: tasks, isLoading: false });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to fetch tasks';
@@ -46,7 +46,7 @@ const useTaskStore = create<TaskState>((set, _get) => ({
     }
   },
 
-  createLearningTask: async (task: Partial<ILearningTask>) => {
+  createLearningTask: async (task: ITaskCreationData) => {
     set({ isLoading: true, error: null });
     try {
       const newTask = await modernLearningTaskService.createTask(task);

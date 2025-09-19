@@ -8,7 +8,6 @@
 import { describe, it, expect, beforeEach, vi, Mock } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 
-import { ModernCourseService } from '@/services/resources/modernCourseService';
 import { ServiceFactory } from '@/services/factory/serviceFactory';
 import { ICourse } from '@/types/course';
 import { IPaginatedResponse } from '@/types/paginatedResponse';
@@ -35,7 +34,8 @@ const mockCourses: ICourse[] = [
     description: 'Learn React fundamentals',
     status: 'published',
     visibility: 'public',
-    creator: 1,
+    category: 'Technology',
+    difficulty_level: 'beginner',
     created_at: '2025-01-01T00:00:00Z',
     updated_at: '2025-01-01T00:00:00Z',
     version: 1,
@@ -48,7 +48,8 @@ const mockCourses: ICourse[] = [
     description: 'Deep dive into TypeScript',
     status: 'published',
     visibility: 'public',
-    creator: 1,
+    category: 'Technology',
+    difficulty_level: 'advanced',
     created_at: '2025-01-02T00:00:00Z',
     updated_at: '2025-01-02T00:00:00Z',
     version: 1,
@@ -369,13 +370,13 @@ describe('Course Store Hooks', () => {
 
   describe('useCourseOperations', () => {
     it('should provide CRUD operation hooks', () => {
-      const { result } = renderHook(() => useCourseOperations());
+      const operations = useCourseOperations;
 
-      expect(result.current.useList).toBeInstanceOf(Function);
-      expect(result.current.useGet).toBeInstanceOf(Function);
-      expect(result.current.useCreate).toBeInstanceOf(Function);
-      expect(result.current.useUpdate).toBeInstanceOf(Function);
-      expect(result.current.useDelete).toBeInstanceOf(Function);
+      expect(typeof operations.useList).toBe('function');
+      expect(typeof operations.useGet).toBe('function');
+      expect(typeof operations.useCreate).toBe('function');
+      expect(typeof operations.useUpdate).toBe('function');
+      expect(typeof operations.useDelete).toBe('function');
     });
   });
 

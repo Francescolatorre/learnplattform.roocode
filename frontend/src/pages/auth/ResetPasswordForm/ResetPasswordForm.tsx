@@ -7,7 +7,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import React, { useState, useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import useNotification from '@/components/Notifications/useNotification';
@@ -38,7 +38,7 @@ const ResetPasswordForm: React.FC = () => {
     watch: _watch,
     formState: { errors },
   } = useForm<ResetPasswordSchema>({
-    resolver: zodResolver(resetPasswordSchema),
+    resolver: zodResolver(resetPasswordSchema) as any,
     mode: 'onChange',
   });
 
@@ -53,7 +53,7 @@ const ResetPasswordForm: React.FC = () => {
     }
   }, [token, navigate, notify]);
 
-  const onSubmit = async (data: ResetPasswordSchema) => {
+  const onSubmit: SubmitHandler<ResetPasswordSchema> = async (data) => {
     setLoading(true);
     setError(null);
     setSuccess(false);

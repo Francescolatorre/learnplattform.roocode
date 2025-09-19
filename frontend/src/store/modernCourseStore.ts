@@ -98,7 +98,7 @@ export const useModernCourseStore = create<CourseStoreState>()(
   devtools(
     (set, _get) => ({
       // Base service slice state
-      ...createServiceSlice<ICourse[]>([])((_, _getSlice) => ({} as Record<string, unknown>)),
+      ...createServiceSlice<ICourse[]>([]),
 
       // Pagination state
       totalCount: 0,
@@ -130,7 +130,7 @@ export const useModernCourseStore = create<CourseStoreState>()(
         }
 
         return withAsyncOperation(
-          () => courseService.getCourses(filters),
+          () => courseService.getCourses(filters as any),
           (loading) => set((state) => ({ ...state, isLoading: loading })),
           (error) => set((state) => ({ ...state, error })),
           (result) => {
@@ -315,7 +315,7 @@ export const useModernCourseStore = create<CourseStoreState>()(
         courseDetailsCache.clear();
 
         // Fetch fresh data
-        return get().fetchCourseDetails(courseId);
+        return _get().fetchCourseDetails(courseId);
       }
     }),
     {

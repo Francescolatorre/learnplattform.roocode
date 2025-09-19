@@ -328,7 +328,7 @@ const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'modern-auth-store', // DevTools name
-      partialize: (state) => ({
+      partialize: (state: AuthState) => ({
         // Only persist essential state, not sensitive data
         isAuthenticated: state.isAuthenticated
       })

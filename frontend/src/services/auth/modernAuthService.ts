@@ -115,16 +115,18 @@ export class ModernAuthService extends BaseService {
           password
         });
 
-        if (!response || !response.access || !response.refresh) {
+        if (!response || typeof response !== 'object' || !('access' in response) || !('refresh' in response)) {
           throw new Error('Login failed: Malformed response from server');
         }
 
+        const tokens = response as { access: string; refresh: string };
+
         // Store tokens securely in localStorage
-        this.storeTokens(response.access, response.refresh);
+        this.storeTokens(tokens.access, tokens.refresh);
 
         return {
-          access: response.access,
-          refresh: response.refresh
+          access: tokens.access,
+          refresh: tokens.refresh
         };
       },
       {
@@ -154,12 +156,17 @@ export class ModernAuthService extends BaseService {
         }
 
         // If registration returns tokens, store them
-        if (response.access && response.refresh) {
-          this.storeTokens(response.access, response.refresh);
+        if (typeof response === 'object' && 'access' in response && 'refresh' in response) {
+          const tokens = response as { access: string; refresh: string };
+          this.storeTokens(tokens.access, tokens.refresh);
         }
 
         // Transform response to IUser format
-        return this.transformProfileToUser(response);
+        if (typeof response === 'object' && response !== null) {
+          return this.transformProfileToUser(response as IUserProfile);
+        }
+
+        throw new Error('Registration failed: Invalid response format');
       },
       {
         serviceName: 'ModernAuthService',
@@ -221,15 +228,17 @@ export class ModernAuthService extends BaseService {
           refresh: refreshToken
         });
 
-        if (!response || !response.access) {
+        if (!response || typeof response !== 'object' || !('access' in response)) {
           throw new Error('Token refresh failed: Malformed response');
         }
 
+        const token = response as { access: string };
+
         // Update access token in localStorage
-        localStorage.setItem(AUTH_CONFIG.tokenStorageKey, response.access);
+        localStorage.setItem(AUTH_CONFIG.tokenStorageKey, token.access);
 
         return {
-          access: response.access,
+          access: token.access,
           refresh: refreshToken // Keep existing refresh token
         };
       },
@@ -268,7 +277,13 @@ export class ModernAuthService extends BaseService {
           );
 
           clearTimeout(timeoutId);
-          return response && response.status !== false;
+
+          if (typeof response === 'object' && response !== null && 'status' in response) {
+            const validationResponse = response as { status: boolean };
+            return response && validationResponse.status !== false;
+          }
+
+          return response !== null && response !== undefined;
         } catch {
           // If validation fails, try to refresh token automatically
           const refreshToken = localStorage.getItem(AUTH_CONFIG.refreshTokenStorageKey);
@@ -313,7 +328,11 @@ export class ModernAuthService extends BaseService {
           throw new Error('Failed to fetch user profile');
         }
 
-        return this.transformProfileToUser(response);
+        if (typeof response === 'object' && response !== null) {
+          return this.transformProfileToUser(response as IUserProfile);
+        }
+
+        throw new Error('Failed to fetch user profile: Invalid response format');
       },
       {
         serviceName: 'ModernAuthService',
@@ -336,7 +355,11 @@ export class ModernAuthService extends BaseService {
           throw new Error('Password reset request failed');
         }
 
-        return response;
+        if (typeof response === 'object' && response !== null && 'detail' in response) {
+          return response as IPasswordResetResponse;
+        }
+
+        throw new Error('Password reset request failed: Invalid response format');
       },
       {
         serviceName: 'ModernAuthService',
@@ -361,7 +384,11 @@ export class ModernAuthService extends BaseService {
           throw new Error('Password reset failed');
         }
 
-        return response;
+        if (typeof response === 'object' && response !== null && 'detail' in response) {
+          return response as IPasswordResetResponse;
+        }
+
+        throw new Error('Password reset failed: Invalid response format');
       },
       {
         serviceName: 'ModernAuthService',

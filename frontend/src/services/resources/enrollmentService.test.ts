@@ -74,7 +74,7 @@ vi.mock('../api/apiService', () => {
 });
 
 describe('enrollmentService', () => {
-  let mockGet: any, mockPost: any, mockPut: any, mockDelete: any;
+  let mockGet: any, mockPost: any, mockPut: any;
 
   // Sample data for consistent testing with correct types
   const sampleEnrollment: Partial<ICourseEnrollment> = {
@@ -103,7 +103,6 @@ describe('enrollmentService', () => {
     mockGet = (globalThis as any).mockGet;
     mockPost = (globalThis as any).mockPost;
     mockPut = (globalThis as any).mockPut;
-    mockDelete = (globalThis as any).mockDelete;
 
     // Clear all mocks before each test
     vi.clearAllMocks();

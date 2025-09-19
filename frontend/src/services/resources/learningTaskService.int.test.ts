@@ -21,7 +21,6 @@ describe('learningTaskService Integration', () => {
   let accessToken: string;
   let createdCourseId: number;
   let baseTaskId: number;
-  let userId: number;
 
   beforeAll(async () => {
     try {
@@ -36,9 +35,8 @@ describe('learningTaskService Integration', () => {
       learningTaskService.setAuthToken(accessToken);
       courseService.setAuthToken(accessToken);
 
-      // Fetch user profile to get userId
-      const userProfile = await authService.getUserProfile(accessToken);
-      userId = userProfile.id;
+      // Fetch user profile
+      await authService.getUserProfile(accessToken);
     } catch (error) {
       console.error('Instructor login failed, falling back to student:', error);
       // Fall back to student if instructor fails
@@ -51,8 +49,7 @@ describe('learningTaskService Integration', () => {
 
       learningTaskService.setAuthToken(accessToken);
       courseService.setAuthToken(accessToken);
-      const userProfile = await authService.getUserProfile(accessToken);
-      userId = userProfile.id;
+      await authService.getUserProfile(accessToken);
     }
 
     // Create a course for testing

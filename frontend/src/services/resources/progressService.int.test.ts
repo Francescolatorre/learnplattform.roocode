@@ -20,7 +20,6 @@ import progressService from './progressService';
 describe('progressService Integration', () => {
   let accessToken: string;
   let createdCourseId: number;
-  let userId: number;
 
   beforeAll(async () => {
     try {
@@ -39,9 +38,8 @@ describe('progressService Integration', () => {
       progressService.setAuthToken(accessToken);
       courseService.setAuthToken(accessToken);
 
-      // Fetch user profile to get userId
-      const userProfile = await authService.getUserProfile(accessToken);
-      userId = userProfile.id;
+      // Fetch user profile
+      await authService.getUserProfile(accessToken);
     } catch (error) {
       console.error('Instructor login failed, falling back to student:', error);
       // Fall back to student if instructor login fails
@@ -58,8 +56,7 @@ describe('progressService Integration', () => {
       progressService.setAuthToken(accessToken);
       courseService.setAuthToken(accessToken);
 
-      const userProfile = await authService.getUserProfile(accessToken);
-      userId = userProfile.id;
+      await authService.getUserProfile(accessToken);
     }
 
     try {
