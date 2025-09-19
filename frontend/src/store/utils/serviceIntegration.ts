@@ -39,50 +39,55 @@ export interface ServiceStoreSlice<T> extends BaseStoreState {
 /**
  * Creates a service-aware store slice with common loading/error handling
  */
-export const createServiceSlice = <T>(
-  initialData: T
-): StateCreator<ServiceStoreSlice<T>, [], [], ServiceStoreSlice<T>> => (set) => ({
-  // Data
-  data: initialData,
-
-  // Loading state
-  isLoading: false,
-  error: null,
-  lastUpdated: null,
-
-  // Actions
-  setData: (data: T) => set((state) => ({
-    ...state,
-    data,
-    isLoading: false,
-    error: null,
-    lastUpdated: new Date()
-  })),
-
-  setLoading: (isLoading: boolean) => set((state) => ({
-    ...state,
-    isLoading,
-    error: isLoading ? null : state.error // Clear error when starting new operation
-  })),
-
-  setError: (error: string | null) => set((state) => ({
-    ...state,
-    error,
-    isLoading: false
-  })),
-
-  updateLastUpdated: () => set((state) => ({
-    ...state,
-    lastUpdated: new Date()
-  })),
-
-  reset: () => set(() => ({
+export const createServiceSlice =
+  <T>(initialData: T): StateCreator<ServiceStoreSlice<T>, [], [], ServiceStoreSlice<T>> =>
+  set => ({
+    // Data
     data: initialData,
+
+    // Loading state
     isLoading: false,
     error: null,
-    lastUpdated: null
-  }))
-});
+    lastUpdated: null,
+
+    // Actions
+    setData: (data: T) =>
+      set(state => ({
+        ...state,
+        data,
+        isLoading: false,
+        error: null,
+        lastUpdated: new Date(),
+      })),
+
+    setLoading: (isLoading: boolean) =>
+      set(state => ({
+        ...state,
+        isLoading,
+        error: isLoading ? null : state.error, // Clear error when starting new operation
+      })),
+
+    setError: (error: string | null) =>
+      set(state => ({
+        ...state,
+        error,
+        isLoading: false,
+      })),
+
+    updateLastUpdated: () =>
+      set(state => ({
+        ...state,
+        lastUpdated: new Date(),
+      })),
+
+    reset: () =>
+      set(() => ({
+        data: initialData,
+        isLoading: false,
+        error: null,
+        lastUpdated: null,
+      })),
+  });
 
 /**
  * Generic async operation wrapper for service calls
@@ -199,7 +204,7 @@ export class StoreCache<T> {
 
     this.cache.set(key, {
       data,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -231,7 +236,7 @@ export enum StoreErrorType {
   VALIDATION_ERROR = 'VALIDATION_ERROR',
   AUTHORIZATION_ERROR = 'AUTHORIZATION_ERROR',
   NOT_FOUND_ERROR = 'NOT_FOUND_ERROR',
-  UNKNOWN_ERROR = 'UNKNOWN_ERROR'
+  UNKNOWN_ERROR = 'UNKNOWN_ERROR',
 }
 
 export interface StoreError {
@@ -250,7 +255,7 @@ export const classifyError = (error: unknown): StoreError => {
       return {
         type: StoreErrorType.AUTHORIZATION_ERROR,
         message: 'Authentication required',
-        details: error
+        details: error,
       };
     }
 
@@ -258,7 +263,7 @@ export const classifyError = (error: unknown): StoreError => {
       return {
         type: StoreErrorType.NOT_FOUND_ERROR,
         message: 'Resource not found',
-        details: error
+        details: error,
       };
     }
 
@@ -266,7 +271,7 @@ export const classifyError = (error: unknown): StoreError => {
       return {
         type: StoreErrorType.VALIDATION_ERROR,
         message: 'Invalid data provided',
-        details: error
+        details: error,
       };
     }
 
@@ -274,7 +279,7 @@ export const classifyError = (error: unknown): StoreError => {
       return {
         type: StoreErrorType.NETWORK_ERROR,
         message: 'Network connection error',
-        details: error
+        details: error,
       };
     }
   }
@@ -282,6 +287,6 @@ export const classifyError = (error: unknown): StoreError => {
   return {
     type: StoreErrorType.UNKNOWN_ERROR,
     message: error instanceof Error ? error.message : 'An unknown error occurred',
-    details: error
+    details: error,
   };
 };

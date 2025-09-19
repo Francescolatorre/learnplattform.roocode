@@ -85,7 +85,7 @@ const TaskCreation: React.FC<TaskCreationProps> = ({
     if (previouslyOpen !== open) {
       setPreviouslyOpen(open);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, previouslyOpen]); // Removed 'task' from dependencies to prevent reset on every render
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

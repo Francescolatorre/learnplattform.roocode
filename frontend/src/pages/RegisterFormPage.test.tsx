@@ -36,7 +36,11 @@ vi.mock('@components/shared/PasswordStrengthIndicator', () => ({
 // Mock password validation
 vi.mock('../utils/passwordValidation', () => ({
   validatePassword: vi.fn((password: string) => ({
-    isValid: password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /\d/.test(password),
+    isValid:
+      password.length >= 8 &&
+      /[A-Z]/.test(password) &&
+      /[a-z]/.test(password) &&
+      /\d/.test(password),
     score: password.length >= 8 ? 4 : 2,
     feedback: password.length < 8 ? ['Password must be at least 8 characters long'] : [],
   })),

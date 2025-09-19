@@ -77,9 +77,7 @@ describe('CourseDetailPage', () => {
 
   it('displays error message when course loading fails', async () => {
     const errorMessage = 'Failed to load course';
-    vi.mocked(modernCourseService.getCourseDetails).mockRejectedValue(
-      new Error(errorMessage)
-    );
+    vi.mocked(modernCourseService.getCourseDetails).mockRejectedValue(new Error(errorMessage));
 
     renderWithProviders();
 

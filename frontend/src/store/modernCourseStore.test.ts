@@ -20,7 +20,7 @@ import {
   useCourseList,
   useSelectedCourse,
   initializeCourseStore,
-  CreateCourseData
+  CreateCourseData,
 } from './modernCourseStore';
 
 // Mock the service factory
@@ -40,7 +40,7 @@ const mockCourses: ICourse[] = [
     updated_at: '2025-01-01T00:00:00Z',
     version: 1,
     learning_objectives: 'Master React basics',
-    prerequisites: 'JavaScript knowledge'
+    prerequisites: 'JavaScript knowledge',
   },
   {
     id: 2,
@@ -53,15 +53,15 @@ const mockCourses: ICourse[] = [
     updated_at: '2025-01-02T00:00:00Z',
     version: 1,
     learning_objectives: 'Master TypeScript',
-    prerequisites: 'Basic programming'
-  }
+    prerequisites: 'Basic programming',
+  },
 ];
 
 const mockPaginatedResponse: IPaginatedResponse<ICourse> = {
   count: 2,
   next: null,
   previous: null,
-  results: mockCourses
+  results: mockCourses,
 };
 
 const mockCourseService = {
@@ -70,7 +70,7 @@ const mockCourseService = {
   createCourse: vi.fn(),
   updateCourse: vi.fn(),
   deleteCourse: vi.fn(),
-  getStudentProgress: vi.fn()
+  getStudentProgress: vi.fn(),
 };
 
 describe.skip('Modern Course Store', () => {
@@ -80,7 +80,7 @@ describe.skip('Modern Course Store', () => {
 
     // Mock service factory
     const mockServiceFactory = {
-      getService: vi.fn(() => mockCourseService)
+      getService: vi.fn(() => mockCourseService),
     };
     (ServiceFactory.getInstance as Mock).mockReturnValue(mockServiceFactory);
 
@@ -172,12 +172,12 @@ describe.skip('Modern Course Store', () => {
       const newCourseData: CreateCourseData = {
         title: 'New Course',
         description: 'A new course',
-        status: 'draft'
+        status: 'draft',
       };
       const createdCourse: ICourse = {
         ...mockCourses[0],
         id: 3,
-        ...newCourseData
+        ...newCourseData,
       };
 
       mockCourseService.createCourse.mockResolvedValue(createdCourse);
@@ -203,7 +203,7 @@ describe.skip('Modern Course Store', () => {
     it('should update course successfully', async () => {
       const updateData = {
         id: 1,
-        title: 'Updated Course Title'
+        title: 'Updated Course Title',
       };
       const updatedCourse = { ...mockCourses[0], title: updateData.title };
 

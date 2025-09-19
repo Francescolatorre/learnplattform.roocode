@@ -24,20 +24,20 @@ const mockApiClient = {
   post: vi.fn(),
   put: vi.fn(),
   delete: vi.fn(),
-  setAuthToken: vi.fn()
+  setAuthToken: vi.fn(),
 };
 
 // Mock withManagedExceptions to simplify testing
 vi.mock('@/utils/errorHandling', () => ({
-  withManagedExceptions: (fn: () => Promise<any>) => fn
+  withManagedExceptions: (fn: () => Promise<any>) => fn,
 }));
 
 // Mock AUTH_CONFIG
 vi.mock('@/config/appConfig', () => ({
   AUTH_CONFIG: {
     tokenStorageKey: 'access_token',
-    refreshTokenStorageKey: 'refresh_token'
-  }
+    refreshTokenStorageKey: 'refresh_token',
+  },
 }));
 
 // Mock localStorage
@@ -45,7 +45,7 @@ const mockLocalStorage = {
   getItem: vi.fn(),
   setItem: vi.fn(),
   removeItem: vi.fn(),
-  clear: vi.fn()
+  clear: vi.fn(),
 };
 Object.defineProperty(window, 'localStorage', { value: mockLocalStorage });
 
@@ -59,18 +59,18 @@ describe.skip('ModernAuthService', () => {
     role: 'student',
     display_name: 'Test User',
     created_at: '2025-01-01T00:00:00Z',
-    updated_at: '2025-01-01T00:00:00Z'
+    updated_at: '2025-01-01T00:00:00Z',
   };
 
   const mockTokens = {
     access: 'mock-access-token',
-    refresh: 'mock-refresh-token'
+    refresh: 'mock-refresh-token',
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
     authService = new ModernAuthService({
-      apiClient: mockApiClient as any
+      apiClient: mockApiClient as any,
     });
   });
 
@@ -82,7 +82,7 @@ describe.skip('ModernAuthService', () => {
 
       expect(mockApiClient.post).toHaveBeenCalledWith('/auth/login/', {
         username: 'testuser',
-        password: 'password'
+        password: 'password',
       });
       expect(mockLocalStorage.setItem).toHaveBeenCalledWith('access_token', mockTokens.access);
       expect(mockLocalStorage.setItem).toHaveBeenCalledWith('refresh_token', mockTokens.refresh);
@@ -113,7 +113,7 @@ describe.skip('ModernAuthService', () => {
       const registrationData = {
         username: 'newuser',
         email: 'new@example.com',
-        password: 'password123'
+        password: 'password123',
       };
 
       const result = await authService.register(registrationData);
@@ -121,13 +121,13 @@ describe.skip('ModernAuthService', () => {
       expect(mockApiClient.post).toHaveBeenCalledWith('/auth/register/', {
         ...registrationData,
         password2: 'password123',
-        role: 'student'
+        role: 'student',
       });
       expect(result).toMatchObject({
         id: '1',
         username: 'testuser',
         email: 'test@example.com',
-        role: UserRoleEnum.STUDENT
+        role: UserRoleEnum.STUDENT,
       });
     });
 
@@ -135,14 +135,14 @@ describe.skip('ModernAuthService', () => {
       const responseWithTokens = {
         ...mockUserProfile,
         access: mockTokens.access,
-        refresh: mockTokens.refresh
+        refresh: mockTokens.refresh,
       };
       mockApiClient.post.mockResolvedValue(responseWithTokens);
 
       await authService.register({
         username: 'newuser',
         email: 'new@example.com',
-        password: 'password123'
+        password: 'password123',
       });
 
       expect(mockLocalStorage.setItem).toHaveBeenCalledWith('access_token', mockTokens.access);
@@ -157,7 +157,7 @@ describe.skip('ModernAuthService', () => {
         email: 'instructor@example.com',
         password: 'password123',
         password2: 'password123',
-        role: 'instructor'
+        role: 'instructor',
       };
 
       await authService.register(registrationData);
@@ -180,8 +180,8 @@ describe.skip('ModernAuthService', () => {
         { refresh: mockTokens.refresh },
         {
           headers: {
-            Authorization: `Bearer ${mockTokens.access}`
-          }
+            Authorization: `Bearer ${mockTokens.access}`,
+          },
         }
       );
       expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('access_token');
@@ -220,12 +220,12 @@ describe.skip('ModernAuthService', () => {
       const result = await authService.refreshToken();
 
       expect(mockApiClient.post).toHaveBeenCalledWith('/auth/token/refresh/', {
-        refresh: mockTokens.refresh
+        refresh: mockTokens.refresh,
       });
       expect(mockLocalStorage.setItem).toHaveBeenCalledWith('access_token', 'new-access-token');
       expect(result).toEqual({
         access: 'new-access-token',
-        refresh: mockTokens.refresh
+        refresh: mockTokens.refresh,
       });
     });
 
@@ -257,9 +257,9 @@ describe.skip('ModernAuthService', () => {
         {},
         {
           headers: {
-            Authorization: `Bearer ${mockTokens.access}`
+            Authorization: `Bearer ${mockTokens.access}`,
           },
-          signal: expect.any(AbortSignal)
+          signal: expect.any(AbortSignal),
         }
       );
       expect(result).toBe(true);
@@ -316,14 +316,14 @@ describe.skip('ModernAuthService', () => {
 
       expect(mockApiClient.get).toHaveBeenCalledWith('/users/profile/', {
         headers: {
-          Authorization: `Bearer ${mockTokens.access}`
-        }
+          Authorization: `Bearer ${mockTokens.access}`,
+        },
       });
       expect(result).toMatchObject({
         id: '1',
         username: 'testuser',
         email: 'test@example.com',
-        role: UserRoleEnum.STUDENT
+        role: UserRoleEnum.STUDENT,
       });
     });
 
@@ -335,8 +335,8 @@ describe.skip('ModernAuthService', () => {
 
       expect(mockApiClient.get).toHaveBeenCalledWith('/users/profile/', {
         headers: {
-          Authorization: `Bearer ${customToken}`
-        }
+          Authorization: `Bearer ${customToken}`,
+        },
       });
       expect(mockLocalStorage.getItem).not.toHaveBeenCalled();
     });
@@ -344,9 +344,7 @@ describe.skip('ModernAuthService', () => {
     it('should throw error when no token is available', async () => {
       mockLocalStorage.getItem.mockReturnValue(null);
 
-      await expect(authService.getCurrentUser()).rejects.toThrow(
-        'No access token available'
-      );
+      await expect(authService.getCurrentUser()).rejects.toThrow('No access token available');
     });
   });
 
@@ -358,7 +356,7 @@ describe.skip('ModernAuthService', () => {
       const result = await authService.requestPasswordReset('test@example.com');
 
       expect(mockApiClient.post).toHaveBeenCalledWith('/auth/password-reset/', {
-        email: 'test@example.com'
+        email: 'test@example.com',
       });
       expect(result).toEqual(mockResponse);
     });
@@ -371,7 +369,7 @@ describe.skip('ModernAuthService', () => {
 
       expect(mockApiClient.post).toHaveBeenCalledWith('/auth/password-reset/confirm/', {
         token: 'reset-token',
-        new_password: 'newpassword'
+        new_password: 'newpassword',
       });
       expect(result).toEqual(mockResponse);
     });
@@ -422,10 +420,8 @@ describe.skip('ModernAuthService', () => {
       mockLocalStorage.getItem.mockReturnValue(mockTokens.access);
 
       // Mock a timeout by rejecting after delay
-      mockApiClient.post.mockImplementation(() =>
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Timeout')), 100)
-        )
+      mockApiClient.post.mockImplementation(
+        () => new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 100))
       );
 
       const result = await authService.validateToken();
@@ -460,7 +456,7 @@ describe.skip('ModernAuthService', () => {
 
     it('should accept custom configuration', () => {
       const customService = new ModernAuthService({
-        apiClient: mockApiClient as any
+        apiClient: mockApiClient as any,
       });
 
       expect(customService).toBeInstanceOf(ModernAuthService);

@@ -130,9 +130,7 @@ export class ModernEnrollmentService extends BaseService {
   async getEnrollmentById(id: string | number): Promise<ICourseEnrollment> {
     return withManagedExceptions(
       async () => {
-        return this.apiClient.get<ICourseEnrollment>(
-          this.endpoints.enrollments.details(id)
-        );
+        return this.apiClient.get<ICourseEnrollment>(this.endpoints.enrollments.details(id));
       },
       {
         serviceName: 'ModernEnrollmentService',
@@ -147,10 +145,7 @@ export class ModernEnrollmentService extends BaseService {
   async createEnrollment(data: Partial<ICourseEnrollment>): Promise<ICourseEnrollment> {
     return withManagedExceptions(
       async () => {
-        return this.apiClient.post<ICourseEnrollment>(
-          this.endpoints.enrollments.create,
-          data
-        );
+        return this.apiClient.post<ICourseEnrollment>(this.endpoints.enrollments.create, data);
       },
       {
         serviceName: 'ModernEnrollmentService',
@@ -162,12 +157,15 @@ export class ModernEnrollmentService extends BaseService {
   /**
    * Update existing enrollment
    */
-  async updateEnrollment(id: string | number, data: Partial<ICourseEnrollment>): Promise<ICourseEnrollment> {
+  async updateEnrollment(
+    id: string | number,
+    data: Partial<ICourseEnrollment>
+  ): Promise<ICourseEnrollment> {
     return withManagedExceptions(
       async () => {
         // Get current enrollment to ensure we have all required fields
         const currentEnrollment = await this.getEnrollmentById(id);
-        
+
         const completeData = {
           ...currentEnrollment,
           ...data,
@@ -216,7 +214,7 @@ export class ModernEnrollmentService extends BaseService {
         // Get user profile (with caching)
         const cacheKey = accessToken.substring(0, 10);
         let profile = this.userProfileCache[cacheKey];
-        
+
         if (!profile) {
           const authService = await import('@/services/auth/authService');
           profile = await authService.default.getUserProfile(accessToken);
@@ -319,9 +317,7 @@ export class ModernEnrollmentService extends BaseService {
   async getEnrolledStudents(courseId: string | number): Promise<ICourseEnrollment[]> {
     return withManagedExceptions(
       async () => {
-        const response = await this.apiClient.get(
-          this.endpoints.enrollments.byCourse(courseId)
-        );
+        const response = await this.apiClient.get(this.endpoints.enrollments.byCourse(courseId));
         return this.normalizeArrayResponse<ICourseEnrollment>(response);
       },
       {

@@ -1,6 +1,6 @@
 /**
  * Modern API Client (2025 Best Practices)
- * 
+ *
  * This implementation follows current TypeScript/React best practices:
  * - Composition over inheritance
  * - Centralized authentication handling
@@ -47,11 +47,11 @@ export class ModernApiClient {
    */
   async request<T = unknown>(config: RequestConfig): Promise<T> {
     const response: AxiosResponse<T> = await this.httpClient.request(config);
-    
+
     if (!response?.data) {
       throw new Error(`Request to ${config.url || config.endpoint} returned no data`);
     }
-    
+
     return response.data;
   }
 
@@ -59,10 +59,10 @@ export class ModernApiClient {
    * GET request helper
    */
   async get<T = unknown>(url: string, config?: RequestConfig): Promise<T> {
-    return this.request<T>({ 
-      method: 'GET', 
-      url, 
-      ...config 
+    return this.request<T>({
+      method: 'GET',
+      url,
+      ...config,
     });
   }
 
@@ -70,11 +70,11 @@ export class ModernApiClient {
    * POST request helper
    */
   async post<T = unknown>(url: string, data?: unknown, config?: RequestConfig): Promise<T> {
-    return this.request<T>({ 
-      method: 'POST', 
-      url, 
-      data, 
-      ...config 
+    return this.request<T>({
+      method: 'POST',
+      url,
+      data,
+      ...config,
     });
   }
 
@@ -82,11 +82,11 @@ export class ModernApiClient {
    * PUT request helper
    */
   async put<T = unknown>(url: string, data?: unknown, config?: RequestConfig): Promise<T> {
-    return this.request<T>({ 
-      method: 'PUT', 
-      url, 
-      data, 
-      ...config 
+    return this.request<T>({
+      method: 'PUT',
+      url,
+      data,
+      ...config,
     });
   }
 
@@ -94,11 +94,11 @@ export class ModernApiClient {
    * PATCH request helper
    */
   async patch<T = unknown>(url: string, data?: unknown, config?: RequestConfig): Promise<T> {
-    return this.request<T>({ 
-      method: 'PATCH', 
-      url, 
-      data, 
-      ...config 
+    return this.request<T>({
+      method: 'PATCH',
+      url,
+      data,
+      ...config,
     });
   }
 
@@ -106,10 +106,10 @@ export class ModernApiClient {
    * DELETE request helper
    */
   async delete<T = unknown>(url: string, config?: RequestConfig): Promise<T> {
-    return this.request<T>({ 
-      method: 'DELETE', 
-      url, 
-      ...config 
+    return this.request<T>({
+      method: 'DELETE',
+      url,
+      ...config,
     });
   }
 

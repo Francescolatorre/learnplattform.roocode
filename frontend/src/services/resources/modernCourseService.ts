@@ -115,7 +115,7 @@ export class ModernCourseService extends BaseService {
       {
         serviceName: 'ModernCourseService',
         methodName: 'getCourseDetails',
-        context: { courseId }
+        context: { courseId },
       }
     )();
   }
@@ -154,7 +154,7 @@ export class ModernCourseService extends BaseService {
       {
         serviceName: 'ModernCourseService',
         methodName: 'updateCourse',
-        context: { courseId }
+        context: { courseId },
       }
     )();
   }
@@ -172,7 +172,7 @@ export class ModernCourseService extends BaseService {
       {
         serviceName: 'ModernCourseService',
         methodName: 'deleteCourse',
-        context: { courseId }
+        context: { courseId },
       }
     )();
   }
@@ -180,7 +180,9 @@ export class ModernCourseService extends BaseService {
   /**
    * Get courses for instructor (filtered by creator)
    */
-  async getInstructorCourses(options: CourseFilterOptions = {}): Promise<IPaginatedResponse<ICourse>> {
+  async getInstructorCourses(
+    options: CourseFilterOptions = {}
+  ): Promise<IPaginatedResponse<ICourse>> {
     // Add creator filter - this would typically come from auth context
     const instructorOptions = { ...options, creator: null }; // TODO: Get from auth context
     return this.getCourses(instructorOptions);
@@ -220,7 +222,7 @@ export class ModernCourseService extends BaseService {
       {
         serviceName: 'ModernCourseService',
         methodName: 'getCourseProgress',
-        context: { courseId }
+        context: { courseId },
       }
     )();
   }
@@ -238,7 +240,7 @@ export class ModernCourseService extends BaseService {
       {
         serviceName: 'ModernCourseService',
         methodName: 'getCourseTasks',
-        context: { courseId }
+        context: { courseId },
       }
     )();
   }
@@ -256,7 +258,7 @@ export class ModernCourseService extends BaseService {
       {
         serviceName: 'ModernCourseService',
         methodName: 'enrollStudent',
-        context: { courseId, studentId }
+        context: { courseId, studentId },
       }
     )();
   }
@@ -274,7 +276,7 @@ export class ModernCourseService extends BaseService {
       {
         serviceName: 'ModernCourseService',
         methodName: 'getStudentProgress',
-        context: { courseId }
+        context: { courseId },
       }
     )();
   }
@@ -291,8 +293,11 @@ export class ModernCourseService extends BaseService {
       user_info: {
         id: userProgress.user_info?.id || 'unknown',
         username: userProgress.user_info?.username || 'Unknown',
-        display_name: userProgress.user_info?.display_name || userProgress.user_info?.username || 'Unknown User',
-        role: userProgress.user_info?.role || 'student'
+        display_name:
+          userProgress.user_info?.display_name ||
+          userProgress.user_info?.username ||
+          'Unknown User',
+        role: userProgress.user_info?.role || 'student',
       },
       overall_stats: {
         courses_enrolled: userProgress.overall_stats?.courses_enrolled || 0,
@@ -300,16 +305,17 @@ export class ModernCourseService extends BaseService {
         overall_progress: userProgress.overall_stats?.overall_progress || 0,
         tasks_completed: userProgress.overall_stats?.tasks_completed || 0,
         tasks_in_progress: userProgress.overall_stats?.tasks_in_progress || 0,
-        tasks_overdue: userProgress.overall_stats?.tasks_overdue || 0
+        tasks_overdue: userProgress.overall_stats?.tasks_overdue || 0,
       },
-      courses: userProgress.courses?.map((course: any) => ({
-        id: course.id || 'unknown',
-        title: course.title || 'Unknown Course',
-        progress: course.progress || 0,
-        status: course.status || 'active',
-        enrolled_date: course.enrolled_date || new Date().toISOString(),
-        last_activity_date: course.last_activity_date
-      })) || []
+      courses:
+        userProgress.courses?.map((course: any) => ({
+          id: course.id || 'unknown',
+          title: course.title || 'Unknown Course',
+          progress: course.progress || 0,
+          status: course.status || 'active',
+          enrolled_date: course.enrolled_date || new Date().toISOString(),
+          last_activity_date: course.last_activity_date,
+        })) || [],
     };
   }
 }

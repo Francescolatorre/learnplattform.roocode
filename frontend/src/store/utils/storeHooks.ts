@@ -45,7 +45,7 @@ export function createAsyncOperationHook<TStore, TParams, TResult>(
       isLoading,
       error,
       data,
-      lastUpdated
+      lastUpdated,
     };
   };
 }
@@ -70,7 +70,10 @@ export function createCrudHooks<TStore, TEntity, TCreateParams, TUpdateParams, T
     list: (store: TStore, filters: TFilters) => Promise<TEntity[] | null>;
     get: (store: TStore, id: string | number) => Promise<TEntity | null>;
     create: (store: TStore, params: TCreateParams) => Promise<TEntity | null>;
-    update: (store: TStore, params: { id: string | number; data: TUpdateParams }) => Promise<TEntity | null>;
+    update: (
+      store: TStore,
+      params: { id: string | number; data: TUpdateParams }
+    ) => Promise<TEntity | null>;
     delete: (store: TStore, id: string | number) => Promise<boolean | null>;
   }
 ): CrudOperationHooks<TEntity, TCreateParams, TUpdateParams, TFilters> {
@@ -79,7 +82,7 @@ export function createCrudHooks<TStore, TEntity, TCreateParams, TUpdateParams, T
     useGet: createAsyncOperationHook(useStore, operations.get),
     useCreate: createAsyncOperationHook(useStore, operations.create),
     useUpdate: createAsyncOperationHook(useStore, operations.update),
-    useDelete: createAsyncOperationHook(useStore, operations.delete)
+    useDelete: createAsyncOperationHook(useStore, operations.delete),
   };
 }
 
@@ -138,7 +141,7 @@ export function createOptimisticUpdateHook<TStore, TParams, TResult>(
       execute,
       rollback,
       isLoading,
-      error
+      error,
     };
   };
 }
@@ -166,7 +169,11 @@ export interface PaginatedHook<TItem, TFilters> {
 export function createPaginatedHook<TStore, TItem, TFilters>(
   useStore: UseBoundStore<StoreApi<TStore>>,
   operations: {
-    loadPage: (store: TStore, page: number, filters: TFilters) => Promise<{
+    loadPage: (
+      store: TStore,
+      page: number,
+      filters: TFilters
+    ) => Promise<{
       items: TItem[];
       totalCount: number;
       currentPage: number;
@@ -194,14 +201,11 @@ export function createPaginatedHook<TStore, TItem, TFilters>(
       [store, state.filters, initialFilters]
     );
 
-    const loadMore = useCallback(
-      async () => {
-        if (currentPage < totalPages) {
-          await loadPage(currentPage + 1);
-        }
-      },
-      [currentPage, totalPages, loadPage]
-    );
+    const loadMore = useCallback(async () => {
+      if (currentPage < totalPages) {
+        await loadPage(currentPage + 1);
+      }
+    }, [currentPage, totalPages, loadPage]);
 
     const setFilters = useCallback(
       (filters: TFilters) => {
@@ -210,12 +214,9 @@ export function createPaginatedHook<TStore, TItem, TFilters>(
       [store]
     );
 
-    const refresh = useCallback(
-      async () => {
-        await loadPage(1);
-      },
-      [loadPage]
-    );
+    const refresh = useCallback(async () => {
+      await loadPage(1);
+    }, [loadPage]);
 
     return {
       items,
@@ -228,7 +229,7 @@ export function createPaginatedHook<TStore, TItem, TFilters>(
       loadPage,
       loadMore,
       setFilters,
-      refresh
+      refresh,
     };
   };
 }
@@ -250,7 +251,11 @@ export interface SubscriptionHook<TData> {
 export function createSubscriptionHook<TStore, TData>(
   useStore: UseBoundStore<StoreApi<TStore>>,
   operations: {
-    subscribe: (store: TStore, onData: (data: TData) => void, onError: (error: string) => void) => () => void;
+    subscribe: (
+      store: TStore,
+      onData: (data: TData) => void,
+      onError: (error: string) => void
+    ) => () => void;
   }
 ) {
   return (): SubscriptionHook<TData> => {
@@ -299,7 +304,7 @@ export function createSubscriptionHook<TStore, TData>(
       isConnected,
       error,
       subscribe,
-      unsubscribe
+      unsubscribe,
     };
   };
 }

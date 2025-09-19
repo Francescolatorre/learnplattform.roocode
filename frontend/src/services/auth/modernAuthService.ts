@@ -112,10 +112,15 @@ export class ModernAuthService extends BaseService {
       async () => {
         const response = await this.apiClient.post('/auth/login/', {
           username,
-          password
+          password,
         });
 
-        if (!response || typeof response !== 'object' || !('access' in response) || !('refresh' in response)) {
+        if (
+          !response ||
+          typeof response !== 'object' ||
+          !('access' in response) ||
+          !('refresh' in response)
+        ) {
           throw new Error('Login failed: Malformed response from server');
         }
 
@@ -126,13 +131,13 @@ export class ModernAuthService extends BaseService {
 
         return {
           access: tokens.access,
-          refresh: tokens.refresh
+          refresh: tokens.refresh,
         };
       },
       {
         serviceName: 'ModernAuthService',
         methodName: 'login',
-        context: { username }
+        context: { username },
       }
     )();
   }
@@ -146,7 +151,7 @@ export class ModernAuthService extends BaseService {
         const payload = {
           ...registrationData,
           password2: registrationData.password2 || registrationData.password,
-          role: registrationData.role || 'student'
+          role: registrationData.role || 'student',
         };
 
         const response = await this.apiClient.post('/auth/register/', payload);
@@ -171,7 +176,7 @@ export class ModernAuthService extends BaseService {
       {
         serviceName: 'ModernAuthService',
         methodName: 'register',
-        context: { username: registrationData.username }
+        context: { username: registrationData.username },
       }
     )();
   }
@@ -188,12 +193,13 @@ export class ModernAuthService extends BaseService {
         try {
           // Call logout endpoint if we have tokens
           if (refreshToken && accessToken) {
-            await this.apiClient.post('/auth/logout/',
+            await this.apiClient.post(
+              '/auth/logout/',
               { refresh: refreshToken },
               {
                 headers: {
-                  Authorization: `Bearer ${accessToken}`
-                }
+                  Authorization: `Bearer ${accessToken}`,
+                },
               }
             );
           }
@@ -207,7 +213,7 @@ export class ModernAuthService extends BaseService {
       },
       {
         serviceName: 'ModernAuthService',
-        methodName: 'logout'
+        methodName: 'logout',
       }
     )();
   }
@@ -225,7 +231,7 @@ export class ModernAuthService extends BaseService {
         }
 
         const response = await this.apiClient.post('/auth/token/refresh/', {
-          refresh: refreshToken
+          refresh: refreshToken,
         });
 
         if (!response || typeof response !== 'object' || !('access' in response)) {
@@ -239,12 +245,12 @@ export class ModernAuthService extends BaseService {
 
         return {
           access: token.access,
-          refresh: refreshToken // Keep existing refresh token
+          refresh: refreshToken, // Keep existing refresh token
         };
       },
       {
         serviceName: 'ModernAuthService',
-        methodName: 'refreshToken'
+        methodName: 'refreshToken',
       }
     )();
   }
@@ -266,13 +272,14 @@ export class ModernAuthService extends BaseService {
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-          const response = await this.apiClient.post('/auth/validate-token/',
+          const response = await this.apiClient.post(
+            '/auth/validate-token/',
             {},
             {
               headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${token}`,
               },
-              signal: controller.signal
+              signal: controller.signal,
             }
           );
 
@@ -301,7 +308,7 @@ export class ModernAuthService extends BaseService {
       },
       {
         serviceName: 'ModernAuthService',
-        methodName: 'validateToken'
+        methodName: 'validateToken',
       }
     )();
   }
@@ -320,8 +327,8 @@ export class ModernAuthService extends BaseService {
 
         const response = await this.apiClient.get('/users/profile/', {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         if (!response) {
@@ -336,7 +343,7 @@ export class ModernAuthService extends BaseService {
       },
       {
         serviceName: 'ModernAuthService',
-        methodName: 'getCurrentUser'
+        methodName: 'getCurrentUser',
       }
     )();
   }
@@ -348,7 +355,7 @@ export class ModernAuthService extends BaseService {
     return withManagedExceptions(
       async () => {
         const response = await this.apiClient.post('/auth/password-reset/', {
-          email
+          email,
         });
 
         if (!response) {
@@ -364,7 +371,7 @@ export class ModernAuthService extends BaseService {
       {
         serviceName: 'ModernAuthService',
         methodName: 'requestPasswordReset',
-        context: { email }
+        context: { email },
       }
     )();
   }
@@ -377,7 +384,7 @@ export class ModernAuthService extends BaseService {
       async () => {
         const response = await this.apiClient.post('/auth/password-reset/confirm/', {
           token,
-          new_password: newPassword
+          new_password: newPassword,
         });
 
         if (!response) {
@@ -392,7 +399,7 @@ export class ModernAuthService extends BaseService {
       },
       {
         serviceName: 'ModernAuthService',
-        methodName: 'resetPassword'
+        methodName: 'resetPassword',
       }
     )();
   }
@@ -447,7 +454,7 @@ export class ModernAuthService extends BaseService {
       role: (profile.role as UserRoleEnum) || UserRoleEnum.STUDENT,
       display_name: String(profile.display_name || ''),
       created_at: String(profile.created_at || new Date().toISOString()),
-      updated_at: String(profile.updated_at || new Date().toISOString())
+      updated_at: String(profile.updated_at || new Date().toISOString()),
     };
   }
 }

@@ -92,7 +92,11 @@ const RegisterFormPage: React.FC = () => {
         role,
       };
 
-      console.info('RegisterFormPage: Registration payload:', { ...registrationData, password: '[REDACTED]', password2: '[REDACTED]' });
+      console.info('RegisterFormPage: Registration payload:', {
+        ...registrationData,
+        password: '[REDACTED]',
+        password2: '[REDACTED]',
+      });
 
       // Call register API
       await register(registrationData);
@@ -102,7 +106,8 @@ const RegisterFormPage: React.FC = () => {
       setHasRegistered(true);
     } catch (errorObj) {
       console.error('Registration failed:', errorObj);
-      const errorMessage = errorObj instanceof Error ? errorObj.message : 'Registration failed. Please try again.';
+      const errorMessage =
+        errorObj instanceof Error ? errorObj.message : 'Registration failed. Please try again.';
       setError(errorMessage);
     }
   };

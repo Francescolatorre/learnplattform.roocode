@@ -87,7 +87,9 @@ const useAuth = vi.fn(() => ({
   error: null,
   login: vi.fn().mockResolvedValue({ access: 'mock-access-token', refresh: 'mock-refresh-token' }),
   logout: vi.fn().mockResolvedValue(undefined),
-  register: vi.fn().mockResolvedValue({ access: 'mock-access-token', refresh: 'mock-refresh-token' }),
+  register: vi
+    .fn()
+    .mockResolvedValue({ access: 'mock-access-token', refresh: 'mock-refresh-token' }),
   getUserRole: () => 'guest',
   redirectToDashboard: vi.fn(),
 }));
@@ -99,7 +101,7 @@ vi.mock('@context/auth/AuthContext', async () => {
     ...RealModule,
     AuthContext: React.createContext({
       access: 'mock-access-token',
-      refresh: 'mock-refresh-token'
+      refresh: 'mock-refresh-token',
     }),
     useAuth,
     AuthProvider: function AuthProvider(props: React.PropsWithChildren<{}>) {

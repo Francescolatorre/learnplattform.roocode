@@ -78,9 +78,7 @@ export class ModernProgressService extends BaseService {
   async getStudentProgressByUser(studentId: string): Promise<IUserProgress[]> {
     return withManagedExceptions(
       async () => {
-        const response = await this.apiClient.get(
-          this.endpoints.student.progress(studentId)
-        );
+        const response = await this.apiClient.get(this.endpoints.student.progress(studentId));
         return this.normalizeArrayResponse<IUserProgress>(response);
       },
       {
@@ -93,7 +91,10 @@ export class ModernProgressService extends BaseService {
   /**
    * Get student progress for a specific course
    */
-  async getStudentProgressByCourse(courseId: string, studentId: string): Promise<IUserProgress | null> {
+  async getStudentProgressByCourse(
+    courseId: string,
+    studentId: string
+  ): Promise<IUserProgress | null> {
     return withManagedExceptions(
       async () => {
         return this.apiClient.get<IUserProgress>(
@@ -113,9 +114,7 @@ export class ModernProgressService extends BaseService {
   async getAllStudentsProgress(courseId: string): Promise<IPaginatedResponse<IUserProgress>> {
     return withManagedExceptions(
       async () => {
-        const response = await this.apiClient.get(
-          this.endpoints.courses.studentProgress(courseId)
-        );
+        const response = await this.apiClient.get(this.endpoints.courses.studentProgress(courseId));
         return this.normalizePaginatedResponse<IUserProgress>(response);
       },
       {
@@ -131,10 +130,10 @@ export class ModernProgressService extends BaseService {
   async getQuizHistory(courseId: string, studentId?: string): Promise<IQuizAttempt[]> {
     return withManagedExceptions(
       async () => {
-        const url = studentId 
+        const url = studentId
           ? `${this.endpoints.quizzes.attemptsList}?student=${studentId}`
           : this.endpoints.quizzes.attemptsList;
-          
+
         const response = await this.apiClient.get(url);
         return this.normalizeArrayResponse<IQuizAttempt>(response);
       },
@@ -221,11 +220,11 @@ export class ModernProgressService extends BaseService {
         const response = await this.apiClient.get<ICourse>(
           this.endpoints.courses.details(courseId)
         );
-        
+
         if (!response) {
           throw new Error(`Course not found for ID: ${courseId}`);
         }
-        
+
         return response;
       },
       {
@@ -241,9 +240,7 @@ export class ModernProgressService extends BaseService {
   async getProgressAnalytics(courseId: string): Promise<IProgressAnalytics> {
     return withManagedExceptions(
       async () => {
-        return this.apiClient.get<IProgressAnalytics>(
-          this.endpoints.courses.analytics(courseId)
-        );
+        return this.apiClient.get<IProgressAnalytics>(this.endpoints.courses.analytics(courseId));
       },
       {
         serviceName: 'ModernProgressService',
@@ -278,11 +275,11 @@ export class ModernProgressService extends BaseService {
         const response = await this.apiClient.get<IInstructorDashboardData>(
           this.endpoints.dashboard.instructor
         );
-        
+
         if (!response) {
           throw new Error('Instructor dashboard data not found');
         }
-        
+
         return response;
       },
       {
@@ -410,8 +407,7 @@ export const submitTask = (
   courseId: string,
   taskId: string,
   submissionData: ITaskSubmissionData
-): Promise<ITaskProgress> =>
-  modernProgressService.submitTask(courseId, taskId, submissionData);
+): Promise<ITaskProgress> => modernProgressService.submitTask(courseId, taskId, submissionData);
 
 export const gradeSubmission = (
   courseId: string,
@@ -438,8 +434,7 @@ export const fetchCourseStructure = (courseId: string): Promise<ICourseStructure
 
 export const getStudentDashboard = (
   studentId?: number | string | null
-): Promise<IDashboardResponse> =>
-  modernProgressService.getStudentDashboard(studentId);
+): Promise<IDashboardResponse> => modernProgressService.getStudentDashboard(studentId);
 
 export const getQuizAttempts = (quizId: string): Promise<IQuizAttempt[]> =>
   modernProgressService.getQuizAttempts(quizId);

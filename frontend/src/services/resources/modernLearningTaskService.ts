@@ -91,11 +91,11 @@ export class ModernLearningTaskService extends BaseService {
         const response = await this.apiClient.get<ILearningTask>(
           this.endpoints.tasks.details(taskId)
         );
-        
+
         if (!response) {
           throw new Error(`Task not found for ID: ${taskId}`);
         }
-        
+
         return response;
       },
       {
@@ -113,11 +113,8 @@ export class ModernLearningTaskService extends BaseService {
       async () => {
         const formData = this.prepareFormData(taskData);
         formData.append('notifyUsers', String(notifyUsers));
-        
-        return this.apiClient.post<ILearningTask>(
-          this.endpoints.tasks.create,
-          formData
-        );
+
+        return this.apiClient.post<ILearningTask>(this.endpoints.tasks.create, formData);
       },
       {
         serviceName: 'ModernLearningTaskService',
@@ -150,9 +147,7 @@ export class ModernLearningTaskService extends BaseService {
   async deleteTask(taskId: string): Promise<void> {
     return withManagedExceptions(
       async () => {
-        await this.apiClient.delete<void>(
-          this.endpoints.tasks.delete(taskId)
-        );
+        await this.apiClient.delete<void>(this.endpoints.tasks.delete(taskId));
       },
       {
         serviceName: 'ModernLearningTaskService',
@@ -168,16 +163,14 @@ export class ModernLearningTaskService extends BaseService {
     return withManagedExceptions(
       async () => {
         const params = { student: studentId };
-        const response = await this.apiClient.get(
-          this.buildUrl(this.endpoints.tasks.list, params)
-        );
-        
+        const response = await this.apiClient.get(this.buildUrl(this.endpoints.tasks.list, params));
+
         const tasks = this.normalizeArrayResponse<ILearningTask>(response);
-        
+
         if (tasks.length === 0) {
           throw new Error('Tasks not found');
         }
-        
+
         return tasks;
       },
       {
@@ -193,16 +186,14 @@ export class ModernLearningTaskService extends BaseService {
   async getTasksByCourseId(courseId: string): Promise<ILearningTask[]> {
     return withManagedExceptions(
       async () => {
-        const response = await this.apiClient.get(
-          this.endpoints.tasks.byCourse(courseId)
-        );
-        
+        const response = await this.apiClient.get(this.endpoints.tasks.byCourse(courseId));
+
         const tasks = this.normalizeArrayResponse<ILearningTask>(response);
-        
+
         if (tasks.length === 0) {
           logger.debug(`No tasks found for course ${courseId}`);
         }
-        
+
         return tasks;
       },
       {
@@ -259,7 +250,7 @@ export class ModernLearningTaskService extends BaseService {
 
           const response = await this.apiClient.get(url);
           const normalizedResponse = this.normalizePaginatedResponse<ILearningTask>(response);
-          
+
           allTasks = [...allTasks, ...normalizedResponse.results];
           hasMorePages = !!normalizedResponse.next && normalizedResponse.results.length > 0;
           currentPage++;
@@ -277,19 +268,20 @@ export class ModernLearningTaskService extends BaseService {
   /**
    * Get task progress counts for deletion authorization
    */
-  async getTaskProgressCounts(taskIds: string[]): Promise<Record<string, { inProgress: number; completed: number }>> {
+  async getTaskProgressCounts(
+    taskIds: string[]
+  ): Promise<Record<string, { inProgress: number; completed: number }>> {
     return withManagedExceptions(
       async () => {
         if (taskIds.length === 0) return {};
 
-        const requestBody = { 
-          task_ids: taskIds.map(id => parseInt(id)) 
+        const requestBody = {
+          task_ids: taskIds.map(id => parseInt(id)),
         };
 
-        const response = await this.apiClient.post<Record<string, { in_progress: number; completed: number }>>(
-          `${this.endpoints.tasks.list}progress-counts/`,
-          requestBody
-        );
+        const response = await this.apiClient.post<
+          Record<string, { in_progress: number; completed: number }>
+        >(`${this.endpoints.tasks.list}progress-counts/`, requestBody);
 
         // Convert API response to expected format
         const result: Record<string, { inProgress: number; completed: number }> = {};
@@ -315,13 +307,13 @@ export class ModernLearningTaskService extends BaseService {
    */
   private prepareFormData(data: ITaskCreationData): FormData {
     const formData = new FormData();
-    
+
     Object.entries(data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         formData.append(key, value instanceof File ? value : String(value));
       }
     });
-    
+
     return formData;
   }
 }
@@ -335,11 +327,15 @@ export const modernLearningTaskService = serviceFactory.getService(ModernLearnin
 export const fetchCourseTasks = (courseId: string): Promise<ILearningTask[]> =>
   modernLearningTaskService.getTasksByCourseId(courseId);
 
-export const createTask = (taskData: ITaskCreationData, notifyUsers = false): Promise<ILearningTask> =>
-  modernLearningTaskService.createTask(taskData, notifyUsers);
+export const createTask = (
+  taskData: ITaskCreationData,
+  notifyUsers = false
+): Promise<ILearningTask> => modernLearningTaskService.createTask(taskData, notifyUsers);
 
-export const updateTask = (taskId: string, updatedData: Partial<ILearningTask>): Promise<ILearningTask> =>
-  modernLearningTaskService.updateTask(taskId, updatedData);
+export const updateTask = (
+  taskId: string,
+  updatedData: Partial<ILearningTask>
+): Promise<ILearningTask> => modernLearningTaskService.updateTask(taskId, updatedData);
 
 export const deleteTask = (taskId: string): Promise<void> =>
   modernLearningTaskService.deleteTask(taskId);

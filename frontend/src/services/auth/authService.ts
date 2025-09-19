@@ -38,7 +38,7 @@ const authService = {
       responseType: typeof response,
       response: response,
       hasData: response && 'data' in response,
-      responseKeys: response ? Object.keys(response) : 'no keys'
+      responseKeys: response ? Object.keys(response) : 'no keys',
     });
 
     // Handle both unit test format (direct data) and integration test format (full Axios response)
@@ -48,7 +48,7 @@ const authService = {
       dataType: typeof data,
       data: data,
       hasAccess: data && 'access' in data,
-      hasRefresh: data && 'refresh' in data
+      hasRefresh: data && 'refresh' in data,
     });
 
     if (!data || typeof data !== 'object') {

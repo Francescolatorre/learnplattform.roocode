@@ -35,8 +35,8 @@ vi.mock('@/services/auth/modernAuthService', () => ({
     resetPassword: vi.fn(),
     isAuthenticated: vi.fn(),
     getAccessToken: vi.fn(),
-    getRefreshToken: vi.fn()
-  }
+    getRefreshToken: vi.fn(),
+  },
 }));
 
 // Mock localStorage
@@ -44,7 +44,7 @@ const mockLocalStorage = {
   getItem: vi.fn(),
   setItem: vi.fn(),
   removeItem: vi.fn(),
-  clear: vi.fn()
+  clear: vi.fn(),
 };
 Object.defineProperty(window, 'localStorage', { value: mockLocalStorage });
 
@@ -52,8 +52,8 @@ Object.defineProperty(window, 'localStorage', { value: mockLocalStorage });
 vi.mock('@/config/appConfig', () => ({
   AUTH_CONFIG: {
     tokenStorageKey: 'access_token',
-    refreshTokenStorageKey: 'refresh_token'
-  }
+    refreshTokenStorageKey: 'refresh_token',
+  },
 }));
 
 describe.skip('Modern Auth Store', () => {
@@ -64,12 +64,12 @@ describe.skip('Modern Auth Store', () => {
     role: UserRoleEnum.STUDENT,
     display_name: 'Test User',
     created_at: '2025-01-01T00:00:00Z',
-    updated_at: '2025-01-01T00:00:00Z'
+    updated_at: '2025-01-01T00:00:00Z',
   };
 
   const mockTokens = {
     access: 'mock-access-token',
-    refresh: 'mock-refresh-token'
+    refresh: 'mock-refresh-token',
   };
 
   beforeEach(() => {
@@ -173,7 +173,7 @@ describe.skip('Modern Auth Store', () => {
         const registrationData = {
           username: 'newuser',
           email: 'new@example.com',
-          password: 'password123'
+          password: 'password123',
         };
 
         const { result } = renderHook(() => useAuthStore());
@@ -201,7 +201,7 @@ describe.skip('Modern Auth Store', () => {
             await result.current.register({
               username: 'existinguser',
               email: 'test@example.com',
-              password: 'password'
+              password: 'password',
             });
           } catch (error) {
             // Expected to throw
@@ -227,7 +227,7 @@ describe.skip('Modern Auth Store', () => {
           // Manually set state for test
           useAuthStore.setState({
             user: mockUser,
-            isAuthenticated: true
+            isAuthenticated: true,
           });
         });
 
@@ -252,7 +252,7 @@ describe.skip('Modern Auth Store', () => {
         act(() => {
           useAuthStore.setState({
             user: mockUser,
-            isAuthenticated: true
+            isAuthenticated: true,
           });
         });
 
@@ -295,7 +295,7 @@ describe.skip('Modern Auth Store', () => {
       act(() => {
         useAuthStore.setState({
           user: mockUser,
-          isAuthenticated: true
+          isAuthenticated: true,
         });
       });
 
@@ -334,7 +334,7 @@ describe.skip('Modern Auth Store', () => {
       act(() => {
         useAuthStore.setState({
           user: mockUser,
-          isAuthenticated: true
+          isAuthenticated: true,
         });
       });
 

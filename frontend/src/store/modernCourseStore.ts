@@ -18,12 +18,9 @@ import {
   withAsyncOperation,
   ServiceStoreSlice,
   createServiceSlice,
-  StoreCache
+  StoreCache,
 } from './utils/serviceIntegration';
-import {
-  createCrudHooks,
-  createPaginatedHook
-} from './utils/storeHooks';
+import { createCrudHooks, createPaginatedHook } from './utils/storeHooks';
 
 // Course filter interface for search and pagination
 export interface CourseFilters {
@@ -85,12 +82,12 @@ interface CourseStoreState extends ServiceStoreSlice<ICourse[]> {
 // Cache configuration
 const courseCache = new StoreCache<ICourse[]>({
   ttl: 5 * 60 * 1000, // 5 minutes
-  maxSize: 10
+  maxSize: 10,
 });
 
 const courseDetailsCache = new StoreCache<ICourse>({
   ttl: 10 * 60 * 1000, // 10 minutes
-  maxSize: 50
+  maxSize: 50,
 });
 
 // Create the modern course store
@@ -121,31 +118,31 @@ export const useModernCourseStore = create<CourseStoreState>()(
         const cacheKey = JSON.stringify(filters);
         const cachedData = courseCache.get(cacheKey);
         if (cachedData) {
-          set((state) => ({
+          set(state => ({
             ...state,
             data: cachedData,
-            lastUpdated: new Date()
+            lastUpdated: new Date(),
           }));
           return null; // Return null to indicate cache hit
         }
 
         return withAsyncOperation(
           () => courseService.getCourses(filters as any),
-          (loading) => set((state) => ({ ...state, isLoading: loading })),
-          (error) => set((state) => ({ ...state, error })),
-          (result) => {
+          loading => set(state => ({ ...state, isLoading: loading })),
+          error => set(state => ({ ...state, error })),
+          result => {
             // Update cache
             courseCache.set(cacheKey, result.results);
 
             // Update store state
-            set((state) => ({
+            set(state => ({
               ...state,
               data: result.results,
               totalCount: result.count,
               currentPage: filters.page || 1,
               pageSize: filters.page_size || 10,
               filters: { ...state.filters, ...filters },
-              lastUpdated: new Date()
+              lastUpdated: new Date(),
             }));
           }
         );
@@ -158,31 +155,31 @@ export const useModernCourseStore = create<CourseStoreState>()(
         // Check cache first
         const cachedCourse = courseDetailsCache.get(courseId.toString());
         if (cachedCourse) {
-          set((state) => ({
+          set(state => ({
             ...state,
             courseDetails: {
               ...state.courseDetails,
-              [courseId]: cachedCourse
-            }
+              [courseId]: cachedCourse,
+            },
           }));
           return cachedCourse;
         }
 
         return withAsyncOperation(
           () => courseService.getCourseDetails(courseId),
-          (loading) => set((state) => ({ ...state, isLoading: loading })),
-          (error) => set((state) => ({ ...state, error })),
-          (result) => {
+          loading => set(state => ({ ...state, isLoading: loading })),
+          error => set(state => ({ ...state, error })),
+          result => {
             // Update cache
             courseDetailsCache.set(courseId.toString(), result);
 
             // Update store state
-            set((state) => ({
+            set(state => ({
               ...state,
               courseDetails: {
                 ...state.courseDetails,
-                [courseId]: result
-              }
+                [courseId]: result,
+              },
             }));
           }
         );
@@ -194,17 +191,17 @@ export const useModernCourseStore = create<CourseStoreState>()(
 
         return withAsyncOperation(
           () => courseService.createCourse(courseData),
-          (loading) => set((state) => ({ ...state, isLoading: loading })),
-          (error) => set((state) => ({ ...state, error })),
-          (result) => {
+          loading => set(state => ({ ...state, isLoading: loading })),
+          error => set(state => ({ ...state, error })),
+          result => {
             // Invalidate cache and refresh courses
             courseCache.clear();
 
             // Add to current courses list
-            set((state) => ({
+            set(state => ({
               ...state,
               data: [result, ...state.data],
-              totalCount: state.totalCount + 1
+              totalCount: state.totalCount + 1,
             }));
           }
         );
@@ -218,22 +215,22 @@ export const useModernCourseStore = create<CourseStoreState>()(
 
         return withAsyncOperation(
           () => courseService.updateCourse(id, updateData),
-          (loading) => set((state) => ({ ...state, isLoading: loading })),
-          (error) => set((state) => ({ ...state, error })),
-          (result) => {
+          loading => set(state => ({ ...state, isLoading: loading })),
+          error => set(state => ({ ...state, error })),
+          result => {
             // Update cache
             courseDetailsCache.set(id.toString(), result);
             courseCache.clear(); // Clear list cache
 
             // Update store state
-            set((state) => ({
+            set(state => ({
               ...state,
-              data: state.data.map(course => course.id === id ? result : course),
+              data: state.data.map(course => (course.id === id ? result : course)),
               courseDetails: {
                 ...state.courseDetails,
-                [id]: result
+                [id]: result,
               },
-              selectedCourse: state.selectedCourse?.id === id ? result : state.selectedCourse
+              selectedCourse: state.selectedCourse?.id === id ? result : state.selectedCourse,
             }));
           }
         );
@@ -245,22 +242,22 @@ export const useModernCourseStore = create<CourseStoreState>()(
 
         const result = await withAsyncOperation(
           () => courseService.deleteCourse(courseId),
-          (loading) => set((state) => ({ ...state, isLoading: loading })),
-          (error) => set((state) => ({ ...state, error })),
+          loading => set(state => ({ ...state, isLoading: loading })),
+          error => set(state => ({ ...state, error })),
           () => {
             // Clear caches
             courseCache.clear();
             courseDetailsCache.clear();
 
             // Remove from store state
-            set((state) => ({
+            set(state => ({
               ...state,
               data: state.data.filter(course => course.id !== courseId),
               courseDetails: Object.fromEntries(
                 Object.entries(state.courseDetails).filter(([id]) => parseInt(id) !== courseId)
               ),
               selectedCourse: state.selectedCourse?.id === courseId ? null : state.selectedCourse,
-              totalCount: Math.max(0, state.totalCount - 1)
+              totalCount: Math.max(0, state.totalCount - 1),
             }));
           }
         );
@@ -274,15 +271,15 @@ export const useModernCourseStore = create<CourseStoreState>()(
 
         return withAsyncOperation(
           () => courseService.getStudentProgress(courseId),
-          (loading) => set((state) => ({ ...state, isLoading: loading })),
-          (error) => set((state) => ({ ...state, error })),
-          (result) => {
-            set((state) => ({
+          loading => set(state => ({ ...state, isLoading: loading })),
+          error => set(state => ({ ...state, error })),
+          result => {
+            set(state => ({
               ...state,
               progressData: {
                 ...state.progressData,
-                [courseId]: result
-              }
+                [courseId]: result,
+              },
             }));
           }
         );
@@ -290,17 +287,17 @@ export const useModernCourseStore = create<CourseStoreState>()(
 
       // Select a course
       selectCourse: (course: ICourse | null) => {
-        set((state) => ({ ...state, selectedCourse: course }));
+        set(state => ({ ...state, selectedCourse: course }));
       },
 
       // Set search/filter criteria
       setFilters: (filters: CourseFilters) => {
-        set((state) => ({ ...state, filters: { ...state.filters, ...filters } }));
+        set(state => ({ ...state, filters: { ...state.filters, ...filters } }));
       },
 
       // Clear all filters
       clearFilters: () => {
-        set((state) => ({ ...state, filters: {} }));
+        set(state => ({ ...state, filters: {} }));
       },
 
       // Cache management
@@ -316,64 +313,58 @@ export const useModernCourseStore = create<CourseStoreState>()(
 
         // Fetch fresh data
         return _get().fetchCourseDetails(courseId);
-      }
+      },
     }),
     {
       name: 'modern-course-store',
       // Serialize only the essential state for debugging
       serialize: {
         options: {
-          map: true
-        }
-      }
+          map: true,
+        },
+      },
     }
   )
 );
 
 // Type-safe hooks for course operations
-export const useCourseOperations = createCrudHooks(
-  useModernCourseStore,
-  {
-    list: async (store, filters: CourseFilters) => {
-      const result = await store.fetchCourses(filters);
-      return result?.results || null;
-    },
-    get: async (store, id: string | number) => {
-      return await store.fetchCourseDetails(Number(id));
-    },
-    create: async (store, params: CreateCourseData) => {
-      return await store.createCourse(params);
-    },
-    update: async (store, params: { id: string | number; data: Partial<CreateCourseData> }) => {
-      return await store.updateCourse({ id: Number(params.id), ...params.data });
-    },
-    delete: async (store, id: string | number) => {
-      return await store.deleteCourse(Number(id));
-    }
-  }
-);
+export const useCourseOperations = createCrudHooks(useModernCourseStore, {
+  list: async (store, filters: CourseFilters) => {
+    const result = await store.fetchCourses(filters);
+    return result?.results || null;
+  },
+  get: async (store, id: string | number) => {
+    return await store.fetchCourseDetails(Number(id));
+  },
+  create: async (store, params: CreateCourseData) => {
+    return await store.createCourse(params);
+  },
+  update: async (store, params: { id: string | number; data: Partial<CreateCourseData> }) => {
+    return await store.updateCourse({ id: Number(params.id), ...params.data });
+  },
+  delete: async (store, id: string | number) => {
+    return await store.deleteCourse(Number(id));
+  },
+});
 
 // Paginated courses hook
-export const usePaginatedCourses = createPaginatedHook(
-  useModernCourseStore,
-  {
-    loadPage: async (store, page: number, filters: CourseFilters) => {
-      const result = await store.fetchCourses({ ...filters, page });
-      if (result) {
-        return {
-          items: result.results,
-          totalCount: result.count,
-          currentPage: page,
-          pageSize: filters.page_size || 10
-        };
-      }
-      return null;
-    },
-    setFilters: (store, filters: CourseFilters) => {
-      store.setFilters(filters);
+export const usePaginatedCourses = createPaginatedHook(useModernCourseStore, {
+  loadPage: async (store, page: number, filters: CourseFilters) => {
+    const result = await store.fetchCourses({ ...filters, page });
+    if (result) {
+      return {
+        items: result.results,
+        totalCount: result.count,
+        currentPage: page,
+        pageSize: filters.page_size || 10,
+      };
     }
-  }
-);
+    return null;
+  },
+  setFilters: (store, filters: CourseFilters) => {
+    store.setFilters(filters);
+  },
+});
 
 // Convenience hooks for common operations
 export const useCourseList = () => {

@@ -61,7 +61,9 @@ describe.skip('TaskStore', () => {
     describe('fetchLearningTasks', () => {
       test('should fetch learning tasks successfully', async () => {
         const mockTasks = [mockLearningTask];
-        (modernLearningTaskService.getAllTasks as ReturnType<typeof vi.fn>).mockResolvedValue(mockTasks);
+        (modernLearningTaskService.getAllTasks as ReturnType<typeof vi.fn>).mockResolvedValue(
+          mockTasks
+        );
 
         const store = useTaskStore.getState();
         await store.fetchLearningTasks('1');
@@ -75,7 +77,9 @@ describe.skip('TaskStore', () => {
 
       test('should handle fetch learning tasks error', async () => {
         const errorMessage = 'Failed to fetch tasks';
-        (modernLearningTaskService.getAllTasks as ReturnType<typeof vi.fn>).mockRejectedValue(new Error(errorMessage));
+        (modernLearningTaskService.getAllTasks as ReturnType<typeof vi.fn>).mockRejectedValue(
+          new Error(errorMessage)
+        );
 
         const store = useTaskStore.getState();
         await store.fetchLearningTasks('1');
@@ -88,10 +92,12 @@ describe.skip('TaskStore', () => {
 
       test('should set loading state during fetch', async () => {
         let resolvePromise: (value: ILearningTask[]) => void;
-        const promise = new Promise<ILearningTask[]>((resolve) => {
+        const promise = new Promise<ILearningTask[]>(resolve => {
           resolvePromise = resolve;
         });
-        (modernLearningTaskService.getAllTasks as ReturnType<typeof vi.fn>).mockReturnValue(promise);
+        (modernLearningTaskService.getAllTasks as ReturnType<typeof vi.fn>).mockReturnValue(
+          promise
+        );
 
         const store = useTaskStore.getState();
         const fetchPromise = store.fetchLearningTasks('1');
@@ -113,7 +119,9 @@ describe.skip('TaskStore', () => {
 
     describe('createLearningTask', () => {
       test('should create learning task successfully', async () => {
-        (modernLearningTaskService.createTask as ReturnType<typeof vi.fn>).mockResolvedValue(mockLearningTask);
+        (modernLearningTaskService.createTask as ReturnType<typeof vi.fn>).mockResolvedValue(
+          mockLearningTask
+        );
 
         const store = useTaskStore.getState();
         const taskData = { title: 'New Task', description: 'New description', course: 1 };
@@ -128,10 +136,16 @@ describe.skip('TaskStore', () => {
 
       test('should handle create learning task error', async () => {
         const errorMessage = 'Failed to create task';
-        (modernLearningTaskService.createTask as ReturnType<typeof vi.fn>).mockRejectedValue(new Error(errorMessage));
+        (modernLearningTaskService.createTask as ReturnType<typeof vi.fn>).mockRejectedValue(
+          new Error(errorMessage)
+        );
 
         const store = useTaskStore.getState();
-        await store.createLearningTask({ title: 'New Task', description: 'Test description', course: 1 });
+        await store.createLearningTask({
+          title: 'New Task',
+          description: 'Test description',
+          course: 1,
+        });
 
         const state = useTaskStore.getState();
         expect(state.learningTasks).toEqual([]);
@@ -143,7 +157,9 @@ describe.skip('TaskStore', () => {
     describe('updateLearningTask', () => {
       test('should update learning task successfully', async () => {
         const updatedTask = { ...mockLearningTask, title: 'Updated Task' };
-        (modernLearningTaskService.updateTask as ReturnType<typeof vi.fn>).mockResolvedValue(updatedTask);
+        (modernLearningTaskService.updateTask as ReturnType<typeof vi.fn>).mockResolvedValue(
+          updatedTask
+        );
 
         // Set initial state with a task
         useTaskStore.setState({ learningTasks: [mockLearningTask] });
@@ -155,12 +171,16 @@ describe.skip('TaskStore', () => {
         expect(state.learningTasks[0].title).toBe('Updated Task');
         expect(state.isLoading).toBe(false);
         expect(state.error).toBeNull();
-        expect(modernLearningTaskService.updateTask).toHaveBeenCalledWith('1', { title: 'Updated Task' });
+        expect(modernLearningTaskService.updateTask).toHaveBeenCalledWith('1', {
+          title: 'Updated Task',
+        });
       });
 
       test('should handle update learning task error', async () => {
         const errorMessage = 'Failed to update task';
-        (modernLearningTaskService.updateTask as ReturnType<typeof vi.fn>).mockRejectedValue(new Error(errorMessage));
+        (modernLearningTaskService.updateTask as ReturnType<typeof vi.fn>).mockRejectedValue(
+          new Error(errorMessage)
+        );
 
         useTaskStore.setState({ learningTasks: [mockLearningTask] });
 
@@ -176,7 +196,9 @@ describe.skip('TaskStore', () => {
 
     describe('deleteLearningTask', () => {
       test('should delete learning task successfully', async () => {
-        (modernLearningTaskService.deleteTask as ReturnType<typeof vi.fn>).mockResolvedValue(undefined);
+        (modernLearningTaskService.deleteTask as ReturnType<typeof vi.fn>).mockResolvedValue(
+          undefined
+        );
 
         // Set initial state with a task
         useTaskStore.setState({ learningTasks: [mockLearningTask] });
@@ -193,7 +215,9 @@ describe.skip('TaskStore', () => {
 
       test('should handle delete learning task error', async () => {
         const errorMessage = 'Failed to delete task';
-        (modernLearningTaskService.deleteTask as ReturnType<typeof vi.fn>).mockRejectedValue(new Error(errorMessage));
+        (modernLearningTaskService.deleteTask as ReturnType<typeof vi.fn>).mockRejectedValue(
+          new Error(errorMessage)
+        );
 
         useTaskStore.setState({ learningTasks: [mockLearningTask] });
 
@@ -290,7 +314,9 @@ describe.skip('TaskStore', () => {
         updated_at: '2025-09-16T00:00:00Z',
       };
 
-      (modernLearningTaskService.getAllTasks as ReturnType<typeof vi.fn>).mockResolvedValue([mockLearningTask]);
+      (modernLearningTaskService.getAllTasks as ReturnType<typeof vi.fn>).mockResolvedValue([
+        mockLearningTask,
+      ]);
 
       const store = useTaskStore.getState();
 

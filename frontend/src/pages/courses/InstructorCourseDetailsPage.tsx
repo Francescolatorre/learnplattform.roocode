@@ -259,7 +259,7 @@ const InstructorCourseDetailPage: React.FC = () => {
 
   useEffect(() => {
     fetchCourseDetails();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId]);
 
   if (isLoading) {

@@ -53,7 +53,7 @@ const ResetPasswordForm: React.FC = () => {
     }
   }, [token, navigate, notify]);
 
-  const onSubmit: SubmitHandler<ResetPasswordSchema> = async (data) => {
+  const onSubmit: SubmitHandler<ResetPasswordSchema> = async data => {
     setLoading(true);
     setError(null);
     setSuccess(false);

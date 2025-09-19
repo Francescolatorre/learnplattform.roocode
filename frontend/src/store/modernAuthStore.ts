@@ -115,7 +115,7 @@ const useAuthStore = create<AuthState>()(
             user,
             isAuthenticated: true,
             isLoading: false,
-            error: null
+            error: null,
           });
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Login failed';
@@ -123,7 +123,7 @@ const useAuthStore = create<AuthState>()(
             error: errorMessage,
             isLoading: false,
             isAuthenticated: false,
-            user: null
+            user: null,
           });
           throw error;
         }
@@ -139,7 +139,7 @@ const useAuthStore = create<AuthState>()(
             user,
             isAuthenticated: true,
             isLoading: false,
-            error: null
+            error: null,
           });
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Registration failed';
@@ -147,7 +147,7 @@ const useAuthStore = create<AuthState>()(
             error: errorMessage,
             isLoading: false,
             isAuthenticated: false,
-            user: null
+            user: null,
           });
           throw error;
         }
@@ -163,7 +163,7 @@ const useAuthStore = create<AuthState>()(
             user: null,
             isAuthenticated: false,
             isLoading: false,
-            error: null
+            error: null,
           });
         } catch (error) {
           // Even if logout fails, clear local state
@@ -172,7 +172,7 @@ const useAuthStore = create<AuthState>()(
             user: null,
             isAuthenticated: false,
             isLoading: false,
-            error: null
+            error: null,
           });
         }
       },
@@ -185,15 +185,16 @@ const useAuthStore = create<AuthState>()(
           set({
             user,
             isAuthenticated: true,
-            isLoading: false
+            isLoading: false,
           });
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Failed to fetch user profile';
+          const errorMessage =
+            error instanceof Error ? error.message : 'Failed to fetch user profile';
           set({
             error: errorMessage,
             isLoading: false,
             isAuthenticated: false,
-            user: null
+            user: null,
           });
           throw error;
         }
@@ -210,7 +211,7 @@ const useAuthStore = create<AuthState>()(
           set({
             user: null,
             isAuthenticated: false,
-            error: 'Session expired'
+            error: 'Session expired',
           });
           return false;
         }
@@ -223,7 +224,7 @@ const useAuthStore = create<AuthState>()(
             set({
               user: null,
               isAuthenticated: false,
-              error: 'Session expired'
+              error: 'Session expired',
             });
           }
           return isValid;
@@ -232,7 +233,7 @@ const useAuthStore = create<AuthState>()(
           set({
             user: null,
             isAuthenticated: false,
-            error: 'Session validation failed'
+            error: 'Session validation failed',
           });
           return false;
         }
@@ -245,7 +246,8 @@ const useAuthStore = create<AuthState>()(
           await modernAuthService.requestPasswordReset(email);
           set({ isLoading: false });
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Password reset request failed';
+          const errorMessage =
+            error instanceof Error ? error.message : 'Password reset request failed';
           set({ error: errorMessage, isLoading: false });
           throw error;
         }
@@ -276,7 +278,7 @@ const useAuthStore = create<AuthState>()(
             set({
               user: null,
               isAuthenticated: false,
-              isRestoring: false
+              isRestoring: false,
             });
             return;
           }
@@ -290,14 +292,14 @@ const useAuthStore = create<AuthState>()(
             set({
               user,
               isAuthenticated: true,
-              isRestoring: false
+              isRestoring: false,
             });
           } else {
             // Tokens are invalid, clear state
             set({
               user: null,
               isAuthenticated: false,
-              isRestoring: false
+              isRestoring: false,
             });
           }
         } catch (error) {
@@ -306,7 +308,7 @@ const useAuthStore = create<AuthState>()(
             user: null,
             isAuthenticated: false,
             isRestoring: false,
-            error: 'Failed to restore authentication state'
+            error: 'Failed to restore authentication state',
           });
         }
       },
@@ -324,14 +326,14 @@ const useAuthStore = create<AuthState>()(
 
       hasValidToken: (): boolean => {
         return modernAuthService.isAuthenticated();
-      }
+      },
     }),
     {
       name: 'modern-auth-store', // DevTools name
       partialize: (state: AuthState) => ({
         // Only persist essential state, not sensitive data
-        isAuthenticated: state.isAuthenticated
-      })
+        isAuthenticated: state.isAuthenticated,
+      }),
     }
   )
 );

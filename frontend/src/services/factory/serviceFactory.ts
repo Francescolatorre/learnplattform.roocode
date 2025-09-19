@@ -1,6 +1,6 @@
 /**
  * Service Factory (2025 Best Practices)
- * 
+ *
  * Implements dependency injection and composition patterns
  * for creating service instances with proper abstraction
  */
@@ -143,7 +143,7 @@ export class ServiceFactory {
     serviceKey?: string
   ): T {
     const key = serviceKey || serviceClass.name;
-    
+
     if (!this.services.has(key)) {
       const service = new serviceClass(this.config);
       this.services.set(key, service);
@@ -161,7 +161,7 @@ export class ServiceFactory {
         service.setAuthToken(token);
       }
     });
-    
+
     // Also set on the default API client
     if (this.config.apiClient) {
       this.config.apiClient.setAuthToken(token);

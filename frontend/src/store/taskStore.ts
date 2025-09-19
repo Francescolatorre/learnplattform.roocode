@@ -38,7 +38,9 @@ const useTaskStore = create<TaskState>((set, _get) => ({
   fetchLearningTasks: async (courseId?: string) => {
     set({ isLoading: true, error: null });
     try {
-      const tasks = await modernLearningTaskService.getAllTasks(courseId ? { course: courseId } : {});
+      const tasks = await modernLearningTaskService.getAllTasks(
+        courseId ? { course: courseId } : {}
+      );
       set({ learningTasks: tasks, isLoading: false });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to fetch tasks';
@@ -52,7 +54,7 @@ const useTaskStore = create<TaskState>((set, _get) => ({
       const newTask = await modernLearningTaskService.createTask(task);
       set(state => ({
         learningTasks: [...state.learningTasks, newTask],
-        isLoading: false
+        isLoading: false,
       }));
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to create task';
@@ -68,7 +70,7 @@ const useTaskStore = create<TaskState>((set, _get) => ({
         learningTasks: state.learningTasks.map(task =>
           task.id === parseInt(taskId) ? updatedTask : task
         ),
-        isLoading: false
+        isLoading: false,
       }));
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to update task';
@@ -82,7 +84,7 @@ const useTaskStore = create<TaskState>((set, _get) => ({
       await modernLearningTaskService.deleteTask(taskId);
       set(state => ({
         learningTasks: state.learningTasks.filter(task => task.id !== parseInt(taskId)),
-        isLoading: false
+        isLoading: false,
       }));
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete task';
@@ -91,8 +93,7 @@ const useTaskStore = create<TaskState>((set, _get) => ({
   },
 
   // Legacy local actions (backward compatibility)
-  addLocalTask: (task) =>
-    set(state => ({ localTasks: [...state.localTasks, task] })),
+  addLocalTask: task => set(state => ({ localTasks: [...state.localTasks, task] })),
 
   removeLocalTask: (taskId: string) =>
     set(state => ({ localTasks: state.localTasks.filter(task => task.id !== taskId) })),
