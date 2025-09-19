@@ -98,7 +98,7 @@ export const useModernCourseStore = create<CourseStoreState>()(
   devtools(
     (set, _get) => ({
       // Base service slice state
-      ...createServiceSlice<ICourse[]>([])((setSlice, _getSlice) => ({} as Record<string, unknown>)),
+      ...createServiceSlice<ICourse[]>([])((_, _getSlice) => ({} as Record<string, unknown>)),
 
       // Pagination state
       totalCount: 0,

@@ -269,7 +269,7 @@ export class ModernAuthService extends BaseService {
 
           clearTimeout(timeoutId);
           return response && response.status !== false;
-        } catch (_validationError) {
+        } catch {
           // If validation fails, try to refresh token automatically
           const refreshToken = localStorage.getItem(AUTH_CONFIG.refreshTokenStorageKey);
           if (refreshToken) {
