@@ -172,7 +172,7 @@ describe('ModernAuthService', () => {
       mockLocalStorage.getItem
         .mockReturnValueOnce(mockTokens.refresh) // refresh token
         .mockReturnValueOnce(mockTokens.access); // access token
-      mockApiClient.post.mockResolvedValue({});
+      mockApiClient.post.mockResolvedValue(undefined);
 
       await authService.logout();
 
@@ -238,7 +238,7 @@ describe('ModernAuthService', () => {
 
     it('should throw error for malformed refresh response', async () => {
       mockLocalStorage.getItem.mockReturnValue(mockTokens.refresh);
-      mockApiClient.post.mockResolvedValue({}); // Missing access token
+      mockApiClient.post.mockResolvedValue(null); // Missing access token
 
       await expect(authService.refreshToken()).rejects.toThrow(
         'Token refresh failed: Malformed response'

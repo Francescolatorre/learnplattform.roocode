@@ -37,8 +37,8 @@ describe('progressService', () => {
     vi.clearAllMocks();
 
     // Set up default responses for PUT and POST
-    mockPut.mockResolvedValue({});
-    mockPost.mockResolvedValue({});
+    mockPut.mockResolvedValue({ success: true });
+    mockPost.mockResolvedValue({ success: true });
 
     // Set up specific responses for different API endpoints
     mockGet.mockImplementation((url: string) => {
