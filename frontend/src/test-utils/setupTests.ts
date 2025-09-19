@@ -85,9 +85,9 @@ const useAuth = vi.fn(() => ({
   isAuthenticated: false,
   isRestoring: false,
   error: null,
-  login: vi.fn(),
-  logout: vi.fn(),
-  register: vi.fn(),
+  login: vi.fn().mockResolvedValue({ access: 'mock-access-token', refresh: 'mock-refresh-token' }),
+  logout: vi.fn().mockResolvedValue(undefined),
+  register: vi.fn().mockResolvedValue({ access: 'mock-access-token', refresh: 'mock-refresh-token' }),
   getUserRole: () => 'guest',
   redirectToDashboard: vi.fn(),
 }));
