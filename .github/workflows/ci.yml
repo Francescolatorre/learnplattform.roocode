@@ -43,35 +43,14 @@ jobs:
   deploy:
     name: Deploy Backend to Railway
     runs-on: ubuntu-latest
+    container: ghcr.io/railwayapp/cli:latest
     # needs: [backend-tests, frontend-tests, code-quality, e2e-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    permissions:
-      contents: read
-      packages: write
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push backend image
-        run: |
-          REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr 'A-Z' 'a-z')
-          docker build -t ghcr.io/${REPO_OWNER}/learnplatform-backend:${{ github.sha }} .
-          docker push ghcr.io/${REPO_OWNER}/learnplatform-backend:${{ github.sha }}
-
-      - name: Deploy to Railway
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          CI: true
-        run: |
-          npx @railway/cli link --project 2eb61cd2-5948-48ed-bc2d-bd7b6b37367c --environment production
-          npx @railway/cli up --detach
+      - uses: actions/checkout@v4
+      - run: railway up --service=${{ vars.RAILWAY_SERVICE_ID || 'learnplatform-backend' }}
 
   summary:
     name: Test Summary
