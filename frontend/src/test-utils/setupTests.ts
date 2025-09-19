@@ -97,7 +97,10 @@ vi.mock('@context/auth/AuthContext', async () => {
   return {
     __esModule: true,
     ...RealModule,
-    AuthContext: React.createContext({}),
+    AuthContext: React.createContext({
+      access: 'mock-access-token',
+      refresh: 'mock-refresh-token'
+    }),
     useAuth,
     AuthProvider: function AuthProvider(props: React.PropsWithChildren<{}>) {
       return React.createElement(React.Fragment, null, props.children);
