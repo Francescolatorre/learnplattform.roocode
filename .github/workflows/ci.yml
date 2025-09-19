@@ -50,7 +50,7 @@ jobs:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:
       - uses: actions/checkout@v4
-      - run: railway up --service=${{ vars.RAILWAY_SERVICE_ID || 'learnplatform-backend' }}
+      - run: railway up --service=${{ vars.RAILWAY_SERVICE_ID || 'learnplattform.roocode' }}
 
   summary:
     name: Test Summary
