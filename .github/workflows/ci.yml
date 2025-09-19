@@ -75,7 +75,7 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
           REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr 'A-Z' 'a-z')
-          railway service --name learnplattform.roocode
+          railway service learnplattform.roocode
           railway deploy --image ghcr.io/${REPO_OWNER}/learnplatform-backend:${{ github.sha }}
 
   summary:
