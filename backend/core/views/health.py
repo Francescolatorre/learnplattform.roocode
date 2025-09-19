@@ -32,7 +32,11 @@ def health_check(request):
         "database": db_status,
         "debug": settings.DEBUG,
         "environment": os.getenv("RAILWAY_ENVIRONMENT", "unknown"),
-        "django_version": settings.DJANGO_VERSION if hasattr(settings, 'DJANGO_VERSION') else "unknown",
+        "django_version": (
+            settings.DJANGO_VERSION
+            if hasattr(settings, "DJANGO_VERSION")
+            else "unknown"
+        ),
     }
 
     status_code = 200 if db_status == "ok" else 503
