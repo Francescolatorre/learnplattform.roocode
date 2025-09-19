@@ -70,6 +70,7 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           CI: true
         run: |
+          npx @railway/cli login --token ${{ secrets.RAILWAY_TOKEN }}
           npx @railway/cli link --project 2eb61cd2-5948-48ed-bc2d-bd7b6b37367c --environment production
           npx @railway/cli up --detach
 
