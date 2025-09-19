@@ -16,10 +16,14 @@ from datetime import timedelta
 from pathlib import Path
 
 import dj_database_url
+from dotenv import load_dotenv
 
 # Add the parent directory to system path to allow importing from root modules
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
+
+# Load environment variables from .env file (only for local development)
+load_dotenv(BASE_DIR / '.env')
 
 # Now we can import logs_setup after adding the path
 
@@ -34,9 +38,18 @@ SECRET_KEY = os.getenv(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "True").lower() in ["true", "1", "yes"]
 
-ALLOWED_HOSTS = []
+# Railway and local development hosts
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    ".railway.app",  # All Railway subdomains
+]
+
+# Add specific Railway URL if provided
+if railway_url := os.getenv("RAILWAY_STATIC_URL"):
+    ALLOWED_HOSTS.append(railway_url.replace("https://", "").replace("http://", ""))
 
 
 # Application definition
@@ -61,6 +74,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",  # CORS middleware - should be at the top
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # Static files for Railway
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",

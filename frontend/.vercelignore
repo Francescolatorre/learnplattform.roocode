@@ -1,0 +1,46 @@
+# Vercel Ignore - Files not needed for deployment
+
+# Development
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Testing
+coverage/
+test-results/
+playwright-report/
+e2e/
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+
+# Development Tools
+.vscode/
+.pytest_cache/
+eslint-rules/
+dependency-cruiser.cjs
+.markdownlint.json
+
+# Documentation
+docs/
+README.md
+*.md
+
+# Build artifacts (will be regenerated)
+node_modules/
+dist/
+
+# Large assets not needed for build
+bg.png
+debug-instructor-page.png
+*.svg
+favicon.ico
+
+# Scripts and configs
+scripts/
+playwright*.config.*
+vitest*.config.*
+tsconfig.playwright.json
