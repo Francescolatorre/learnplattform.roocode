@@ -74,6 +74,7 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
+          railway link --project 2eb61cd2-5948-48ed-bc2d-bd7b6b37367c --environment production
           railway up --detach
 
   summary:
