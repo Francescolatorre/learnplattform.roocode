@@ -214,6 +214,7 @@ if DEBUG:
 else:
     # Production: Specific allowed origins only
     CORS_ALLOWED_ORIGINS = [
+        "https://learnplattform-roocode-preprod.vercel.app",  # Vercel Preproduction (Static Domain)
         "https://learnplattform-roocode.vercel.app",  # Vercel Production
         "https://learnplattform-roocode-git-main-francescolatorre.vercel.app",  # Vercel Main Branch
         "http://localhost:5173",  # Local development
@@ -237,6 +238,7 @@ if DEBUG:
 else:
     # Production: Specific trusted origins only
     CSRF_TRUSTED_ORIGINS = [
+        "https://learnplattform-roocode-preprod.vercel.app",  # Vercel Preproduction (Static Domain)
         "https://learnplattform-roocode.vercel.app",  # Vercel Production
         "https://learnplattform-roocode-git-main-francescolatorre.vercel.app",  # Vercel Main Branch
         "https://learnplattformroocode-preproduction.up.railway.app",  # Railway Backend

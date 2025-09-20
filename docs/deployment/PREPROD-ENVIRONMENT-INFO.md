@@ -8,7 +8,7 @@
 ## 🌐 Service URLs
 
 ### Frontend (Vercel)
-- **URL**: https://learnplattform-roocode.vercel.app
+- **URL**: https://learnplattform-roocode-preprod.vercel.app (Static Preproduction Domain)
 - **Status**: ✅ Active
 - **Framework**: React 19.1.1 + Vite + TypeScript
 - **Deployment**: Auto-deploy from `develop` branch (preproduction)

@@ -18,7 +18,7 @@
 - **Purpose**: Integration branch for active development
 - **Deployment**: Preproduction environment (Railway + Vercel)
 - **Current URL**:
-  - Frontend: https://learnplattform-roocode.vercel.app
+  - Frontend: https://learnplattform-roocode-preprod.vercel.app (Static Domain)
   - Backend: https://learnplattformroocode-preproduction.up.railway.app
 - **Updates**: Direct commits + feature branch merges
 - **Testing**: Automated tests + integration testing
