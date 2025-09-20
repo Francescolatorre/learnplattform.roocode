@@ -11,14 +11,14 @@
 - **URL**: https://learnplattform-roocode.vercel.app
 - **Status**: ✅ Active
 - **Framework**: React 19.1.1 + Vite + TypeScript
-- **Deployment**: Auto-deploy from `main` branch
+- **Deployment**: Auto-deploy from `develop` branch (preproduction)
 - **Features**: React Router, Authentication Flow, API Integration
 
 ### Backend (Railway)
 - **URL**: https://learnplattformroocode-preproduction.up.railway.app
 - **Status**: ✅ Active
 - **Framework**: Django 4.2.23 + DRF
-- **Deployment**: Auto-deploy from `main` branch
+- **Deployment**: Auto-deploy from `develop` branch (preproduction)
 - **Health Check**: `/health/` endpoint available
 
 ### Database (Neon PostgreSQL)
