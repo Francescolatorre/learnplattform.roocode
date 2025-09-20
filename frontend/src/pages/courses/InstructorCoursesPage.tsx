@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import StatsSummary from '@/components/common/StatsSummary';
 import FilterableCourseList from '@/components/courses/FilterableCourseList';
-import { courseService } from '@/services/resources/courseService';
+import { modernCourseService, type CourseFilterOptions } from '@/services/resources/modernCourseService';
 import type { ICourse } from '@/types';
 
 /**
@@ -51,7 +51,7 @@ const InstructorCoursesPage: React.FC = () => {
         title=""
         emptyMessage="You haven't created any courses yet."
         noResultsMessage="No courses match your search criteria."
-        customFetchFunction={courseService.fetchInstructorCourses.bind(courseService)}
+        customFetchFunction={(options: CourseFilterOptions) => modernCourseService.getInstructorCourses(options)}
         showInstructorActions={true}
       />
     </Box>

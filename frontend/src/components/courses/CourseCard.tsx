@@ -12,8 +12,8 @@ import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { useAuth } from '@/context/auth/AuthContext';
-import { enrollmentService } from '@/services/resources/enrollmentService';
+import { useAuthStore } from '@/store/modernAuthStore';
+import { modernEnrollmentService } from '@/services/resources/modernEnrollmentService';
 import { ICourse } from '@/types';
 
 /**
@@ -35,12 +35,12 @@ interface ICourseCardProps {
  * @returns A card component displaying course information
  */
 const CourseCard: React.FC<ICourseCardProps> = ({ course }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuthStore();
 
   // Enhanced query configuration for more reliable data fetching
   const { data: enrollment, isLoading: enrollmentLoading } = useQuery({
     queryKey: ['enrollment', course.id],
-    queryFn: () => enrollmentService.getEnrollmentStatus(course.id),
+    queryFn: () => modernEnrollmentService.getEnrollmentStatus(course.id),
     enabled: Boolean(course.id) && Boolean(isAuthenticated),
     retry: 3,
     retryDelay: 1000,

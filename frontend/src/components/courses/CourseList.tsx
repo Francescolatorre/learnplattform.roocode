@@ -32,8 +32,8 @@ import { useNavigate } from 'react-router-dom';
 
 import useNotification from '@/components/Notifications/useNotification';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
-import { useAuth } from '@/context/auth/AuthContext';
-import { courseService } from '@/services/resources/courseService';
+import { useAuthStore } from '@/store/modernAuthStore';
+import { modernCourseService } from '@/services/resources/modernCourseService';
 import { ICourse } from '@/types/course';
 import { formatDateRelative } from '@/utils/dateUtils';
 
@@ -76,7 +76,7 @@ const CourseList: React.FC<ICourseListProps> = ({
   const [isDeleting, setIsDeleting] = useState(false);
   const queryClient = useQueryClient();
   const notify = useNotification();
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const navigate = useNavigate();
 
   // Check if user has instructor or admin privileges
@@ -128,7 +128,7 @@ const CourseList: React.FC<ICourseListProps> = ({
 
     setIsDeleting(true);
     try {
-      await courseService.deleteCourse(String(selectedCourse.id));
+      await modernCourseService.deleteCourse(selectedCourse.id);
       await queryClient.invalidateQueries({ queryKey: ['courses'] });
       notify('Course deleted successfully', 'success');
       // Navigate back to course list if we're on the deleted course's detail page
@@ -159,11 +159,11 @@ const CourseList: React.FC<ICourseListProps> = ({
           );
         });
 
-        savedCourse = await courseService.updateCourse(String(selectedCourse.id), courseData);
+        savedCourse = await modernCourseService.updateCourse(selectedCourse.id, courseData);
         notify('Course updated successfully', 'success');
       } else {
         // For new courses, we'll wait for the response since we need the ID
-        savedCourse = await courseService.createCourse(courseData);
+        savedCourse = await modernCourseService.createCourse(courseData);
         notify('Course created successfully', 'success');
       }
 

@@ -19,11 +19,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
-import { enrollmentService } from '@/services/resources/enrollmentService';
+import { modernEnrollmentService } from '@/services/resources/modernEnrollmentService';
 import { ICourse } from '@/types/course';
 import { TCompletionStatus } from '@/types/entities';
 import { useAuthStore } from '@/store/modernAuthStore';
-import { courseService } from '@services/resources/courseService';
+import { modernCourseService } from '@/services/resources/modernCourseService';
 
 interface ICourseEnrollmentProps {
   courseId: string;
@@ -47,7 +47,7 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({ courseId }) => {
     error: courseError,
   } = useQuery({
     queryKey: ['course', courseId],
-    queryFn: () => courseService.getCourseDetails(courseId),
+    queryFn: () => modernCourseService.getCourseDetails(Number(courseId)),
     enabled: Boolean(courseId),
   });
 
@@ -58,13 +58,20 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({ courseId }) => {
       if (!user?.id) {
         throw new Error('User ID is required');
       }
-      // Find enrollments for this course
-      const enrollments = await enrollmentService.findByFilter({ course: Number(courseId) });
-      const enrollment = enrollments.find(e => e.course === Number(courseId));
+      // Get enrollment status for this course
+      const enrollmentStatus = await modernEnrollmentService.getEnrollmentStatus(Number(courseId));
+      if (!enrollmentStatus) return null;
+
+      // Convert to expected format
+      const enrollment = enrollmentStatus.enrolled ? {
+        status: 'active' as TCompletionStatus,
+        course: Number(courseId),
+        id: enrollmentStatus.enrollmentId || 0
+      } : null;
       return enrollment
         ? {
             status: enrollment.status,
-            enrollmentId: enrollment.id,
+            enrollmentId: typeof enrollment.id === 'number' ? enrollment.id : undefined,
           }
         : null;
     },
@@ -73,12 +80,7 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({ courseId }) => {
 
   // Handle enrollment mutation
   const enrollMutation = useMutation({
-    mutationFn: () =>
-      enrollmentService.create({
-        course: Number(courseId),
-        user: user ? Number(user.id) : undefined,
-        status: 'active',
-      }),
+    mutationFn: () => modernEnrollmentService.enrollInCourse(Number(courseId)),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['enrollment', courseId] });
     },
@@ -90,7 +92,7 @@ const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({ courseId }) => {
 
   // Handle unenrollment mutation
   const unenrollMutation = useMutation({
-    mutationFn: () => enrollmentService.unenrollFromCourseById(Number(courseId)),
+    mutationFn: () => modernEnrollmentService.unenrollFromCourse(Number(courseId)),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['enrollment', courseId] });
       setUnenrollDialogOpen(false);
