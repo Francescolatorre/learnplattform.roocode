@@ -177,9 +177,8 @@ const authService = {
       const timeoutId = setTimeout(() => controller.abort(), 5000);
 
       try {
-        const response = await apiClient.post(
+        const response = await apiClient.get(
           '/auth/validate-token/',
-          {},
           {
             headers: {
               Authorization: `Bearer ${token}`,
