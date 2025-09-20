@@ -1,5 +1,4 @@
 {
-  "_comment": "Updated 2025-09-20: Fixed API base URL to point to Railway backend",
   "name": "learnplatform-frontend",
   "version": 2,
   "buildCommand": "npm run build",
