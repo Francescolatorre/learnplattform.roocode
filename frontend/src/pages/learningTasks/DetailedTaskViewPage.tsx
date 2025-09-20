@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import { ILearningTask } from '@/types/Task';
-import LearningTaskService from '@services/resources/learningTaskService';
+import { modernLearningTaskService } from '@/services/resources/modernLearningTaskService';
 
 const DetailedTaskViewPage: React.FC = () => {
   const { taskId } = useParams<{ taskId: string }>();
@@ -21,7 +21,7 @@ const DetailedTaskViewPage: React.FC = () => {
       }
 
       try {
-        const fetchedTask = await LearningTaskService.getById(taskId);
+        const fetchedTask = await modernLearningTaskService.getTaskById(taskId);
         setTask(fetchedTask);
       } catch (err) {
         console.error('Failed to fetch task:', err);

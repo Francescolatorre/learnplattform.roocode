@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { ILearningTask } from '@/types/Task';
-import { fetchCourseTasks } from 'src/services/resources/learningTaskService';
+import { modernLearningTaskService } from '@/services/resources/modernLearningTaskService';
 
 const TaskListPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -12,7 +12,7 @@ const TaskListPage: React.FC = () => {
   useEffect(() => {
     if (!courseId) return; // Defensive guard
     const loadTasks = async () => {
-      const tasks = await fetchCourseTasks(courseId!);
+      const tasks = await modernLearningTaskService.getAllTasksByCourseId(courseId!);
       setLearningTasks(tasks);
     };
     loadTasks();

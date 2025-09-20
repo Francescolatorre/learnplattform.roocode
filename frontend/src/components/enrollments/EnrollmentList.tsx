@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { enrollmentService } from '@/services/resources/enrollmentService';
+import { modernEnrollmentService } from '@/services/resources/modernEnrollmentService';
 import { ICourseEnrollment } from '@/types/entities';
 
 const EnrollmentList: React.FC = () => {
@@ -9,7 +9,7 @@ const EnrollmentList: React.FC = () => {
   useEffect(() => {
     const fetchEnrollments = async () => {
       try {
-        const response = await enrollmentService.getAll();
+        const response = await modernEnrollmentService.getAllEnrollments();
         setEnrollments(response as ICourseEnrollment[]);
       } catch (error) {
         console.error('Failed to fetch enrollments:', error);
