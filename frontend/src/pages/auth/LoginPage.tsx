@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import useNotification from '@/components/Notifications/useNotification';
 import { ROUTE_CONFIG } from '@/config/appConfig';
-import { useAuthStore } from '@/store/modernAuthStore';
+import { useAuth } from '@/context/auth/AuthContext';
 
 interface ILoginFormInputs {
   username: string;
@@ -32,7 +32,7 @@ const LoginPage: React.FC = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ILoginFormInputs>();
-  const { login, user, isLoading } = useAuthStore();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
   const notify = useNotification();
 
