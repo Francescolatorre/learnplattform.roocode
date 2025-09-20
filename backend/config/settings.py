@@ -242,6 +242,11 @@ else:
         "https://learnplattformroocode-preproduction.up.railway.app",  # Railway Backend
     ]
 
+# Additional CSRF settings for Railway
+CSRF_COOKIE_SECURE = not DEBUG  # Use secure cookies in production
+CSRF_COOKIE_SAMESITE = 'Lax'  # Allow cross-site requests
+CSRF_USE_SESSIONS = False  # Use cookies for CSRF tokens
+
 # Logging Configuration
 LOGGING = {
     "version": 1,
