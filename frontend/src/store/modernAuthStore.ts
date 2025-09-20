@@ -272,13 +272,16 @@ const useAuthStore = create<AuthState>()(
       clearError: () => set({ error: null }),
 
       restoreAuthState: async () => {
+        console.log('RestoreAuthState: Starting...');
         set({ isRestoring: true, error: null });
         try {
           // Check if we have tokens in localStorage
           const accessToken = localStorage.getItem(AUTH_CONFIG.tokenStorageKey);
           const refreshToken = localStorage.getItem(AUTH_CONFIG.refreshTokenStorageKey);
+          console.log('RestoreAuthState: Token check', { hasAccess: !!accessToken, hasRefresh: !!refreshToken });
 
           if (!accessToken || !refreshToken) {
+            console.log('RestoreAuthState: No tokens found, setting unauthenticated state');
             set({
               user: null,
               isAuthenticated: false,
@@ -287,32 +290,26 @@ const useAuthStore = create<AuthState>()(
             return;
           }
 
-          // Validate current tokens using legacy authService
-          const isValid = await authService.validateToken();
+          // Skip validation and directly try to get user profile with existing token
+          console.log('RestoreAuthState: Attempting to get user profile...');
+          const user = await authService.getUserProfile();
+          console.log('RestoreAuthState: Successfully got user profile:', user);
 
-          if (isValid) {
-            // Fetch current user profile using legacy authService
-            const user = await authService.getUserProfile();
-            set({
-              user,
-              isAuthenticated: true,
-              isRestoring: false,
-            });
-          } else {
-            // Tokens are invalid, clear state
-            set({
-              user: null,
-              isAuthenticated: false,
-              isRestoring: false,
-            });
-          }
+          set({
+            user,
+            isAuthenticated: true,
+            isRestoring: false,
+          });
         } catch (error) {
-          console.error('Auth state restoration failed:', error);
+          console.error('RestoreAuthState: Failed to restore auth state:', error);
+          // If getUserProfile fails, tokens might be expired - clear them
+          localStorage.removeItem(AUTH_CONFIG.tokenStorageKey);
+          localStorage.removeItem(AUTH_CONFIG.refreshTokenStorageKey);
+
           set({
             user: null,
             isAuthenticated: false,
             isRestoring: false,
-            error: 'Failed to restore authentication state',
           });
         }
       },
