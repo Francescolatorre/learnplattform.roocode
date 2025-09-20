@@ -156,6 +156,12 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+# Static files for production deployment
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+# Whitenoise static files storage (already configured in MIDDLEWARE)
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
