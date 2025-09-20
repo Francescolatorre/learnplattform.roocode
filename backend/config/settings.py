@@ -225,6 +225,23 @@ else:
         r"^https://learnplattform-roocode.*\.vercel\.app$",
     ]
 
+# CSRF trusted origins configuration
+if DEBUG:
+    # Development: Allow all origins
+    CSRF_TRUSTED_ORIGINS = [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:3000",
+    ]
+else:
+    # Production: Specific trusted origins only
+    CSRF_TRUSTED_ORIGINS = [
+        "https://learnplattform-roocode.vercel.app",  # Vercel Production
+        "https://learnplattform-roocode-git-main-francescolatorre.vercel.app",  # Vercel Main Branch
+        "https://learnplattformroocode-preproduction.up.railway.app",  # Railway Backend
+    ]
+
 # Logging Configuration
 LOGGING = {
     "version": 1,
