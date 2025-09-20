@@ -214,16 +214,13 @@ if DEBUG:
 else:
     # Production: Specific allowed origins only
     CORS_ALLOWED_ORIGINS = [
-        "https://learnplattform-roocode-preprod.vercel.app",  # Vercel Preproduction (Static Domain)
-        "https://learnplattform-roocode.vercel.app",  # Vercel Production
-        "https://learnplattform-roocode-git-main-francescolatorre.vercel.app",  # Vercel Main Branch
         "http://localhost:5173",  # Local development
         "http://localhost:3000",  # Alternative local dev port
     ]
 
-    # Add Vercel preview deployments (starts with project name)
+    # Allow all Vercel deployments for flexible testing of feature branches
     CORS_ALLOWED_ORIGIN_REGEXES = [
-        r"^https://learnplattform-roocode.*\.vercel\.app$",
+        r"^https://.*\.vercel\.app$",  # All Vercel deployments (flexible for testing)
     ]
 
 # CSRF trusted origins configuration
@@ -238,10 +235,10 @@ if DEBUG:
 else:
     # Production: Specific trusted origins only
     CSRF_TRUSTED_ORIGINS = [
-        "https://learnplattform-roocode-preprod.vercel.app",  # Vercel Preproduction (Static Domain)
-        "https://learnplattform-roocode.vercel.app",  # Vercel Production
-        "https://learnplattform-roocode-git-main-francescolatorre.vercel.app",  # Vercel Main Branch
         "https://learnplattformroocode-preproduction.up.railway.app",  # Railway Backend
+        # Note: CSRF_TRUSTED_ORIGINS doesn't support regex, so specific domains needed
+        "https://learnplattform-roocode-preprod.vercel.app",  # Static Preproduction Domain
+        "https://learnplattform-roocode.vercel.app",  # Production Domain
     ]
 
 # Additional CSRF settings for Railway
