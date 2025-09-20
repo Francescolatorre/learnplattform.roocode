@@ -1,3 +1,4 @@
+import { Box } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -6,6 +7,7 @@ import React from 'react';
 import NavigationBar from '@components/navigation/NavigationBar';
 import { NotificationProvider } from '@components/Notifications/NotificationProvider';
 import { ErrorBoundary } from '@components/shared';
+import VersionFooter from '@components/shared/VersionFooter';
 import AppRoutes from '@routes/AppRoutes.tsx';
 import { theme } from '@styles/theme.ts';
 
@@ -18,10 +20,13 @@ const App: React.FC = () => {
         <NotificationProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <NavigationBar />
-            <main role="main">
-              <AppRoutes />
-            </main>
+            <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+              <NavigationBar />
+              <main role="main" style={{ flex: 1 }}>
+                <AppRoutes />
+              </main>
+              <VersionFooter />
+            </Box>
           </ThemeProvider>
         </NotificationProvider>
       </ErrorBoundary>

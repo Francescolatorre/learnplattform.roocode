@@ -1,4 +1,5 @@
 import { resolve } from 'path';
+import { execSync } from 'child_process';
 
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
@@ -20,11 +21,23 @@ const customPaths = {
   '@test-utils': resolve(__dirname, './src/test-utils'),
 };
 
+const getCommitHash = () => {
+  try {
+    return execSync('git rev-parse --short HEAD').toString().trim();
+  } catch {
+    return 'unknown';
+  }
+};
+
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   resolve: {
     alias: customPaths,
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+  },
+  define: {
+    __COMMIT_HASH__: JSON.stringify(getCommitHash()),
+    __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
   },
   server: {
     proxy: {
