@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
-import { ICourse } from '@/types/course';
 import { modernCourseService } from '@/services/resources/modernCourseService';
+import { ICourse } from '@/types/course';
 
 const CourseDetailPage: React.FC = () => {
   const { id } = useParams() as { id: string | undefined };

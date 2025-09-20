@@ -15,10 +15,10 @@ import {
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import PasswordStrengthIndicator from '@components/shared/PasswordStrengthIndicator';
 import { ROUTE_CONFIG } from '@/config/appConfig';
-import { useAuthStore } from '@/store/modernAuthStore';
 import { IRegistrationData } from '@/services/auth/modernAuthService';
+import { useAuthStore } from '@/store/modernAuthStore';
+import PasswordStrengthIndicator from '@components/shared/PasswordStrengthIndicator';
 
 import { validatePassword, type PasswordStrength } from '../utils/passwordValidation';
 

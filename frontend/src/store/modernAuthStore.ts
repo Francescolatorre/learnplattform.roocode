@@ -108,7 +108,7 @@ const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         try {
           // Authenticate with legacy service (proven to work)
-          const tokens = await authService.login(username, password);
+          const _tokens = await authService.login(username, password);
 
           // Store tokens in localStorage (legacy service handles this)
           // Fetch user profile after successful login
