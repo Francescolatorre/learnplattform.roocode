@@ -24,7 +24,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import ProgressIndicator from '@/components/shared/ProgressIndicator';
 import progressService from '@/services/resources/progressService';
 import { ICourse, IPaginatedResponse, IInstructorDashboardData } from '@/types';
-import { useAuth } from '@context/auth/AuthContext';
+import { useAuthStore } from '@/store/modernAuthStore';
 import { courseService } from '@services/resources/courseService';
 
 /**
@@ -34,7 +34,7 @@ import { courseService } from '@services/resources/courseService';
  * @returns InstructorDashboard component
  */
 const InstructorDashboard: React.FC = () => {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
 
   // Log component lifecycle
   useEffect(() => {
