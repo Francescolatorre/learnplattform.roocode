@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Login Test</title>
+</head>
+<body>
+    <h1>Manual Login Test</h1>
+    <div id="result"></div>
+
+    <script>
+        async function testLogin() {
+            const baseUrl = 'https://learnplattformroocode-preproduction.up.railway.app';
+            const result = document.getElementById('result');
+
+            try {
+                result.innerHTML = 'Testing login API call...';
+
+                const response = await fetch(`${baseUrl}/auth/login/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: 'instructor',
+                        password: 'AdminPass123!'
+                    })
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+
+                const data = await response.json();
+                console.log('Response data:', data);
+
+                if (response.ok) {
+                    result.innerHTML = `
+                        <h2>✅ Login Success!</h2>
+                        <p><strong>Status:</strong> ${response.status}</p>
+                        <p><strong>User:</strong> ${data.user.username} (${data.user.role})</p>
+                        <p><strong>Access Token:</strong> ${data.access.substring(0, 50)}...</p>
+                        <p><strong>Refresh Token:</strong> ${data.refresh.substring(0, 50)}...</p>
+                    `;
+                } else {
+                    result.innerHTML = `
+                        <h2>❌ Login Failed</h2>
+                        <p><strong>Status:</strong> ${response.status}</p>
+                        <p><strong>Error:</strong> ${JSON.stringify(data)}</p>
+                    `;
+                }
+            } catch (error) {
+                console.error('Login test error:', error);
+                result.innerHTML = `
+                    <h2>❌ Network Error</h2>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p>Check browser console for details</p>
+                `;
+            }
+        }
+
+        // Run test immediately
+        testLogin();
+    </script>
+</body>
+</html>

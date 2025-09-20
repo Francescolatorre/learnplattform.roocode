@@ -1,9 +1,10 @@
 import axios from 'axios';
 
 import { AUTH_CONFIG } from '@/config/appConfig';
+import { API_CONFIG } from '@/services/api/apiConfig';
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8000/', // Ensure this matches the backend API base URL
+  baseURL: API_CONFIG.baseURL, // Use centralized API configuration
   headers: {
     'Content-Type': 'application/json',
   },
@@ -32,6 +33,10 @@ const authService = {
    * Authenticates a user and returns access and refresh tokens
    */
   async login(username: string, password: string): Promise<{ access: string; refresh: string }> {
+    console.log('Auth service debug - baseURL:', apiClient.defaults.baseURL);
+    console.log('Auth service debug - full URL:', `${apiClient.defaults.baseURL}/auth/login/`);
+    console.log('Auth service debug - API_CONFIG.baseURL:', API_CONFIG.baseURL);
+
     const response = await apiClient.post('/auth/login/', { username, password }); // Added trailing slash to handle APPEND_SLASH setting
 
     console.log('Auth login debug:', {
@@ -57,6 +62,11 @@ const authService = {
     if (!data.access || !data.refresh) {
       throw new Error('Login failed: Malformed response from server.');
     }
+
+    // Store tokens in localStorage
+    localStorage.setItem(AUTH_CONFIG.tokenStorageKey, data.access);
+    localStorage.setItem(AUTH_CONFIG.refreshTokenStorageKey, data.refresh);
+
     return data;
   },
 
@@ -167,9 +177,8 @@ const authService = {
       const timeoutId = setTimeout(() => controller.abort(), 5000);
 
       try {
-        const response = await apiClient.post(
+        const response = await apiClient.get(
           '/auth/validate-token/',
-          {},
           {
             headers: {
               Authorization: `Bearer ${token}`,

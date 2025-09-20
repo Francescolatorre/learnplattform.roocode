@@ -1,9 +1,8 @@
-import { Box, TextField, Button, Typography, CircularProgress } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { Box, TextField, Button, Typography, CircularProgress, Alert } from '@mui/material';
+import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
-import useNotification from '@/components/Notifications/useNotification';
 import { ROUTE_CONFIG } from '@/config/appConfig';
 import { useAuthStore } from '@/store/modernAuthStore';
 
@@ -12,19 +11,14 @@ interface ILoginFormInputs {
   password: string;
 }
 
-interface IApiError {
-  response?: {
-    data?: {
-      detail?: string;
-      [key: string]: unknown;
-    };
-  };
-  message?: string;
-}
-
 /**
- * Login page component for user authentication
- * Handles login form submission and redirects based on user role
+ * Modern Login Page Component (2025 Architecture)
+ *
+ * Features:
+ * - Modern useAuthStore integration
+ * - Direct navigation after login
+ * - Clean error handling
+ * - Simplified state management
  */
 const LoginPage: React.FC = () => {
   const {
@@ -32,104 +26,75 @@ const LoginPage: React.FC = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ILoginFormInputs>();
-  const { login, user, isLoading } = useAuthStore();
+
+  const { login, getUserRole, isLoading, error } = useAuthStore();
   const navigate = useNavigate();
-  const notify = useNotification();
 
-  // Track login state to know when to watch for user data
-  const [hasLoggedIn, setHasLoggedIn] = useState(false);
-
-  // Watch for user data changes after successful login
-  useEffect(() => {
-    // Only run this effect after a successful login
-    if (hasLoggedIn && user) {
-      console.info('LoginPage: User data updated after login:', user);
-
-      // Get the role directly from user object
-      const role = user.role;
-      console.info(`LoginPage: User role from user object: ${role}`);
-
-      // Navigate to appropriate dashboard based on role
-      const dashboardPath = ROUTE_CONFIG.dashboardPaths[role] || ROUTE_CONFIG.defaultRedirect;
-      console.info(`LoginPage: Redirecting to: ${dashboardPath}`);
-      navigate(dashboardPath, { replace: true });
-    }
-  }, [user, hasLoggedIn, navigate]);
-
-  const handleLogin = async (data: ILoginFormInputs) => {
+  const handleLogin: SubmitHandler<ILoginFormInputs> = async (data) => {
     try {
-      console.info('LoginPage: handleLogin: Login payload:', data);
-
-      // Login and await the result
+      // Login through modern auth store
       await login(data.username, data.password);
-      console.info('LoginPage: handleLogin: Login successful');
 
-      // Set login state to trigger the effect above
-      setHasLoggedIn(true);
-    } catch (error: unknown) {
-      const apiError = error as IApiError;
-      console.error(
-        'LoginPage: handleLogin: Login error:',
-        'response' in apiError
-          ? apiError.response?.data
-          : apiError instanceof Error
-            ? apiError.message
-            : 'Unknown error'
-      );
+      // Get user role and redirect immediately
+      const role = getUserRole();
+      const dashboardPath = ROUTE_CONFIG.dashboardPaths[role] || ROUTE_CONFIG.defaultRedirect;
 
-      notify({
-        title: 'Login Failed',
-        message:
-          'response' in apiError
-            ? apiError.response?.data?.detail || 'An error occurred during login'
-            : 'An error occurred during login',
-        severity: 'error',
-        duration: 5000,
-      });
+      console.info(`Login successful for role: ${role}, redirecting to: ${dashboardPath}`);
+      navigate(dashboardPath, { replace: true });
+    } catch (loginError) {
+      // Error handling is managed by the auth store
+      console.error('Login failed:', loginError);
     }
   };
 
-  const onSubmit: SubmitHandler<ILoginFormInputs> = async data => {
-    await handleLogin(data);
-  };
+  const isFormLoading = isSubmitting || isLoading;
 
-  // Render form component (unchanged)
   return (
     <Box sx={{ maxWidth: 400, mx: 'auto', mt: 8, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
       <Typography variant="h5" gutterBottom>
         Login
       </Typography>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <TextField
-          label="Username"
-          autoComplete="username"
-          fullWidth
-          margin="normal"
-          error={!!errors.username}
-          helperText={errors.username?.message}
-          InputProps={{ inputProps: { 'data-testid': 'login-username-input' } }}
-          {...register('username', { required: 'Username is required' })}
-        />
-        <TextField
-          label="Password"
-          type="password"
-          fullWidth
-          margin="normal"
-          autoComplete="current-password"
-          InputProps={{ inputProps: { 'data-testid': 'login-password-input' } }}
-          {...register('password', { required: 'Password is required' })}
-          error={!!errors.password}
-          helperText={errors.password?.message}
-        />
-        <Box sx={{ mt: 2, textAlign: 'center' }}>
+
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+
+      <form onSubmit={handleSubmit(handleLogin)}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <TextField
+            label="Username"
+            variant="outlined"
+            fullWidth
+            disabled={isFormLoading}
+            inputProps={{ 'data-testid': 'login-username-input' }}
+            {...register('username', { required: 'Username is required' })}
+            error={!!errors.username}
+            helperText={errors.username?.message}
+          />
+
+          <TextField
+            label="Password"
+            type="password"
+            variant="outlined"
+            fullWidth
+            disabled={isFormLoading}
+            inputProps={{ 'data-testid': 'login-password-input' }}
+            {...register('password', { required: 'Password is required' })}
+            error={!!errors.password}
+            helperText={errors.password?.message}
+          />
+
           <Button
             type="submit"
             variant="contained"
             color="primary"
-            disabled={isSubmitting || isLoading}
+            disabled={isFormLoading}
             data-testid="login-submit-button"
+            sx={{ mt: 2 }}
           >
-            {isSubmitting || isLoading ? <CircularProgress size={24} /> : 'Login'}
+            {isFormLoading ? <CircularProgress size={24} /> : 'Login'}
           </Button>
         </Box>
       </form>

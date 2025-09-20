@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
 import useNotification from '@/components/Notifications/useNotification';
-import { useAuth } from '@/context/auth/AuthContext';
+import { useAuthStore } from '@/store/modernAuthStore';
 import { UserRoleEnum } from '@/types/userTypes';
 
 interface IProtectedRouteProps {
@@ -20,7 +20,7 @@ interface IProtectedRouteProps {
  * @param allowedRoles - Optional array of roles that are allowed to access this route
  */
 const ProtectedRoute: React.FC<IProtectedRouteProps> = ({ children, allowedRoles = [] }) => {
-  const { isAuthenticated, getUserRole, isRestoring } = useAuth();
+  const { isAuthenticated, getUserRole, isRestoring } = useAuthStore();
   const userRole = getUserRole();
   const location = useLocation();
   const notify = useNotification();

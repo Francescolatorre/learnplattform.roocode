@@ -1,5 +1,6 @@
 // MVP: Support environment variable override for E2E testing
-let API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+// Temporarily hardcoded for preproduction testing
+let API_BASE_URL = 'https://learnplattformroocode-preproduction.up.railway.app';
 export const setApiBaseUrl = (url: string) => {
   API_BASE_URL = url; // Update the base URL
   API_CONFIG.baseURL = API_BASE_URL; // Update the API_CONFIG

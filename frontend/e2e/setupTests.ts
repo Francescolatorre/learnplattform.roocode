@@ -278,17 +278,17 @@ function getScreenshotPath(filename: string): string {
 export const TEST_USERS = {
   lead_instructor: {
     username: 'instructor',
-    password: 'instructor123',
+    password: 'AdminPass123!',
     expectedRole: 'instructor',
   },
   admin: {
     username: 'admin',
-    password: 'adminpassword',
+    password: 'AdminPass123!',
     expectedRole: 'admin',
   },
   student: {
     username: 'student',
-    password: 'student123',
+    password: 'AdminPass123!',
     expectedRole: 'student',
   },
 };

@@ -22,7 +22,7 @@ import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import { enrollmentService } from '@/services/resources/enrollmentService';
 import { ICourse } from '@/types/course';
 import { TCompletionStatus } from '@/types/entities';
-import { useAuth } from '@context/auth/AuthContext';
+import { useAuthStore } from '@/store/modernAuthStore';
 import { courseService } from '@services/resources/courseService';
 
 interface ICourseEnrollmentProps {
@@ -37,7 +37,7 @@ interface IEnrollmentStatusResponse {
 const CourseEnrollment: React.FC<ICourseEnrollmentProps> = ({ courseId }) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const [unenrollDialogOpen, setUnenrollDialogOpen] = useState(false);
 
   // Fetch course data

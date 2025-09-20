@@ -47,6 +47,8 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
+import { AUTH_CONFIG } from '@/config/appConfig';
+import authService from '@/services/auth/authService';
 import { modernAuthService, IRegistrationData } from '@/services/auth/modernAuthService';
 import { IUser, UserRoleEnum } from '@/types/userTypes';
 
@@ -105,11 +107,12 @@ const useAuthStore = create<AuthState>()(
       login: async (username: string, password: string) => {
         set({ isLoading: true, error: null });
         try {
-          // Authenticate with service
-          const tokens = await modernAuthService.login(username, password);
+          // Authenticate with legacy service (proven to work)
+          const _tokens = await authService.login(username, password);
 
+          // Store tokens in localStorage (legacy service handles this)
           // Fetch user profile after successful login
-          const user = await modernAuthService.getCurrentUser(tokens.access);
+          const user = await authService.getUserProfile();
 
           set({
             user,
@@ -156,8 +159,8 @@ const useAuthStore = create<AuthState>()(
       logout: async () => {
         set({ isLoading: true, error: null });
         try {
-          // Logout through service (cleans up tokens)
-          await modernAuthService.logout();
+          // Logout through legacy service (cleans up tokens)
+          await authService.logout();
 
           set({
             user: null,
@@ -269,12 +272,16 @@ const useAuthStore = create<AuthState>()(
       clearError: () => set({ error: null }),
 
       restoreAuthState: async () => {
+        console.log('RestoreAuthState: Starting...');
         set({ isRestoring: true, error: null });
         try {
-          // Check if we have tokens
-          const hasTokens = modernAuthService.isAuthenticated();
+          // Check if we have tokens in localStorage
+          const accessToken = localStorage.getItem(AUTH_CONFIG.tokenStorageKey);
+          const refreshToken = localStorage.getItem(AUTH_CONFIG.refreshTokenStorageKey);
+          console.log('RestoreAuthState: Token check', { hasAccess: !!accessToken, hasRefresh: !!refreshToken });
 
-          if (!hasTokens) {
+          if (!accessToken || !refreshToken) {
+            console.log('RestoreAuthState: No tokens found, setting unauthenticated state');
             set({
               user: null,
               isAuthenticated: false,
@@ -283,32 +290,26 @@ const useAuthStore = create<AuthState>()(
             return;
           }
 
-          // Validate current tokens
-          const isValid = await modernAuthService.validateToken();
+          // Skip validation and directly try to get user profile with existing token
+          console.log('RestoreAuthState: Attempting to get user profile...');
+          const user = await authService.getUserProfile();
+          console.log('RestoreAuthState: Successfully got user profile:', user);
 
-          if (isValid) {
-            // Fetch current user profile
-            const user = await modernAuthService.getCurrentUser();
-            set({
-              user,
-              isAuthenticated: true,
-              isRestoring: false,
-            });
-          } else {
-            // Tokens are invalid, clear state
-            set({
-              user: null,
-              isAuthenticated: false,
-              isRestoring: false,
-            });
-          }
+          set({
+            user,
+            isAuthenticated: true,
+            isRestoring: false,
+          });
         } catch (error) {
-          console.error('Auth state restoration failed:', error);
+          console.error('RestoreAuthState: Failed to restore auth state:', error);
+          // If getUserProfile fails, tokens might be expired - clear them
+          localStorage.removeItem(AUTH_CONFIG.tokenStorageKey);
+          localStorage.removeItem(AUTH_CONFIG.refreshTokenStorageKey);
+
           set({
             user: null,
             isAuthenticated: false,
             isRestoring: false,
-            error: 'Failed to restore authentication state',
           });
         }
       },
@@ -325,7 +326,10 @@ const useAuthStore = create<AuthState>()(
       },
 
       hasValidToken: (): boolean => {
-        return modernAuthService.isAuthenticated();
+        // Check if we have tokens in localStorage (using legacy storage keys)
+        const accessToken = localStorage.getItem(AUTH_CONFIG.tokenStorageKey);
+        const refreshToken = localStorage.getItem(AUTH_CONFIG.refreshTokenStorageKey);
+        return !!(accessToken && refreshToken);
       },
     }),
     {

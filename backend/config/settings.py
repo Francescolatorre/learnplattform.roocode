@@ -156,6 +156,12 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+# Static files for production deployment
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+# Whitenoise static files storage (already configured in MIDDLEWARE)
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -198,11 +204,47 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
 
-# CORS settings
-CORS_ALLOW_ALL_ORIGINS = (
-    True  # Only for development, set to specific origins in production
-)
+# CORS settings for Frontend ↔ Backend communication
 CORS_ALLOW_CREDENTIALS = True
+
+# Environment-specific CORS configuration
+if DEBUG:
+    # Development: Allow all origins
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    # Production: Specific allowed origins only
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:5173",  # Local development
+        "http://localhost:3000",  # Alternative local dev port
+    ]
+
+    # Allow all Vercel deployments for flexible testing of feature branches
+    CORS_ALLOWED_ORIGIN_REGEXES = [
+        r"^https://.*\.vercel\.app$",  # All Vercel deployments (flexible for testing)
+    ]
+
+# CSRF trusted origins configuration
+if DEBUG:
+    # Development: Allow all origins
+    CSRF_TRUSTED_ORIGINS = [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:3000",
+    ]
+else:
+    # Production: Specific trusted origins only
+    CSRF_TRUSTED_ORIGINS = [
+        "https://learnplattformroocode-preproduction.up.railway.app",  # Railway Backend
+        # Note: CSRF_TRUSTED_ORIGINS doesn't support regex, so specific domains needed
+        "https://learnplattform-roocode-preprod.vercel.app",  # Static Preproduction Domain
+        "https://learnplattform-roocode.vercel.app",  # Production Domain
+    ]
+
+# Additional CSRF settings for Railway
+CSRF_COOKIE_SECURE = not DEBUG  # Use secure cookies in production
+CSRF_COOKIE_SAMESITE = 'Lax'  # Allow cross-site requests
+CSRF_USE_SESSIONS = False  # Use cookies for CSRF tokens
 
 # Logging Configuration
 LOGGING = {

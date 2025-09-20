@@ -2,10 +2,10 @@ import { Typography, Container, Paper, Box } from '@mui/material';
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
-import { useAuth } from '@context/auth/AuthContext';
+import { useAuthStore } from '@/store/modernAuthStore';
 
 const ProfilePage: React.FC = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuthStore();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
