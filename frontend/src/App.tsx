@@ -8,12 +8,16 @@ import NavigationBar from '@components/navigation/NavigationBar';
 import { NotificationProvider } from '@components/Notifications/NotificationProvider';
 import { ErrorBoundary } from '@components/shared';
 import VersionFooter from '@components/shared/VersionFooter';
+import { useAuthInitialization } from '@hooks/useAuthInitialization';
 import AppRoutes from '@routes/AppRoutes.tsx';
 import { theme } from '@styles/theme.ts';
 
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
+  // Initialize authentication state on app startup
+  useAuthInitialization();
+
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
