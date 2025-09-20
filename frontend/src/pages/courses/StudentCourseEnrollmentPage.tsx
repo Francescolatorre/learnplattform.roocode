@@ -18,16 +18,16 @@ import React, { useState, useEffect, useCallback } from 'react';
 import CourseCard from '@/components/courses/CourseCard';
 import CourseList from '@/components/courses/CourseList';
 import useNotification from '@/components/Notifications/useNotification';
-import { useAuth } from '@/context/auth/AuthContext';
+import { useAuthStore } from '@/store/modernAuthStore';
 import { ICourse, IPaginatedResponse } from '@/types';
-import { courseService } from '@services/resources/courseService';
+import { modernCourseService } from '@/services/resources/modernCourseService';
 
 /**
  * Page for students to browse and enroll in courses
  * Displays available courses with options to view details and enroll
  */
 const StudentCourseEnrollmentPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const notify = useNotification();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -54,7 +54,7 @@ const StudentCourseEnrollmentPage: React.FC = () => {
     queryFn: async () => {
       console.info('StudentCourseEnrollmentPage: Fetching available courses, page:', currentPage);
       try {
-        const response = await courseService.fetchCourses({
+        const response = await modernCourseService.getCourses({
           page: currentPage,
           page_size: pageSize,
         });

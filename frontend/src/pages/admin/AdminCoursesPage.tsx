@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import useNotification from '@/components/Notifications/useNotification';
-import { courseService } from '@/services/resources/courseService';
+import { modernCourseService } from '@/services/resources/modernCourseService';
 import { ICourse } from '@/types/course';
 
 const AdminCoursesPage: React.FC = () => {
@@ -16,7 +16,7 @@ const AdminCoursesPage: React.FC = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const data = await courseService.fetchCourses();
+        const data = await modernCourseService.getCourses();
         setCourses(data.results);
       } catch (err: unknown) {
         setError((err as Error).message || 'Failed to load courses.');

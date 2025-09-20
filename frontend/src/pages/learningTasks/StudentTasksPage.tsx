@@ -4,12 +4,12 @@ import { useEffect } from 'react';
 
 import useNotification from '@/components/Notifications/useNotification';
 import { ILearningTask } from '@/types/Task';
-import learningTaskService from '@services/resources/learningTaskService';
-import { useAuth } from 'src/context/auth'; // Annahme: Auth-Kontext für Benutzer-ID
+import { modernLearningTaskService } from '@/services/resources/modernLearningTaskService';
+import { useAuthStore } from '@/store/modernAuthStore';
 import LearningTaskCard from 'src/pages/learningTasks/LearningTaskCard';
 
 const StudentTasksPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const studentId = user?.id;
   const notify = useNotification();
 
@@ -23,7 +23,7 @@ const StudentTasksPage: React.FC = () => {
       if (!studentId) {
         throw new Error('Student ID is required');
       }
-      return learningTaskService.getByStudentId(studentId);
+      return modernLearningTaskService.getTasksByStudentId(studentId);
     },
     enabled: !!studentId,
   });
