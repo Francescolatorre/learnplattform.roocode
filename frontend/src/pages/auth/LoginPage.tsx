@@ -126,10 +126,10 @@ const LoginPage: React.FC = () => {
             type="submit"
             variant="contained"
             color="primary"
-            disabled={isSubmitting || isLoading}
+            disabled={isSubmitting}
             data-testid="login-submit-button"
           >
-            {isSubmitting || isLoading ? <CircularProgress size={24} /> : 'Login'}
+            {isSubmitting ? <CircularProgress size={24} /> : 'Login'}
           </Button>
         </Box>
       </form>
