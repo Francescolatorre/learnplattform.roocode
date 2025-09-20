@@ -16,7 +16,7 @@ import React, { useState } from 'react';
 
 import { ICourse, TCourseStatus } from '@/types/course';
 import { IPaginatedResponse } from '@/types/paginatedResponse';
-import { courseService, CourseFilterOptions } from '@services/resources/courseService';
+import { modernCourseService, CourseFilterOptions } from '@/services/resources/modernCourseService';
 import { useDebounce } from '@utils/useDebounce';
 
 import CourseList from './CourseList';
@@ -89,10 +89,10 @@ const FilterableCourseList: React.FC<FilterableCourseListProps> = ({
       if (status) filterOptions.status = status;
       if (creator) filterOptions.creator = creator;
 
-      // Use customFetchFunction if provided, otherwise use default courseService
+      // Use customFetchFunction if provided, otherwise use default modernCourseService
       return customFetchFunction
         ? customFetchFunction(filterOptions)
-        : courseService.fetchCourses(filterOptions);
+        : modernCourseService.getCourses(filterOptions);
     },
     // Prevent refetching too often
     staleTime: 30 * 1000, // Consider data fresh for 30 seconds

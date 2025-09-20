@@ -17,8 +17,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useNotification from '@/components/Notifications/useNotification';
 import MarkdownEditor from '@/components/shared/MarkdownEditor';
 import { ICourse } from '@/types/course';
-import { useAuth } from '@context/auth/AuthContext';
-import { courseService } from '@services/resources/courseService';
+import { useAuthStore } from '@/store/modernAuthStore';
+import { modernCourseService } from '@/services/resources/modernCourseService';
 
 interface IEditCourseProps {
   isNew?: boolean;
@@ -46,7 +46,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const notify = useNotification();
 
   const {
@@ -82,7 +82,7 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
     error: courseError,
   } = useQuery({
     queryKey: ['course', courseId],
-    queryFn: () => courseService.getCourseDetails(courseId as string) as Promise<ICourse>,
+    queryFn: () => modernCourseService.getCourseDetails(Number(courseId)) as Promise<ICourse>,
     enabled: !isNew && !!courseId,
   });
 
@@ -121,9 +121,9 @@ const InstructorEditCoursePage: React.FC<IEditCourseProps> = ({
         };
 
         console.debug('Creating course with enhanced data:', enhancedData);
-        return courseService.createCourse(enhancedData);
+        return modernCourseService.createCourse(enhancedData);
       } else {
-        return courseService.updateCourse(courseId as string, data);
+        return modernCourseService.updateCourse(Number(courseId), data);
       }
     },
     onSuccess: data => {

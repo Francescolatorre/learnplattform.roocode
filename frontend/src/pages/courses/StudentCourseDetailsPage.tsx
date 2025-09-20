@@ -24,9 +24,10 @@ import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import { ICourse } from '@/types/course';
 import { IPaginatedResponse } from '@/types/paginatedResponse';
 import { ILearningTask } from '@/types/Task';
-import { useAuth } from '@context/auth/AuthContext';
-import { courseService } from '@services/resources/courseService';
-import { enrollmentService } from '@services/resources/enrollmentService';
+import { useAuthStore } from '@/store/modernAuthStore';
+import { modernCourseService } from '@/services/resources/modernCourseService';
+import { modernEnrollmentService } from '@/services/resources/modernEnrollmentService';
+import { modernLearningTaskService } from '@/services/resources/modernLearningTaskService';
 
 /**
  * StudentCourseDetailsPage displays detailed information about a specific course.
@@ -43,7 +44,7 @@ const StudentCourseDetailsPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const courseIdNum = Number(courseId);
   const queryClient = useQueryClient();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
   const notify = useNotification();
   const [unenrollDialogOpen, setUnenrollDialogOpen] = useState(false);
@@ -58,7 +59,7 @@ const StudentCourseDetailsPage: React.FC = () => {
     error: _enrollmentError,
   } = useQuery({
     queryKey: ['enrollment', courseIdNum],
-    queryFn: () => enrollmentService.getEnrollmentStatus(courseIdNum),
+    queryFn: () => modernEnrollmentService.getEnrollmentStatus(courseIdNum),
     enabled: Boolean(courseIdNum) && Boolean(isAuthenticated),
     retry: 2,
     staleTime: 0,
@@ -78,7 +79,7 @@ const StudentCourseDetailsPage: React.FC = () => {
     queryKey: ['courseDetails', courseIdNum],
     queryFn: () => {
       console.log('[COMPONENT] StudentCourseDetailsPage: getCourseDetails called', { courseIdNum });
-      return courseService.getCourseDetails(String(courseIdNum));
+      return modernCourseService.getCourseDetails(courseIdNum);
     },
     enabled: !!courseIdNum,
     retry: 2,
@@ -113,7 +114,14 @@ const StudentCourseDetailsPage: React.FC = () => {
     queryFn: async () => {
       console.debug('[StudentCourseDetailsPage] Fetching course tasks:', { courseIdNum });
       try {
-        const response = await courseService.getCourseTasks(String(courseIdNum));
+        const tasks = await modernLearningTaskService.getAllTasksByCourseId(String(courseIdNum));
+        // Convert to paginated response format for compatibility
+        const response = {
+          count: tasks.length,
+          next: null,
+          previous: null,
+          results: tasks
+        };
         console.debug('[StudentCourseDetailsPage] Tasks loaded:', {
           count: response.count,
           taskCount: response.results?.length,
@@ -134,7 +142,7 @@ const StudentCourseDetailsPage: React.FC = () => {
    * On success, invalidates the courseDetails query and shows success message
    */
   const enrollMutation = useMutation({
-    mutationFn: () => enrollmentService.enrollInCourse(courseIdNum),
+    mutationFn: () => modernEnrollmentService.enrollInCourse(courseIdNum),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['courseDetails', courseIdNum],
@@ -158,7 +166,7 @@ const StudentCourseDetailsPage: React.FC = () => {
     },
   });
   const unenrollMutation = useMutation({
-    mutationFn: () => enrollmentService.unenrollFromCourseById(courseIdNum),
+    mutationFn: () => modernEnrollmentService.unenrollFromCourse(courseIdNum),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['courseDetails', courseIdNum],

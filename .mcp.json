@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\FrancescoL\\AppData\\Roaming\\npm\\node_modules\\claude-playwright\\dist\\mcp\\server.cjs"
+      ],
+      "env": {
+        "BASE_URL": "http://localhost:5179"
+      }
+    }
+  }
+}

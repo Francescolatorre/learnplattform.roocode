@@ -31,13 +31,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useNotification from '@/components/Notifications/useNotification';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import { ILearningTask } from '@/types/Task';
-import { useAuth } from '@context/auth/AuthContext';
-import { courseService } from '@services/resources/courseService';
-import LearningTaskService, {
-  deleteTask as deleteLearningTask,
-  updateTask as updateLearningTask,
-  createTask as createLearningTask,
-} from '@services/resources/learningTaskService';
+import { useAuthStore } from '@/store/modernAuthStore';
+import { modernCourseService } from '@/services/resources/modernCourseService';
+import { modernLearningTaskService } from '@/services/resources/modernLearningTaskService';
 
 // Create or Edit Task dialog props
 interface ITaskDialogProps {
@@ -147,7 +143,7 @@ const TaskDialog: React.FC<ITaskDialogProps> = ({ open, onClose, onSave, task, i
 const CourseLearningTasksPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuthStore();
   const canEdit = ['admin', 'instructor'].includes(user?.role ?? '');
 
   const [courseName, setCourseName] = useState('');
@@ -173,7 +169,7 @@ const CourseLearningTasksPage: React.FC = () => {
         setLoading(true);
 
         // Fetch course details
-        const courseResult = await courseService.getCourseDetails(courseId);
+        const courseResult = await modernCourseService.getCourseDetails(Number(courseId));
         if (
           'error' in courseResult &&
           courseResult.error &&
@@ -187,7 +183,7 @@ const CourseLearningTasksPage: React.FC = () => {
         setCourseName(courseResult.title);
 
         // Fetch tasks for this course
-        const tasksResponse = await LearningTaskService.getAll({ courseId: courseId });
+        const tasksResponse = await modernLearningTaskService.getAllTasksByCourseId(courseId);
         setTasks(tasksResponse.sort((a: ILearningTask, b: ILearningTask) => a.order - b.order));
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Unknown error';
@@ -235,7 +231,7 @@ const CourseLearningTasksPage: React.FC = () => {
     if (!taskToDelete) return;
 
     try {
-      await deleteLearningTask(String(taskToDelete));
+      await modernLearningTaskService.deleteTask(String(taskToDelete));
       setTasks(tasks.filter(task => task.id !== taskToDelete));
       notify('Task deleted successfully', 'success');
     } catch (err) {
@@ -253,7 +249,7 @@ const CourseLearningTasksPage: React.FC = () => {
     try {
       if (isEditing && taskData.id) {
         // Update existing task
-        const updatedTask = await updateLearningTask(String(taskData.id), {
+        const updatedTask = await modernLearningTaskService.updateTask(String(taskData.id), {
           ...taskData,
           course: parseInt(courseId!, 10),
         });
@@ -262,7 +258,7 @@ const CourseLearningTasksPage: React.FC = () => {
       } else {
         // Create new task
         const { id: _id, ...taskDataWithoutId } = taskData;
-        const newTask = await createLearningTask({
+        const newTask = await modernLearningTaskService.createTask({
           ...taskDataWithoutId,
           course: Number(courseId!),
           title: taskDataWithoutId.title || 'Untitled Task',

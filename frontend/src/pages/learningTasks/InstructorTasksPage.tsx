@@ -18,7 +18,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 import useNotification from '@/components/Notifications/useNotification';
-import learningTaskService from '@/services/resources/learningTaskService';
+import { modernLearningTaskService } from '@/services/resources/modernLearningTaskService';
 import { ILearningTask } from '@/types';
 import { useCourseTasks } from '@services/useCourseTasks';
 import { DataTable } from 'src/components/shared';
@@ -41,7 +41,7 @@ const InstructorTasksPage: React.FC = () => {
   React.useEffect(() => {
     if (data && data.length > 0) {
       const taskIds = data.map(task => String(task.id));
-      learningTaskService
+      modernLearningTaskService
         .getTaskProgressCounts(taskIds)
         .then(counts => setProgressCounts(counts))
         .catch(err => console.error('Failed to load progress counts:', err));
@@ -81,7 +81,7 @@ const InstructorTasksPage: React.FC = () => {
     if (!taskToDelete) return;
 
     try {
-      await learningTaskService.delete(String(taskToDelete.id));
+      await modernLearningTaskService.deleteTask(String(taskToDelete.id));
 
       // Invalidate and refetch data
       queryClient.invalidateQueries({ queryKey: ['courseTasks', courseId] });
