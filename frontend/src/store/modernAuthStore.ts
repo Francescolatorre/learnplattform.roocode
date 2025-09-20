@@ -47,6 +47,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
+import { AUTH_CONFIG } from '@/config/appConfig';
 import authService from '@/services/auth/authService';
 import { IRegistrationData } from '@/services/auth/modernAuthService';
 import { IUser, UserRoleEnum } from '@/types/userTypes';
@@ -273,10 +274,11 @@ const useAuthStore = create<AuthState>()(
       restoreAuthState: async () => {
         set({ isRestoring: true, error: null });
         try {
-          // Check if we have tokens
-          const hasTokens = modernAuthService.isAuthenticated();
+          // Check if we have tokens in localStorage
+          const accessToken = localStorage.getItem(AUTH_CONFIG.tokenStorageKey);
+          const refreshToken = localStorage.getItem(AUTH_CONFIG.refreshTokenStorageKey);
 
-          if (!hasTokens) {
+          if (!accessToken || !refreshToken) {
             set({
               user: null,
               isAuthenticated: false,
@@ -285,12 +287,12 @@ const useAuthStore = create<AuthState>()(
             return;
           }
 
-          // Validate current tokens
-          const isValid = await modernAuthService.validateToken();
+          // Validate current tokens using legacy authService
+          const isValid = await authService.validateToken();
 
           if (isValid) {
-            // Fetch current user profile
-            const user = await modernAuthService.getCurrentUser();
+            // Fetch current user profile using legacy authService
+            const user = await authService.getUserProfile();
             set({
               user,
               isAuthenticated: true,
@@ -327,7 +329,10 @@ const useAuthStore = create<AuthState>()(
       },
 
       hasValidToken: (): boolean => {
-        return modernAuthService.isAuthenticated();
+        // Check if we have tokens in localStorage (using legacy storage keys)
+        const accessToken = localStorage.getItem(AUTH_CONFIG.tokenStorageKey);
+        const refreshToken = localStorage.getItem(AUTH_CONFIG.refreshTokenStorageKey);
+        return !!(accessToken && refreshToken);
       },
     }),
     {
