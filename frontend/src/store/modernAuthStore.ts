@@ -47,7 +47,8 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import { modernAuthService, IRegistrationData } from '@/services/auth/modernAuthService';
+import authService from '@/services/auth/authService';
+import { IRegistrationData } from '@/services/auth/modernAuthService';
 import { IUser, UserRoleEnum } from '@/types/userTypes';
 
 /**
@@ -105,11 +106,12 @@ const useAuthStore = create<AuthState>()(
       login: async (username: string, password: string) => {
         set({ isLoading: true, error: null });
         try {
-          // Authenticate with service
-          const tokens = await modernAuthService.login(username, password);
+          // Authenticate with legacy service (proven to work)
+          const tokens = await authService.login(username, password);
 
+          // Store tokens in localStorage (legacy service handles this)
           // Fetch user profile after successful login
-          const user = await modernAuthService.getCurrentUser(tokens.access);
+          const user = await authService.getUserProfile();
 
           set({
             user,
@@ -156,8 +158,8 @@ const useAuthStore = create<AuthState>()(
       logout: async () => {
         set({ isLoading: true, error: null });
         try {
-          // Logout through service (cleans up tokens)
-          await modernAuthService.logout();
+          // Logout through legacy service (cleans up tokens)
+          await authService.logout();
 
           set({
             user: null,
