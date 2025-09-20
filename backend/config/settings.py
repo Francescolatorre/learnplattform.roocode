@@ -204,11 +204,26 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
 
-# CORS settings
-CORS_ALLOW_ALL_ORIGINS = (
-    True  # Only for development, set to specific origins in production
-)
+# CORS settings for Frontend ↔ Backend communication
 CORS_ALLOW_CREDENTIALS = True
+
+# Environment-specific CORS configuration
+if DEBUG:
+    # Development: Allow all origins
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    # Production: Specific allowed origins only
+    CORS_ALLOWED_ORIGINS = [
+        "https://learnplattform-roocode.vercel.app",  # Vercel Production
+        "https://learnplattform-roocode-git-main-francescolatorre.vercel.app",  # Vercel Main Branch
+        "http://localhost:5173",  # Local development
+        "http://localhost:3000",  # Alternative local dev port
+    ]
+
+    # Add Vercel preview deployments (starts with project name)
+    CORS_ALLOWED_ORIGIN_REGEXES = [
+        r"^https://learnplattform-roocode.*\.vercel\.app$",
+    ]
 
 # Logging Configuration
 LOGGING = {
