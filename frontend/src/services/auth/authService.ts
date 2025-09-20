@@ -62,6 +62,11 @@ const authService = {
     if (!data.access || !data.refresh) {
       throw new Error('Login failed: Malformed response from server.');
     }
+
+    // Store tokens in localStorage
+    localStorage.setItem(AUTH_CONFIG.tokenStorageKey, data.access);
+    localStorage.setItem(AUTH_CONFIG.refreshTokenStorageKey, data.refresh);
+
     return data;
   },
 
