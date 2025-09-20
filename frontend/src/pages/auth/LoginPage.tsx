@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import useNotification from '@/components/Notifications/useNotification';
 import { ROUTE_CONFIG } from '@/config/appConfig';
-import { useAuth } from '@/context/auth/AuthContext';
+import { useAuthStore } from '@/store/modernAuthStore';
 
 interface ILoginFormInputs {
   username: string;
@@ -32,7 +32,7 @@ const LoginPage: React.FC = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ILoginFormInputs>();
-  const { login, user } = useAuth();
+  const { login, user, isLoading } = useAuthStore();
   const navigate = useNavigate();
   const notify = useNotification();
 
@@ -126,10 +126,10 @@ const LoginPage: React.FC = () => {
             type="submit"
             variant="contained"
             color="primary"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isLoading}
             data-testid="login-submit-button"
           >
-            {isSubmitting ? <CircularProgress size={24} /> : 'Login'}
+            {(isSubmitting || isLoading) ? <CircularProgress size={24} /> : 'Login'}
           </Button>
         </Box>
       </form>

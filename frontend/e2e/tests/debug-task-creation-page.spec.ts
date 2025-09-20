@@ -5,8 +5,21 @@ import { test, expect } from '@playwright/test';
  */
 test.describe('Debug: Instructor Courses Page Content', () => {
   test('check page content and available buttons', async ({ page }) => {
-    // Navigate to instructor course page
-    await page.goto('http://localhost:5174/instructor/courses/727');
+    // Use BASE_URL from environment, fallback to localhost
+    const baseUrl = process.env.BASE_URL || 'http://localhost:5174';
+
+    // First check the root page, then navigate to instructor course page
+    console.log('Testing base URL:', baseUrl);
+    await page.goto(baseUrl);
+    await page.waitForLoadState('networkidle');
+
+    // Take screenshot of home page
+    await page.screenshot({ path: 'debug-home-page.png', fullPage: true });
+    console.log('Home page title:', await page.title());
+    console.log('Home page URL:', page.url());
+
+    // Now try the instructor course page
+    await page.goto(`${baseUrl}/instructor/courses/727`);
     await page.waitForLoadState('networkidle');
 
     // Take a screenshot to see what's there
