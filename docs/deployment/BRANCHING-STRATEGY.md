@@ -1,7 +1,7 @@
 # Branching Strategy & Deployment Workflow
 
 **Implemented**: 2025-09-20
-**Status**: ✅ Develop branch created, configuration pending
+**Status**: ✅ Develop branch created and configured successfully
 
 ## 🌿 Branch Structure
 
@@ -31,19 +31,19 @@
 
 ## 🚀 Deployment Configuration
 
-### Current Configuration (To Be Updated)
+### Current Configuration (✅ Completed 2025-09-20)
 
-#### Railway (Backend)
-- **Current**: Deploys from `main` branch
-- **Target**: Change to deploy from `develop` branch
+#### Railway (Backend) ✅
+- **Configured**: Now deploys from `develop` branch
 - **Environment**: preproduction
 - **Service**: learnplattform.roocode
+- **Status**: Active and working
 
-#### Vercel (Frontend)
-- **Current**: Deploys from `main` branch
-- **Target**: Change to deploy from `develop` branch
+#### Vercel (Frontend) ✅
+- **Configured**: Preview deployments from "All unassigned branches" (includes `develop`)
 - **Environment**: preview
 - **Project**: learnplatform-frontend
+- **Status**: Active and working
 
 ### Required Configuration Changes
 
