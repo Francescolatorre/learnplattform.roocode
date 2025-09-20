@@ -39,6 +39,16 @@ export default defineConfig({
     __COMMIT_HASH__: JSON.stringify(getCommitHash()),
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+        },
+      },
+    },
+  },
   server: {
     proxy: {
       '/api': {
