@@ -167,4 +167,50 @@ export class ServiceFactory {
       this.config.apiClient.setAuthToken(token);
     }
   }
+
+  /**
+   * Register service override for testing
+   * Allows injection of mock services or behavior doubles
+   */
+  registerOverride(serviceKey: string, serviceInstance: unknown): void {
+    this.services.set(serviceKey, serviceInstance as IBaseService);
+  }
+
+  /**
+   * Register multiple service overrides for testing
+   */
+  registerOverrides(services: Record<string, unknown>): void {
+    Object.entries(services).forEach(([key, service]) => {
+      this.registerOverride(key, service);
+    });
+  }
+
+  /**
+   * Clear all services (useful for test cleanup)
+   */
+  clearServices(): void {
+    this.services.clear();
+  }
+
+  /**
+   * Reset factory to initial state (useful for test isolation)
+   */
+  reset(): void {
+    this.clearServices();
+    ServiceFactory.instance = undefined as any;
+  }
+
+  /**
+   * Check if service is registered
+   */
+  hasService(serviceKey: string): boolean {
+    return this.services.has(serviceKey);
+  }
+
+  /**
+   * Get all registered service keys (useful for debugging)
+   */
+  getRegisteredServices(): string[] {
+    return Array.from(this.services.keys());
+  }
 }

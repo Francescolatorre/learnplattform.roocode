@@ -1,31 +1,45 @@
 /**
- * ProtectedRoute.test.tsx
+ * ProtectedRoute.test.tsx - Behavior-Driven Route Protection Testing
  *
- * This test suite REQUIRES the actual NotificationProvider and useNotification implementation.
- * - NotificationProvider is used to provide the real notification context.
- * - Do NOT mock useNotification in this file.
+ * Tests route protection behaviors focusing on user access control outcomes
+ * and navigation behaviors rather than implementation details.
+ *
+ * Uses AuthTestBehavior for consistent authentication testing patterns.
  */
 
 import { render, screen, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom'; // Import for toBeInTheDocument
+import '@testing-library/jest-dom';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { vi, Mock } from 'vitest';
-vi.mock('@context/auth/AuthContext', () => ({
-  useAuth: vi.fn(),
-}));
-import { describe, it, expect } from 'vitest';
+import { vi, Mock, describe, it, expect, beforeEach, afterEach } from 'vitest';
 
 import { NotificationProvider } from '@/components/Notifications/NotificationProvider';
-import { useAuth } from '@context/auth/AuthContext';
+import { useAuthStore } from '@/store/modernAuthStore';
+import { AuthTestBehavior, AuthTestScenarios } from '@/test/behaviors/AuthTestBehavior';
+import { ServiceTestUtils } from '@/test/utils/ServiceTestUtils';
+import { UserRoleEnum } from '@/types/userTypes';
 
 import ProtectedRoute from './ProtectedRoute';
 
-describe('ProtectedRoute with isRestoring logic', () => {
+// Mock the modern auth store
+vi.mock('@/store/modernAuthStore', () => ({
+  useAuthStore: vi.fn(),
+}));
+
+describe('ProtectedRoute - Behavior-Driven Access Control Testing', () => {
+  let authBehavior: AuthTestBehavior;
+
   beforeEach(() => {
     vi.clearAllMocks();
+    ServiceTestUtils.initialize();
+    authBehavior = new AuthTestBehavior();
   });
 
-  const renderWithAuthContext = (initialRoute = '/dashboard') => {
+  afterEach(() => {
+    ServiceTestUtils.cleanup();
+    authBehavior.reset();
+  });
+
+  const renderProtectedContent = (initialRoute = '/dashboard') => {
     return render(
       <NotificationProvider>
         <MemoryRouter initialEntries={[initialRoute]}>
@@ -34,88 +48,115 @@ describe('ProtectedRoute with isRestoring logic', () => {
               path="/dashboard"
               element={
                 <ProtectedRoute>
-                  <div data-testid="dashboard-content">Dashboard Content</div>
+                  <div data-testid="dashboard-content">Protected Dashboard Content</div>
                 </ProtectedRoute>
               }
             />
-            <Route path="/login" element={<div>Login Page</div>} />
+            <Route path="/login" element={<div data-testid="login-page">Login Page</div>} />
           </Routes>
         </MemoryRouter>
       </NotificationProvider>
     );
   };
 
-  it('renders loading placeholder while isRestoring is true', () => {
-    (useAuth as Mock).mockReturnValue({
+  it('shows loading state while authentication is being restored', () => {
+    // Configure authentication restoration in progress
+    (useAuthStore as Mock).mockReturnValue({
       isAuthenticated: false,
       isRestoring: true,
       user: null,
-      getUserRole: vi.fn().mockReturnValue('user'),
+      getUserRole: vi.fn().mockReturnValue(UserRoleEnum.GUEST),
     });
-    renderWithAuthContext();
+
+    renderProtectedContent();
+
+    // User should see loading state during authentication restoration
     expect(screen.getByTestId('protected-route-loading')).toBeInTheDocument();
-    expect(screen.queryByText('Dashboard Content')).not.toBeInTheDocument();
-    expect(screen.queryByText('Login Page')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('dashboard-content')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('login-page')).not.toBeInTheDocument();
   });
 
-  it('renders children after restoration if authenticated', async () => {
-    (useAuth as Mock).mockReturnValue({
+  it('grants access to authenticated users after restoration completes', async () => {
+    // Configure successful authentication restoration for student
+    authBehavior.configureStudentLogin('student@university.edu');
+    const authenticatedUser = authBehavior.getCurrentUser();
+
+    (useAuthStore as Mock).mockReturnValue({
       isAuthenticated: true,
       isRestoring: false,
-      user: { id: '1', username: 'student' },
-      getUserRole: vi.fn().mockReturnValue('user'),
+      user: authenticatedUser,
+      getUserRole: vi.fn().mockReturnValue('student'),
     });
-    renderWithAuthContext();
+
+    renderProtectedContent();
+
+    // Authenticated user should access protected content
     expect(screen.getByTestId('dashboard-content')).toBeInTheDocument();
-    expect(screen.queryByText('Login Page')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('login-page')).not.toBeInTheDocument();
   });
 
-  it('redirects to login after restoration if not authenticated', async () => {
-    (useAuth as Mock).mockReturnValue({
+  it('redirects unauthenticated users to login after restoration completes', async () => {
+    // Configure unauthenticated user scenario
+    authBehavior.configureUnauthenticatedUser();
+
+    (useAuthStore as Mock).mockReturnValue({
       isAuthenticated: false,
       isRestoring: false,
       user: null,
-      getUserRole: vi.fn().mockReturnValue(null),
+      getUserRole: vi.fn().mockReturnValue(UserRoleEnum.GUEST),
     });
-    renderWithAuthContext();
-    await waitFor(() => expect(screen.getByText('Login Page')).toBeInTheDocument());
-    expect(screen.queryByText('Dashboard Content')).not.toBeInTheDocument();
+
+    renderProtectedContent();
+
+    // Unauthenticated user should be redirected to login
+    await waitFor(() => expect(screen.getByTestId('login-page')).toBeInTheDocument());
+    expect(screen.queryByTestId('dashboard-content')).not.toBeInTheDocument();
   });
 
-  it('does not redirect or render children if restoration never completes', () => {
-    (useAuth as Mock).mockReturnValue({
+  it('maintains loading state when authentication restoration is incomplete', () => {
+    // Configure incomplete authentication restoration
+    (useAuthStore as Mock).mockReturnValue({
       isAuthenticated: false,
       isRestoring: true,
       user: null,
-      getUserRole: vi.fn().mockReturnValue(null),
+      getUserRole: vi.fn().mockReturnValue(UserRoleEnum.GUEST),
     });
-    renderWithAuthContext();
+
+    renderProtectedContent();
+
+    // System should maintain loading state until restoration completes
     expect(screen.getByTestId('protected-route-loading')).toBeInTheDocument();
-    expect(screen.queryByText('Dashboard Content')).not.toBeInTheDocument();
-    expect(screen.queryByText('Login Page')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('dashboard-content')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('login-page')).not.toBeInTheDocument();
   });
 
-  it('renders loading placeholder, then children after restoration completes (async)', async () => {
-    // Use the same mocking approach as other tests
-    (useAuth as Mock).mockReturnValue({
+  it('transitions from loading to authenticated access when restoration succeeds', async () => {
+    // Configure authentication restoration process
+    authBehavior.configureStudentLogin('student@university.edu');
+    const student = authBehavior.getCurrentUser();
+
+    // Start with restoration in progress
+    (useAuthStore as Mock).mockReturnValue({
       isAuthenticated: false,
       isRestoring: true,
       user: null,
-      getUserRole: vi.fn().mockReturnValue(null),
+      getUserRole: vi.fn().mockReturnValue(UserRoleEnum.GUEST),
     });
 
-    const { rerender } = renderWithAuthContext();
+    const { rerender } = renderProtectedContent();
+
+    // Verify loading state initially
     expect(screen.getByTestId('protected-route-loading')).toBeInTheDocument();
 
-    // Update the mock for the second render
-    (useAuth as Mock).mockReturnValue({
+    // Simulate successful authentication restoration
+    (useAuthStore as Mock).mockReturnValue({
       isAuthenticated: true,
       isRestoring: false,
-      user: { id: '1', username: 'student' },
-      getUserRole: vi.fn().mockReturnValue('user'),
+      user: student,
+      getUserRole: vi.fn().mockReturnValue(UserRoleEnum.STUDENT),
     });
 
-    // Rerender with the same component structure as before
+    // Re-render to trigger authentication completion
     rerender(
       <NotificationProvider>
         <MemoryRouter initialEntries={['/dashboard']}>
@@ -124,16 +165,21 @@ describe('ProtectedRoute with isRestoring logic', () => {
               path="/dashboard"
               element={
                 <ProtectedRoute>
-                  <div data-testid="dashboard-content">Dashboard Content</div>
+                  <div data-testid="dashboard-content">Protected Dashboard Content</div>
                 </ProtectedRoute>
               }
             />
-            <Route path="/login" element={<div>Login Page</div>} />
+            <Route path="/login" element={<div data-testid="login-page">Login Page</div>} />
           </Routes>
         </MemoryRouter>
       </NotificationProvider>
     );
 
+    // User should now have access to protected content
     await waitFor(() => expect(screen.getByTestId('dashboard-content')).toBeInTheDocument());
+
+    // Verify authentication behavior occurred
+    expect(authBehavior.isUserAuthenticated()).toBe(true);
+    expect(authBehavior.getCurrentUserRole()).toBe(UserRoleEnum.STUDENT);
   });
 });

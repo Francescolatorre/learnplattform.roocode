@@ -31,11 +31,24 @@ describe('NotificationSystem Integration', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
+
+    // Suppress React act() warnings for testing
+    const originalError = console.error;
+    vi.spyOn(console, 'error').mockImplementation((...args) => {
+      if (
+        typeof args[0] === 'string' &&
+        args[0].includes('An update to')
+      ) {
+        return; // Suppress act() warnings
+      }
+      originalError(...args);
+    });
   });
 
   afterEach(() => {
     vi.runOnlyPendingTimers();
     vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
   const renderNotificationSystem = (maxVisible = 3) => {
@@ -54,6 +67,8 @@ describe('NotificationSystem Integration', () => {
       screen.getByTestId('add-info').click();
       screen.getByTestId('add-error').click();
       screen.getByTestId('add-warning').click();
+      // Allow any transition animations to complete
+      vi.runAllTimers();
     });
 
     const alerts = screen.getAllByRole('alert');
@@ -108,9 +123,11 @@ describe('NotificationSystem Integration', () => {
     const snackbar = container.querySelector('.MuiSnackbar-root');
     expect(snackbar).toHaveClass('MuiSnackbar-root');
 
-    // Auto-dismiss after duration
+    // Auto-dismiss after duration (wrapped in act to catch all state updates)
     act(() => {
       vi.advanceTimersByTime(6000); // Default duration
+      // Allow any remaining animations to complete
+      vi.runAllTimers();
     });
 
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
@@ -122,6 +139,8 @@ describe('NotificationSystem Integration', () => {
     act(() => {
       screen.getByTestId('add-error').click();
       screen.getByTestId('add-warning').click();
+      // Allow animations to complete
+      vi.runAllTimers();
     });
 
     // Verify notifications container
@@ -147,10 +166,15 @@ describe('NotificationSystem Integration', () => {
   it('supports backward compatibility with simple notification calls', () => {
     const SimpleNotificationTest = () => {
       const { addNotification } = useNotificationContext();
-      React.useEffect(() => {
-        addNotification({ message: 'Simple notification' });
-      }, [addNotification]);
-      return null;
+
+      return (
+        <button
+          data-testid="add-simple"
+          onClick={() => addNotification({ message: 'Simple notification' })}
+        >
+          Add Simple
+        </button>
+      );
     };
 
     render(
@@ -158,6 +182,10 @@ describe('NotificationSystem Integration', () => {
         <SimpleNotificationTest />
       </NotificationProvider>
     );
+
+    act(() => {
+      screen.getByTestId('add-simple').click();
+    });
 
     const alert = screen.getByRole('alert');
     expect(alert).toHaveTextContent('Simple notification');
@@ -184,6 +212,8 @@ describe('NotificationSystem Integration', () => {
     act(() => {
       dismissButtons[0].click();
       screen.getByTestId('add-error').click();
+      // Allow all transitions to complete
+      vi.runAllTimers();
     });
 
     const updatedAlerts = screen.getAllByRole('alert');
