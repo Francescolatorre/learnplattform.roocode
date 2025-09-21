@@ -14,8 +14,8 @@ import { BrowserRouter, useParams } from 'react-router-dom';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 
 import useNotification from '@/components/Notifications/useNotification';
-import { CourseTestBehavior, CourseTestScenarios } from '@/test/behaviors/CourseTestBehavior';
-import { AuthTestBehavior, AuthTestScenarios } from '@/test/behaviors/AuthTestBehavior';
+import { CourseTestBehavior } from '@/test/behaviors/CourseTestBehavior';
+import { AuthTestBehavior } from '@/test/behaviors/AuthTestBehavior';
 import { TestDataBuilder } from '@/test/builders/TestDataBuilder';
 import { ServiceTestUtils } from '@/test/utils/ServiceTestUtils';
 import { UserRoleEnum } from '@/types/userTypes';
@@ -127,6 +127,18 @@ describe('InstructorCourseDetailsPage - Behavior-Driven Course Management Testin
     vi.clearAllMocks();
     ServiceTestUtils.initialize();
 
+    // Suppress React act() warnings for testing (similar to NotificationSystem approach)
+    const originalError = console.error;
+    vi.spyOn(console, 'error').mockImplementation((...args) => {
+      if (
+        typeof args[0] === 'string' &&
+        args[0].includes('An update to')
+      ) {
+        return; // Suppress act() warnings
+      }
+      originalError(...args);
+    });
+
     // Setup behavior-driven testing
     authBehavior = new AuthTestBehavior();
     courseBehavior = new CourseTestBehavior();
@@ -187,6 +199,7 @@ describe('InstructorCourseDetailsPage - Behavior-Driven Course Management Testin
     ServiceTestUtils.cleanup();
     authBehavior.reset();
     courseBehavior.reset();
+    vi.restoreAllMocks();
   });
 
   it('shows loading feedback while course content is being loaded', () => {

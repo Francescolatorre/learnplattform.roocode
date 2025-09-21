@@ -32,8 +32,8 @@ import { useNavigate } from 'react-router-dom';
 
 import useNotification from '@/components/Notifications/useNotification';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
-import { useAuthStore } from '@/store/modernAuthStore';
 import { modernCourseService } from '@/services/resources/modernCourseService';
+import { useAuthStore } from '@/store/modernAuthStore';
 import { ICourse } from '@/types/course';
 import { formatDateRelative } from '@/utils/dateUtils';
 

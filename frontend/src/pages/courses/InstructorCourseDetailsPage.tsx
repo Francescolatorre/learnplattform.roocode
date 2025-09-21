@@ -30,9 +30,9 @@ import useNotification from '@/components/Notifications/useNotification';
 import InfoCard from '@/components/shared/InfoCard';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
 import TaskCreation from '@/components/taskCreation/TaskCreation';
+import { updateTask } from '@/services/resources/learningTaskService';
 import { modernCourseService } from '@/services/resources/modernCourseService';
 import { modernLearningTaskService } from '@/services/resources/modernLearningTaskService';
-import { updateTask } from '@/services/resources/learningTaskService';
 import { ICourse } from '@/types/course';
 import { ILearningTask } from '@/types/Task';
 
@@ -246,7 +246,6 @@ const InstructorCourseDetailPage: React.FC = () => {
       setTasks(sortedTasks);
 
       // Fetch progress counts for all tasks
-      const taskIds = sortedTasks.map(task => String(task.id));
       // Note: getTaskProgressCounts not available in modern service, keeping empty for now
       const progressCounts = {};
       setTaskProgressCounts(progressCounts);

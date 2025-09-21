@@ -16,9 +16,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import useNotification from '@/components/Notifications/useNotification';
 import MarkdownEditor from '@/components/shared/MarkdownEditor';
-import { ICourse } from '@/types/course';
-import { useAuthStore } from '@/store/modernAuthStore';
 import { modernCourseService } from '@/services/resources/modernCourseService';
+import { useAuthStore } from '@/store/modernAuthStore';
+import { ICourse } from '@/types/course';
 
 interface IEditCourseProps {
   isNew?: boolean;

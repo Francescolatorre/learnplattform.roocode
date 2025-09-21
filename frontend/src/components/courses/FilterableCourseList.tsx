@@ -14,9 +14,9 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
 
+import { modernCourseService, CourseFilterOptions } from '@/services/resources/modernCourseService';
 import { ICourse, TCourseStatus } from '@/types/course';
 import { IPaginatedResponse } from '@/types/paginatedResponse';
-import { modernCourseService, CourseFilterOptions } from '@/services/resources/modernCourseService';
 import { useDebounce } from '@utils/useDebounce';
 
 import CourseList from './CourseList';

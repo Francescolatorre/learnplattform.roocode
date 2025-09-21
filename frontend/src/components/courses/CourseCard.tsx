@@ -12,8 +12,8 @@ import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { useAuthStore } from '@/store/modernAuthStore';
 import { modernEnrollmentService } from '@/services/resources/modernEnrollmentService';
+import { useAuthStore } from '@/store/modernAuthStore';
 import { ICourse } from '@/types';
 
 /**

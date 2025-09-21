@@ -5,7 +5,7 @@ import { vi, describe, it, expect, beforeEach, afterEach, Mock } from 'vitest';
 
 import { UserRoleEnum } from '@/types/userTypes';
 import { useAuthStore } from '@/store/modernAuthStore';
-import { AuthTestBehavior, AuthTestScenarios } from '@/test/behaviors/AuthTestBehavior';
+import { AuthTestBehavior } from '@/test/behaviors/AuthTestBehavior';
 import { TestDataBuilder } from '@/test/builders/TestDataBuilder';
 import { ServiceTestUtils } from '@/test/utils/ServiceTestUtils';
 
