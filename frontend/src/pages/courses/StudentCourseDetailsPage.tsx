@@ -21,13 +21,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import EnrollmentStatusIndicator from '@/components/courses/EnrollmentStatusIndicator';
 import useNotification from '@/components/Notifications/useNotification';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
-import { ICourse } from '@/types/course';
-import { IPaginatedResponse } from '@/types/paginatedResponse';
-import { ILearningTask } from '@/types/Task';
-import { useAuthStore } from '@/store/modernAuthStore';
 import { modernCourseService } from '@/services/resources/modernCourseService';
 import { modernEnrollmentService } from '@/services/resources/modernEnrollmentService';
 import { modernLearningTaskService } from '@/services/resources/modernLearningTaskService';
+import { useAuthStore } from '@/store/modernAuthStore';
+import { ICourse } from '@/types/course';
+import { IPaginatedResponse } from '@/types/paginatedResponse';
+import { ILearningTask } from '@/types/Task';
 
 /**
  * StudentCourseDetailsPage displays detailed information about a specific course.
