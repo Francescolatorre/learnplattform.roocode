@@ -30,10 +30,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import useNotification from '@/components/Notifications/useNotification';
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
-import { ILearningTask } from '@/types/Task';
-import { useAuthStore } from '@/store/modernAuthStore';
 import { modernCourseService } from '@/services/resources/modernCourseService';
 import { modernLearningTaskService } from '@/services/resources/modernLearningTaskService';
+import { useAuthStore } from '@/store/modernAuthStore';
+import { ILearningTask } from '@/types/Task';
 
 // Create or Edit Task dialog props
 interface ITaskDialogProps {

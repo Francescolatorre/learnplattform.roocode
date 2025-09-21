@@ -18,9 +18,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import CourseCard from '@/components/courses/CourseCard';
 import CourseList from '@/components/courses/CourseList';
 import useNotification from '@/components/Notifications/useNotification';
+import { modernCourseService } from '@/services/resources/modernCourseService';
 import { useAuthStore } from '@/store/modernAuthStore';
 import { ICourse, IPaginatedResponse } from '@/types';
-import { modernCourseService } from '@/services/resources/modernCourseService';
 
 /**
  * Page for students to browse and enroll in courses

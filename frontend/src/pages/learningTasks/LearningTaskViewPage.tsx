@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import MarkdownRenderer from '@/components/shared/MarkdownRenderer';
-import { ILearningTask } from '@/types/Task';
 import { modernLearningTaskService } from '@/services/resources/modernLearningTaskService';
+import { ILearningTask } from '@/types/Task';
 
 const LearningTaskViewPage: React.FC = () => {
   const { taskId } = useParams<{ taskId: string }>();
