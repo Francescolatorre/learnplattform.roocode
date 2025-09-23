@@ -101,6 +101,7 @@ class LearningTask(models.Model):
     def get_course(self) -> Course:
         """Returns the course this task belongs to."""
         pass
+
     def get_course_title(self) -> str:
         """Returns the title of the course this task belongs to."""
         pass

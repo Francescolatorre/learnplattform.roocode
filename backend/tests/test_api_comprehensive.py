@@ -125,7 +125,9 @@ def run_tests():
     try:
         courses = api.get("/api/v1/courses/")
         if courses and isinstance(courses.get("results", []), list):
-            print(f"✅ Successfully retrieved {len(courses.get('results', []))} courses")
+            print(
+                f"✅ Successfully retrieved {len(courses.get('results', []))} courses"
+            )
             tests_passed += 1
         else:
             print("❌ Failed to retrieve courses")
