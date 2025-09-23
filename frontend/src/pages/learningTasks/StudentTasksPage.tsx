@@ -3,9 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 import useNotification from '@/components/Notifications/useNotification';
-import { ILearningTask } from '@/types/Task';
 import { modernLearningTaskService } from '@/services/resources/modernLearningTaskService';
 import { useAuthStore } from '@/store/modernAuthStore';
+import { ILearningTask } from '@/types/Task';
 import LearningTaskCard from 'src/pages/learningTasks/LearningTaskCard';
 
 const StudentTasksPage: React.FC = () => {

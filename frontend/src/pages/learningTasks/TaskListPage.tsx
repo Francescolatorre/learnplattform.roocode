@@ -2,8 +2,8 @@ import { List, ListItem, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-import { ILearningTask } from '@/types/Task';
 import { modernLearningTaskService } from '@/services/resources/modernLearningTaskService';
+import { ILearningTask } from '@/types/Task';
 
 const TaskListPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();

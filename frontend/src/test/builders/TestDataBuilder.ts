@@ -33,9 +33,9 @@
  */
 
 import { ICourse, TCourseStatus } from '@/types/course';
-import { ILearningTask, ITaskCreationData } from '@/types/Task';
-import { IUser, UserRoleEnum } from '@/types/userTypes';
 import { ICourseEnrollment } from '@/types/entities';
+import { ILearningTask } from '@/types/Task';
+import { IUser, UserRoleEnum } from '@/types/userTypes';
 
 /**
  * Base interface for all test data builders

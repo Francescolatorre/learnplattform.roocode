@@ -30,17 +30,16 @@
  * @since 2025-09-20 (TASK-059 Test Suite Modernization)
  */
 
-import { IUser, UserRoleEnum } from '@/types/userTypes';
+import { TestDataBuilder } from '@/test/builders/TestDataBuilder';
 import {
   ICompleteAuthService,
   AuthBehaviorResult,
   AccessBehaviorResult,
   NavigationBehaviorResult,
-  IRegistrationData,
   EDUCATIONAL_PERMISSIONS,
   EducationalPermission,
 } from '@/test/contracts/IAuthService';
-import { TestDataBuilder } from '@/test/builders/TestDataBuilder';
+import { IUser, UserRoleEnum } from '@/types/userTypes';
 
 /**
  * Authentication test scenario configuration
@@ -461,13 +460,11 @@ export class AuthTestBehavior {
    * Create mock auth service for testing
    */
   createMockAuthService(): Partial<ICompleteAuthService> {
-    const behavior = this;
-
     return {
       // Authentication methods
-      authenticateUser: async (username: string, password: string): Promise<AuthBehaviorResult> => {
-        behavior.recordInteraction(`authenticateUser:${username}`);
-        return behavior.lastAuthResult || {
+      authenticateUser: async (username: string, _password: string): Promise<AuthBehaviorResult> => {
+        this.recordInteraction(`authenticateUser:${username}`);
+        return this.lastAuthResult || {
           success: false,
           message: 'No authentication behavior configured',
           errorCode: 'NO_BEHAVIOR_CONFIGURED',
@@ -475,15 +472,15 @@ export class AuthTestBehavior {
       },
 
       getCurrentUser: async (): Promise<IUser | null> => {
-        behavior.recordInteraction('getCurrentUser');
-        return behavior.currentUser;
+        this.recordInteraction('getCurrentUser');
+        return this.currentUser;
       },
 
       logoutUser: async (): Promise<AuthBehaviorResult> => {
-        behavior.recordInteraction('logoutUser');
-        behavior.currentUser = null;
-        behavior.authenticationState.isAuthenticated = false;
-        behavior.authenticationState.userRole = UserRoleEnum.GUEST;
+        this.recordInteraction('logoutUser');
+        this.currentUser = null;
+        this.authenticationState.isAuthenticated = false;
+        this.authenticationState.userRole = UserRoleEnum.GUEST;
         return {
           success: true,
           message: 'Logout successful',
@@ -492,24 +489,24 @@ export class AuthTestBehavior {
 
       // Role and permission methods
       getUserRole: (userId?: string): UserRoleEnum => {
-        behavior.recordInteraction(`getUserRole:${userId || 'current'}`);
-        return behavior.authenticationState.userRole;
+        this.recordInteraction(`getUserRole:${userId || 'current'}`);
+        return this.authenticationState.userRole;
       },
 
-      hasPermission: (permission: string, userId?: string): boolean => {
-        behavior.recordInteraction(`hasPermission:${permission}`);
-        return behavior.simulatePermissionCheck(permission as EducationalPermission);
+      hasPermission: (permission: string, _userId?: string): boolean => {
+        this.recordInteraction(`hasPermission:${permission}`);
+        return this.simulatePermissionCheck(permission as EducationalPermission);
       },
 
-      canAccessCourse: async (courseId: string | number, userId?: string): Promise<AccessBehaviorResult> => {
-        behavior.recordInteraction(`canAccessCourse:${courseId}`);
-        return behavior.simulateCourseAccess(String(courseId));
+      canAccessCourse: async (courseId: string | number, _userId?: string): Promise<AccessBehaviorResult> => {
+        this.recordInteraction(`canAccessCourse:${courseId}`);
+        return this.simulateCourseAccess(String(courseId));
       },
 
       // Navigation methods
       determinePostLoginDestination: (user: IUser): NavigationBehaviorResult => {
-        const targetPath = behavior.getDefaultPathForRole(user.role);
-        behavior.simulateNavigationTo(targetPath);
+        const targetPath = this.getDefaultPathForRole(user.role);
+        this.simulateNavigationTo(targetPath);
         return {
           shouldNavigate: true,
           targetPath,
@@ -520,25 +517,25 @@ export class AuthTestBehavior {
       },
 
       getDefaultPathForRole: (role: UserRoleEnum): string => {
-        return behavior.getDefaultPathForRole(role);
+        return this.getDefaultPathForRole(role);
       },
 
       // Session management
       validateSession: async (): Promise<boolean> => {
-        behavior.recordInteraction('validateSession');
-        return behavior.authenticationState.isAuthenticated;
+        this.recordInteraction('validateSession');
+        return this.authenticationState.isAuthenticated;
       },
 
       isSessionValid: (): boolean => {
-        behavior.recordInteraction('isSessionValid');
-        return behavior.authenticationState.isAuthenticated;
+        this.recordInteraction('isSessionValid');
+        return this.authenticationState.isAuthenticated;
       },
 
       // State management
       getAuthenticationState: () => ({
-        isAuthenticated: behavior.authenticationState.isAuthenticated,
-        user: behavior.currentUser,
-        role: behavior.authenticationState.userRole,
+        isAuthenticated: this.authenticationState.isAuthenticated,
+        user: this.currentUser,
+        role: this.authenticationState.userRole,
         isLoading: false,
         error: null,
       }),
@@ -607,7 +604,7 @@ export class AuthTestScenarios {
    */
   static studentLogin(email?: string): AuthTestBehavior {
     const behavior = new AuthTestBehavior();
-    behavior.configureStudentLogin(email);
+    this.configureStudentLogin(email);
     return behavior;
   }
 
@@ -616,7 +613,7 @@ export class AuthTestScenarios {
    */
   static instructorLogin(email?: string): AuthTestBehavior {
     const behavior = new AuthTestBehavior();
-    behavior.configureInstructorLogin(email);
+    this.configureInstructorLogin(email);
     return behavior;
   }
 
@@ -625,7 +622,7 @@ export class AuthTestScenarios {
    */
   static adminLogin(email?: string): AuthTestBehavior {
     const behavior = new AuthTestBehavior();
-    behavior.configureAdminLogin(email);
+    this.configureAdminLogin(email);
     return behavior;
   }
 
@@ -634,7 +631,7 @@ export class AuthTestScenarios {
    */
   static unauthenticatedUser(): AuthTestBehavior {
     const behavior = new AuthTestBehavior();
-    behavior.configureUnauthenticatedUser();
+    this.configureUnauthenticatedUser();
     return behavior;
   }
 
@@ -643,7 +640,7 @@ export class AuthTestScenarios {
    */
   static loginFailure(errorMessage?: string): AuthTestBehavior {
     const behavior = new AuthTestBehavior();
-    behavior.configureLoginFailure(errorMessage);
+    this.configureLoginFailure(errorMessage);
     return behavior;
   }
 }

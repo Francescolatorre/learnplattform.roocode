@@ -11,10 +11,10 @@
  * @since 2025-09-20 (TASK-059 Test Suite Modernization)
  */
 
-import { ICourse, TCourseStatus } from '@/types/course';
-import { ILearningTask, ITaskCreationData } from '@/types/Task';
+import { ICourse } from '@/types/course';
 import { ICourseEnrollment, IEnrollmentStatus } from '@/types/entities';
 import { IPaginatedResponse } from '@/types/paginatedResponse';
+import { ILearningTask, ITaskCreationData } from '@/types/Task';
 
 /**
  * Educational behavior outcomes for testing

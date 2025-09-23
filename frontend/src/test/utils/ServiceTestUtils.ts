@@ -28,12 +28,14 @@
  */
 
 import { ServiceFactory } from '@/services/factory/serviceFactory';
-import { ModernCourseService } from '@/services/resources/modernCourseService';
-import { ModernLearningTaskService } from '@/services/resources/modernLearningTaskService';
-import { ModernEnrollmentService } from '@/services/resources/modernEnrollmentService';
-
 import {
-  IEducationService,
+  ICompleteAuthService,
+  IRoleBasedAccessService,
+  IAuthNavigationService,
+  AuthBehaviorResult,
+  NavigationBehaviorResult,
+} from '@/test/contracts/IAuthService';
+import {
   ICourseManagementService,
   ILearningTaskService,
   IEnrollmentService,
@@ -42,21 +44,8 @@ import {
   EnrollmentBehaviorResult,
   TaskSubmissionBehaviorResult,
 } from '@/test/contracts/IEducationService';
-
-import {
-  ICompleteAuthService,
-  IAuthService,
-  IRoleBasedAccessService,
-  IAuthNavigationService,
-  AuthBehaviorResult,
-  AccessBehaviorResult,
-  NavigationBehaviorResult,
-} from '@/test/contracts/IAuthService';
-
-import { UserRoleEnum } from '@/types/userTypes';
 import { ICourse } from '@/types/course';
-import { ILearningTask } from '@/types/Task';
-import { ICourseEnrollment } from '@/types/entities';
+import { UserRoleEnum } from '@/types/userTypes';
 
 /**
  * Service behavior configuration for testing
@@ -375,7 +364,7 @@ export class AuthTestBehavior {
   configureLogin(role: UserRoleEnum, shouldSucceed: boolean = true): void {
     const mockService = ServiceTestUtils.createMockService<ICompleteAuthService>(
       {
-        authenticateUser: async (username: string, password: string): Promise<AuthBehaviorResult> => ({
+        authenticateUser: async (username: string, _password: string): Promise<AuthBehaviorResult> => ({
           success: shouldSucceed,
           message: shouldSucceed ? 'Login successful' : 'Invalid credentials',
           data: shouldSucceed ? {
@@ -510,7 +499,7 @@ export class TaskTestBehavior {
   configureTaskSubmission(shouldSucceed: boolean, errorMessage?: string): void {
     const mockService = ServiceTestUtils.createMockService<ILearningTaskService>(
       {
-        submitTask: async (taskId: string, submissionData: unknown): Promise<TaskSubmissionBehaviorResult> => ({
+        submitTask: async (taskId: string, _submissionData: unknown): Promise<TaskSubmissionBehaviorResult> => ({
           success: shouldSucceed,
           message: shouldSucceed ? 'Task submitted successfully' : errorMessage || 'Task submission failed',
           data: shouldSucceed ? {

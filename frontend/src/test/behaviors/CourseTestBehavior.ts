@@ -31,11 +31,7 @@
  * @since 2025-09-20 (TASK-059 Test Suite Modernization)
  */
 
-import { ICourse, TCourseStatus } from '@/types/course';
-import { ILearningTask, ITaskCreationData } from '@/types/Task';
-import { ICourseEnrollment } from '@/types/entities';
-import { UserRoleEnum } from '@/types/userTypes';
-import { IPaginatedResponse } from '@/types/paginatedResponse';
+import { TestDataBuilder } from '@/test/builders/TestDataBuilder';
 import {
   ICourseManagementService,
   ILearningTaskService,
@@ -45,7 +41,11 @@ import {
   EnrollmentBehaviorResult,
   TaskSubmissionBehaviorResult,
 } from '@/test/contracts/IEducationService';
-import { TestDataBuilder } from '@/test/builders/TestDataBuilder';
+import { ICourse, TCourseStatus } from '@/types/course';
+import { ICourseEnrollment } from '@/types/entities';
+import { IPaginatedResponse } from '@/types/paginatedResponse';
+import { ILearningTask, ITaskCreationData } from '@/types/Task';
+import { UserRoleEnum } from '@/types/userTypes';
 
 /**
  * Course workflow scenario configuration
@@ -263,7 +263,7 @@ export class CourseTestBehavior {
    * Configure task submission behavior
    */
   configureTaskSubmission(taskId: string, shouldSucceed: boolean = true): void {
-    const task = this.currentTasks.find(t => t.id === taskId);
+    const _task = this.currentTasks.find(t => t.id === taskId);
 
     this.behaviorResults['submitTask'] = {
       success: shouldSucceed,
@@ -349,7 +349,7 @@ export class CourseTestBehavior {
   /**
    * Simulate course discovery behavior
    */
-  simulateCourseDiscovery(searchTerm?: string, filters?: Record<string, unknown>): ICourse[] {
+  simulateCourseDiscovery(searchTerm?: string, _filters?: Record<string, unknown>): ICourse[] {
     const availableCourses = [
       TestDataBuilder.course().withTitle('Introduction to Computer Science').asPublished().build(),
       TestDataBuilder.course().withTitle('Advanced Mathematics').asPublished().build(),
@@ -530,13 +530,11 @@ export class CourseTestBehavior {
    * Create mock course service for testing
    */
   createMockCourseService(): Partial<ICourseManagementService> {
-    const behavior = this;
-
     return {
       // Course discovery and access
       discoverCourses: async (filters?: Record<string, unknown>): Promise<IPaginatedResponse<ICourse>> => {
-        behavior.recordInteraction('discoverCourses');
-        const courses = behavior.simulateCourseDiscovery(filters?.search as string, filters);
+        this.recordInteraction('discoverCourses');
+        const courses = this.simulateCourseDiscovery(filters?.search as string, filters);
         return {
           count: courses.length,
           next: null,
@@ -546,8 +544,8 @@ export class CourseTestBehavior {
       },
 
       accessCourse: async (courseId: string | number): Promise<CourseAccessBehaviorResult> => {
-        behavior.recordInteraction(`accessCourse:${courseId}`);
-        return behavior.behaviorResults['accessCourse'] as CourseAccessBehaviorResult || {
+        this.recordInteraction(`accessCourse:${courseId}`);
+        return this.behaviorResults['accessCourse'] as CourseAccessBehaviorResult || {
           success: false,
           message: 'Course access not configured',
           data: {
@@ -559,32 +557,32 @@ export class CourseTestBehavior {
       },
 
       getCourseDetails: async (courseId: string | number): Promise<ICourse> => {
-        behavior.recordInteraction(`getCourseDetails:${courseId}`);
-        if (!behavior.currentCourse) {
+        this.recordInteraction(`getCourseDetails:${courseId}`);
+        if (!this.currentCourse) {
           throw new Error('Course not found');
         }
-        return behavior.currentCourse;
+        return this.currentCourse;
       },
 
       getCourseContent: async (courseId: string | number): Promise<ICourse> => {
-        behavior.recordInteraction(`getCourseContent:${courseId}`);
-        if (behavior.currentCourse) {
-          return behavior.currentCourse;
+        this.recordInteraction(`getCourseContent:${courseId}`);
+        if (this.currentCourse) {
+          return this.currentCourse;
         }
         throw new Error('Course not found or access denied');
       },
 
       // Course management
-      createCourse: async (courseData: Partial<ICourse>): Promise<EducationalOutcome> => {
-        behavior.recordInteraction('createCourse');
-        return behavior.behaviorResults['createCourse'] || {
+      createCourse: async (_courseData: Partial<ICourse>): Promise<EducationalOutcome> => {
+        this.recordInteraction('createCourse');
+        return this.behaviorResults['createCourse'] || {
           success: false,
           message: 'Course creation not configured',
         };
       },
 
       modifyCourse: async (courseId: string | number, updates: Partial<ICourse>): Promise<EducationalOutcome> => {
-        behavior.recordInteraction(`modifyCourse:${courseId}`);
+        this.recordInteraction(`modifyCourse:${courseId}`);
         return {
           success: true,
           message: 'Course updated successfully',
@@ -593,7 +591,7 @@ export class CourseTestBehavior {
       },
 
       publishCourse: async (courseId: string | number): Promise<EducationalOutcome> => {
-        behavior.recordInteraction(`publishCourse:${courseId}`);
+        this.recordInteraction(`publishCourse:${courseId}`);
         return {
           success: true,
           message: 'Course published successfully',
@@ -603,8 +601,8 @@ export class CourseTestBehavior {
 
       // Instructor methods
       getInstructorCourses: async (instructorId?: string | number): Promise<IPaginatedResponse<ICourse>> => {
-        behavior.recordInteraction(`getInstructorCourses:${instructorId}`);
-        const result = behavior.behaviorResults['getInstructorCourses'];
+        this.recordInteraction(`getInstructorCourses:${instructorId}`);
+        const result = this.behaviorResults['getInstructorCourses'];
         if (result?.success) {
           return {
             count: (result.data as any)?.totalCourses || 0,
@@ -618,11 +616,11 @@ export class CourseTestBehavior {
 
       // Progress tracking
       getCourseProgress: async (courseId: string | number): Promise<EducationalOutcome> => {
-        behavior.recordInteraction(`getCourseProgress:${courseId}`);
-        return behavior.behaviorResults['getCourseProgress'] || {
+        this.recordInteraction(`getCourseProgress:${courseId}`);
+        return this.behaviorResults['getCourseProgress'] || {
           success: true,
           message: 'Progress retrieved',
-          data: { progressPercentage: behavior.workflowScenario.progressPercentage },
+          data: { progressPercentage: this.workflowScenario.progressPercentage },
         };
       },
     };
@@ -632,21 +630,19 @@ export class CourseTestBehavior {
    * Create mock enrollment service for testing
    */
   createMockEnrollmentService(): Partial<IEnrollmentService> {
-    const behavior = this;
-
     return {
-      enrollInCourse: async (courseId: string | number, studentId?: string | number): Promise<EnrollmentBehaviorResult> => {
-        behavior.recordInteraction(`enrollInCourse:${courseId}`);
-        return behavior.behaviorResults['enrollInCourse'] as EnrollmentBehaviorResult || {
+      enrollInCourse: async (courseId: string | number, _studentId?: string | number): Promise<EnrollmentBehaviorResult> => {
+        this.recordInteraction(`enrollInCourse:${courseId}`);
+        return this.behaviorResults['enrollInCourse'] as EnrollmentBehaviorResult || {
           success: false,
           message: 'Enrollment not configured',
         };
       },
 
-      getEnrollmentStatus: async (courseId: string | number, studentId?: string | number) => {
-        behavior.recordInteraction(`getEnrollmentStatus:${courseId}`);
+      getEnrollmentStatus: async (courseId: string | number, _studentId?: string | number) => {
+        this.recordInteraction(`getEnrollmentStatus:${courseId}`);
         return {
-          enrolled: behavior.workflowScenario.enrollmentStatus === 'enrolled',
+          enrolled: this.workflowScenario.enrollmentStatus === 'enrolled',
           enrollmentDate: new Date().toISOString(),
           enrollmentId: 1,
         };
@@ -658,30 +654,28 @@ export class CourseTestBehavior {
    * Create mock task service for testing
    */
   createMockTaskService(): Partial<ILearningTaskService> {
-    const behavior = this;
-
     return {
       getTasksForCourse: async (courseId: string): Promise<ILearningTask[]> => {
-        behavior.recordInteraction(`getTasksForCourse:${courseId}`);
-        return behavior.currentTasks;
+        this.recordInteraction(`getTasksForCourse:${courseId}`);
+        return this.currentTasks;
       },
 
       getAllTasksByCourseId: async (courseId: string): Promise<ILearningTask[]> => {
-        behavior.recordInteraction(`getAllTasksByCourseId:${courseId}`);
-        return behavior.currentTasks;
+        this.recordInteraction(`getAllTasksByCourseId:${courseId}`);
+        return this.currentTasks;
       },
 
-      createTask: async (taskData: ITaskCreationData, notifyStudents?: boolean): Promise<TaskSubmissionBehaviorResult> => {
-        behavior.recordInteraction('createTask');
-        return behavior.behaviorResults['createTask'] as TaskSubmissionBehaviorResult || {
+      createTask: async (_taskData: ITaskCreationData, _notifyStudents?: boolean): Promise<TaskSubmissionBehaviorResult> => {
+        this.recordInteraction('createTask');
+        return this.behaviorResults['createTask'] as TaskSubmissionBehaviorResult || {
           success: false,
           message: 'Task creation not configured',
         };
       },
 
-      submitTask: async (taskId: string, submissionData: unknown): Promise<TaskSubmissionBehaviorResult> => {
-        behavior.recordInteraction(`submitTask:${taskId}`);
-        return behavior.behaviorResults['submitTask'] as TaskSubmissionBehaviorResult || {
+      submitTask: async (taskId: string, _submissionData: unknown): Promise<TaskSubmissionBehaviorResult> => {
+        this.recordInteraction(`submitTask:${taskId}`);
+        return this.behaviorResults['submitTask'] as TaskSubmissionBehaviorResult || {
           success: false,
           message: 'Task submission not configured',
         };
@@ -718,8 +712,8 @@ export class CourseTestScenarios {
    */
   static studentEnrollment(courseTitle?: string): CourseTestBehavior {
     const behavior = new CourseTestBehavior();
-    behavior.configureCourseAccess(UserRoleEnum.STUDENT, 'view', { title: courseTitle });
-    behavior.configureCourseEnrollment(true, 'enrolled');
+    this.configureCourseAccess(UserRoleEnum.STUDENT, 'view', { title: courseTitle });
+    this.configureCourseEnrollment(true, 'enrolled');
     return behavior;
   }
 
@@ -728,7 +722,7 @@ export class CourseTestScenarios {
    */
   static instructorCourseManagement(courseCount: number = 3): CourseTestBehavior {
     const behavior = new CourseTestBehavior();
-    behavior.configureInstructorCourseManagement(courseCount);
+    this.configureInstructorCourseManagement(courseCount);
     return behavior;
   }
 
@@ -737,7 +731,7 @@ export class CourseTestScenarios {
    */
   static courseCreation(shouldSucceed: boolean = true): CourseTestBehavior {
     const behavior = new CourseTestBehavior();
-    behavior.configureCourseCreation(shouldSucceed);
+    this.configureCourseCreation(shouldSucceed);
     return behavior;
   }
 
@@ -746,8 +740,8 @@ export class CourseTestScenarios {
    */
   static taskSubmission(taskCount: number = 3): CourseTestBehavior {
     const behavior = new CourseTestBehavior();
-    behavior.configureTaskManagement(taskCount);
-    behavior.configureCourseEnrollment(true, 'enrolled');
+    this.configureTaskManagement(taskCount);
+    this.configureCourseEnrollment(true, 'enrolled');
     return behavior;
   }
 
@@ -756,9 +750,9 @@ export class CourseTestScenarios {
    */
   static courseProgress(progressPercentage: number = 75): CourseTestBehavior {
     const behavior = new CourseTestBehavior();
-    behavior.configureCourseAccess(UserRoleEnum.STUDENT, 'view');
-    behavior.configureCourseEnrollment(true, 'enrolled');
-    behavior.configureCourseProgress(progressPercentage, Math.floor(progressPercentage / 20));
+    this.configureCourseAccess(UserRoleEnum.STUDENT, 'view');
+    this.configureCourseEnrollment(true, 'enrolled');
+    this.configureCourseProgress(progressPercentage, Math.floor(progressPercentage / 20));
     return behavior;
   }
 }
