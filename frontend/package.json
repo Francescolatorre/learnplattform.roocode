@@ -28,7 +28,8 @@
     "deps:graph": "depcruise --validate .dependency-cruiser.cjs --output-type dot src --exclude 'node_modules'| dot -T svg > dependency-graph.svg",
     "deps:validate": "depcruise --validate .dependency-cruiser.cjs src ",
     "deps:json": "depcruise --output-type json src --exclude 'node_modules' > dependency-graph.json",
-    "playwright:mcp": "npx @playwright/test test --config=playwright-mcp.config.js"
+    "playwright:mcp": "npx @playwright/test test --config=playwright-mcp.config.js",
+    "prepare": "husky"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",

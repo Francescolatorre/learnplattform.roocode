@@ -1,0 +1,46 @@
+#!/usr/bin/env sh
+
+# Pre-commit hook to automatically fix issues for BOTH frontend and backend
+echo "🔍 Running pre-commit checks (matching CI pipeline)..."
+
+# Check if we have staged frontend files
+FRONTEND_FILES=$(git diff --staged --name-only | grep -E '^frontend/.*\.(ts|tsx|js|jsx)$' || true)
+# Check if we have staged backend files
+BACKEND_FILES=$(git diff --staged --name-only | grep -E '^backend/.*\.py$' || true)
+
+# Frontend auto-fixes
+if [ -n "$FRONTEND_FILES" ]; then
+  echo "🔧 Auto-fixing Frontend (TypeScript/JavaScript) files..."
+  cd frontend
+  npx lint-staged
+  cd ..
+  git add -u
+  echo "✅ Frontend auto-fixes completed!"
+fi
+
+# Backend auto-fixes
+if [ -n "$BACKEND_FILES" ]; then
+  echo "🐍 Auto-fixing Backend (Python) files..."
+  cd backend
+
+  # Auto-fix Python files using the same tools as CI
+  echo "  📦 Running Black formatter..."
+  black .
+
+  echo "  📦 Running isort (import sorting)..."
+  isort .
+
+  # Check for issues (but don't fail - let CI handle complex issues)
+  echo "  🔍 Running Flake8 check..."
+  flake8 . || echo "  ⚠️  Flake8 issues found - will be caught in CI"
+
+  cd ..
+  git add -u
+  echo "✅ Backend auto-fixes completed!"
+fi
+
+if [ -z "$FRONTEND_FILES" ] && [ -z "$BACKEND_FILES" ]; then
+  echo "ℹ️  No frontend or backend files staged for commit"
+fi
+
+echo "🎉 Pre-commit hook completed - files auto-fixed with CI-matching rules!"
