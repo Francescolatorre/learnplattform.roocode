@@ -7,7 +7,7 @@
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -69,11 +69,13 @@ describe('StudentCourseDetailsPage - Behavior-Driven Student Enrollment Testing'
     warning: vi.fn(),
   });
 
-  const renderWithProviders = (ui: React.ReactElement = (
-    <Routes>
-      <Route path="/courses/:courseId" element={<StudentCourseDetailsPage />} />
-    </Routes>
-  )) => {
+  const renderWithProviders = (
+    ui: React.ReactElement = (
+      <Routes>
+        <Route path="/courses/:courseId" element={<StudentCourseDetailsPage />} />
+      </Routes>
+    )
+  ) => {
     const queryClient = new QueryClient({
       defaultOptions: {
         queries: { retry: false },
@@ -83,9 +85,7 @@ describe('StudentCourseDetailsPage - Behavior-Driven Student Enrollment Testing'
     return render(
       <QueryClientProvider client={queryClient}>
         <NotificationProvider>
-          <BrowserRouter>
-            {ui}
-          </BrowserRouter>
+          <BrowserRouter>{ui}</BrowserRouter>
         </NotificationProvider>
       </QueryClientProvider>
     );
@@ -142,8 +142,12 @@ describe('StudentCourseDetailsPage - Behavior-Driven Student Enrollment Testing'
 
     // Setup service mocks
     const { modernCourseService } = await import('@/services/resources/modernCourseService');
-    const { modernEnrollmentService } = await import('@/services/resources/modernEnrollmentService');
-    const { modernLearningTaskService } = await import('@/services/resources/modernLearningTaskService');
+    const { modernEnrollmentService } = await import(
+      '@/services/resources/modernEnrollmentService'
+    );
+    const { modernLearningTaskService } = await import(
+      '@/services/resources/modernLearningTaskService'
+    );
 
     vi.mocked(modernCourseService.getCourseDetails).mockResolvedValue(testCourse);
     vi.mocked(modernEnrollmentService.getEnrollmentStatus).mockResolvedValue({
@@ -151,12 +155,7 @@ describe('StudentCourseDetailsPage - Behavior-Driven Student Enrollment Testing'
       enrollmentDate: '2024-01-01T00:00:00Z',
       enrollmentId: 123,
     });
-    vi.mocked(modernLearningTaskService.getAllTasksByCourseId).mockResolvedValue({
-      results: testTasks,
-      count: testTasks.length,
-      next: null,
-      previous: null,
-    });
+    vi.mocked(modernLearningTaskService.getAllTasksByCourseId).mockResolvedValue(testTasks);
 
     // Navigate to course details page
     window.history.pushState({}, 'Test', `/courses/${mockCourseId}`);
@@ -174,8 +173,12 @@ describe('StudentCourseDetailsPage - Behavior-Driven Student Enrollment Testing'
 
     // Setup service mocks
     const { modernCourseService } = await import('@/services/resources/modernCourseService');
-    const { modernEnrollmentService } = await import('@/services/resources/modernEnrollmentService');
-    const { modernLearningTaskService } = await import('@/services/resources/modernLearningTaskService');
+    const { modernEnrollmentService } = await import(
+      '@/services/resources/modernEnrollmentService'
+    );
+    const { modernLearningTaskService } = await import(
+      '@/services/resources/modernLearningTaskService'
+    );
 
     vi.mocked(modernCourseService.getCourseDetails).mockResolvedValue(testCourse);
     vi.mocked(modernEnrollmentService.getEnrollmentStatus).mockResolvedValue({
@@ -183,12 +186,7 @@ describe('StudentCourseDetailsPage - Behavior-Driven Student Enrollment Testing'
       enrollmentDate: '2024-01-01T00:00:00Z',
       enrollmentId: 123,
     });
-    vi.mocked(modernLearningTaskService.getAllTasksByCourseId).mockResolvedValue({
-      results: testTasks,
-      count: testTasks.length,
-      next: null,
-      previous: null,
-    });
+    vi.mocked(modernLearningTaskService.getAllTasksByCourseId).mockResolvedValue(testTasks);
 
     // Navigate to course details page
     window.history.pushState({}, 'Test', `/courses/${mockCourseId}`);
@@ -203,7 +201,9 @@ describe('StudentCourseDetailsPage - Behavior-Driven Student Enrollment Testing'
     expect(screen.getByTestId('markdown-renderer')).toBeInTheDocument();
 
     // Verify service calls were made (testing integration behavior)
-    expect(vi.mocked(modernCourseService.getCourseDetails)).toHaveBeenCalledWith(Number(mockCourseId));
+    expect(vi.mocked(modernCourseService.getCourseDetails)).toHaveBeenCalledWith(
+      Number(mockCourseId)
+    );
     // Note: enrollmentService.getEnrollmentStatus may be called conditionally based on auth state
 
     // Verify enrollment behavior occurred
@@ -217,8 +217,12 @@ describe('StudentCourseDetailsPage - Behavior-Driven Student Enrollment Testing'
 
     // Setup service mocks
     const { modernCourseService } = await import('@/services/resources/modernCourseService');
-    const { modernEnrollmentService } = await import('@/services/resources/modernEnrollmentService');
-    const { modernLearningTaskService } = await import('@/services/resources/modernLearningTaskService');
+    const { modernEnrollmentService } = await import(
+      '@/services/resources/modernEnrollmentService'
+    );
+    const { modernLearningTaskService } = await import(
+      '@/services/resources/modernLearningTaskService'
+    );
 
     vi.mocked(modernCourseService.getCourseDetails).mockResolvedValue(testCourse);
     vi.mocked(modernEnrollmentService.getEnrollmentStatus).mockResolvedValue({
@@ -226,12 +230,7 @@ describe('StudentCourseDetailsPage - Behavior-Driven Student Enrollment Testing'
       enrollmentDate: null,
       enrollmentId: null,
     });
-    vi.mocked(modernLearningTaskService.getAllTasksByCourseId).mockResolvedValue({
-      results: [],
-      count: 0,
-      next: null,
-      previous: null,
-    });
+    vi.mocked(modernLearningTaskService.getAllTasksByCourseId).mockResolvedValue([]);
 
     // Navigate to course details page
     window.history.pushState({}, 'Test', `/courses/${mockCourseId}`);

@@ -3,7 +3,6 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { vi, describe, it, expect, beforeEach, Mock } from 'vitest';
 
-import { UserRoleEnum } from '@/types/userTypes';
 import { useAuthStore } from '@/store/modernAuthStore';
 import { IRegistrationData } from '@/services/auth/modernAuthService';
 

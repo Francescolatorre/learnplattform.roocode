@@ -8,7 +8,6 @@
 import { describe, it, expect, beforeEach, vi, Mock } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 
-import { ModernCourseService } from '@/services/resources/modernCourseService';
 import { ServiceFactory } from '@/services/factory/serviceFactory';
 import { ICourse } from '@/types/course';
 import { IPaginatedResponse } from '@/types/paginatedResponse';
@@ -16,7 +15,6 @@ import { IPaginatedResponse } from '@/types/paginatedResponse';
 import {
   useModernCourseStore,
   useCourseOperations,
-  usePaginatedCourses,
   useCourseList,
   useSelectedCourse,
   initializeCourseStore,
