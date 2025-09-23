@@ -108,11 +108,20 @@ const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         try {
           // Authenticate with legacy service (proven to work)
-          const _tokens = await authService.login(username, password);
+          await authService.login(username, password);
 
           // Store tokens in localStorage (legacy service handles this)
           // Fetch user profile after successful login
-          const user = await authService.getUserProfile();
+          const userProfile = await authService.getUserProfile();
+
+          // Convert UserProfile to IUser format (id conversion and required fields)
+          const user: IUser = {
+            ...userProfile,
+            id: String(userProfile.id), // Convert number to string
+            role: userProfile.role as UserRoleEnum,
+            created_at: userProfile.created_at || new Date().toISOString(),
+            updated_at: userProfile.updated_at || new Date().toISOString(),
+          };
 
           set({
             user,
@@ -278,7 +287,10 @@ const useAuthStore = create<AuthState>()(
           // Check if we have tokens in localStorage
           const accessToken = localStorage.getItem(AUTH_CONFIG.tokenStorageKey);
           const refreshToken = localStorage.getItem(AUTH_CONFIG.refreshTokenStorageKey);
-          console.log('RestoreAuthState: Token check', { hasAccess: !!accessToken, hasRefresh: !!refreshToken });
+          console.log('RestoreAuthState: Token check', {
+            hasAccess: !!accessToken,
+            hasRefresh: !!refreshToken,
+          });
 
           if (!accessToken || !refreshToken) {
             console.log('RestoreAuthState: No tokens found, setting unauthenticated state');
@@ -292,8 +304,17 @@ const useAuthStore = create<AuthState>()(
 
           // Skip validation and directly try to get user profile with existing token
           console.log('RestoreAuthState: Attempting to get user profile...');
-          const user = await authService.getUserProfile();
-          console.log('RestoreAuthState: Successfully got user profile:', user);
+          const userProfile = await authService.getUserProfile();
+          console.log('RestoreAuthState: Successfully got user profile:', userProfile);
+
+          // Convert UserProfile to IUser format (id conversion and required fields)
+          const user: IUser = {
+            ...userProfile,
+            id: String(userProfile.id), // Convert number to string
+            role: userProfile.role as UserRoleEnum,
+            created_at: userProfile.created_at || new Date().toISOString(),
+            updated_at: userProfile.updated_at || new Date().toISOString(),
+          };
 
           set({
             user,

@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import React from 'react';
+// import React from 'react'; // Not needed in React 19+
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 import { ICourse } from '@/types/course';
@@ -30,6 +30,8 @@ const mockCourse: ICourse = {
   learning_objectives: 'Learn testing and modern development',
   prerequisites: 'Basic JavaScript knowledge',
   status: 'published',
+  category: 'Computer Science',
+  difficulty_level: 'Beginner',
 };
 
 const renderWithProviders = () => {

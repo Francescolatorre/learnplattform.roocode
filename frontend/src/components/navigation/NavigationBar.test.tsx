@@ -42,10 +42,10 @@ const mockUser: IUser = {
   username: 'testuser',
   email: 'test@example.com',
   role: UserRoleEnum.STUDENT,
-  first_name: 'Test',
-  last_name: 'User',
+  display_name: 'Test User',
   is_active: true,
-  date_joined: '2025-01-01T00:00:00Z',
+  created_at: '2025-01-01T00:00:00Z',
+  updated_at: '2025-01-01T00:00:00Z',
 };
 
 const theme = createTheme();

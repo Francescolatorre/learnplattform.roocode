@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
-import React from 'react';
+// import React from 'react'; // Not needed in React 19+
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 

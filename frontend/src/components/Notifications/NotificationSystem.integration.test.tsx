@@ -1,5 +1,5 @@
 import { render, screen, act } from '@testing-library/react';
-import React from 'react';
+// import React from 'react'; // Not needed in React 19+
 import { describe, it, beforeEach, afterEach, expect, vi } from 'vitest';
 
 import { NotificationProvider, useNotificationContext } from './NotificationProvider';
@@ -35,10 +35,7 @@ describe('NotificationSystem Integration', () => {
     // Suppress React act() warnings for testing
     const originalError = console.error;
     vi.spyOn(console, 'error').mockImplementation((...args) => {
-      if (
-        typeof args[0] === 'string' &&
-        args[0].includes('An update to')
-      ) {
+      if (typeof args[0] === 'string' && args[0].includes('An update to')) {
         return; // Suppress act() warnings
       }
       originalError(...args);

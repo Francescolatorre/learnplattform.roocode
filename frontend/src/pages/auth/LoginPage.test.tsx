@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import React from 'react';
+// import React from 'react'; // Not needed in React 19+
 import { MemoryRouter } from 'react-router-dom';
 import { vi, describe, it, expect, beforeEach, afterEach, Mock } from 'vitest';
 
@@ -59,7 +59,7 @@ describe('LoginPage - Behavior-Driven Authentication Testing', () => {
     const mockAuthService = authBehavior.createMockAuthService();
 
     // Mock auth store with basic functionality
-    (useAuthStore as Mock).mockReturnValue({
+    (useAuthStore as unknown as Mock).mockReturnValue({
       login: mockAuthService.authenticateUser,
       getUserRole: mockAuthService.getUserRole,
       user: null,
@@ -83,7 +83,7 @@ describe('LoginPage - Behavior-Driven Authentication Testing', () => {
     const mockAuthService = authBehavior.createMockAuthService();
 
     // Mock auth store with validation behavior
-    (useAuthStore as Mock).mockReturnValue({
+    (useAuthStore as unknown as Mock).mockReturnValue({
       login: mockAuthService.authenticateUser,
       getUserRole: mockAuthService.getUserRole,
       user: null,
@@ -111,7 +111,7 @@ describe('LoginPage - Behavior-Driven Authentication Testing', () => {
     authBehavior.configureStudentLogin('testuser@university.edu');
 
     // Mock auth store to use behavior
-    (useAuthStore as Mock).mockReturnValue({
+    (useAuthStore as unknown as Mock).mockReturnValue({
       login: mockAuthService.authenticateUser,
       getUserRole: mockAuthService.getUserRole,
       user: null,
@@ -139,7 +139,7 @@ describe('LoginPage - Behavior-Driven Authentication Testing', () => {
 
   it('shows loading feedback during authentication process', () => {
     // Configure loading state during authentication
-    (useAuthStore as Mock).mockReturnValue({
+    (useAuthStore as unknown as Mock).mockReturnValue({
       login: vi.fn(),
       getUserRole: vi.fn().mockReturnValue('student'),
       user: null,
@@ -165,7 +165,7 @@ describe('LoginPage - Behavior-Driven Authentication Testing', () => {
     // Setup post-login navigation behavior
     authBehavior.simulateNavigationTo('/dashboard');
 
-    (useAuthStore as Mock).mockReturnValue({
+    (useAuthStore as unknown as Mock).mockReturnValue({
       login: mockAuthService.authenticateUser,
       getUserRole: mockAuthService.getUserRole,
       user: student,
@@ -200,7 +200,7 @@ describe('LoginPage - Behavior-Driven Authentication Testing', () => {
     // Setup instructor navigation behavior
     authBehavior.simulateNavigationTo('/instructor/dashboard');
 
-    (useAuthStore as Mock).mockReturnValue({
+    (useAuthStore as unknown as Mock).mockReturnValue({
       login: mockAuthService.authenticateUser,
       getUserRole: mockAuthService.getUserRole,
       user: instructor,
@@ -212,7 +212,9 @@ describe('LoginPage - Behavior-Driven Authentication Testing', () => {
     renderWithRouter();
 
     // Instructor performs login
-    fireEvent.change(screen.getByLabelText('Username'), { target: { value: 'instructor@university.edu' } });
+    fireEvent.change(screen.getByLabelText('Username'), {
+      target: { value: 'instructor@university.edu' },
+    });
     fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'password' } });
     fireEvent.click(screen.getByTestId('login-submit-button'));
 
@@ -228,7 +230,7 @@ describe('LoginPage - Behavior-Driven Authentication Testing', () => {
     authBehavior.configureLoginFailure('Invalid credentials');
     const mockAuthService = authBehavior.createMockAuthService();
 
-    (useAuthStore as Mock).mockReturnValue({
+    (useAuthStore as unknown as Mock).mockReturnValue({
       login: mockAuthService.authenticateUser,
       getUserRole: mockAuthService.getUserRole,
       user: null,
@@ -260,7 +262,7 @@ describe('LoginPage - Behavior-Driven Authentication Testing', () => {
 
   it('allows form submission when user provides valid input', () => {
     // Configure ready-to-authenticate state
-    (useAuthStore as Mock).mockReturnValue({
+    (useAuthStore as unknown as Mock).mockReturnValue({
       login: vi.fn(),
       getUserRole: vi.fn().mockReturnValue('student'),
       user: null,

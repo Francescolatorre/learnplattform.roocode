@@ -61,7 +61,7 @@ describe('ProtectedRoute - Behavior-Driven Access Control Testing', () => {
 
   it('shows loading state while authentication is being restored', () => {
     // Configure authentication restoration in progress
-    (useAuthStore as Mock).mockReturnValue({
+    (useAuthStore as unknown as Mock).mockReturnValue({
       isAuthenticated: false,
       isRestoring: true,
       user: null,
@@ -81,7 +81,7 @@ describe('ProtectedRoute - Behavior-Driven Access Control Testing', () => {
     authBehavior.configureStudentLogin('student@university.edu');
     const authenticatedUser = authBehavior.getCurrentUser();
 
-    (useAuthStore as Mock).mockReturnValue({
+    (useAuthStore as unknown as Mock).mockReturnValue({
       isAuthenticated: true,
       isRestoring: false,
       user: authenticatedUser,
@@ -99,7 +99,7 @@ describe('ProtectedRoute - Behavior-Driven Access Control Testing', () => {
     // Configure unauthenticated user scenario
     authBehavior.configureUnauthenticatedUser();
 
-    (useAuthStore as Mock).mockReturnValue({
+    (useAuthStore as unknown as Mock).mockReturnValue({
       isAuthenticated: false,
       isRestoring: false,
       user: null,
@@ -115,7 +115,7 @@ describe('ProtectedRoute - Behavior-Driven Access Control Testing', () => {
 
   it('maintains loading state when authentication restoration is incomplete', () => {
     // Configure incomplete authentication restoration
-    (useAuthStore as Mock).mockReturnValue({
+    (useAuthStore as unknown as Mock).mockReturnValue({
       isAuthenticated: false,
       isRestoring: true,
       user: null,
@@ -136,7 +136,7 @@ describe('ProtectedRoute - Behavior-Driven Access Control Testing', () => {
     const student = authBehavior.getCurrentUser();
 
     // Start with restoration in progress
-    (useAuthStore as Mock).mockReturnValue({
+    (useAuthStore as unknown as Mock).mockReturnValue({
       isAuthenticated: false,
       isRestoring: true,
       user: null,
@@ -149,7 +149,7 @@ describe('ProtectedRoute - Behavior-Driven Access Control Testing', () => {
     expect(screen.getByTestId('protected-route-loading')).toBeInTheDocument();
 
     // Simulate successful authentication restoration
-    (useAuthStore as Mock).mockReturnValue({
+    (useAuthStore as unknown as Mock).mockReturnValue({
       isAuthenticated: true,
       isRestoring: false,
       user: student,

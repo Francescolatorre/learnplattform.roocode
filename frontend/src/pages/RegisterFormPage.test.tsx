@@ -1,9 +1,9 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import React from 'react';
+// import React from 'react'; // Not needed in React 19+
 import { MemoryRouter } from 'react-router-dom';
 import { vi, describe, it, expect, beforeEach, Mock } from 'vitest';
 
-import { IUser, UserRoleEnum } from '@/types/userTypes';
+import { UserRoleEnum } from '@/types/userTypes';
 import { useAuthStore } from '@/store/modernAuthStore';
 import { IRegistrationData } from '@/services/auth/modernAuthService';
 
@@ -46,16 +46,7 @@ vi.mock('../utils/passwordValidation', () => ({
   })),
 }));
 
-const mockUser: IUser = {
-  id: 1,
-  username: 'newuser',
-  email: 'newuser@example.com',
-  role: UserRoleEnum.STUDENT,
-  first_name: 'New',
-  last_name: 'User',
-  is_active: true,
-  date_joined: '2025-01-01T00:00:00Z',
-};
+// Removed unused mockUser - was not referenced in tests
 
 const renderWithRouter = () => {
   return render(
@@ -77,7 +68,7 @@ describe('RegisterFormPage', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useAuthStore as Mock).mockReturnValue(mockAuthStore);
+    (useAuthStore as unknown as Mock).mockReturnValue(mockAuthStore);
   });
 
   it('renders registration form correctly', () => {
@@ -157,7 +148,7 @@ describe('RegisterFormPage', () => {
   });
 
   it('shows loading state during registration', () => {
-    (useAuthStore as Mock).mockReturnValue({
+    (useAuthStore as unknown as Mock).mockReturnValue({
       ...mockAuthStore,
       isLoading: true,
     });
@@ -173,7 +164,7 @@ describe('RegisterFormPage', () => {
     const errorMessage = 'Username already exists';
     const mockFailedRegister = vi.fn().mockRejectedValue(new Error(errorMessage));
 
-    (useAuthStore as Mock).mockReturnValue({
+    (useAuthStore as unknown as Mock).mockReturnValue({
       ...mockAuthStore,
       register: mockFailedRegister,
     });

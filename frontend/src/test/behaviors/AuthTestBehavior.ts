@@ -102,10 +102,7 @@ export class AuthTestBehavior {
     this.authenticationState = {
       userRole: UserRoleEnum.STUDENT,
       isAuthenticated: true,
-      permissions: [
-        EDUCATIONAL_PERMISSIONS.VIEW_COURSE,
-        EDUCATIONAL_PERMISSIONS.SUBMIT_TASK,
-      ],
+      permissions: [EDUCATIONAL_PERMISSIONS.VIEW_COURSE, EDUCATIONAL_PERMISSIONS.SUBMIT_TASK],
       courseAccess: ['course-1', 'course-2'], // Mock enrolled courses
       navigationHistory: ['/student/dashboard'],
       lastAction: 'student_login_configured',
@@ -290,8 +287,9 @@ export class AuthTestBehavior {
   simulateCourseAccess(courseId: string): AccessBehaviorResult {
     this.recordInteraction(`accessCourse:${courseId}`);
 
-    const hasAccess = this.authenticationState.courseAccess.includes(courseId) ||
-                     this.authenticationState.courseAccess.includes('*');
+    const hasAccess =
+      this.authenticationState.courseAccess.includes(courseId) ||
+      this.authenticationState.courseAccess.includes('*');
 
     const result: AccessBehaviorResult = {
       hasAccess,
@@ -327,11 +325,12 @@ export class AuthTestBehavior {
    * Verify user authentication attempt occurred
    */
   verifyAuthenticationAttempted(): boolean {
-    return this.interactionHistory.some(action =>
-      action.includes('configureStudentLogin') ||
-      action.includes('configureInstructorLogin') ||
-      action.includes('configureAdminLogin') ||
-      action.includes('authenticateUser')
+    return this.interactionHistory.some(
+      action =>
+        action.includes('configureStudentLogin') ||
+        action.includes('configureInstructorLogin') ||
+        action.includes('configureAdminLogin') ||
+        action.includes('authenticateUser')
     );
   }
 
@@ -353,8 +352,10 @@ export class AuthTestBehavior {
    * Verify user was redirected for authentication
    */
   verifyRedirectToLogin(): boolean {
-    return this.navigationHistory.includes('/login') ||
-           this.authenticationState.navigationHistory.includes('/login');
+    return (
+      this.navigationHistory.includes('/login') ||
+      this.authenticationState.navigationHistory.includes('/login')
+    );
   }
 
   /**
@@ -368,9 +369,11 @@ export class AuthTestBehavior {
    * Verify course access was granted
    */
   verifyCourseAccessGranted(courseId: string): boolean {
-    return this.interactionHistory.includes(`accessCourse:${courseId}`) &&
-           (this.authenticationState.courseAccess.includes(courseId) ||
-            this.authenticationState.courseAccess.includes('*'));
+    return (
+      this.interactionHistory.includes(`accessCourse:${courseId}`) &&
+      (this.authenticationState.courseAccess.includes(courseId) ||
+        this.authenticationState.courseAccess.includes('*'))
+    );
   }
 
   /**
@@ -462,13 +465,18 @@ export class AuthTestBehavior {
   createMockAuthService(): Partial<ICompleteAuthService> {
     return {
       // Authentication methods
-      authenticateUser: async (username: string, _password: string): Promise<AuthBehaviorResult> => {
+      authenticateUser: async (
+        username: string,
+        _password: string
+      ): Promise<AuthBehaviorResult> => {
         this.recordInteraction(`authenticateUser:${username}`);
-        return this.lastAuthResult || {
-          success: false,
-          message: 'No authentication behavior configured',
-          errorCode: 'NO_BEHAVIOR_CONFIGURED',
-        };
+        return (
+          this.lastAuthResult || {
+            success: false,
+            message: 'No authentication behavior configured',
+            errorCode: 'NO_BEHAVIOR_CONFIGURED',
+          }
+        );
       },
 
       getCurrentUser: async (): Promise<IUser | null> => {
@@ -498,7 +506,10 @@ export class AuthTestBehavior {
         return this.simulatePermissionCheck(permission as EducationalPermission);
       },
 
-      canAccessCourse: async (courseId: string | number, _userId?: string): Promise<AccessBehaviorResult> => {
+      canAccessCourse: async (
+        courseId: string | number,
+        _userId?: string
+      ): Promise<AccessBehaviorResult> => {
         this.recordInteraction(`canAccessCourse:${courseId}`);
         return this.simulateCourseAccess(String(courseId));
       },
@@ -548,10 +559,7 @@ export class AuthTestBehavior {
   private getDefaultPermissionsForRole(role: UserRoleEnum): EducationalPermission[] {
     switch (role) {
       case UserRoleEnum.STUDENT:
-        return [
-          EDUCATIONAL_PERMISSIONS.VIEW_COURSE,
-          EDUCATIONAL_PERMISSIONS.SUBMIT_TASK,
-        ];
+        return [EDUCATIONAL_PERMISSIONS.VIEW_COURSE, EDUCATIONAL_PERMISSIONS.SUBMIT_TASK];
       case UserRoleEnum.INSTRUCTOR:
         return [
           EDUCATIONAL_PERMISSIONS.VIEW_COURSE,
@@ -604,7 +612,7 @@ export class AuthTestScenarios {
    */
   static studentLogin(email?: string): AuthTestBehavior {
     const behavior = new AuthTestBehavior();
-    this.configureStudentLogin(email);
+    behavior.configureStudentLogin(email);
     return behavior;
   }
 
@@ -613,7 +621,7 @@ export class AuthTestScenarios {
    */
   static instructorLogin(email?: string): AuthTestBehavior {
     const behavior = new AuthTestBehavior();
-    this.configureInstructorLogin(email);
+    behavior.configureInstructorLogin(email);
     return behavior;
   }
 
@@ -622,7 +630,7 @@ export class AuthTestScenarios {
    */
   static adminLogin(email?: string): AuthTestBehavior {
     const behavior = new AuthTestBehavior();
-    this.configureAdminLogin(email);
+    behavior.configureAdminLogin(email);
     return behavior;
   }
 
@@ -631,7 +639,7 @@ export class AuthTestScenarios {
    */
   static unauthenticatedUser(): AuthTestBehavior {
     const behavior = new AuthTestBehavior();
-    this.configureUnauthenticatedUser();
+    behavior.configureUnauthenticatedUser();
     return behavior;
   }
 
@@ -640,7 +648,7 @@ export class AuthTestScenarios {
    */
   static loginFailure(errorMessage?: string): AuthTestBehavior {
     const behavior = new AuthTestBehavior();
-    this.configureLoginFailure(errorMessage);
+    behavior.configureLoginFailure(errorMessage);
     return behavior;
   }
 }
