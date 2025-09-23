@@ -31,21 +31,31 @@ from rest_framework import permissions
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from core.progress_api import (CourseAnalyticsAPI, CourseStudentProgressAPI,
-                               CourseTaskAnalyticsAPI,
-                               EnhancedQuizAttemptViewSet,
-                               EnhancedTaskProgressViewSet, StudentProgressAPI,
-                               StudentQuizPerformanceAPI)
-from core.views.auth import (CustomTokenObtainPairView, LogoutView,
-                             RegisterView, validate_token)
+from core.progress_api import (
+    CourseAnalyticsAPI,
+    CourseStudentProgressAPI,
+    CourseTaskAnalyticsAPI,
+    EnhancedQuizAttemptViewSet,
+    EnhancedTaskProgressViewSet,
+    StudentProgressAPI,
+    StudentQuizPerformanceAPI,
+)
+from core.views.auth import (
+    CustomTokenObtainPairView,
+    LogoutView,
+    RegisterView,
+    validate_token,
+)
 from core.views.courses import CourseVersionViewSet, CourseViewSet
-from core.views.dashboards import (AdminDashboardAPI, InstructorDashboardAPI,
-                                   StudentDashboardAPI,
-                                   admin_dashboard_summary)
+from core.views.dashboards import (
+    AdminDashboardAPI,
+    InstructorDashboardAPI,
+    StudentDashboardAPI,
+    admin_dashboard_summary,
+)
 from core.views.enrollments import EnrollmentViewSet
 from core.views.health import health_check
-from core.views.quizzes import (QuizOptionViewSet, QuizQuestionViewSet,
-                                QuizTaskViewSet)
+from core.views.quizzes import QuizOptionViewSet, QuizQuestionViewSet, QuizTaskViewSet
 from core.views.tasks import LearningTaskViewSet
 from core.views.users import UserProfileAPI, UserViewSet
 

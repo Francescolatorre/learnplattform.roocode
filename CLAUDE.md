@@ -68,45 +68,41 @@ const courseService = ServiceFactory.getInstance().getService(ModernCourseServic
 
 # claude-code-hooks
 
-## Automatic Code Quality Hooks (matches CI pipeline exactly)
+## Code Quality Integration (with Husky Pre-commit Hooks)
 
-### Pre-commit validation hooks (run before git commits)
+**Note**: This project now uses Husky pre-commit hooks for automatic formatting and linting.
+Claude Code hooks are configured to complement, not conflict with, the Husky automation.
 
-```bash
-# Python: Format and lint backend code (exact CI commands)
-cd backend && black --check --diff . && flake8 . && mypy . --ignore-missing-imports
+### Husky Pre-commit Automation (Active)
 
-# TypeScript: Format and lint frontend code (exact CI commands)
-cd frontend && npx prettier --check . && npm run lint && npx tsc --noEmit
+The project automatically runs these on every commit:
+- **Frontend**: ESLint --fix + Prettier --write via lint-staged
+- **Backend**: Black formatter for Python files
+- **CI Compatibility**: Matches exact CI pipeline rules
 
-# Tests: Run unit tests to catch issues early
-cd frontend && npm run test:unit
-```
-
-### Pre-push validation hooks (run before git push)
+### Claude Code Validation Hooks (Non-conflicting)
 
 ```bash
-# Backend tests (exact CI command)
+# Pre-commit validation (read-only checks)
+cd backend && flake8 . && mypy . --ignore-missing-imports
+cd frontend && npx tsc --noEmit
+
+# Pre-push validation (comprehensive testing)
 cd backend && pytest --tb=short
-
-# Frontend full validation (exact CI commands)
-cd frontend && npm run test:unit && npm run test:integration && npm run test:coverage
-
-# Build validation
-cd frontend && npm run build
+cd frontend && npm run test:unit && npm run test:integration && npm run build
 ```
 
-### Post-edit hooks (run after file edits)
+### Post-edit Analysis (Information Only)
 
 ```bash
-# Auto-format Python files after editing (with autofix)
+# Analyze Python file changes (no auto-fix to avoid Husky conflicts)
 if [[ "{file_path}" == backend/* && "{file_path}" == *.py ]]; then
-  cd backend && black "{file_path}" && flake8 "{file_path}" && mypy "{file_path}" --ignore-missing-imports
+  cd backend && flake8 "{file_path}" && mypy "{file_path}" --ignore-missing-imports
 fi
 
-# Auto-format TypeScript files after editing (with autofix)
+# Analyze TypeScript file changes (no auto-fix to avoid Husky conflicts)
 if [[ "{file_path}" == frontend/* && "{file_path}" == *.ts* ]]; then
-  cd frontend && npx prettier --write "{file_path}" && npx eslint --fix "{file_path}"
+  cd frontend && npx tsc --noEmit
 fi
 ```
 

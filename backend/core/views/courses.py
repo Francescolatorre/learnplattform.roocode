@@ -18,12 +18,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from ..models import (Course, CourseEnrollment, CourseVersion, LearningTask,
-                      TaskProgress)
+from ..models import Course, CourseEnrollment, CourseVersion, LearningTask, TaskProgress
 from ..pagination import SafePageNumberPagination
 from ..permissions import IsInstructorOrAdmin
-from ..serializers import (CourseSerializer, CourseVersionSerializer,
-                           TaskProgressSerializer)
+from ..serializers import (
+    CourseSerializer,
+    CourseVersionSerializer,
+    TaskProgressSerializer,
+)
 
 logger = logging.getLogger(__name__)
 

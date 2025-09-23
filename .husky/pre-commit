@@ -27,9 +27,6 @@ if [ -n "$BACKEND_FILES" ]; then
   echo "  📦 Running Black formatter..."
   black .
 
-  echo "  📦 Running isort (import sorting)..."
-  isort .
-
   # Check for issues (but don't fail - let CI handle complex issues)
   echo "  🔍 Running Flake8 check..."
   flake8 . || echo "  ⚠️  Flake8 issues found - will be caught in CI"
