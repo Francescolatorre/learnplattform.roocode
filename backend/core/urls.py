@@ -24,7 +24,8 @@ from rest_framework.routers import DefaultRouter
 from .views.courses import CourseVersionViewSet, CourseViewSet
 from .views.enrollments import EnrollmentViewSet
 from .views.misc import health_check
-from .views.quizzes import QuizOptionViewSet, QuizQuestionViewSet, QuizTaskViewSet
+from .views.quizzes import (QuizOptionViewSet, QuizQuestionViewSet,
+                            QuizTaskViewSet)
 from .views.tasks import LearningTaskViewSet
 from .views.users import UserViewSet
 

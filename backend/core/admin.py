@@ -13,16 +13,8 @@ providing a user-friendly interface for content management. It includes:
 from django.contrib import admin
 
 from .models import CourseEnrollment  # Ensure parentheses are closed
-from .models import (
-    Course,
-    LearningTask,
-    QuizAttempt,
-    QuizOption,
-    QuizQuestion,
-    QuizResponse,
-    QuizTask,
-    TaskProgress,
-)
+from .models import (Course, LearningTask, QuizAttempt, QuizOption,
+                     QuizQuestion, QuizResponse, QuizTask, TaskProgress)
 
 
 @admin.register(Course)

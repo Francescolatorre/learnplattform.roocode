@@ -21,15 +21,8 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from core.models import (
-    Course,
-    CourseEnrollment,
-    LearningTask,
-    QuizAttempt,
-    QuizTask,
-    TaskProgress,
-    User,
-)
+from core.models import (Course, CourseEnrollment, LearningTask, QuizAttempt,
+                         QuizTask, TaskProgress, User)
 
 
 @pytest.fixture

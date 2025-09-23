@@ -3,12 +3,13 @@ Health check endpoint for Railway deployment monitoring.
 Created for REQ-078 Hosting Environment Setup.
 """
 
-from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
-from django.views.decorators.csrf import csrf_exempt
-from django.db import connection
-from django.conf import settings
 import os
+
+from django.conf import settings
+from django.db import connection
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 
 
 @csrf_exempt

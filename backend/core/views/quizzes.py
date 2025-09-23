@@ -9,14 +9,11 @@ import logging
 
 from rest_framework import permissions, viewsets
 
-from ..models import QuizAttempt, QuizOption, QuizQuestion, QuizResponse, QuizTask
-from ..serializers import (
-    QuizAttemptSerializer,
-    QuizOptionSerializer,
-    QuizQuestionSerializer,
-    QuizResponseSerializer,
-    QuizTaskSerializer,
-)
+from ..models import (QuizAttempt, QuizOption, QuizQuestion, QuizResponse,
+                      QuizTask)
+from ..serializers import (QuizAttemptSerializer, QuizOptionSerializer,
+                           QuizQuestionSerializer, QuizResponseSerializer,
+                           QuizTaskSerializer)
 
 logger = logging.getLogger(__name__)
 
