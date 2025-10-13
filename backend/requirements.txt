@@ -41,7 +41,7 @@ pycodestyle==2.14.0
 pyflakes==3.4.0
 Pygments==2.19.1
 PyJWT==2.10.1
-pylint==3.0.3
+pylint==4.0.0
 pylint-django==2.6.1
 pylint-plugin-utils==0.8.2
 pytest==7.4.4
