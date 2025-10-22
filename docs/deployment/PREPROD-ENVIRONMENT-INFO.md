@@ -32,14 +32,17 @@
 ### Administrator Access
 - **Username**: `admin`
 - **Email**: `admin@learnplatform.dev`
-- **Password**: `AdminPass123!`
+- **Password**: *Stored securely in Railway environment variables*
 - **Role**: Administrator (Superuser + Staff)
 - **Access**: Full Django Admin, System Management
+
+**Note**: Passwords are managed via environment variables and never committed to version control.
+See `backend/.env.example` for configuration template.
 
 ### Instructor Account
 - **Username**: `instructor`
 - **Email**: `instructor@learnplatform.dev`
-- **Password**: `AdminPass123!`
+- **Password**: *Configured via environment*
 - **Role**: Instructor
 - **Display Name**: Dr. Smith
 - **Access**: Course Creation, Content Management
@@ -47,10 +50,16 @@
 ### Student Account
 - **Username**: `student`
 - **Email**: `student@learnplatform.dev`
-- **Password**: `AdminPass123!`
+- **Password**: *Configured via environment*
 - **Role**: Student
 - **Display Name**: John Doe
 - **Access**: Course Enrollment, Learning Activities
+
+**Security Best Practices**:
+- All passwords stored as environment variables
+- Use `./scripts/setup-railway-env.sh` to configure credentials securely
+- Never commit passwords to version control
+- Rotate credentials regularly
 
 ## 📚 Sample Learning Content
 
@@ -85,13 +94,32 @@
 ## 🔧 Technical Configuration
 
 ### Environment Variables (Railway)
-```
-DATABASE_URL=postgresql://neondb_owner:npg_Q4LceFhtdg8I@ep-tiny-fire-adw4f5ov-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
-DEBUG=FALSE
+
+**Note**: These are configured via Railway dashboard or using `./scripts/setup-railway-env.sh`
+
+```bash
+# Database connection (from Neon)
+DATABASE_URL=postgresql://[USER]:[PASSWORD]@[HOST]/[DB]?sslmode=require
+
+# Django settings
+DEBUG=False
+SECRET_KEY=[GENERATED_SECRET_KEY]
 DJANGO_ADMIN_URL=admin-secure/
-SECRET_KEY=your-railway-secret-key
+
+# Admin user configuration
+ADMIN_USERNAME=admin
+ADMIN_EMAIL=admin@learnplatform.dev
+ADMIN_PASSWORD=[SECURE_PASSWORD]
+
+# Environment identifier
 RAILWAY_ENVIRONMENT=preproduction
 ```
+
+**Security Notes**:
+- Never commit actual values to git
+- Use Railway dashboard or CLI to set variables
+- Credentials are encrypted in Railway's systems
+- Rotate secrets regularly (quarterly recommended)
 
 ### Environment Variables (Vercel)
 ```
