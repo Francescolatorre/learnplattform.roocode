@@ -133,9 +133,121 @@ instructor_urls = [
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="API Documentation",
+        title="Learning Platform API",
         default_version="v1",
-        description="API documentation for the backend",
+        description="""
+# Learning Platform REST API
+
+## Overview
+The Learning Platform API provides comprehensive endpoints for managing courses,
+learning tasks, quizzes, enrollments, and progress tracking.
+
+## Authentication
+
+Most endpoints require JWT (JSON Web Token) authentication.
+
+### Getting Started:
+
+1. **Register a new account:**
+   ```
+   POST /auth/register/
+   {
+     "username": "student1",
+     "email": "student@example.com",
+     "password": "SecurePass123!",
+     "role": "student"
+   }
+   ```
+
+2. **Login to get access token:**
+   ```
+   POST /auth/login/
+   {
+     "username": "student1",
+     "password": "SecurePass123!"
+   }
+   ```
+
+   Response:
+   ```json
+   {
+     "access": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+     "refresh": "eyJ0eXAiOiJKV1QiLCJhbGc..."
+   }
+   ```
+
+3. **Use the access token in requests:**
+   ```
+   Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...
+   ```
+
+### Token Refresh:
+When your access token expires, refresh it using:
+```
+POST /auth/token/refresh/
+{
+  "refresh": "your_refresh_token"
+}
+```
+
+## User Roles
+
+The platform supports three user roles:
+- **Student**: Can enroll in courses, complete tasks, take quizzes
+- **Instructor**: Can create and manage courses, view student progress
+- **Admin**: Full system access, user management, analytics
+
+## Common Error Responses
+
+| Status Code | Meaning |
+|-------------|---------|
+| 400 | Bad Request - Invalid input data |
+| 401 | Unauthorized - Not authenticated (missing/invalid token) |
+| 403 | Forbidden - Not authorized (insufficient permissions) |
+| 404 | Not Found - Resource doesn't exist |
+| 500 | Server Error - Something went wrong on our end |
+
+### Error Response Format:
+```json
+{
+  "error": {
+    "code": "validation_error",
+    "message": "Invalid input data",
+    "details": {
+      "email": ["This field is required"]
+    }
+  }
+}
+```
+
+## Rate Limiting
+
+- **Anonymous users**: 100 requests/hour
+- **Authenticated users**: 1000 requests/hour
+
+## Pagination
+
+List endpoints return paginated results:
+```json
+{
+  "count": 100,
+  "next": "http://api.example.com/api/v1/courses/?page=2",
+  "previous": null,
+  "results": [...]
+}
+```
+
+## Health Check
+
+Monitor API status: `GET /health/` or `GET /health/?detailed=true`
+
+## Support
+
+For issues or questions, please contact: support@learnplatform.dev
+        """,
+        terms_of_service="https://www.example.com/terms/",
+        contact=openapi.Contact(email="support@learnplatform.dev"),
+        license=openapi.License(name="MIT License"),
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
